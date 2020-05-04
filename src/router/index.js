@@ -4,9 +4,16 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
-  routes: [{
-    path: '/',
-    name: 'home',
-    component: () => import('@/views/home')
-  }]
+  routes: [
+    {
+      path: '/',
+      name: 'Home',
+      component: () => import('@/views/home')
+    },
+    {
+      path: '/article/:ArticleID',
+      name: 'Article',
+      component: () => import('@/views/article')
+    }
+  ]
 })

@@ -5,6 +5,8 @@
         v-for="article in articles"
         :key="article.timeStamp"
         class="mx-auto pt-5"
+        :to="`article/${article._id
+        }`"
       >
         <b-card
           no-body
