@@ -24,6 +24,11 @@ export default new Router({
       path: '/tiptap',
       name: 'EditPage',
       component: () => import('@/views/EditPage')
+    },
+    {
+      path: '/NewsPanel',
+      name: 'NewsPanel',
+      component: () => import('@/views/NewsPanel')
     }
   ]
 })

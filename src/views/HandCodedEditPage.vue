@@ -45,7 +45,7 @@
 
 <script>
 export default {
-  name: 'EditPage',
+  name: 'HandCodedEditPage',
   data() {
     return {
       title: '',

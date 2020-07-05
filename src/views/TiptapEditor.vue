@@ -9,7 +9,7 @@
       </b-col>
     </b-row>
     <b-row class="my-1">
-      <b-col sm="6">
+      <b-col sm="8">
         <editor-menu-bar v-slot="{ commands, isActive }" :editor="editor">
           <b-row class="my-1">
             <b-col>
@@ -83,6 +83,7 @@
                 variant="outline-secondary"
                 class="menubar__button"
                 :class="{ 'is-active': isActive.bullet_list() }"
+                :pressed.sync="buttonsToggledState.ul"
                 @click="commands.bullet_list"
               >
                 ul
@@ -112,8 +113,14 @@ export default {
     EditorContent,
     EditorMenuBar
   },
+  props: {
+    content: String
+  },
   data() {
+    const content = this.content
     return {
+      title: '',
+      time: '',
       editor: new Editor({
         extensions: [
           new Heading({ levels: [1, 2, 3] }),
@@ -124,14 +131,7 @@ export default {
           new BulletList(),
           new ListItem()
         ],
-        content: `
-          <h2>
-            Test
-          </h2>
-          <p>
-            simple demo
-          </p>
-        `
+        content: content
       }),
       buttonsToggledState: {
         Bold: false,
@@ -140,7 +140,8 @@ export default {
         Underline: false,
         H1: false,
         H2: false,
-        H3: false
+        H3: false,
+        ul: false
       }
     }
   },
