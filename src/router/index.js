@@ -14,6 +14,16 @@ export default new Router({
       path: '/article/:ArticleID',
       name: 'Article',
       component: () => import('@/views/article')
+    },
+    {
+      path: '/test',
+      name: 'HandCodedEditPage',
+      component: () => import('@/views/HandCodedEditPage')
+    },
+    {
+      path: '/tiptap',
+      name: 'EditPage',
+      component: () => import('@/views/EditPage')
     }
   ]
 })
