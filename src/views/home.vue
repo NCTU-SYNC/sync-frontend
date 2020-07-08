@@ -5,8 +5,7 @@
         v-for="article in articles"
         :key="article.timeStamp"
         class="mx-auto pt-5"
-        :to="`article/${article._id
-        }`"
+        :to="{ name: 'Article', params: { ArticleID: article._id }}"
       >
         <b-card
           no-body
@@ -38,15 +37,22 @@ export default {
   name: 'Home',
   data() {
     return {
-      articles: []
+      articles: [
+        {
+          title: '測試',
+          editedCount: '123',
+          _id: '123456',
+          timeStamp: '1123'
+        }
+      ]
     }
   },
   created() {
     getArticles().then(response => {
-      if (response.code === 200) {
+      /* if (response.code === 200) {
         this.articles = response.data
         this.articles.sort((a, b) => new Date(b.timeStamp) - new Date(a.timeStamp))
-      }
+      }*/
     })
   }
 }

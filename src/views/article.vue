@@ -2,11 +2,15 @@
   <b-container>
     <b-row>
       <b-col sm="auto" class="mr-auto p-3">
-        <b-button pill variant="outline-secondary">回上一頁</b-button>
+        <b-button pill variant="outline-secondary" @click="$router.back()">回上一頁</b-button>
       </b-col>
       <b-col sm="6" />
       <b-col sm="auto" class="p-3">
-        <b-button pill class="primary-color">編輯新聞</b-button>
+        <b-button
+          pill
+          class="primary-color"
+          :to="`${$route.path}/Post`"
+        >編輯新聞</b-button>
       </b-col>
     </b-row>
     <hr>
