@@ -51,24 +51,68 @@
           <b-link href="#" class="card-link">作者</b-link>
         </b-card>
         <hr>
+
+        <b-card v-for="block in blocks" :key="block.id">
+          <TiptapEditor :key="content" :content="content" />
+          <b-row>
+            <b-col class="text-center">
+              <b-button
+                variant="outline-secondary"
+                style="border-radius: 100px; margin-bottom: 10px;"
+                @click="addBlock"
+              >+ 段落</b-button>
+            </b-col>
+          </b-row>
+        </b-card>
+        <div style="margin: 20px;">
+          <b-row align-h="between">
+            <b-col sm="2">
+              <b-button>發布</b-button>
+            </b-col>
+            <b-col sm="2">
+              <b-button>儲存</b-button>
+            </b-col>
+          </b-row>
+        </div>
       </b-col>
-      <b-col cols="4" />
+      <b-col cols="4">
+        <NewsPanel @importNews="importNews" />
+      </b-col>
     </b-row>
+
   </b-container>
 </template>
 
 <script>
-
+import TiptapEditor from '@/components/Post/TiptapEditor'
+import NewsPanel from './NewsPanel'
 export default {
   name: 'Post',
+  components: {
+    TiptapEditor,
+    NewsPanel
+  },
   data() {
     return {
+      blocks: [{ id: 0 }],
+      content: 'original content',
       postDateValue: '',
       postTimeValue: ''
     }
   },
-  created() {
-
+  methods: {
+    addBlock() {
+      this.blocks.push({
+        id: this.blocks[this.blocks.length - 1].id + 1
+      })
+    },
+    importNews(content) {
+      this.content = content
+    }
   }
 }
 </script>
+
+<style scoped lang="scss">
+@import "@/assets/Post/editor.scss";
+</style>

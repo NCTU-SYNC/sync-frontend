@@ -14,7 +14,7 @@
             </b-link>
           </b-nav-item>
           <b-nav-item>
-            <b-link :to="`/tiptap`">
+            <b-link :to="`/Post`">
               tiptap
             </b-link>
           </b-nav-item>
@@ -62,8 +62,6 @@ export default {
 }
 </script>
 
-<style scoped>
-  #brand {
-    color: #FF7865
-  }
+<style scoped lang="scss">
+@import "@/assets/styles.scss";
 </style>

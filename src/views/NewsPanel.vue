@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <b-card>
     <b-input-group class="mt-3" style="margin-bottom: 20px;">
       <b-form-input />
       <b-input-group-append>
@@ -23,11 +23,11 @@
     <div v-for="i in 3" :key="i" style="margin-top: 10px;">
       <NewsCard :title="'title '+i" content="test content" @importNews="emitToEditPage" />
     </div>
-  </div>
+  </b-card>
 </template>
 
 <script>
-import NewsCard from './NewsCard'
+import NewsCard from '@/components/Post/NewsCard'
 export default {
   name: 'NewsPanel',
   components: {

@@ -1,15 +1,45 @@
 <template>
   <div style="margin: 20px;">
-    <b-row class="my-1">
-      <b-col sm="10">
-        <b-form-input v-model="title" placeholder="Title..." />
-      </b-col>
-      <b-col sm="2">
-        <b-form-input v-model="time" placeholder="Time" />
-      </b-col>
-    </b-row>
-    <b-row class="my-1">
-      <b-col sm="8">
+    <b-form inline>
+      <label class="sr-only" for="inline-form-input-name">Name</label>
+      <b-input
+        id="inline-form-input-name"
+        v-model="title"
+        class="mb-2 mr-sm-2 mb-sm-0"
+        placeholder=" 輸入標題..."
+      />
+
+      <label class="sr-only" for="example-datepicker" />
+      <b-form-datepicker
+        id="example-datepicker"
+        v-model="postDateValue"
+        class="mb-2 mr-sm-2 mb-sm-0"
+        :hide-header="true"
+        :locale="zh"
+        :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+        label-no-date-selected="日期"
+        label-help=""
+      />
+
+      <label class="sr-only" for="timepicker-lg" />
+      <b-form-timepicker
+        id="timepicker-lg"
+        v-model="time"
+        class="mb-2 mr-sm-2 mb-sm-0"
+        :hour12="false"
+        :locale="zh"
+        :now-button="true"
+        :show-seconds="false"
+        :minutes-step="10"
+        :no-close-button="true"
+        label-now-button="現在時間"
+        label-no-time-selected="時間"
+        :hide-header="true"
+      />
+    </b-form>
+
+    <b-row class="my-2">
+      <b-col cols="12" class="editor">
         <editor-menu-bar v-slot="{ commands, isActive }" :editor="editor">
           <b-row class="my-1">
             <b-col>
@@ -92,12 +122,11 @@
           </b-row>
         </editor-menu-bar>
       </b-col>
-      <b-col sm="12">
-        <editor-content
-          class="editor__content"
-          :editor="editor"
-          style="border: 1px solid rgb(20, 20, 20); margin-top: 20px;"
-        />
+
+      <b-col cols="12">
+        <hr>
+        <br>
+        <editor-content class="editor__content" :editor="editor" />
       </b-col>
     </b-row>
   </div>
@@ -113,11 +142,7 @@ export default {
     EditorContent,
     EditorMenuBar
   },
-  props: {
-    content: String
-  },
   data() {
-    const content = this.content
     return {
       title: '',
       time: '',
@@ -131,7 +156,28 @@ export default {
           new BulletList(),
           new ListItem()
         ],
-        content: content
+        content: `
+          <h2>
+            Hi there,
+          </h2>
+          <p>
+            this is a very <em>basic</em> example of tiptap.
+          </p>
+          <pre><code>body { display: none; }</code></pre>
+          <ul>
+            <li>
+              A regular list
+            </li>
+            <li>
+              With regular items
+            </li>
+          </ul>
+          <blockquote>
+            It's amazing 👏
+            <br />
+            – mom
+          </blockquote>
+        `
       }),
       buttonsToggledState: {
         Bold: false,
@@ -151,5 +197,6 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="scss">
+@import "@/assets/Post/main";
 </style>
