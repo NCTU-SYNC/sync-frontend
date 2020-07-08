@@ -16,6 +16,11 @@ export default new Router({
       component: () => import('@/views/article')
     },
     {
+      path: '/article/:ArticleID/post',
+      name: 'Post',
+      component: () => import('@/views/post')
+    },
+    {
       path: '/test',
       name: 'HandCodedEditPage',
       component: () => import('@/views/HandCodedEditPage')
