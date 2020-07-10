@@ -1,33 +1,33 @@
 <template>
   <div style="margin: 20px;">
     <b-form inline>
-      <label class="sr-only" for="inline-form-input-name">Name</label>
+      <label class="sr-only" :for="`block-title-${blockId}`">段落標題</label>
       <b-input
-        id="inline-form-input-name"
-        v-model="title"
+        :id="`block-title-${blockId}`"
+        v-model="blockTitle"
         class="mb-2 mr-sm-2 mb-sm-0"
         placeholder=" 輸入標題..."
       />
 
-      <label class="sr-only" for="example-datepicker" />
+      <label class="sr-only" :for="`block-datepicker-${blockId}`" />
       <b-form-datepicker
-        id="example-datepicker"
-        v-model="postDateValue"
+        :id="`block-datepicker-${blockId}`"
+        v-model="blockDateValue"
         class="mb-2 mr-sm-2 mb-sm-0"
         :hide-header="true"
-        :locale="zh"
+        locale="zh"
         :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
         label-no-date-selected="日期"
         label-help=""
       />
 
-      <label class="sr-only" for="timepicker-lg" />
+      <label class="sr-only" :for="`block-timepicker-${blockId}`" />
       <b-form-timepicker
-        id="timepicker-lg"
-        v-model="time"
+        :id="`block-timepicker-${blockId}`"
+        v-model="blockTimeValue"
         class="mb-2 mr-sm-2 mb-sm-0"
         :hour12="false"
-        :locale="zh"
+        locale="zh"
         :now-button="true"
         :show-seconds="false"
         :minutes-step="10"
@@ -134,7 +134,7 @@
 
 <script>
 import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
-import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem } from 'tiptap-extensions'
+import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder } from 'tiptap-extensions'
 
 export default {
   name: 'TiptapEditPage',
@@ -142,11 +142,30 @@ export default {
     EditorContent,
     EditorMenuBar
   },
+  props: {
+    content: {
+      type: Object,
+      default: null
+    }
+  },
   data() {
     return {
-      title: '',
-      time: '',
+      blockId: '',
+      blockDateValue: '',
+      blockTimeValue: '',
+      blockTitle: '',
       editor: new Editor({
+        autoFocus: true,
+        onInit: () => {
+          // editor is initialized
+        },
+        onUpdate: ({ state, getHTML, getJSON, transaction }) => {
+          // console.log(state, transaction)
+          console.log(getHTML(), getJSON())
+          console.log(JSON.stringify(getJSON()))
+          // 將資料回傳給父物件
+          this.$emit('update:content', getJSON())
+        },
         extensions: [
           new Heading({ levels: [1, 2, 3] }),
           new Bold(),
@@ -154,30 +173,16 @@ export default {
           new Strike(),
           new Underline(),
           new BulletList(),
-          new ListItem()
+          new ListItem(),
+          new Placeholder({
+            emptyEditorClass: 'is-editor-empty',
+            emptyNodeClass: 'is-empty',
+            emptyNodeText: '輸入內文...',
+            showOnlyWhenEditable: true,
+            showOnlyCurrent: true
+          })
         ],
-        content: `
-          <h2>
-            Hi there,
-          </h2>
-          <p>
-            this is a very <em>basic</em> example of tiptap.
-          </p>
-          <pre><code>body { display: none; }</code></pre>
-          <ul>
-            <li>
-              A regular list
-            </li>
-            <li>
-              With regular items
-            </li>
-          </ul>
-          <blockquote>
-            It's amazing 👏
-            <br />
-            – mom
-          </blockquote>
-        `
+        content: this.content
       }),
       buttonsToggledState: {
         Bold: false,
@@ -193,6 +198,14 @@ export default {
   },
   beforeDestroy() {
     this.editor.destroy()
+  },
+  created() {
+    // 產生隨機ID，讓元件綁上id
+    this.blockId = Math.random().toString(36).substring(7)
+    console.log('Random block id: ', this.blockId)
+  },
+  method: {
+
   }
 }
 </script>

@@ -4,32 +4,33 @@
       <b-col cols="8">
         <b-card>
           <b-form inline>
-            <label class="sr-only" for="inline-form-input-name">Name</label>
+            <label class="sr-only" for="post-title">標題</label>
             <b-input
-              id="inline-form-input-name"
+              id="post-title"
+              v-model="postTitle"
               class="mb-2 mr-sm-2 mb-sm-0"
               placeholder="輸入標題..."
             />
 
-            <label class="sr-only" for="example-datepicker" />
+            <label class="sr-only" for="post-datepicker" />
             <b-form-datepicker
-              id="example-datepicker"
+              id="post-datepicker"
               v-model="postDateValue"
               class="mb-2 mr-sm-2 mb-sm-0"
               :hide-header="true"
-              :locale="zh"
+              locale="zh"
               :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
               label-no-date-selected="日期"
               label-help=""
             />
 
-            <label class="sr-only" for="timepicker-lg" />
+            <label class="sr-only" for="post-timepicker" />
             <b-form-timepicker
-              id="timepicker-lg"
+              id="post-timepicker"
               v-model="postTimeValue"
               class="mb-2 mr-sm-2 mb-sm-0"
               :hour12="false"
-              :locale="zh"
+              locale="zh"
               :now-button="true"
               :show-seconds="false"
               :minutes-step="10"
@@ -39,10 +40,10 @@
               :hide-header="true"
             />
           </b-form>
-          <label for="tags-remove-on-delete" />
+          <label for="post-tags" />
           <b-form-tags
-            v-model="value"
-            input-id="tags-remove-on-delete"
+            v-model="postTags"
+            input-id="post-tags"
             separator=" "
             placeholder="新增標籤"
             remove-on-delete
@@ -51,19 +52,21 @@
           <b-link href="#" class="card-link">作者</b-link>
         </b-card>
         <hr>
-
-        <b-card v-for="block in blocks" :key="block.id">
-          <TiptapEditor :key="content" :content="content" />
+        <div v-for="block in blocks" :key="block.id">
+          <b-card>
+            <TiptapEditor :content.sync="block.content" />
+          </b-card>
+          <hr>
           <b-row>
             <b-col class="text-center">
               <b-button
                 variant="outline-secondary"
                 style="border-radius: 100px; margin-bottom: 10px;"
-                @click="addBlock"
+                @click="handleAddBlack"
               >+ 段落</b-button>
             </b-col>
           </b-row>
-        </b-card>
+        </div>
         <div style="margin: 20px;">
           <b-row align-h="between">
             <b-col sm="2">
@@ -94,16 +97,18 @@ export default {
   },
   data() {
     return {
-      blocks: [{ id: 0 }],
-      content: 'original content',
+      blocks: [{ id: 0, content: { 'type': 'doc', 'content': [{ 'type': 'heading', 'attrs': { 'level': 2 }, 'content': [{ 'type': 'text', 'text': 'Hi there,' }] }, { 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'this is a very ' }, { 'type': 'text', 'marks': [{ 'type': 'italic' }], 'text': 'basic' }, { 'type': 'text', 'text': ' example of tiptap.' }] }, { 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'body { display: none; }' }] }, { 'type': 'bullet_list', 'content': [{ 'type': 'list_item', 'content': [{ 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'A regular list' }] }] }, { 'type': 'list_item', 'content': [{ 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'With regular items' }] }] }] }, { 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': " It's amazing 👏 – mom" }] }] }}],
+      postTitle: '',
       postDateValue: '',
-      postTimeValue: ''
+      postTimeValue: '',
+      postTags: []
     }
   },
   methods: {
-    addBlock() {
+    handleAddBlack() {
       this.blocks.push({
-        id: this.blocks[this.blocks.length - 1].id + 1
+        id: this.blocks[this.blocks.length - 1].id + 1,
+        content: null
       })
     },
     importNews(content) {
