@@ -17,7 +17,6 @@ export default new Router({
     },
     {
       path: '/article/:ArticleID/Post',
-      name: 'Post',
       component: () => import('@/views/Post')
     },
     {
