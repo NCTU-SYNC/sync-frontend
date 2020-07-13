@@ -4,15 +4,16 @@
       <label class="sr-only" :for="`block-title-${blockId}`">段落標題</label>
       <b-input
         :id="`block-title-${blockId}`"
-        v-model="blockTitle"
-        class="mb-2 mr-sm-2 mb-sm-0"
-        placeholder=" 輸入標題..."
+        v-model="tempData.blockTitle"
+        class="mb-2 mr-sm-2 mb-sm-0 pl-2"
+        placeholder="輸入標題..."
+        @change="handleChangeTitle()"
       />
 
       <label class="sr-only" :for="`block-datepicker-${blockId}`" />
       <b-form-datepicker
         :id="`block-datepicker-${blockId}`"
-        v-model="blockDateValue"
+        v-model="tempData.blockDateValue"
         class="mb-2 mr-sm-2 mb-sm-0"
         :hide-header="true"
         locale="zh"
@@ -24,7 +25,7 @@
       <label class="sr-only" :for="`block-timepicker-${blockId}`" />
       <b-form-timepicker
         :id="`block-timepicker-${blockId}`"
-        v-model="blockTimeValue"
+        v-model="tempData.blockTimeValue"
         class="mb-2 mr-sm-2 mb-sm-0"
         :hour12="false"
         locale="zh"
@@ -44,7 +45,7 @@
           <b-row class="my-1">
             <b-col>
               <!-- use :pressed.sync="buttonsToggledState.Bold" to make a toggle button -->
-              <b-button
+              <button
                 variant="outline-secondary"
                 class="menubar__button"
                 :class="{ 'is-active': isActive.bold() }"
@@ -52,64 +53,64 @@
                 @click="commands.bold"
               >
                 <b>B</b>
-              </b-button>
+              </button>
             </b-col>
             <b-col>
-              <b-button
+              <button
                 variant="outline-secondary"
                 class="menubar__button"
                 :class="{ 'is-active': isActive.italic() }"
                 @click="commands.italic"
               >
                 <i>I</i>
-              </b-button>
+              </button>
             </b-col>
             <b-col>
-              <b-button
+              <button
                 variant="outline-secondary"
                 class="menubar__button"
                 :class="{ 'is-active': isActive.strike() }"
                 @click="commands.strike"
               >
                 <s>S</s>
-              </b-button>
+              </button>
             </b-col>
             <b-col>
-              <b-button
+              <button
                 variant="outline-secondary"
                 class="menubar__button"
                 :class="{ 'is-active': isActive.underline() }"
                 @click="commands.underline"
               >
                 <u>T</u>
-              </b-button>
+              </button>
             </b-col>
             <b-col>
-              <b-button
+              <button
                 variant="outline-secondary"
                 class="menubar__button"
                 :class="{ 'is-active': isActive.heading({ level: 1 }) }"
                 @click="commands.heading({ level: 1 })"
-              >H1</b-button>
+              >H1</button>
             </b-col>
             <b-col>
-              <b-button
+              <button
                 variant="outline-secondary"
                 class="menubar__button"
                 :class="{ 'is-active': isActive.heading({ level: 2 }) }"
                 @click="commands.heading({ level: 2 })"
-              >H2</b-button>
+              >H2</button>
             </b-col>
             <b-col>
-              <b-button
+              <button
                 variant="outline-secondary"
                 class="menubar__button"
                 :class="{ 'is-active': isActive.heading({ level: 3 }) }"
                 @click="commands.heading({ level: 3 })"
-              >H3</b-button>
+              >H3</button>
             </b-col>
             <b-col>
-              <b-button
+              <button
                 variant="outline-secondary"
                 class="menubar__button"
                 :class="{ 'is-active': isActive.bullet_list() }"
@@ -117,7 +118,7 @@
                 @click="commands.bullet_list"
               >
                 ul
-              </b-button>
+              </button>
             </b-col>
           </b-row>
         </editor-menu-bar>
@@ -146,14 +147,28 @@ export default {
     content: {
       type: Object,
       default: null
+    },
+    blockTitle: {
+      type: String,
+      default: ''
+    },
+    blockDateValue: {
+      type: String,
+      default: ''
+    },
+    blockTimeValue: {
+      type: String,
+      default: ''
     }
   },
   data() {
     return {
       blockId: '',
-      blockDateValue: '',
-      blockTimeValue: '',
-      blockTitle: '',
+      tempData: {
+        blockTitle: '',
+        blockDateValue: '',
+        blockTimeValue: ''
+      },
       editor: new Editor({
         autoFocus: true,
         onInit: () => {
@@ -203,9 +218,20 @@ export default {
     // 產生隨機ID，讓元件綁上id
     this.blockId = Math.random().toString(36).substring(7)
     console.log('Random block id: ', this.blockId)
+    this.tempData.blockTitle = this.blockTitle
+    this.tempData.blockDateValue = this.blockDateValue
+    this.tempData.blockTimeValue = this.blockTimeValue
   },
-  method: {
-
+  methods: {
+    handleChangeTitle() {
+      this.$emit('update:blockTitle', this.tempData.blockTitle)
+    },
+    handleChangeDate() {
+      this.$emit('update:blockDate', this.tempData.blockDateValue)
+    },
+    handleChangeTime() {
+      this.$emit('update:blockTime', this.tempData.blockTimeValue)
+    }
   }
 }
 </script>

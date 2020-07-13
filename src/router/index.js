@@ -16,6 +16,11 @@ export default new Router({
       component: () => import('@/views/Article')
     },
     {
+      path: '/oldArticle',
+      name: 'OldArticle',
+      component: () => import('@/views/OldArticle')
+    },
+    {
       path: '/article/:ArticleID/Post',
       component: () => import('@/views/Post')
     },

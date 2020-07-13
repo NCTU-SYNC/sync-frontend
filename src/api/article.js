@@ -14,3 +14,11 @@ export function getArticleById(articleId) {
     method: 'get'
   })
 }
+
+export function createArticle(data) {
+  return request({
+    url: config.baseURL + `/article`,
+    method: 'post',
+    data: data
+  })
+}

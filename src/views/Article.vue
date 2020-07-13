@@ -8,59 +8,124 @@
       <b-col sm="auto" class="p-3">
         <b-button
           pill
-          class="primary-color"
           :to="`${$route.path}/Post`"
         >編輯新聞</b-button>
       </b-col>
     </b-row>
     <hr>
-    <h1>紙媒只是起點</h1>
-    <b-link>#台灣</b-link> <b-link>#口罩</b-link> <b-link>#WHO</b-link>
-    <p>發布日期 2020/4/16</p>
-    <b-img src="https://picsum.photos/300/150/?image=41" fluid-grow alt="Fluid-grow image" />
-    <p>四月八日，WHO 秘書長譚德塞於正式場合，公開針對台灣發表長達三分鐘的不實發言，此事件引起台灣民眾高度關注。發起團隊決定
-      透過嘖嘖群眾集資平台，集資刊登紐約時報廣告，希望透過大眾的支持，以贊助者共同名義，向世界發出一個訊息： “Who can help?
-      Taiwan.”
-      在不到一天的集資期間內，集資專案獲得 26,980 人的贊助支持，平均每二秒有一人投入支持。在嘖嘖集資平台與貝殼集器的計畫專
-      頁，集資啟動至今累積超過兩百萬人次的瀏覽，充分顯示台灣人對於公眾事務的參與熱情。刊登於紐時的廣告文案，先經過所有關注
-      者的投票選擇版本與提供建議後，也經過深諳國際關係和外交事務的專業人士細修推敲。</p>
     <b-row>
-      <div class="last-update">(最後更新時間：2020年4月19日 14:00)</div></b-row>
-    <hr>
-    <h2>2020.04.10</h2>
-    <h1>Taiwan can help</h1>
-    <p>四月八日，WHO 秘書長譚德塞於正式場合，公開針對台灣發表長達三分鐘的不實發言，此事件引起台灣民眾高度關注。發起團隊決定
-      透過嘖嘖群眾集資平台，集資刊登紐約時報廣告，希望透過大眾的支持，以贊助者共同名義，向世界發出一個訊息： “Who can help?
-      Taiwan.”
-      在不到一天的集資期間內，集資專案獲得 26,980 人的贊助支持，平均每二秒有一人投入支持。在嘖嘖集資平台與貝殼集器的計畫專
-      頁，集資啟動至今累積超過兩百萬人次的瀏覽，充分顯示台灣人對於公眾事務的參與熱情。刊登於紐時的廣告文案，先經過所有關注
-      者的投票選擇版本與提供建議後，也經過深諳國際關係和外交事務的專業人士細修推敲。</p>
-    <ul>
-      <li><b-link class="reference">[1]132</b-link></li>
-      <li><b-link class="reference">[2]132</b-link></li>
-    </ul>
+      <b-col cols="auto" class="mr-auto">
+        <h1>{{ title }}</h1>
+      </b-col>
+      <b-col cols="auto">
+        <b-button variant="outline-secondary">編輯</b-button>
+      </b-col>
+    </b-row>
+    <div class="title-bar">
+      <span class="author">{{ author }}</span>
+    </div>
+    <div class="title-bar">
+      <b-link v-for="tag in tags" :key="tag" class="tag">#{{ tag }}
+      </b-link>
+      <span class="author">{{ createdAt.toLocaleString() }}</span>
+    </div>
+
+    <b-img src="https://picsum.photos/300/150/?image=41" fluid-grow alt="Fluid-grow image" />
+    <div v-for="block in blocks" :key="block.id">
+      <b-card border-variant="white">
+        <editor-content class="editor__content" :editor="editors[block.id]" />
+      </b-card>
+      <b-row>
+        <div class="last-update">(最後更新時間：2020年4月19日 14:00)</div>
+      </b-row>
+      <hr>
+    </div>
+
   </b-container>
 </template>
 
 <script>
-
+import { getArticleById } from '@/api/article'
+import { Editor, EditorContent } from 'tiptap'
+import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder } from 'tiptap-extensions'
 export default {
   name: 'Article',
+  components: {
+    EditorContent
+  },
   data() {
     return {
-
+      title: '紙媒只是起點',
+      tags: ['台灣', '口罩', 'WHO'],
+      author: 'Tim Chang',
+      createdAt: '2020年5月20日 上午5:00',
+      blocks: [{ id: 0, content: { 'type': 'doc', 'content': [{ 'type': 'heading', 'attrs': { 'level': 2 }, 'content': [{ 'type': 'text', 'text': 'Hi there,' }] }, { 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'this is a very ' }, { 'type': 'text', 'marks': [{ 'type': 'italic' }], 'text': 'basic' }, { 'type': 'text', 'text': ' example of tiptap.' }] }, { 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'body { display: none; }' }] }, { 'type': 'bullet_list', 'content': [{ 'type': 'list_item', 'content': [{ 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'A regular list' }] }] }, { 'type': 'list_item', 'content': [{ 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'With regular items' }] }] }] }, { 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': " It's amazing 👏 – mom" }] }] }}],
+      editors: []
     }
   },
+  beforeDestroy() {
+    this.editors.forEach(editor => editor.destroy())
+  },
   created() {
-
+    getArticleById().then(response => {
+      if (response.code === 200) {
+        const data = response.data
+        this.title = data.title
+        this.tags = data.tags
+        this.author = data.author
+        this.publishedTime = data.publishedTime
+        this.blocks = data.blocks
+        this.blocks.forEach(block => {
+          this.editors[block.id] = this.createEditor(block.content)
+        })
+      }
+    }).catch(err => {
+      console.error(err)
+    }
+    )
+    this.blocks.forEach(block => {
+      this.editors[block.id] = this.createEditor(block.content)
+    })
+  },
+  methods: {
+    createEditor(initializedContent) {
+      const editor = new Editor({
+        autoFocus: true,
+        onInit: () => {
+          // editor is initialized
+        },
+        onUpdate: ({ state, getHTML, getJSON, transaction }) => {
+          // console.log(state, transaction)
+          console.log(getHTML(), getJSON())
+          console.log(JSON.stringify(getJSON()))
+        },
+        extensions: [
+          new Heading({ levels: [1, 2, 3] }),
+          new Bold(),
+          new Italic(),
+          new Strike(),
+          new Underline(),
+          new BulletList(),
+          new ListItem(),
+          new Placeholder({
+            emptyEditorClass: 'is-editor-empty',
+            emptyNodeClass: 'is-empty',
+            emptyNodeText: '輸入內文...',
+            showOnlyWhenEditable: true,
+            showOnlyCurrent: true
+          })
+        ],
+        content: initializedContent,
+        editable: false
+      })
+      return editor
+    }
   }
 }
 </script>
 
-<style scoped>
-  .primary-color {
-    background-color: #FF7865;
-  }
+<style scoped lang="scss">
+@import "@/assets/Article/main";
   .reference {
     color: gray;
     text-decoration-line: underline;
@@ -70,16 +135,26 @@ export default {
     list-style: none;
   }
   p {
-    padding: 2em 0;
-  }
-  h2 {
-    color: #FF7865;
+    padding: 2rem 0;
   }
   hr {
-    padding-bottom: 2em;
+    padding-bottom: 1rem;
   }
   .last-update {
     margin: auto;
+    color: gray;
+  }
+  .title-bar {
+    display: flex;
+  }
+  .author {
+    display: inline-block;
+    margin-left: auto !important;
+    color: gray;
+  }
+  .tag {
+    display: inline-block;
+    padding: 0.5rem;
     color: gray;
   }
 </style>

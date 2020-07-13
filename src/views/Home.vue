@@ -49,10 +49,10 @@ export default {
   },
   created() {
     getArticles().then(response => {
-      /* if (response.code === 200) {
+      if (response.code === 200) {
         this.articles = response.data
         this.articles.sort((a, b) => new Date(b.timeStamp) - new Date(a.timeStamp))
-      }*/
+      }
     })
   }
 }
