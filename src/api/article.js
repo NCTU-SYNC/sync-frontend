@@ -10,7 +10,7 @@ export function getArticles() {
 
 export function getArticleById(articleId) {
   return request({
-    url: config.baseURL + `/${articleId}`,
+    url: config.baseURL + `/article/${articleId}`,
     method: 'get'
   })
 }
@@ -19,6 +19,14 @@ export function createArticle(data) {
   return request({
     url: config.baseURL + `/article`,
     method: 'post',
-    data: data
+    data
+  })
+}
+
+export function updateArticleById(data) {
+  return request({
+    url: config.baseURL + `/article`,
+    method: 'put',
+    data
   })
 }

@@ -17,6 +17,7 @@
                 v-model="postTitle"
                 class="mb-0 mr-sm-2 mb-sm-0"
                 placeholder="輸入標題..."
+                required
               />
 
               <label class="sr-only" for="post-datepicker" />
@@ -65,7 +66,7 @@
         </b-card>
         <hr>
         <div>
-          <pre />
+          <br>
           <b-col cols="12" class="text-center">
             <b-button
               variant="outline-secondary"
@@ -79,11 +80,11 @@
             <TiptapEditor
               :content.sync="block.content"
               :block-title.sync="block.blockTitle"
-              :block-date-value.sync="sperateDateAndTime(block.blockDateTime).date"
-              :block-time-value.sync="sperateDateAndTime(block.blockDateTime).time"
+              :block-date-time.sync="block.blockDateTime"
+              @onEdit="onEditorEdit"
             />
           </b-card>
-          <pre />
+          <br>
           <b-col cols="12" class="text-center">
             <b-button
               variant="outline-secondary"
@@ -111,7 +112,7 @@
 </template>
 
 <script>
-import { getArticleById } from '@/api/article'
+import { getArticleById, createArticle, updateArticleById } from '@/api/article'
 import TiptapEditor from '@/components/Post/TiptapEditor'
 import NewsPanel from './NewsPanel'
 export default {
@@ -122,31 +123,35 @@ export default {
   },
   data() {
     return {
+      articleId: undefined,
+      currentEditingEditor: null,
       isNewPost: false,
-      blocks: [{ id: 0, blockTitle: '紙媒只是起點喔', blockDateTime: '2020-03-17T11:22:00.294+00:00', content: { 'type': 'doc', 'content': [{ 'type': 'heading', 'attrs': { 'level': 2 }, 'content': [{ 'type': 'text', 'text': 'Hi there,' }] }, { 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'this is a very ' }, { 'type': 'text', 'marks': [{ 'type': 'italic' }], 'text': 'basic' }, { 'type': 'text', 'text': ' example of tiptap.' }] }, { 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'body { display: none; }' }] }, { 'type': 'bullet_list', 'content': [{ 'type': 'list_item', 'content': [{ 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'A regular list' }] }] }, { 'type': 'list_item', 'content': [{ 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'With regular items' }] }] }] }, { 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': " It's amazing 👏 – mom" }] }] }}],
+      blocks: [],
       data: {},
-      postAuthors: ['Wang', 'Lin', 'John'],
+      postAuthors: ['內部測試'],
       postTitle: '',
-      postDateValue: '2020-05-15',
-      postTimeValue: '13:00:00',
+      postDateTime: '',
+      postDateValue: '',
+      postTimeValue: '',
       postTags: []
     }
   },
   created() {
-    // this.handleClearPost()
+    this.handleClearPost()
     // 從route中獲得此文章的ID
-    const articleId = this.$route.params.ArticleID
+    const articleId = this.articleId = this.$route.params.ArticleID
     this.isNewPost = !(articleId || false)
     if (articleId) {
-      getArticleById().then(response => {
-        if (response.code === 200) {
-          this.data = response.data
+      getArticleById(articleId).then(response => {
+        if (response.data.code === 200) {
+          this.data = response.data.data
           const data = this.data
           this.postAuthors = data.authors
           this.postTitle = data.title
           this.postTags = data.tags
-          this.postDateValue = data.postDateValue
-          this.postTimeValue = data.postTimeValue
+          const dateTime = this.postDateTime = data.createdAt
+          this.postDateValue = this.sperateDateAndTime(dateTime).date
+          this.postTimeValue = this.sperateDateAndTime(dateTime).time
           this.blocks = data.blocks
         }
       }).catch(err => {
@@ -159,25 +164,66 @@ export default {
       const currentBlockCount = this.blocks.length
       this.blocks.push({
         id: currentBlockCount + 1,
+        blockDateTime: new Date().toISOString(),
         content: null
       })
     },
     handleSaveArticle() {
       this.data = {
+        title: this.postTitle,
+        tags: this.postTags,
+        authors: this.postAuthors,
         blocks: this.blocks,
-        postAuthors: this.postAuthors,
-        postTitle: this.postTitle,
-        postDateValue: this.postDateValue,
-        postTimeValue: this.postTimeValue,
-        postTags: this.post.Tags
+        createdAt: `${this.postDateValue} ${this.postTimeValue}`
       }
       localStorage.setItem('post', this.data)
     },
     handlePublish() {
       this.handleSaveArticle()
+      if (this.isNewPost) {
+        createArticle(this.data).then(response => {
+          console.log(response)
+          if (response.data.code === 200) {
+            this.articleId = response.data.id
+            this.$bvModal.msgBoxOk(response.data.message)
+              .then(() => {
+                this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
+              })
+          } else {
+            this.$bvModal.msgBoxOk(response.data.message)
+          }
+        }).catch(err => {
+          console.error(err)
+          this.$bvModal.msgBoxOk(err.data.message)
+        })
+      } else {
+        this.data.id = this.$route.params.ArticleID
+        updateArticleById(this.data).then(response => {
+          console.log(response)
+          if (response.data.code === 200) {
+            this.$bvModal.msgBoxOk(response.data.message)
+              .then(() => {
+                this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
+              })
+          } else {
+            this.$bvModal.msgBoxOk(response.data.message)
+          }
+        }).catch(err => {
+          console.error(err)
+          this.$bvModal.msgBoxOk(err.data.message)
+        })
+      }
     },
     importNews(content) {
-      this.content = content
+      if (this.currentEditingEditor === null) {
+        this.$bvModal.msgBoxOk('請選擇編輯區塊，或是先新增段落後再引入')
+        return
+      }
+      var str = this.currentEditingEditor.getHTML()
+      content.forEach(text => {
+        str += `<p>${text}</p>`
+      })
+      this.currentEditingEditor.setContent(str)
     },
     handleClearPost() {
       this.blocks = []
@@ -192,6 +238,9 @@ export default {
       const dateTime = new Date(dateTimeString)
       return { date: dateTime.toISOString().slice(0, 10),
         time: dateTime.toLocaleTimeString('en-US', { hour12: false }) }
+    },
+    onEditorEdit(editor) {
+      this.currentEditingEditor = editor
     }
   }
 }

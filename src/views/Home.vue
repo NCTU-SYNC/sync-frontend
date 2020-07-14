@@ -3,7 +3,7 @@
     <b-card-group deck>
       <b-link
         v-for="article in articles"
-        :key="article.timeStamp"
+        :key="article.lastUpdatedAt"
         class="mx-auto pt-5"
         :to="{ name: 'Article', params: { ArticleID: article._id }}"
       >
@@ -38,22 +38,19 @@ export default {
   data() {
     return {
       articles: [
-        {
-          title: '測試',
-          editedCount: '123',
-          _id: '123456',
-          timeStamp: '1123'
-        }
+
       ]
     }
   },
   created() {
     getArticles().then(response => {
-      if (response.code === 200) {
-        this.articles = response.data
-        this.articles.sort((a, b) => new Date(b.timeStamp) - new Date(a.timeStamp))
+      console.log(response)
+      if (response.data.code === 200) {
+        this.articles = response.data.data
+        console.log(this.articles)
+        this.articles.sort((a, b) => new Date(a.lastUpdatedAt) - new Date(b.lastUpdatedAt))
       }
-    })
+    }).catch(err => console.error(err))
   }
 }
 </script>

@@ -27,20 +27,23 @@
     <div class="title-bar">
       <b-link v-for="tag in tags" :key="tag" class="tag">#{{ tag }}
       </b-link>
-      <span class="author">{{ createdAt.toLocaleString() }}</span>
+      <span class="author">{{ new Date(createdAt).toLocaleString() }}</span>
     </div>
 
     <b-img src="https://picsum.photos/300/150/?image=41" fluid-grow alt="Fluid-grow image" />
+    <br>
+    <br>
     <div v-for="block in blocks" :key="block.id">
-      <b-card border-variant="white">
+      <h2>{{ block.blockTitle }}</h2>
+      <br>
+      <b-card border-variant="white" no-body>
         <editor-content class="editor__content" :editor="editors[block.id]" />
       </b-card>
       <b-row>
-        <div class="last-update">(最後更新時間：2020年4月19日 14:00)</div>
+        <div class="last-update">(最後更新時間：{{ new Date (block.blockDateTime).toLocaleString() }})</div>
       </b-row>
       <hr>
     </div>
-
   </b-container>
 </template>
 
@@ -59,7 +62,7 @@ export default {
       tags: ['台灣', '口罩', 'WHO'],
       author: 'Tim Chang',
       createdAt: '2020年5月20日 上午5:00',
-      blocks: [{ id: 0, content: { 'type': 'doc', 'content': [{ 'type': 'heading', 'attrs': { 'level': 2 }, 'content': [{ 'type': 'text', 'text': 'Hi there,' }] }, { 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'this is a very ' }, { 'type': 'text', 'marks': [{ 'type': 'italic' }], 'text': 'basic' }, { 'type': 'text', 'text': ' example of tiptap.' }] }, { 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'body { display: none; }' }] }, { 'type': 'bullet_list', 'content': [{ 'type': 'list_item', 'content': [{ 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'A regular list' }] }] }, { 'type': 'list_item', 'content': [{ 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'With regular items' }] }] }] }, { 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': " It's amazing 👏 – mom" }] }] }}],
+      blocks: [],
       editors: []
     }
   },
@@ -67,13 +70,16 @@ export default {
     this.editors.forEach(editor => editor.destroy())
   },
   created() {
-    getArticleById().then(response => {
-      if (response.code === 200) {
-        const data = response.data
+    // 從route中獲得此文章的ID
+    const articleId = this.$route.params.ArticleID
+    console.log(articleId)
+    getArticleById(articleId).then(response => {
+      if (response.data.code === 200) {
+        const data = response.data.data
         this.title = data.title
         this.tags = data.tags
         this.author = data.author
-        this.publishedTime = data.publishedTime
+        this.createdAt = data.createdAt
         this.blocks = data.blocks
         this.blocks.forEach(block => {
           this.editors[block.id] = this.createEditor(block.content)
@@ -81,10 +87,6 @@ export default {
       }
     }).catch(err => {
       console.error(err)
-    }
-    )
-    this.blocks.forEach(block => {
-      this.editors[block.id] = this.createEditor(block.content)
     })
   },
   methods: {

@@ -64,8 +64,8 @@
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
           <b-nav-form>
-            <b-form-input size="sm" class="mr-sm-2" placeholder="搜尋" />
-            <b-button size="sm" class="my-2 my-sm-0" type="submit">搜尋</b-button>
+            <b-form-input size="sm" class="mr-sm-2" placeholder="搜尋" disabled />
+            <b-button size="sm" class="my-2 my-sm-0" type="submit" disabled>搜尋</b-button>
           </b-nav-form>
 
           <b-nav-item-dropdown right>
