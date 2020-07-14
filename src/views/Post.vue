@@ -223,7 +223,7 @@ export default {
       content.forEach(text => {
         str += `<p>${text}</p>`
       })
-      this.currentEditingEditor.setContent(str)
+      this.currentEditingEditor.setContent(str, true)
     },
     handleClearPost() {
       this.blocks = []

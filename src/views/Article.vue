@@ -58,7 +58,7 @@ export default {
   },
   data() {
     return {
-      title: '紙媒只是起點',
+      title: '標題',
       tags: ['台灣', '口罩', 'WHO'],
       author: 'Tim Chang',
       createdAt: '2020年5月20日 上午5:00',
