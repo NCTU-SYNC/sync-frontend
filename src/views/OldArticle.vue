@@ -45,7 +45,7 @@
 <script>
 
 export default {
-  name: 'Article',
+  name: 'OldArticle',
   data() {
     return {
 

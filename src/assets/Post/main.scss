@@ -1,0 +1,26 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-touch-callout: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+
+  :focus {
+    outline: none;
+  }
+}
+
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+
+
+@import "./editor";
+@import "./menubar";
+@import "./menububble";
