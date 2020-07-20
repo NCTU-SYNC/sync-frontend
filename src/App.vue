@@ -64,7 +64,6 @@
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
           <b-nav-form>
-<<<<<<< HEAD
             <b-form-input size="sm" class="mr-sm-2" placeholder="Search" />
             <b-button
               size="sm"
@@ -80,12 +79,6 @@
             <b-dropdown-item href="#">FA</b-dropdown-item>
           </b-nav-item-dropdown>
           <b-nav-item to="login">登入</b-nav-item>
-=======
-            <b-form-input size="sm" class="mr-sm-2" placeholder="搜尋" disabled />
-            <b-button size="sm" class="my-2 my-sm-0" type="submit" disabled>搜尋</b-button>
-          </b-nav-form>
-
->>>>>>> master
           <b-nav-item-dropdown right>
 
             <!-- Using 'button-content' slot -->
@@ -113,13 +106,6 @@ export default {
 }
 </script>
 
-<<<<<<< HEAD
-<style scoped>
-#brand {
-  color: #ff7865;
-}
-=======
 <style scoped lang="scss">
 @import "@/assets/styles.scss";
->>>>>>> master
 </style>
