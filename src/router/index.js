@@ -8,17 +8,36 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      component: () => import('@/views/home')
+      component: () => import('@/views/Home')
     },
     {
       path: '/article/:ArticleID',
       name: 'Article',
-      component: () => import('@/views/article')
+      component: () => import('@/views/Article')
     },
     {
-      path: '/article/:ArticleID/post',
+      path: '/oldArticle',
+      name: 'OldArticle',
+      component: () => import('@/views/OldArticle')
+    },
+    {
+      path: '/article/:ArticleID/Post',
+      component: () => import('@/views/Post')
+    },
+    {
+      path: '/Post',
       name: 'Post',
-      component: () => import('@/views/post')
+      component: () => import('@/views/Post')
+    },
+    {
+      path: '/test',
+      name: 'HandCodedEditPage',
+      component: () => import('@/views/HandCodedEditPage')
+    },
+    {
+      path: '/NewsPanel',
+      name: 'NewsPanel',
+      component: () => import('@/views/NewsPanel')
     }
   ]
 })

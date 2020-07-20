@@ -15,7 +15,10 @@
     "core-js": "^3.6.5",
     "intersection-observer": "^0.9.0",
     "js-cookie": "^2.2.1",
+    "popper.js": "^1.16.1",
     "regenerator-runtime": "^0.13.5",
+    "tiptap": "^1.27.1",
+    "tiptap-extensions": "^1.29.1",
     "vue": "^2.6.11",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.3.4",
@@ -33,13 +36,21 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "eslint-plugin-vue": "^6.2.2",
+<<<<<<< HEAD
     "exports-loader": "^1.1.0",
     "imports-loader": "^1.1.0",
+=======
+    "node-sass": "^4.14.1",
+    "sass-loader": "^9.0.2",
+>>>>>>> origin/feat/editPage
     "vue-template-compiler": "^2.6.11"
   },
   "browserslist": [
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "resolutions": {
+    "prosemirror-model": "1.9.1"
+  }
 }
