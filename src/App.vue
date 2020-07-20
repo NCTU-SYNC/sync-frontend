@@ -20,24 +20,7 @@
               type="submit"
             >Search</b-button>
           </b-nav-form>
-
-          <b-nav-form @submit.prevent>
-            <b-form-input v-model="mail" size="sm" class="mr-sm-2" placeholder="信箱" />
-            <b-form-input v-model="password" size="sm" class="mr-sm-2" placeholder="密碼" />
-            <b-button
-              size="sm"
-              class="my-2 my-sm-0"
-              type="submit"
-              @click="handleSignup"
-            >註冊</b-button>
-            <b-button
-              size="sm"
-              class="my-2 my-sm-0"
-              type="submit"
-              @click="handleLogin"
-            >登入</b-button>
-          </b-nav-form>
-
+          <Auth />
           <b-nav-item-dropdown text="Lang" right>
             <b-dropdown-item href="#">EN</b-dropdown-item>
             <b-dropdown-item href="#">ES</b-dropdown-item>
@@ -61,23 +44,12 @@
 </template>
 
 <script>
+import Auth from './components/auth'
+
 export default {
   name: 'App',
-  data() {
-    return {
-      mail: '',
-      password: ''
-    }
-  },
-  methods: {
-    handleSignup: function() {
-      console.log(this.mail)
-      console.log(this.password)
-    },
-    handleLogin: function() {
-      console.log(this.mail)
-      console.log(this.password)
-    }
+  components: {
+    Auth
   }
 }
 </script>
