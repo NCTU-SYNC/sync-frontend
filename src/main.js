@@ -12,7 +12,7 @@ import 'intersection-observer'
 
 import router from './router'
 
-import { firebaseConfig } from '../firebaseConfig'
+import { firebaseConfig } from '../config/firebaseConfig'
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)
