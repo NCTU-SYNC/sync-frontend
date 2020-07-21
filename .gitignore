@@ -19,10 +19,7 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
-<<<<<<< HEAD
 
 # firebase
 firebaseConfig.js
-=======
 config/
->>>>>>> master
