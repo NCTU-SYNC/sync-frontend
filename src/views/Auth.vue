@@ -17,7 +17,7 @@
               <b-button block pill variant="primary" class="mt-3">註冊帳號</b-button>
               <b-button block pill variant="light" class="mt-3" @click="isInChooseMethod=false">登入</b-button>
               <p class="text-center mt-3">或以其他方式登入</p>
-              <b-button block pill variant="dark" class="mt-3">Google</b-button>
+              <b-button block pill variant="dark" class="mt-3" @click="loginWithGoogle">Google</b-button>
             </div>
             <div v-else key="v-login-form">
               <b-form
@@ -161,6 +161,25 @@ export default {
         .then(() => {
           this.isLogin ? console.log('logout successfully') : console.log('no user logged in')
         })
+    },
+    loginWithGoogle: function() {
+      const provider = new firebase.auth.GoogleAuthProvider()
+      firebase.auth().useDeviceLanguage()
+      firebase.auth().signInWithPopup(provider).then(result => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const token = result.credential.accessToken
+        console.log(token)
+        // The signed-in user info.
+        const user = result.user
+        console.log(user)
+        this.isLogin = true
+        // route to home page
+        this.$router.push('/')
+      }).catch(error => {
+        // Handle Errors here.
+        const { errorCode, errorMessage, email, credential } = error
+        console.log(errorCode, errorMessage, email, credential)
+      })
     }
   }
 }
