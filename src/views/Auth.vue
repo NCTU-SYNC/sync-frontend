@@ -146,10 +146,10 @@ export default {
         .then(
           user => {
             console.log(user)
+            this.$router.push({ path: this.redirect || '/' })
           },
           err => {
             this.errorMessage = err.message
-            this.$router.push({ path: this.redirect || '/' })
             console.log(err)
           }
         )

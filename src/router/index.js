@@ -16,6 +16,11 @@ export default new Router({
       component: () => import('@/views/Auth')
     },
     {
+      path: '/signup',
+      name: 'SignUp',
+      component: () => import('@/views/SignUp')
+    },
+    {
       path: '/article/:ArticleID',
       name: 'Article',
       component: () => import('@/views/Article')
