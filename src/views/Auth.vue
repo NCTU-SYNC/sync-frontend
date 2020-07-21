@@ -78,6 +78,7 @@ export default {
   name: 'Login',
   data() {
     return {
+      auth: null,
       isInChooseMethod: true,
       errorMessage: '',
       email: '',
@@ -124,11 +125,11 @@ export default {
           console.log('signed out')
           this.isLogin = false
         }
+        this.auth = firebase.auth()
       })
     },
     handleSignup: function() {
-      firebase
-        .auth()
+      this.auth
         .createUserWithEmailAndPassword(this.email, this.password)
         .then(
           user => {
@@ -140,8 +141,7 @@ export default {
         )
     },
     handleLogin: function() {
-      firebase
-        .auth()
+      this.auth
         .signInWithEmailAndPassword(this.form.email, this.form.password)
         .then(
           user => {
@@ -155,8 +155,7 @@ export default {
         )
     },
     handleLogout: function() {
-      firebase
-        .auth()
+      this.auth
         .signOut()
         .then(() => {
           this.isLogin ? console.log('logout successfully') : console.log('no user logged in')
@@ -164,8 +163,8 @@ export default {
     },
     loginWithGoogle: function() {
       const provider = new firebase.auth.GoogleAuthProvider()
-      firebase.auth().useDeviceLanguage()
-      firebase.auth().signInWithPopup(provider).then(result => {
+      this.auth.useDeviceLanguage()
+      this.auth.signInWithPopup(provider).then(result => {
         // This gives you a Google Access Token. You can use it to access the Google API.
         const token = result.credential.accessToken
         console.log(token)
@@ -174,7 +173,7 @@ export default {
         console.log(user)
         this.isLogin = true
         // route to home page
-        this.$router.push('/')
+        this.$router.push({ path: this.redirect || '/' })
       }).catch(error => {
         // Handle Errors here.
         const { errorCode, errorMessage, email, credential } = error
