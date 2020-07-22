@@ -2,103 +2,107 @@
   <b-container>
     <b-row
       align-h="center"
-      class="mt-5"
+      class="mt-2 mt-sm-5"
     >
       <transition
         :name="slide"
         mode="out-in"
         :duration="250"
       >
-        <b-col v-if="isInFirstPage" key="v-first-form" xl="5" lg="6" md="8" sm="10" cols="10">
-
-          <b-card class="p-3">
+        <b-col v-if="isInFirstPage" key="v-first-form" xl="5" lg="6" md="8" sm="10" cols="12">
+          <b-card class="p-sm-3">
             <h1>建立您的帳戶</h1>
-            <b-form @submit.stop.prevent="onSubmit">
-              <label
-                for="name"
-                class="mt-3"
-              >姓名</label>
-              <b-input
-                id="name"
-                v-model="name"
-                type="email"
-                :state="validName"
-                aria-describedby="invalid-name"
-                trim
-                debounce="500"
-                @change="hasChanged.name = true"
-              />
-              <b-form-invalid-feedback id="invalid-name">
-                請輸入正確的姓名
-              </b-form-invalid-feedback>
-              <label
-                for="email"
-                class="mt-3"
-              >電子郵件</label>
-              <b-input
-                id="email"
-                v-model="email"
-                :state="validEmail"
-                aria-describedby="invalid-email"
-                trim
-                debounce="500"
-                @change="hasChanged.email = true"
-              />
-              <b-form-invalid-feedback id="invalid-email">
-                請輸入正確的電子郵件
-              </b-form-invalid-feedback>
+            <b-form @submit.stop.prevent="handleSubmit">
+              <b-form-group>
+                <label
+                  for="name"
+                  class="mt-3"
+                >姓名</label>
+                <b-input
+                  id="name"
+                  v-model="userData.name"
+                  :state="validName()"
+                  aria-describedby="invalid-name"
+                  trim
+                  debounce="500"
+                  @change="hasChanged.name = true"
+                />
+                <b-form-invalid-feedback id="invalid-name">
+                  請輸入正確的姓名
+                </b-form-invalid-feedback>
+              </b-form-group>
+
+              <b-form-group>
+                <label
+                  for="email"
+                >電子郵件</label>
+                <b-input
+                  id="email"
+                  v-model="userData.email"
+                  :state="validEmail()"
+                  aria-describedby="invalid-email"
+                  trim
+                  debounce="500"
+                  @change="hasChanged.email = true"
+                />
+                <b-form-invalid-feedback id="invalid-email">
+                  請輸入正確的電子郵件
+                </b-form-invalid-feedback>
+              </b-form-group>
+
               <b-form-group
                 description="此資訊不會公開顯示。"
                 label="出生日期"
-                class="mt-3"
-                :state="validEmail"
+                :state="validBirthday()"
                 aria-describedby="invalid-birthday"
               >
-                <b-form inline class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between form-inline">
                   <label for="birthday-year">年</label>
                   <b-form-select
                     id="birthday-year"
-                    v-model="birthday.year"
+                    v-model="userData.birthday.year"
                     class="mx-sm-1 mb-2 mb-sm-0 birthday-input"
                     :options="birthdayOptions.year"
-                    :state="validBirthday(birthday)"
+                    :state="validBirthday()"
                     @change="handleChangeDate('year')"
                   />
 
                   <label for="birthday-month" class="ml-sm-1">月</label>
                   <b-form-select
                     id="birthday-month"
-                    v-model="birthday.month"
+                    v-model="userData.birthday.month"
                     class="mx-sm-1 mb-2 mb-sm-0 birthday-input"
                     :options="birthdayOptions.month"
-                    :state="validBirthday(birthday)"
+                    :state="validBirthday()"
                     @change="handleChangeDate('month')"
                   />
 
                   <label for="birthday-day" class="ml-sm-1">日</label>
                   <b-form-select
                     id="birthday-day"
-                    v-model="birthday.day"
+                    v-model="userData.birthday.day"
                     class="mx-sm-1 mb-2 mb-sm-0 birthday-input"
                     :options="birthdayOptions.day"
-                    :state="validBirthday(birthday)"
+                    :state="validBirthday()"
                     @change="handleChangeDate('day')"
                   />
-                  <b-form-invalid-feedback id="invalid-birthday">
+                  <b-form-invalid-feedback id="invalid-birthday" :state="validBirthday()">
                     請輸入正確的生日
                   </b-form-invalid-feedback>
-                </b-form>
+                </div>
               </b-form-group>
+
               <b-form-group>
                 <label for="gender">性別</label>
                 <b-form-radio-group
                   id="gender"
-                  v-model="gender"
+                  v-model="userData.gender"
                   :options="genderOptions"
+                  :state="validGender()"
                 />
               </b-form-group>
               <div class="d-flex justify-content-end">
-                <b-button variant="primary" @click="isInFirstPage = false">下一步</b-button>
+                <b-button type="button" variant="primary" @click="handleNextPage">下一步</b-button>
               </div>
             </b-form>
           </b-card>
@@ -106,32 +110,59 @@
         <b-col v-else key="v-second-form" xl="5" lg="6" md="8" sm="10" cols="10">
           <b-card class="p-3">
             <h1>設定您的密碼</h1>
-            <b-form @submit.stop.prevent="onSubmit">
+            <b-form @submit.stop.prevent="handleSubmit">
               <label
                 for="password"
                 class="mt-3"
               >密碼</label>
-              <b-input
-                id="password"
-                v-model="password"
-                type="password"
-                trim
-                debounce="500"
-              />
+              <div class="mb-2 mb-sm-0 form-inline">
+                <b-input
+                  id="password"
+                  v-model="password"
+                  class="flex-grow-1"
+                  :state="validPassword()"
+                  aria-describedby="invalid-password"
+                  placeholder="密碼需包含大小寫英數字8碼以上"
+                  :type="togglePeerPasswordInput"
+                  trim
+                  debounce="500"
+                  @change="hasChanged.password = true"
+                />
+                <b-button class="btn-icon btn-icon-only" variant="outer-link" @click="isPeerPassword = !isPeerPassword">
+                  <b-icon :icon="togglePeerPasswordIcon" />
+                </b-button>
+                <b-form-invalid-feedback id="invalid-password">
+                  密碼需包含大小寫英數字8碼以上
+                </b-form-invalid-feedback>
+              </div>
               <label
-                for="confirm-password"
+                for="repeat-password"
                 class="mt-3"
-              >確認</label>
-              <b-input
-                id="confirm-password"
-                v-model="password"
-                type="password"
-                trim
-                debounce="500"
-              />
+              >密碼確認</label>
+              <div class="mb-2 mb-sm-0 form-inline">
+                <b-input
+                  id="repeat-password"
+                  v-model="repeatPassword"
+                  class="flex-grow-1"
+                  :state="validRepeatPassword()"
+                  aria-describedby="invalid-confirmPassword"
+                  placeholder="請再次輸入您的密碼"
+                  :type="togglePeerPasswordInput"
+                  trim
+                  debounce="500"
+                  @change="hasChanged.repeatPassword = true"
+                />
+                <b-button class="btn-icon btn-icon-only" variant="outer-link" @click="isPeerPassword = !isPeerPassword">
+                  <b-icon :icon="togglePeerPasswordIcon" />
+                </b-button>
+                <b-form-invalid-feedback id="invalid-confirmPassword">
+                  確認密碼與密碼不相符
+                </b-form-invalid-feedback>
+              </div>
+
               <div class="d-flex justify-content-between mt-4">
                 <b-button variant="transparent" @click="isInFirstPage = true">返回</b-button>
-                <b-button variant="primary">註冊</b-button>
+                <b-button type="button" variant="primary" @click="handleSubmit">註冊</b-button>
               </div>
             </b-form>
           </b-card>
@@ -148,15 +179,18 @@ export default {
   name: 'SignUp',
   data() {
     return {
-      name: '',
-      email: '',
-      birthday: {
-        year: '',
-        month: '',
-        day: ''
+      userData: {
+        name: '',
+        email: '',
+        birthday: {
+          year: '',
+          month: '',
+          day: ''
+        },
+        gender: ''
       },
-      gender: '',
       password: '',
+      repeatPassword: '',
       birthdayOptions: {
         year: [],
         month: [],
@@ -166,18 +200,27 @@ export default {
       hasChanged: {
         name: false,
         email: false,
-        birthday: false
+        birthday: false,
+        gender: false,
+        password: false,
+        repeatPassword: false
       },
-      isInFirstPage: true
+      validations: {
+        name: false,
+        email: false,
+        birthday: false,
+        gender: false
+      },
+      isInFirstPage: true,
+      isPeerPassword: false
     }
   },
   computed: {
-    validName() {
-      return this.hasChanged.name ? this.name.length >= 2 : null
+    togglePeerPasswordIcon() {
+      return `eye${this.isPeerPassword ? '' : '-slash'}`
     },
-    validEmail() {
-      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      return this.hasChanged.email ? re.test(this.email) : null
+    togglePeerPasswordInput() {
+      return `${this.isPeerPassword ? 'text' : 'password'}`
     },
     slide() {
       return this.isInFirstPage ? 'slide-right' : 'slide-left'
@@ -192,26 +235,77 @@ export default {
   methods: {
     handleChangeDate(changedField) {
       this.hasChanged.birthday = true
+      var date = this.userData.birthday
       const valid = this.validBirthday()
       if (valid !== true) {
         if (changedField === 'year') {
-          this.birthday.month = ''
+          date.month = ''
         } else if (changedField === 'month') {
-          this.birthday.day = ''
+          date.day = ''
         }
       }
-      const days = this.getDaysInMonth(this.birthday.month, this.birthday.year)
+      const days = this.getDaysInMonth(date.month, date.year)
       this.birthdayOptions.day = Array.from(Array(days), (_, i) => i + 1)
     },
+    validName() {
+      this.validations.name = this.userData.name.length >= 2
+      return this.hasChanged.name ? this.validations.name : null
+    },
+    validEmail() {
+      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      this.validations.email = re.test(this.userData.email)
+      return this.hasChanged.email ? this.validations.email : null
+    },
+    validGender() {
+      this.validations.gender = (this.userData.gender !== '')
+      return this.hasChanged.gender ? this.validations.gender : null
+    },
+    validPassword() {
+      var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
+      return this.hasChanged.password ? re.test(this.password) : null
+    },
+    validRepeatPassword() {
+      return this.hasChanged.repeatPassword ? this.password === this.repeatPassword && this.repeatPassword.length > 0 : null
+    },
     validBirthday() {
-      const d = moment(`${this.birthday.year}-${this.birthday.month}-${this.birthday.day}`, `YYYY-M-D`, true)
-      return this.hasChanged.birthday ? d.isValid() : null
+      var date = this.userData.birthday
+      const d = moment(`${date.year}-${date.month}-${date.day}`, `YYYY-M-D`, true)
+      this.validations.birthday = d.isValid()
+      return this.hasChanged.birthday ? this.validations.birthday : null
     },
     getDaysInMonth(month, year) {
       return new Date(year, month, 0).getDate()
     },
-    onSubmit() {
-      alert('Form submitted!')
+    handleNextPage() {
+      this.hasChanged.name = true
+      this.hasChanged.email = true
+      this.hasChanged.birthday = true
+      this.hasChanged.gender = true
+
+      /* Not support IE :(
+      if (Object.keys(this.validations).every((key) => {
+        return this.validations[key]
+      })) {
+        this.isInFirstPage = true
+      }*/
+
+      var validationResult = true
+      for (var v in this.validations) {
+        if (!this.validations[v]) {
+          validationResult = false
+          break
+        }
+      }
+      console.log(!validationResult)
+      this.isInFirstPage = !validationResult
+    },
+    handleSubmit() {
+      this.hasChanged.password = true
+      this.hasChanged.repeatPassword = true
+      if (this.validPassword() && this.validRepeatPassword()) {
+        alert('To Do: 送資料到後端，前端呼叫Firebase，重新導向的Props')
+        this.$router.push({ path: this.redirect || '/' })
+      }
     }
   }
 }
