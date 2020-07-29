@@ -173,12 +173,15 @@
 </template>
 
 <script>
+import * as firebase from 'firebase/app'
+import 'firebase/auth'
 import moment from 'moment'
 
 export default {
   name: 'SignUp',
   data() {
     return {
+      auth: null,
       userData: {
         name: '',
         email: '',
@@ -226,6 +229,9 @@ export default {
       return this.isInFirstPage ? 'slide-right' : 'slide-left'
     }
   },
+  mounted() {
+    this.setupFirebase()
+  },
   created() {
     const d = new Date()
     this.birthdayOptions.year = Array.from(Array(d.getFullYear() - 1899), (_, i) => i + 1900).reverse()
@@ -233,6 +239,18 @@ export default {
     this.birthdayOptions.day = Array.from(Array(31), (_, i) => i + 1)
   },
   methods: {
+    setupFirebase() {
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          console.log('signed in')
+          this.isLogin = true
+        } else {
+          console.log('signed out')
+          this.isLogin = false
+        }
+        this.auth = firebase.auth()
+      })
+    },
     handleChangeDate(changedField) {
       this.hasChanged.birthday = true
       var date = this.userData.birthday
@@ -303,7 +321,16 @@ export default {
       this.hasChanged.password = true
       this.hasChanged.repeatPassword = true
       if (this.validPassword() && this.validRepeatPassword()) {
-        alert('To Do: 送資料到後端，前端呼叫Firebase，重新導向的Props')
+        this.auth
+          .createUserWithEmailAndPassword(this.userData.email, this.password)
+          .then(
+            user => {
+              console.log(user)
+            },
+            err => {
+              console.log(err.message)
+            }
+          )
         this.$router.push({ path: this.redirect || '/' })
       }
     }
