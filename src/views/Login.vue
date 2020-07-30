@@ -14,7 +14,7 @@
             :duration="500"
           >
             <div v-if="isInChooseMethod" key="v-choose-form"><br>
-              <b-button block pill variant="primary" class="mt-3">註冊帳號</b-button>
+              <b-button block pill variant="primary" class="mt-3" to="/signup">註冊帳號</b-button>
               <b-button block pill variant="light" class="mt-3" @click="isInChooseMethod=false">登入</b-button>
               <p class="text-center mt-3">或以其他方式登入</p>
               <b-button block pill variant="dark" class="mt-3" @click="loginWithGoogle">Google</b-button>
@@ -119,9 +119,9 @@ export default {
     setupFirebase() {
       firebase.auth().onAuthStateChanged(user => {
         if (user) {
-          console.log('signed in')
-          console.log(user)
           this.isLogin = true
+          // USE COMPONENT AUTH!! DONT CODE HERE
+          // this.$store.commit('user/sendToken', data)
         } else {
           console.log('no user')
           this.isLogin = false

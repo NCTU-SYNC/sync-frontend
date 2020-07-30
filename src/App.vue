@@ -33,8 +33,8 @@
         </nav>
       </div>
     </b-sidebar>
-    <b-navbar toggleable="lg" type="light" variant="faded">
-      <b-navbar-brand id="brand" href="/">SYNC</b-navbar-brand>
+    <b-navbar class="header-navbar" toggleable="lg" type="light" variant="faded">
+      <b-navbar-brand id="brand" to="/">SYNC</b-navbar-brand>
       <b-navbar-toggle target="nav-collapse" />
 
       <b-collapse id="nav-collapse" is-nav>
@@ -45,7 +45,7 @@
             </b-link>
           </b-nav-item>
           <b-nav-item>
-            <b-link :to="`/Post`">
+            <b-link :to="`/post`">
               建立新聞
             </b-link>
           </b-nav-item>
@@ -92,7 +92,13 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-    <router-view />
+    <transition
+      name="fade"
+      mode="out-in"
+      :duration="500"
+    >
+      <router-view />
+    </transition>
   </div>
 </template>
 
@@ -109,4 +115,15 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/styles.scss";
+
+.header-navbar {
+  margin: 2em
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
 </style>

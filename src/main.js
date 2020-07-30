@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+import store from './store'
 import firebase from 'firebase/app'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
@@ -25,6 +26,7 @@ firebase.initializeApp(firebaseConfig)
 new Vue({
   el: '#app',
   router,
+  store,
   components: {
     App
   },

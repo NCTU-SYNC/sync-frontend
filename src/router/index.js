@@ -13,7 +13,7 @@ export default new Router({
     {
       path: '/login',
       name: 'Login',
-      component: () => import('@/views/Auth')
+      component: () => import('@/views/Login')
     },
     {
       path: '/signup',
@@ -26,6 +26,11 @@ export default new Router({
       component: () => import('@/views/Article')
     },
     {
+      path: '/profile',
+      name: 'Profile',
+      component: () => import('@/views/Profile')
+    },
+    {
       path: '/oldArticle',
       name: 'OldArticle',
       component: () => import('@/views/OldArticle')
@@ -35,7 +40,7 @@ export default new Router({
       component: () => import('@/views/Post')
     },
     {
-      path: '/Post',
+      path: '/post',
       name: 'Post',
       component: () => import('@/views/Post')
     },

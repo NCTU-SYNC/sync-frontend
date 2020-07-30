@@ -40,10 +40,27 @@ export default {
     this.setupFirebase()
   },
   methods: {
-    setupFirebase() {
+    async setupFirebase() {
+      // TO DO: CALLBACK HELL USE ASYC AWAIT!!
       firebase.auth().onAuthStateChanged(user => {
         if (user) {
-          console.log(`current user = ${user}`)
+          user.getIdToken().then(token => {
+            var data = {
+              displayName: user.displayName,
+              email: user.email,
+              emailVerified: user.emailVerified,
+              photoURL: user.photoURL,
+              isAnonymous: user.isAnonymous,
+              uid: user.uid,
+              providerData: user.providerData,
+              idToken: token
+            }
+            this.$store.dispatch('user/sendToken', data)
+            // this.$store.dispatch('SET_TOKEN', token)
+          }).catch(error => {
+            console.log(error)
+          })
+          console.log('signed in')
           this.isLogin = true
         } else {
           console.log('no user logged in')
@@ -87,7 +104,7 @@ export default {
         .auth()
         .signOut()
         .then(() => {
-          this.isLogin ? console.log('logout successfully') : console.log('no user logged in')
+          this.isLogin ? console.log('logout successfully') : console.log('no user loggedS in')
         })
     }
   }
