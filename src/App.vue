@@ -34,7 +34,7 @@
       </div>
     </b-sidebar>
     <b-navbar class="header-navbar" toggleable="lg" type="light" variant="faded">
-      <b-navbar-brand id="brand" href="/">SYNC</b-navbar-brand>
+      <b-navbar-brand id="brand" to="/">SYNC</b-navbar-brand>
       <b-navbar-toggle target="nav-collapse" />
 
       <b-collapse id="nav-collapse" is-nav>
@@ -92,7 +92,13 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-    <router-view />
+    <transition
+      name="fade"
+      mode="out-in"
+      :duration="500"
+    >
+      <router-view />
+    </transition>
   </div>
 </template>
 
@@ -112,5 +118,12 @@ export default {
 
 .header-navbar {
   margin: 2em
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
