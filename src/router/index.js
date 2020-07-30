@@ -37,12 +37,12 @@ export default new Router({
     },
     {
       path: '/article/:ArticleID/Post',
-      component: () => import('@/views/Post1')
+      component: () => import('@/views/Post')
     },
     {
       path: '/post',
       name: 'Post',
-      component: () => import('@/views/Post1')
+      component: () => import('@/views/Post')
     },
     {
       path: '/test',
