@@ -33,7 +33,7 @@
         </nav>
       </div>
     </b-sidebar>
-    <b-navbar toggleable="lg" type="light" variant="faded">
+    <b-navbar class="header-navbar" toggleable="lg" type="light" variant="faded">
       <b-navbar-brand id="brand" href="/">SYNC</b-navbar-brand>
       <b-navbar-toggle target="nav-collapse" />
 
@@ -45,7 +45,7 @@
             </b-link>
           </b-nav-item>
           <b-nav-item>
-            <b-link :to="`/Post`">
+            <b-link :to="`/post`">
               建立新聞
             </b-link>
           </b-nav-item>
@@ -109,4 +109,8 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/styles.scss";
+
+.header-navbar {
+  margin: 2em
+}
 </style>

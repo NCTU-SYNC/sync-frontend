@@ -26,18 +26,23 @@ export default new Router({
       component: () => import('@/views/Article')
     },
     {
+      path: '/profile',
+      name: 'Profile',
+      component: () => import('@/views/Profile')
+    },
+    {
       path: '/oldArticle',
       name: 'OldArticle',
       component: () => import('@/views/OldArticle')
     },
     {
       path: '/article/:ArticleID/Post',
-      component: () => import('@/views/Post')
+      component: () => import('@/views/Post1')
     },
     {
-      path: '/Post',
+      path: '/post',
       name: 'Post',
-      component: () => import('@/views/Post')
+      component: () => import('@/views/Post1')
     },
     {
       path: '/test',
