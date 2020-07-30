@@ -119,8 +119,9 @@ export default {
     setupFirebase() {
       firebase.auth().onAuthStateChanged(user => {
         if (user) {
-          console.log('signed in')
           this.isLogin = true
+          // USE COMPONENT AUTH!! DONT CODE HERE
+          // this.$store.commit('user/sendToken', data)
         } else {
           console.log('signed out')
           this.isLogin = false
