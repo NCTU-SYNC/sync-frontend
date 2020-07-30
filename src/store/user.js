@@ -1,29 +1,30 @@
-/*import { login, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken, getUserInfo, setUserInfo, setExpiredTime } from '@/utils/auth'
+import { login } from '@/api/user'
+// import { getToken, setToken, removeToken, getUserInfo, setUserInfo, setExpiredTime } from '@/utils/auth'
+import { getToken, setToken, setExpiredTime } from '@/utils/auth'
 
 const state = {
   token: getToken(),
   name: '',
-  dept: '',
-  mail: '',
+  email: '',
   id: '',
   gender: ''
 }
 
 const mutations = {
-  SET_TOKEN: (state, token) => {
-    state.token = token
+  SET_USER(state, user) {
+    state.authenticated = !!user
+    state.user = {
+      email: user ? user.email : null,
+      displayName: user ? user.displayName : null,
+      photoURL: user ? user.photoURL : null
+    }
   },
-  SET_USER: (state, payload) => {
-    state.name = payload.name
-    state.dept = payload.dept
-    state.mail = payload.mail
-    state.id = payload.id
-    state.token = payload.token
-    state.gender = payload.gender
+  SET_TOKEN(state, payload) {
+    state.token = payload
   }
 }
 
+/*
 const actions = {
   // user login
   login ({ commit, dispatch }, userInfo) {
@@ -133,3 +134,27 @@ export default {
   actions
 }
 */
+
+const actions = {
+  sendToken({ commit, dispatch }, userdata) {
+    return new Promise((resolve, reject) => {
+      login(userdata).then(response => {
+        const { data } = response
+        console.log(data)
+        commit('SET_TOKEN', userdata.idToken)
+        setToken(userdata.idToken)
+        setExpiredTime(Date.now() + 3 * 24 * 60 * 60 * 1000)
+        resolve(data.message)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  }
+}
+
+export default {
+  namespaced: true,
+  state,
+  mutations,
+  actions
+}
