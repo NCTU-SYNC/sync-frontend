@@ -75,7 +75,7 @@ import * as firebase from 'firebase/app'
 import 'firebase/auth'
 
 export default {
-  name: 'Login',
+  name: 'Auth',
   data() {
     return {
       auth: null,
@@ -120,9 +120,10 @@ export default {
       firebase.auth().onAuthStateChanged(user => {
         if (user) {
           console.log('signed in')
+          console.log(user)
           this.isLogin = true
         } else {
-          console.log('signed out')
+          console.log('no user')
           this.isLogin = false
         }
         this.auth = firebase.auth()

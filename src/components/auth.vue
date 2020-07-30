@@ -26,6 +26,7 @@
 <script>
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
+import { setToken } from '../utils/auth'
 export default {
   name: 'Auth',
   data() {
@@ -42,10 +43,10 @@ export default {
     setupFirebase() {
       firebase.auth().onAuthStateChanged(user => {
         if (user) {
-          console.log('signed in')
+          console.log(`current user = ${user}`)
           this.isLogin = true
         } else {
-          console.log('signed out')
+          console.log('no user logged in')
           this.isLogin = false
         }
       })
@@ -70,6 +71,11 @@ export default {
         .then(
           user => {
             console.log(user)
+            firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+              setToken(idToken)
+            }).catch(function(error) {
+              console.log(error)
+            })
           },
           err => {
             console.log(err.message)
