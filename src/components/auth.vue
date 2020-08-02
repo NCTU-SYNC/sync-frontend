@@ -26,7 +26,8 @@
 <script>
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
-import { setToken } from '../utils/auth'
+import { setToken, removeToken, removeUserInfo } from '../utils/auth'
+
 export default {
   name: 'Auth',
   data() {
@@ -44,6 +45,7 @@ export default {
       // TO DO: CALLBACK HELL USE ASYC AWAIT!!
       firebase.auth().onAuthStateChanged(user => {
         if (user) {
+          // myConsoleLog(user)
           user.getIdToken().then(token => {
             var data = {
               displayName: user.displayName,
@@ -56,7 +58,6 @@ export default {
               idToken: token
             }
             this.$store.dispatch('user/sendToken', data)
-            // this.$store.dispatch('SET_TOKEN', token)
           }).catch(error => {
             console.log(error)
           })
@@ -86,8 +87,9 @@ export default {
         .auth()
         .signInWithEmailAndPassword(this.email, this.password)
         .then(
-          user => {
-            console.log(user)
+          result => {
+            const { user } = result
+            this.$store.dispatch('user/sendUserInfo', user)
             firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
               setToken(idToken)
             }).catch(function(error) {
@@ -104,7 +106,12 @@ export default {
         .auth()
         .signOut()
         .then(() => {
-          this.isLogin ? console.log('logout successfully') : console.log('no user loggedS in')
+          if (this.isLogin) {
+            removeToken()
+            removeUserInfo()
+            this.$store.dispatch('user/removeUser')
+            console.log('logout successfully')
+          }
         })
     }
   }

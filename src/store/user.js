@@ -1,26 +1,37 @@
 import { login } from '@/api/user'
-// import { getToken, setToken, removeToken, getUserInfo, setUserInfo, setExpiredTime } from '@/utils/auth'
-import { getToken, setToken, setExpiredTime } from '@/utils/auth'
+import { getToken, setToken, setExpiredTime, setUserInfo, getUserInfo } from '@/utils/auth'
 
-const state = {
-  token: getToken(),
-  name: '',
-  email: '',
-  id: '',
-  gender: ''
+const getDefaultState = () => {
+  return {
+    token: getToken(),
+    name: '',
+    displayName: getUserInfo() ? getUserInfo().displayName : '',
+    email: getUserInfo() ? getUserInfo().email : '',
+    id: '',
+    gender: ''
+  }
 }
+
+const state = getDefaultState()
 
 const mutations = {
   SET_USER(state, user) {
+    // state = {
+    //   ...state,
+    //   authenticated: !!user,
+    //   email: user ? user.email : null,
+    //   displayName: user ? user.displayName : null,
+    //   photoURL: user ? user.photoURL : null
+    // }
+    state.displayName = user ? user.displayName : null
+    state.email = user ? user.email : null
     state.authenticated = !!user
-    state.user = {
-      email: user ? user.email : null,
-      displayName: user ? user.displayName : null,
-      photoURL: user ? user.photoURL : null
-    }
   },
   SET_TOKEN(state, payload) {
     state.token = payload
+  },
+  RESET_USER(state) {
+    Object.assign(state, getDefaultState())
   }
 }
 
@@ -149,6 +160,13 @@ const actions = {
         reject(error)
       })
     })
+  },
+  sendUserInfo({ commit }, userInfo) {
+    commit('SET_USER', userInfo)
+    setUserInfo(userInfo)
+  },
+  removeUser({ commit }) {
+    commit('RESET_USER')
   }
 }
 

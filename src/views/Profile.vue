@@ -47,7 +47,7 @@
               </b-col>
               <b-col cols="auto" sm="9" md="12" class="d-flex align-items-end">
                 <h1 class="vcard-names pl-2 pl-md-0">
-                  <span class="vcard-fullname d-block overflow-hidden">姓名</span>
+                  <span class="vcard-fullname d-block overflow-hidden">{{ getDisplayName }}</span>
                   <span class="vcard-username d-block">@AccountID</span>
                 </h1>
               </b-col>
@@ -70,7 +70,7 @@
                     <span> Taiwan</span>
                   </li><li class="vcard-detail pt-2 hide-sm hide-md" show_title="false" aria-label="Email：username@domain.com">
                     <b-icon icon="envelope" aria-hidden="true" />
-                    <a class="link-gray" href="mailto:username@domain.com" target="_blank"> username@domain.com</a>
+                    <a class="link-gray" href="mailto:username@domain.com" target="_blank"> {{ getEmail }}</a>
                   </li>
                 </ul>
               </b-col>
@@ -129,6 +129,14 @@ export default {
   data() {
     return {
       scrollY: 0
+    }
+  },
+  computed: {
+    getDisplayName() {
+      return this.$store.getters.displayName
+    },
+    getEmail() {
+      return this.$store.state.user.email
     }
   },
   created() {

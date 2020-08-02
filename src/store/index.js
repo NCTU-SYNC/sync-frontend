@@ -9,7 +9,7 @@ const store = new Vuex.Store({
   },
   getters: {
     token: state => state.user.token,
-    name: state => state.user.name
+    displayName: state => state.user.displayName
   }
 })
 

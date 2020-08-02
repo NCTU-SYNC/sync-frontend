@@ -242,8 +242,7 @@ export default {
     setupFirebase() {
       firebase.auth().onAuthStateChanged(user => {
         if (user) {
-          console.log('signed in')
-          this.isLogin = true
+          console.log('status changed')
         } else {
           console.log('signed out')
           this.isLogin = false
@@ -324,8 +323,15 @@ export default {
         this.auth
           .createUserWithEmailAndPassword(this.userData.email, this.password)
           .then(
-            user => {
-              console.log(user)
+            result => {
+              const { user } = result
+              user.updateProfile({
+                displayName: this.userData.name
+              }).then(() => {
+                console.log('update profile successfully')
+              }).catch((error) => {
+                console.log(error)
+              })
             },
             err => {
               console.log(err.message)

@@ -80,6 +80,7 @@
           </b-nav-item-dropdown>
           <b-nav-item to="signup">註冊</b-nav-item>
           <b-nav-item to="login">登入</b-nav-item>
+          <b-nav-item to="profile">個人頁面</b-nav-item>
           <b-nav-item-dropdown right>
 
             <!-- Using 'button-content' slot -->
