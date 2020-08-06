@@ -71,13 +71,6 @@
               type="submit"
             >Search</b-button>
           </b-nav-form>
-          <Auth />
-          <b-nav-item-dropdown text="Lang" right>
-            <b-dropdown-item href="#">EN</b-dropdown-item>
-            <b-dropdown-item href="#">ES</b-dropdown-item>
-            <b-dropdown-item href="#">RU</b-dropdown-item>
-            <b-dropdown-item href="#">FA</b-dropdown-item>
-          </b-nav-item-dropdown>
           <b-nav-item to="signup">註冊</b-nav-item>
           <b-nav-item to="login">登入</b-nav-item>
           <b-nav-item to="profile">個人頁面</b-nav-item>
@@ -104,13 +97,9 @@
 </template>
 
 <script>
-import Auth from './components/auth'
 
 export default {
-  name: 'App',
-  components: {
-    Auth
-  }
+  name: 'App'
 }
 </script>
 

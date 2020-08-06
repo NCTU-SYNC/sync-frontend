@@ -1,26 +1,5 @@
 <template>
-  <b-nav-form @submit.prevent>
-    <b-form-input v-model="email" size="sm" class="mr-sm-2" placeholder="信箱" />
-    <b-form-input v-model="password" size="sm" class="mr-sm-2" placeholder="密碼" />
-    <b-button
-      size="sm"
-      class="my-2 my-sm-0"
-      type="submit"
-      @click="handleSignup"
-    >註冊</b-button>
-    <b-button
-      size="sm"
-      class="my-2 my-sm-0"
-      type="submit"
-      @click="handleLogin"
-    >登入</b-button>
-    <b-button
-      size="sm"
-      class="my-2 my-sm-0"
-      type="submit"
-      @click="handleLogout"
-    >登出</b-button>
-  </b-nav-form>
+  <div />
 </template>
 
 <script>
