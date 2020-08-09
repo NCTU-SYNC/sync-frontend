@@ -34,11 +34,32 @@
     <br>
     <br>
     <div v-for="block in blocks" :key="block.id">
-      <h2>{{ block.blockTitle }}</h2>
-      <br>
+      <b-row>
+        <b-col cols="auto" class="mr-auto">
+          <h2>{{ block.blockTitle }}</h2>
+        </b-col>
+        <b-col cols="auto">
+          <div class="btn-actions-pane-right actions-icon-btn">
+            <b-dropdown id="ddown1" variant="transparent" no-caret dropright>
+              <template v-slot:button-content>
+                <b-icon icon="three-dots" font-scale="1.5" /><span class="sr-only">更多</span>
+              </template>
+              <b-dropdown-item :disabled="isEditting" @click="handleEditBlockStatusChange(block.id, true, block)">{{ isEditting? '已經為編輯狀態': '編輯此段落' }}</b-dropdown-item>
+              <b-dropdown-item disabled>段落歷史</b-dropdown-item>
+              <b-dropdown-item disabled>編輯次數：3</b-dropdown-item>
+              <b-dropdown-divider />
+              <b-dropdown-item disabled>編輯者</b-dropdown-item>
+            </b-dropdown>
+          </div>
+        </b-col>
+      </b-row>
       <b-card border-variant="white" no-body>
         <editor-content class="editor__content" :editor="editors[block.id]" />
       </b-card>
+      <b-row v-if="getEditable(block.id)" class="p-3 d-block text-right card-footer">
+        <b-button variant="link" @click="handleEditBlockStatusChange(block.id, false)">取消</b-button>
+        <b-button variant="primary" class="ml-2" @click="handleSubmitBlock(block.id)">儲存並發布</b-button>
+      </b-row>
       <b-row>
         <div class="last-update">(最後更新時間：{{ new Date (block.blockDateTime).toLocaleString() }})</div>
       </b-row>
@@ -48,9 +69,10 @@
 </template>
 
 <script>
-import { getArticleById } from '@/api/article'
+import { getArticleById, updateArticleById } from '@/api/article'
 import { Editor, EditorContent } from 'tiptap'
 import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder } from 'tiptap-extensions'
+
 export default {
   name: 'Article',
   components: {
@@ -58,12 +80,17 @@ export default {
   },
   data() {
     return {
-      title: '標題',
-      tags: ['台灣', '口罩', 'WHO'],
-      author: 'Tim Chang',
-      createdAt: '2020年5月20日 上午5:00',
+      data: null,
+      title: '',
+      tags: [],
+      author: '',
+      createdAt: '',
       blocks: [],
-      editors: []
+      editors: [],
+      editableBlocks: [],
+      isEditting: false,
+      // 當使用者按下取消復原用
+      backupBlock: null
     }
   },
   beforeDestroy() {
@@ -75,7 +102,7 @@ export default {
     console.log(articleId)
     getArticleById(articleId).then(response => {
       if (response.data.code === 200) {
-        const data = response.data.data
+        const data = this.data = response.data.data
         this.title = data.title
         this.tags = data.tags
         this.author = data.author
@@ -83,6 +110,7 @@ export default {
         this.blocks = data.blocks
         this.blocks.forEach(block => {
           this.editors[block.id] = this.createEditor(block.content)
+          this.editableBlocks[block.id] = false
         })
       }
     }).catch(err => {
@@ -121,6 +149,56 @@ export default {
         editable: false
       })
       return editor
+    },
+    getEditable(blockId) {
+      console.log(this.editableBlocks[blockId])
+      return this.editors[blockId] !== undefined ? this.editableBlocks[blockId] : false
+    },
+    handleEditBlockStatusChange(blockId, value, block) {
+      console.log(blockId)
+      this.editors[blockId].setOptions({
+        editable: value
+      })
+      this.$set(this.editableBlocks, blockId, value)
+      this.isEditting = value
+      if (value) {
+        this.backupBlock = Object.assign(block)
+      }
+    },
+    handleSubmitBlock(blockId, block) {
+      // TODO: 或許需要判定編輯哪個Block，只傳更改的Block到後端
+      this.handleEditBlockStatusChange(blockId, false)
+      console.log(this.$route.params.ArticleID)
+      let changedBlock = this.data.blocks.find(block => block.id === blockId)
+      if (changedBlock === undefined) { return }
+      // 取代更新Block
+      changedBlock = block
+      updateArticleById(this.data).then(response => {
+        console.log(response)
+        if (response.data.code === 200) {
+          this.backupBlock = null
+          this.$bvModal.msgBoxOk(response.data.message)
+            .then(() => {
+              const data = this.data = response.data.data
+              this.title = data.title
+              this.tags = data.tags
+              this.author = data.author
+              this.createdAt = data.createdAt
+              this.blocks = data.blocks
+              this.blocks.forEach(block => {
+                if (this.editors[block.id] !== undefined) {
+                  this.editors[block.id].setContent(block.content)
+                } else { this.editors[block.id] = this.createEditor(block.content) }
+                this.editableBlocks[block.id] = false
+              })
+            })
+        } else {
+          this.$bvModal.msgBoxOk(response.data.message)
+        }
+      }).catch(err => {
+        console.error(err)
+        this.$bvModal.msgBoxOk(err.data.message)
+      })
     }
   }
 }
