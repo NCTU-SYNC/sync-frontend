@@ -24,7 +24,6 @@ export default {
       // TO DO: CALLBACK HELL USE ASYC AWAIT!!
       firebase.auth().onAuthStateChanged(user => {
         if (user) {
-          // myConsoleLog(user)
           user.getIdToken().then(token => {
             var data = {
               displayName: user.displayName,

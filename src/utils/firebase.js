@@ -35,6 +35,7 @@ class FirebaseAuth {
             idToken: token
           }
           store.dispatch('user/sendToken', data)
+          store.dispatch('user/sendUserInfo', user)
           console.log('signed in')
           this.isLogin = true
         } else {
