@@ -46,12 +46,10 @@
         <editor-menu-bar v-slot="{ commands, isActive }" :editor="editor">
           <b-row class="my-1">
             <b-col>
-              <!-- use :pressed.sync="buttonsToggledState.Bold" to make a toggle button -->
               <button
                 variant="outline-secondary"
                 class="menubar__button"
                 :class="{ 'is-active': isActive.bold() }"
-                :pressed.sync="buttonsToggledState.Bold"
                 @click="commands.bold"
               >
                 <b>B</b>
@@ -116,7 +114,6 @@
                 variant="outline-secondary"
                 class="menubar__button"
                 :class="{ 'is-active': isActive.bullet_list() }"
-                :pressed.sync="buttonsToggledState.ul"
                 @click="commands.bullet_list"
               >
                 ul
@@ -127,7 +124,6 @@
                 variant="outline-secondary"
                 class="menubar__button"
                 :class="{ 'is-active': isActive.ordered_list() }"
-                :pressed.sync="buttonsToggledState.ol"
                 @click="commands.ordered_list"
               >
                 ol
@@ -293,17 +289,7 @@ export default {
           })
         ],
         content: this.content
-      }),
-      buttonsToggledState: {
-        Bold: false,
-        Italic: false,
-        Strike: false,
-        Underline: false,
-        H1: false,
-        H2: false,
-        H3: false,
-        ul: false
-      }
+      })
     }
   },
   beforeDestroy() {

@@ -1,11 +1,10 @@
 <template>
   <b-container>
     <b-row>
-      <b-col sm="auto" class="mr-auto p-3">
+      <b-col cols="auto" class="mr-auto p-3">
         <b-button pill variant="outline-secondary" @click="$router.back()">回上一頁</b-button>
       </b-col>
-      <b-col sm="6" />
-      <b-col sm="auto" class="p-3">
+      <b-col cols="auto" class="p-3">
         <b-button
           pill
           :to="`${$route.path}/Post`"
@@ -16,9 +15,6 @@
     <b-row>
       <b-col cols="auto" class="mr-auto">
         <h1>{{ title }}</h1>
-      </b-col>
-      <b-col cols="auto">
-        <b-button variant="outline-secondary">編輯</b-button>
       </b-col>
     </b-row>
     <div class="title-bar">
@@ -33,7 +29,7 @@
     <b-img src="https://picsum.photos/300/150/?image=41" fluid-grow alt="Fluid-grow image" />
     <br>
     <br>
-    <div v-for="block in blocks" :key="block.id">
+    <div v-for="block in blocks" :key="block._id">
       <b-row>
         <b-col cols="auto" class="mr-auto">
           <h2>{{ block.blockTitle }}</h2>
@@ -44,7 +40,7 @@
               <template v-slot:button-content>
                 <b-icon icon="three-dots" font-scale="1.5" /><span class="sr-only">更多</span>
               </template>
-              <b-dropdown-item :disabled="isEditting" @click="handleEditBlockStatusChange(block.id, true, block)">{{ isEditting? '已經為編輯狀態': '編輯此段落' }}</b-dropdown-item>
+              <b-dropdown-item :disabled="isEditting" @click="handleEditBlockStatusChange(block._id, true, block)">{{ isEditting? '已經為編輯狀態': '編輯此段落' }}</b-dropdown-item>
               <b-dropdown-item disabled>段落歷史</b-dropdown-item>
               <b-dropdown-item disabled>編輯次數：3</b-dropdown-item>
               <b-dropdown-divider />
@@ -54,11 +50,11 @@
         </b-col>
       </b-row>
       <b-card border-variant="white" no-body>
-        <editor-content class="editor__content" :editor="editors[block.id]" />
+        <editor-content class="editor__content" :editor="editors[block._id]" />
       </b-card>
-      <b-row v-if="getEditable(block.id)" class="p-3 d-block text-right card-footer">
-        <b-button variant="link" @click="handleEditBlockStatusChange(block.id, false)">取消</b-button>
-        <b-button variant="primary" class="ml-2" @click="handleSubmitBlock(block.id)">儲存並發布</b-button>
+      <b-row v-if="getEditable(block._id)" class="p-3 d-block text-right card-footer">
+        <b-button variant="link" @click="handleEditBlockStatusChange(block._id, false, block)">取消</b-button>
+        <b-button variant="primary" class="ml-2" @click="handleSubmitBlock(block._id, block)">儲存並發布</b-button>
       </b-row>
       <b-row>
         <div class="last-update">(最後更新時間：{{ new Date (block.blockDateTime).toLocaleString() }})</div>
@@ -109,8 +105,8 @@ export default {
         this.createdAt = data.createdAt
         this.blocks = data.blocks
         this.blocks.forEach(block => {
-          this.editors[block.id] = this.createEditor(block.content)
-          this.editableBlocks[block.id] = false
+          this.editors[block._id] = this.createEditor(block.content)
+          this.editableBlocks[block._id] = false
         })
       }
     }).catch(err => {
@@ -126,8 +122,8 @@ export default {
         },
         onUpdate: ({ state, getHTML, getJSON, transaction }) => {
           // console.log(state, transaction)
-          console.log(getHTML(), getJSON())
-          console.log(JSON.stringify(getJSON()))
+          // console.log(getHTML(), getJSON())
+          // console.log(JSON.stringify(getJSON()))
         },
         extensions: [
           new Heading({ levels: [1, 2, 3] }),
@@ -151,11 +147,10 @@ export default {
       return editor
     },
     getEditable(blockId) {
-      console.log(this.editableBlocks[blockId])
       return this.editors[blockId] !== undefined ? this.editableBlocks[blockId] : false
     },
     handleEditBlockStatusChange(blockId, value, block) {
-      console.log(blockId)
+      console.log(value)
       this.editors[blockId].setOptions({
         editable: value
       })
@@ -163,16 +158,17 @@ export default {
       this.isEditting = value
       if (value) {
         this.backupBlock = Object.assign(block)
+      } else if (value === false) {
+        block = Object.assign(this.backupBlock)
+        this.editors[blockId].setContent(block.content)
       }
     },
     handleSubmitBlock(blockId, block) {
       // TODO: 或許需要判定編輯哪個Block，只傳更改的Block到後端
-      this.handleEditBlockStatusChange(blockId, false)
-      console.log(this.$route.params.ArticleID)
-      let changedBlock = this.data.blocks.find(block => block.id === blockId)
-      if (changedBlock === undefined) { return }
+      this.handleEditBlockStatusChange(blockId)
+      this.data.id = this.$route.params.ArticleID
       // 取代更新Block
-      changedBlock = block
+      block.content = this.editors[blockId].getJSON()
       updateArticleById(this.data).then(response => {
         console.log(response)
         if (response.data.code === 200) {

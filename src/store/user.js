@@ -8,7 +8,8 @@ const getDefaultState = () => {
     displayName: getUserInfo() ? getUserInfo().displayName : '',
     email: getUserInfo() ? getUserInfo().email : '',
     id: '',
-    gender: ''
+    gender: '',
+    photoURL: null
   }
 }
 
@@ -23,6 +24,7 @@ const mutations = {
     //   displayName: user ? user.displayName : null,
     //   photoURL: user ? user.photoURL : null
     // }
+    state.photoURL = user ? user.photoURL : null
     state.displayName = user ? user.displayName : null
     state.email = user ? user.email : null
     state.authenticated = !!user

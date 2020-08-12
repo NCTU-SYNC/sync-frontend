@@ -14,21 +14,34 @@
 
       <b-navbar-toggle target="nav-collapse" />
       <!-- Right aligned nav items -->
-      <b-navbar-nav class="ml-auto">
+      <b-navbar-nav class="ml-auto d-flex align-items-center">
         <b-nav-item v-show="!isLogin" to="signup">註冊</b-nav-item>
         <b-nav-item v-show="!isLogin" to="login">登入</b-nav-item>
-        <b-nav-item v-show="isLogin" to="profile">個人頁面</b-nav-item>
-        <b-nav-item-dropdown right>
-
+        <b-nav-item-dropdown v-show="isLogin" no-caret right>
           <!-- Using 'button-content' slot -->
           <template v-slot:button-content>
-            選項
+            <b-iconstack font-scale="2.5">
+              <b-icon stacked icon="person-fill" scale="0.6" />
+              <b-icon stacked icon="circle" />
+            </b-iconstack>
           </template>
-          <b-dropdown-item href="#">Profile</b-dropdown-item>
-          <b-dropdown-item href="#">Sign Out</b-dropdown-item>
+          <b-dropdown-item to="profile">個人頁面</b-dropdown-item>
+          <b-dropdown-item href="#" disabled>登出</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-collapse>
+    <b-nav-item
+      class="ml-auto d-flex align-items-center d-block d-lg-none"
+      :to="isLogin? 'profile': 'login'"
+    >
+      <span v-if="isLogin">
+        <img class="rounded-1 avatar-user" height="32" width="32" alt="@AccountID" :src="$store.getters.photoURL">
+      </span>
+      <b-iconstack v-else font-scale="2.5">
+        <b-icon stacked icon="person-fill" scale="0.6" variant="secondary" />
+        <b-icon stacked icon="circle" variant="secondary" />
+      </b-iconstack>
+    </b-nav-item>
   </b-navbar>
 </template>
 
@@ -37,7 +50,17 @@ export default {
   name: 'NavBar',
   data() {
     return {
-      isLogin: false
+
+    }
+  },
+  computed: {
+    isLogin: {
+      get() {
+        return this.$store.getters.isLogin
+      },
+      set(name) {
+        return name
+      }
     }
   },
   created() {
