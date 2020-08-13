@@ -53,46 +53,29 @@ class FirebaseAuth {
     this.password = password
   }
 
-  handleSignup(email, password) {
-    this.setEmailAndPassword(email, password)
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(this.email, this.password)
-      .then(
-        user => {
-          console.log(user)
-        },
-        err => {
-          console.log(err.message)
-        }
-      )
+  async handleSignup(email, password) {
+    try {
+      this.setEmailAndPassword(email, password)
+      const { user } = await this.auth.createUserWithEmailAndPassword(this.email, this.password)
+      return Promise.resolve(user)
+    } catch (error) {
+      console.log(error)
+      return Promise.reject(error)
+    }
   }
 
-  handleLogin(email, password) {
-    // TO DO: 優化Promise和thenable的操作
-    return new Promise((resolve, reject) => {
+  async handleLogin(email, password) {
+    try {
       this.setEmailAndPassword(email, password)
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(this.email, this.password)
-        .then(
-          result => {
-            const { user } = result
-            store.dispatch('user/sendUserInfo', user)
-            firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
-              setToken(idToken)
-              resolve()
-            }).catch(function(error) {
-              console.log(error)
-              reject(error)
-            })
-          },
-          err => {
-            console.log(err.message)
-            reject(err.message)
-          }
-        )
-    })
+      const { user } = await this.auth.signInWithEmailAndPassword(this.email, this.password)
+      console.log(user)
+      store.dispatch('user/sendUserInfo', user)
+      setToken(user.idToken)
+      return Promise.resolve(user)
+    } catch (error) {
+      console.log(error)
+      return Promise.reject(error)
+    }
   }
 
   handleLogout() {
@@ -109,25 +92,23 @@ class FirebaseAuth {
       })
   }
 
-  loginWithGoogle() {
-    // TO DO: 優化Promise和thenable的操作
-    return new Promise((resolve, reject) => {
+  async loginWithGoogle() {
+    try {
       const provider = new firebase.auth.GoogleAuthProvider()
+      provider.addScope('profile')
+      provider.addScope('email')
       this.auth.useDeviceLanguage()
-      this.auth.signInWithPopup(provider).then(result => {
-        const idToken = result.credential.idToken
-        console.log(idToken)
-        const user = result.user
-        store.dispatch('user/sendUserInfo', user)
-        setToken(idToken)
-        resolve()
-      }).catch(error => {
-        // Handle Errors here.
-        const { errorCode, errorMessage, email, credential } = error
-        console.log(errorCode, errorMessage, email, credential)
-        reject(error)
-      })
-    })
+      const result = await this.auth.signInWithPopup(provider)
+      const idToken = result.credential.idToken
+      const user = result.user
+      console.log(result)
+      store.dispatch('user/sendUserInfo', user)
+      setToken(idToken)
+      return Promise.resolve(user)
+    } catch (error) {
+      console.log(error)
+      return Promise.reject(error)
+    }
   }
 }
 

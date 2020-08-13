@@ -94,9 +94,6 @@ export default {
       immediate: true
     }
   },
-  created() {
-    console.log(this.$route)
-  },
   methods: {
     onSubmit(evt) {
       evt.preventDefault()
@@ -112,16 +109,13 @@ export default {
         this.show = true
       })
     },
-    handleSignup() {
-      firebase.handleSignup(this.email, this.password)
-    },
     async handleLogin() {
       try {
         await firebase.handleLogin(this.email, this.password)
         this.$router.push({ path: this.redirect || '/' })
       } catch (error) {
         console.error(error)
-        this.$msgBoxOk('很抱歉，登入時發生錯誤，請稍後再試')
+        this.$bvModal.msgBoxOk(error.message)
       }
     },
     handleLogout() {
@@ -133,7 +127,7 @@ export default {
         this.$router.push({ path: this.redirect || '/' })
       } catch (error) {
         console.error(error)
-        this.$msgBoxOk('很抱歉，登入時發生錯誤，請稍後再試')
+        this.$bvModal.msgBoxOk(error.message)
       }
     }
   }
