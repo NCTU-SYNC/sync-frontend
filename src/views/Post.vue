@@ -60,8 +60,7 @@
           </b-card-body>
           <b-card-footer>
             編輯者：
-            <b-link v-for="postAuthor in postAuthors" :key="postAuthor" href="#" class="card-link">{{ postAuthor
-            }}</b-link>
+            <b-link v-for="postAuthor in postAuthors" :key="postAuthor.uid" href="#" class="card-link">{{ postAuthor.displayName }}</b-link>
           </b-card-footer>
         </b-card>
         <hr>
