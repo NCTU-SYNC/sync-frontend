@@ -95,7 +95,6 @@ export default {
   created() {
     // 從route中獲得此文章的ID
     const articleId = this.$route.params.ArticleID
-    console.log(articleId)
     getArticleById(articleId).then(response => {
       if (response.data.code === 200) {
         const data = this.data = response.data.data

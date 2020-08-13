@@ -15,8 +15,8 @@
       <b-navbar-toggle target="nav-collapse" />
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto d-flex align-items-center">
-        <b-nav-item v-show="!getLoginStatus" to="signup">註冊</b-nav-item>
-        <b-nav-item v-show="!getLoginStatus" to="login">登入</b-nav-item>
+        <b-nav-item v-show="!getLoginStatus" :to="{ name: 'SignUp', query: getRedirectPath }">註冊</b-nav-item>
+        <b-nav-item v-show="!getLoginStatus" :to="{ name: 'Login', query: getRedirectPath}">登入</b-nav-item>
         <b-nav-item-dropdown v-show="getLoginStatus" no-caret right>
           <!-- Using 'button-content' slot -->
           <template v-slot:button-content>
@@ -24,8 +24,8 @@
               <img class="avatar-user" height="48" width="48" :src="getPhotoURL">
             </span>
           </template>
-          <b-dropdown-item to="profile">個人頁面</b-dropdown-item>
-          <b-dropdown-item href="#" disabled>登出</b-dropdown-item>
+          <b-dropdown-item to="/profile">個人頁面</b-dropdown-item>
+          <b-dropdown-item href="#" @click="handleLogout">登出</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-collapse>
@@ -47,14 +47,16 @@
 </template>
 
 <script>
+import firebase from '@/utils/firebase'
 
 export default {
   name: 'NavBar',
-  data() {
-    return {
-    }
-  },
   computed: {
+    getRedirectPath() {
+      // 設置重新導向，若在首頁、註冊、登入頁面做切換不需設置redirect，其他頁面則需要重新導向，若已經設置重新導向頁面，則註冊、登入切換時，並不會互相把自己的頁面給放進重新導向內
+      const disableRedirectPaths = ['/', '/signup', '/login']
+      return disableRedirectPaths.some(disableRedirectPath => this.$route.path === disableRedirectPath) ? (this.$route.query.redirect === undefined ? null : { redirect: this.$route.query.redirect }) : { redirect: this.$route.path }
+    },
     getPhotoURL() {
       return this.$store.getters.photoURL
     },
@@ -62,10 +64,10 @@ export default {
       return this.$store.getters.isLogin
     }
   },
-  created() {
-    console.log('NavBar loaded')
-    this.isLogin = this.$firebaseAuth.isLogin
-    // TO DO: Fix asynchronous behavior when isLogin state change (invoke order issue)
+  methods: {
+    handleLogout() {
+      firebase.handleLogout()
+    }
   }
 }
 </script>

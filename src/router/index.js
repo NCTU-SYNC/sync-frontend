@@ -13,12 +13,14 @@ export default new Router({
     {
       path: '/login',
       name: 'Login',
-      component: () => import('@/views/Login')
+      component: () => import('@/views/Login'),
+      hidden: true
     },
     {
       path: '/signup',
       name: 'SignUp',
-      component: () => import('@/views/SignUp')
+      component: () => import('@/views/SignUp'),
+      hidden: true
     },
     {
       path: '/article/:ArticleID',

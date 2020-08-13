@@ -13,7 +13,6 @@ class FirebaseAuth {
   }
 
   get auth() {
-    console.log(this.instance)
     return this.instance
   }
 
@@ -70,24 +69,30 @@ class FirebaseAuth {
   }
 
   handleLogin(email, password) {
-    this.setEmailAndPassword(email, password)
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(this.email, this.password)
-      .then(
-        result => {
-          const { user } = result
-          store.dispatch('user/sendUserInfo', user)
-          firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
-            setToken(idToken)
-          }).catch(function(error) {
-            console.log(error)
-          })
-        },
-        err => {
-          console.log(err.message)
-        }
-      )
+    // TO DO: 優化Promise和thenable的操作
+    return new Promise((resolve, reject) => {
+      this.setEmailAndPassword(email, password)
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(this.email, this.password)
+        .then(
+          result => {
+            const { user } = result
+            store.dispatch('user/sendUserInfo', user)
+            firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+              setToken(idToken)
+              resolve()
+            }).catch(function(error) {
+              console.log(error)
+              reject(error)
+            })
+          },
+          err => {
+            console.log(err.message)
+            reject(err.message)
+          }
+        )
+    })
   }
 
   handleLogout() {
@@ -102,6 +107,27 @@ class FirebaseAuth {
           console.log('logout successfully')
         }
       })
+  }
+
+  loginWithGoogle() {
+    // TO DO: 優化Promise和thenable的操作
+    return new Promise((resolve, reject) => {
+      const provider = new firebase.auth.GoogleAuthProvider()
+      this.auth.useDeviceLanguage()
+      this.auth.signInWithPopup(provider).then(result => {
+        const idToken = result.credential.idToken
+        console.log(idToken)
+        const user = result.user
+        store.dispatch('user/sendUserInfo', user)
+        setToken(idToken)
+        resolve()
+      }).catch(error => {
+        // Handle Errors here.
+        const { errorCode, errorMessage, email, credential } = error
+        console.log(errorCode, errorMessage, email, credential)
+        reject(error)
+      })
+    })
   }
 }
 

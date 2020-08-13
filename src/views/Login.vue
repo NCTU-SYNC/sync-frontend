@@ -31,7 +31,7 @@
                 >
                   <b-form-input
                     id="email"
-                    v-model="form.email"
+                    v-model="email"
                     required
                     placeholder="電子郵件 Email"
                   />
@@ -43,7 +43,7 @@
                 >
                   <b-form-input
                     id="password"
-                    v-model="form.password"
+                    v-model="password"
                     type="password"
                     required
                     placeholder="請輸入密碼"
@@ -60,7 +60,7 @@
                   <b-link style="">忘記密碼</b-link>
                 </div>
                 <hr>
-                <b-button block pill variant="dark">以 Google 繼續</b-button>
+                <b-button block pill variant="dark" @click="loginWithGoogle">以 Google 繼續</b-button>
               </b-form>
             </div>
           </transition>
@@ -71,8 +71,7 @@
 </template>
 
 <script>
-import * as firebase from 'firebase/app'
-import 'firebase/auth'
+import firebase from '@/utils/firebase'
 
 export default {
   name: 'Auth',
@@ -83,103 +82,59 @@ export default {
       errorMessage: '',
       email: '',
       password: '',
-      isLogin: false,
-      form: {
-        email: '',
-        password: ''
-      },
-      show: true
+      show: true,
+      redirect: undefined
     }
   },
-  mounted() {
-    this.setupFirebase()
+  watch: {
+    $route: {
+      handler(route) {
+        this.redirect = route.query && route.query.redirect
+      },
+      immediate: true
+    }
+  },
+  created() {
+    console.log(this.$route)
   },
   methods: {
     onSubmit(evt) {
       evt.preventDefault()
       this.handleLogin()
-      /*
-      this.$store.dispatch('user/login', this.form).then(() => {
-        this.$router.push({ path: this.redirect || '/' })
-      }).catch(() => {
-        this.$bvModal.msgBoxOk('帳號或密碼錯誤')
-      })*/
     },
     onReset(evt) {
       evt.preventDefault()
-      // Reset our form values
-      this.form.id = ''
-      this.form.password = ''
+      this.email = ''
+      this.password = ''
       // Trick to reset/clear native browser form validation state
       this.show = false
       this.$nextTick(() => {
         this.show = true
       })
     },
-    setupFirebase() {
-      firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          this.isLogin = true
-          // USE COMPONENT AUTH!! DONT CODE HERE
-          // this.$store.commit('user/sendToken', data)
-        } else {
-          console.log('no user')
-          this.isLogin = false
-        }
-        this.auth = firebase.auth()
-      })
+    handleSignup() {
+      firebase.handleSignup(this.email, this.password)
     },
-    handleSignup: function() {
-      this.auth
-        .createUserWithEmailAndPassword(this.email, this.password)
-        .then(
-          user => {
-            console.log(user)
-          },
-          err => {
-            console.log(err.message)
-          }
-        )
-    },
-    handleLogin: function() {
-      this.auth
-        .signInWithEmailAndPassword(this.form.email, this.form.password)
-        .then(
-          user => {
-            console.log(user)
-            this.$router.push({ path: this.redirect || '/' })
-          },
-          err => {
-            this.errorMessage = err.message
-            console.log(err)
-          }
-        )
-    },
-    handleLogout: function() {
-      this.auth
-        .signOut()
-        .then(() => {
-          this.isLogin ? console.log('logout successfully') : console.log('no user logged in')
-        })
-    },
-    loginWithGoogle: function() {
-      const provider = new firebase.auth.GoogleAuthProvider()
-      this.auth.useDeviceLanguage()
-      this.auth.signInWithPopup(provider).then(result => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const token = result.credential.accessToken
-        console.log(token)
-        // The signed-in user info.
-        const user = result.user
-        console.log(user)
-        this.isLogin = true
-        // route to home page
+    async handleLogin() {
+      try {
+        await firebase.handleLogin(this.email, this.password)
         this.$router.push({ path: this.redirect || '/' })
-      }).catch(error => {
-        // Handle Errors here.
-        const { errorCode, errorMessage, email, credential } = error
-        console.log(errorCode, errorMessage, email, credential)
-      })
+      } catch (error) {
+        console.error(error)
+        this.$msgBoxOk('很抱歉，登入時發生錯誤，請稍後再試')
+      }
+    },
+    handleLogout() {
+      firebase.handleLogout()
+    },
+    async loginWithGoogle() {
+      try {
+        await firebase.loginWithGoogle()
+        this.$router.push({ path: this.redirect || '/' })
+      } catch (error) {
+        console.error(error)
+        this.$msgBoxOk('很抱歉，登入時發生錯誤，請稍後再試')
+      }
     }
   }
 }
