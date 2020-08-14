@@ -151,7 +151,7 @@ export default {
     handleEditBlockStatusChange(blockId, value, block) {
       console.log(value)
       this.editors[blockId].setOptions({
-        editable: value
+        editable: value || false
       })
       this.$set(this.editableBlocks, blockId, value)
       this.isEditting = value

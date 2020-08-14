@@ -312,7 +312,7 @@ export default {
     },
     async handleSignup() {
       try {
-        await firebase.handleSignup(this.userData.email, this.password)
+        await firebase.handleSignup(this.userData.email, this.password, this.userData.name)
         this.$router.push({ path: this.redirect || '/' })
       } catch (error) {
         console.error(error)

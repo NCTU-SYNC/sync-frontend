@@ -53,10 +53,14 @@ class FirebaseAuth {
     this.password = password
   }
 
-  async handleSignup(email, password) {
+  async handleSignup(email, password, displayName) {
     try {
       this.setEmailAndPassword(email, password)
-      const { user } = await this.auth.createUserWithEmailAndPassword(this.email, this.password)
+      const { user } = await this.auth.createUserWithEmailAndPassword(email, password)
+      user.updateProfile({
+        displayName
+      })
+      console.log(user)
       return Promise.resolve(user)
     } catch (error) {
       console.log(error)
@@ -67,11 +71,11 @@ class FirebaseAuth {
   async handleLogin(email, password) {
     try {
       this.setEmailAndPassword(email, password)
-      const { user } = await this.auth.signInWithEmailAndPassword(this.email, this.password)
-      console.log(user)
-      store.dispatch('user/sendUserInfo', user)
-      setToken(user.idToken)
-      return Promise.resolve(user)
+      const userCredential = await this.auth.signInWithEmailAndPassword(this.email, this.password)
+      console.log(userCredential)
+      store.dispatch('user/sendUserInfo', userCredential.user)
+      setToken(userCredential.user.idToken)
+      return Promise.resolve(userCredential.user)
     } catch (error) {
       console.log(error)
       return Promise.reject(error)
