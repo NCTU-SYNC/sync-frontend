@@ -7,7 +7,7 @@
       <b-col cols="auto" class="p-3">
         <b-button
           pill
-          :to="`${$route.path}/Post`"
+          @click="handleEditPostRoute(`${$route.path}/Post`)"
         >編輯新聞</b-button>
       </b-col>
     </b-row>
@@ -36,7 +36,7 @@
         </b-col>
         <b-col cols="auto">
           <div class="btn-actions-pane-right actions-icon-btn">
-            <b-dropdown id="ddown1" variant="transparent" no-caret dropright>
+            <b-dropdown id="ddown1" variant="transparent" no-caret dropright :disabled="!isLogin">
               <template v-slot:button-content>
                 <b-icon icon="three-dots" font-scale="1.5" /><span class="sr-only">更多</span>
               </template>
@@ -68,6 +68,7 @@
 import { getArticleById, updateArticleById } from '@/api/article'
 import { Editor, EditorContent } from 'tiptap'
 import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder } from 'tiptap-extensions'
+import { getToken } from '@/utils/auth'
 
 export default {
   name: 'Article',
@@ -86,7 +87,8 @@ export default {
       editableBlocks: [],
       isEditting: false,
       // 當使用者按下取消復原用
-      backupBlock: null
+      backupBlock: null,
+      isLogin: false
     }
   },
   beforeDestroy() {
@@ -111,6 +113,8 @@ export default {
     }).catch(err => {
       console.error(err)
     })
+    // check if user logged in
+    this.isLogin = !!getToken()
   },
   methods: {
     createEditor(initializedContent) {
@@ -194,6 +198,10 @@ export default {
         console.error(err)
         this.$bvModal.msgBoxOk(err.data.message)
       })
+    },
+    handleEditPostRoute(route) {
+      if (this.isLogin) this.$router.push(route)
+      else console.log('not log in')
     }
   }
 }

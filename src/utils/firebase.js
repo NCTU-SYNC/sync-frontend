@@ -8,6 +8,7 @@ class FirebaseAuth {
   constructor() {
     this.email = ''
     this.password = ''
+    this.displayName = ''
     this.isLogin = false
     firebase.initializeApp(firebaseConfig)
   }
@@ -48,14 +49,15 @@ class FirebaseAuth {
     }
   }
 
-  setEmailAndPassword(email, password) {
+  setUserInfo(email, password, displayName = '') {
     this.email = email
     this.password = password
+    this.displayName = displayName
   }
 
   async handleSignup(email, password, displayName) {
     try {
-      this.setEmailAndPassword(email, password)
+      this.setUserInfo(email, password, displayName)
       const { user } = await this.auth.createUserWithEmailAndPassword(email, password)
       user.updateProfile({
         displayName
@@ -70,9 +72,8 @@ class FirebaseAuth {
 
   async handleLogin(email, password) {
     try {
-      this.setEmailAndPassword(email, password)
+      this.setUserInfo(email, password)
       const userCredential = await this.auth.signInWithEmailAndPassword(this.email, this.password)
-      console.log(userCredential)
       store.dispatch('user/sendUserInfo', userCredential.user)
       setToken(userCredential.user.idToken)
       return Promise.resolve(userCredential.user)
