@@ -5,7 +5,7 @@
 <script>
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
-import { setToken, removeToken, removeUserInfo } from '../utils/auth'
+import { setToken } from '../utils/auth'
 
 export default {
   name: 'Auth',
@@ -78,19 +78,6 @@ export default {
             console.log(err.message)
           }
         )
-    },
-    handleLogout: function() {
-      firebase
-        .auth()
-        .signOut()
-        .then(() => {
-          if (this.isLogin) {
-            removeToken()
-            removeUserInfo()
-            this.$store.dispatch('user/removeUser')
-            console.log('logout successfully')
-          }
-        })
     }
   }
 }

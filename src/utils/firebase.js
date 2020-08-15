@@ -62,7 +62,7 @@ class FirebaseAuth {
       user.updateProfile({
         displayName
       })
-      console.log(user)
+      store.dispatch('user/sendUserInfo', user)
       return Promise.resolve(user)
     } catch (error) {
       console.log(error)
@@ -72,11 +72,11 @@ class FirebaseAuth {
 
   async handleLogin(email, password) {
     try {
-      this.setUserInfo(email, password)
-      const userCredential = await this.auth.signInWithEmailAndPassword(this.email, this.password)
-      store.dispatch('user/sendUserInfo', userCredential.user)
-      setToken(userCredential.user.idToken)
-      return Promise.resolve(userCredential.user)
+      const { user } = await this.auth.signInWithEmailAndPassword(email, password)
+      this.setUserInfo(email, password, user.displayName)
+      store.dispatch('user/sendUserInfo', user)
+      setToken(user.idToken)
+      return Promise.resolve(user)
     } catch (error) {
       console.log(error)
       return Promise.reject(error)

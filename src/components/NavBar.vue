@@ -67,6 +67,7 @@ export default {
   methods: {
     handleLogout() {
       firebase.handleLogout()
+      this.$router.push({ path: this.redirect || '/' })
     }
   }
 }

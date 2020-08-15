@@ -114,6 +114,7 @@
 import { getArticleById, createArticle, updateArticleById } from '@/api/article'
 import TiptapEditor from '@/components/Post/TiptapEditor'
 import NewsPanel from './NewsPanel'
+import { getToken } from '@/utils/auth'
 export default {
   name: 'Post',
   components: {
@@ -178,6 +179,11 @@ export default {
       localStorage.setItem('post', this.data)
     },
     handlePublish() {
+      // return if the user is not login
+      if (!getToken()) {
+        this.$bvModal.msgBoxOk('Please Login First')
+        return
+      }
       this.handleSaveArticle()
       if (this.isNewPost) {
         createArticle(this.data).then(response => {

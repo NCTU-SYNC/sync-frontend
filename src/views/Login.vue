@@ -118,9 +118,6 @@ export default {
         this.$bvModal.msgBoxOk(error.message)
       }
     },
-    handleLogout() {
-      firebase.handleLogout()
-    },
     async loginWithGoogle() {
       try {
         await firebase.loginWithGoogle()

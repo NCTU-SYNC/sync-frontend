@@ -201,7 +201,7 @@ export default {
     },
     handleEditPostRoute(route) {
       if (this.isLogin) this.$router.push(route)
-      else console.log('not log in')
+      else this.$bvModal.msgBoxOk('Please Login First')
     }
   }
 }
