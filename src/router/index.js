@@ -1,7 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import { getToken } from '@/utils/auth'
 
 Vue.use(Router)
+
+const isLogin = () => {
+  return !!getToken()
+}
 
 export default new Router({
   routes: [
@@ -30,7 +35,10 @@ export default new Router({
     {
       path: '/profile',
       name: 'Profile',
-      component: () => import('@/views/Profile')
+      component: () => import('@/views/Profile'),
+      beforeEnter: (to, from, next) => {
+        isLogin() ? next() : next('/login')
+      }
     },
     {
       path: '/oldArticle',
@@ -39,12 +47,18 @@ export default new Router({
     },
     {
       path: '/article/:ArticleID/Post',
-      component: () => import('@/views/Post')
+      component: () => import('@/views/Post'),
+      beforeEnter: (to, from, next) => {
+        isLogin() ? next() : next('/login')
+      }
     },
     {
       path: '/post',
       name: 'Post',
-      component: () => import('@/views/Post')
+      component: () => import('@/views/Post'),
+      beforeEnter: (to, from, next) => {
+        isLogin() ? next() : next('/login')
+      }
     },
     {
       path: '/test',
