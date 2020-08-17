@@ -173,8 +173,7 @@
 </template>
 
 <script>
-import * as firebase from 'firebase/app'
-import 'firebase/auth'
+import firebase from '@/utils/firebase'
 import moment from 'moment'
 
 export default {
@@ -215,7 +214,8 @@ export default {
         gender: false
       },
       isInFirstPage: true,
-      isPeerPassword: false
+      isPeerPassword: false,
+      redirect: undefined
     }
   },
   computed: {
@@ -229,8 +229,13 @@ export default {
       return this.isInFirstPage ? 'slide-right' : 'slide-left'
     }
   },
-  mounted() {
-    this.setupFirebase()
+  watch: {
+    $route: {
+      handler(route) {
+        this.redirect = route.query && route.query.redirect
+      },
+      immediate: true
+    }
   },
   created() {
     const d = new Date()
@@ -239,17 +244,6 @@ export default {
     this.birthdayOptions.day = Array.from(Array(31), (_, i) => i + 1)
   },
   methods: {
-    setupFirebase() {
-      firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          console.log('status changed')
-        } else {
-          console.log('signed out')
-          this.isLogin = false
-        }
-        this.auth = firebase.auth()
-      })
-    },
     handleChangeDate(changedField) {
       this.hasChanged.birthday = true
       var date = this.userData.birthday
@@ -316,28 +310,20 @@ export default {
       console.log(!validationResult)
       this.isInFirstPage = !validationResult
     },
+    async handleSignup() {
+      try {
+        await firebase.handleSignup(this.userData.email, this.password, this.userData.name)
+        this.$router.push({ path: this.redirect || '/' })
+      } catch (error) {
+        console.error(error)
+        this.$bvModal.msgBoxOk(error.message)
+      }
+    },
     handleSubmit() {
       this.hasChanged.password = true
       this.hasChanged.repeatPassword = true
       if (this.validPassword() && this.validRepeatPassword()) {
-        this.auth
-          .createUserWithEmailAndPassword(this.userData.email, this.password)
-          .then(
-            result => {
-              const { user } = result
-              user.updateProfile({
-                displayName: this.userData.name
-              }).then(() => {
-                console.log('update profile successfully')
-              }).catch((error) => {
-                console.log(error)
-              })
-            },
-            err => {
-              console.log(err.message)
-            }
-          )
-        this.$router.push({ path: this.redirect || '/' })
+        this.handleSignup()
       }
     }
   }

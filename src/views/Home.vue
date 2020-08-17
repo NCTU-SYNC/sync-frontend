@@ -13,7 +13,7 @@
           <b-card
             no-body
             :title="article.title"
-            img-src="https://picsum.photos/600/300/?image=25"
+            img-src="http://fakeimg.pl/600x300?text=圖片&font=noto"
             img-alt="Image"
             img-top
             tag="article"
@@ -48,9 +48,10 @@ export default {
   },
   created() {
     getArticles().then(response => {
-      console.log(response)
-      if (response.data.code === 200) {
-        this.articles = response.data.data
+      const { data } = response
+      console.log(data)
+      if (data.code === 200) {
+        this.articles = data.data
         this.articles.sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
       }
     }).catch(err => console.error(err))

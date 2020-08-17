@@ -8,12 +8,12 @@ class FirebaseAuth {
   constructor() {
     this.email = ''
     this.password = ''
+    this.displayName = ''
     this.isLogin = false
     firebase.initializeApp(firebaseConfig)
   }
 
   get auth() {
-    console.log(this.instance)
     return this.instance
   }
 
@@ -35,6 +35,7 @@ class FirebaseAuth {
             idToken: token
           }
           store.dispatch('user/sendToken', data)
+          store.dispatch('user/sendUserInfo', user)
           console.log('signed in')
           this.isLogin = true
         } else {
@@ -48,45 +49,38 @@ class FirebaseAuth {
     }
   }
 
-  setEmailAndPassword(email, password) {
+  setUserInfo(email, password, displayName = '') {
     this.email = email
     this.password = password
+    this.displayName = displayName
   }
 
-  handleSignup(email, password) {
-    this.setEmailAndPassword(email, password)
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(this.email, this.password)
-      .then(
-        user => {
-          console.log(user)
-        },
-        err => {
-          console.log(err.message)
-        }
-      )
+  async handleSignup(email, password, displayName) {
+    try {
+      this.setUserInfo(email, password, displayName)
+      const { user } = await this.auth.createUserWithEmailAndPassword(email, password)
+      user.updateProfile({
+        displayName
+      })
+      store.dispatch('user/sendUserInfo', user)
+      return Promise.resolve(user)
+    } catch (error) {
+      console.log(error)
+      return Promise.reject(error)
+    }
   }
 
-  handleLogin(email, password) {
-    this.setEmailAndPassword(email, password)
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(this.email, this.password)
-      .then(
-        result => {
-          const { user } = result
-          store.dispatch('user/sendUserInfo', user)
-          firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
-            setToken(idToken)
-          }).catch(function(error) {
-            console.log(error)
-          })
-        },
-        err => {
-          console.log(err.message)
-        }
-      )
+  async handleLogin(email, password) {
+    try {
+      const { user } = await this.auth.signInWithEmailAndPassword(email, password)
+      this.setUserInfo(email, password, user.displayName)
+      store.dispatch('user/sendUserInfo', user)
+      setToken(user.idToken)
+      return Promise.resolve(user)
+    } catch (error) {
+      console.log(error)
+      return Promise.reject(error)
+    }
   }
 
   handleLogout() {
@@ -101,6 +95,25 @@ class FirebaseAuth {
           console.log('logout successfully')
         }
       })
+  }
+
+  async loginWithGoogle() {
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider()
+      provider.addScope('profile')
+      provider.addScope('email')
+      this.auth.useDeviceLanguage()
+      const result = await this.auth.signInWithPopup(provider)
+      const idToken = result.credential.idToken
+      const user = result.user
+      console.log(result)
+      store.dispatch('user/sendUserInfo', user)
+      setToken(idToken)
+      return Promise.resolve(user)
+    } catch (error) {
+      console.log(error)
+      return Promise.reject(error)
+    }
   }
 }
 
