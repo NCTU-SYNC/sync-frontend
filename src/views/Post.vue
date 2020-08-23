@@ -111,10 +111,12 @@
 </template>
 
 <script>
+import firebase from 'firebase/app'
 import { getArticleById, createArticle, updateArticleById } from '@/api/article'
 import TiptapEditor from '@/components/Post/TiptapEditor'
 import NewsPanel from './NewsPanel'
-import { getToken } from '@/utils/auth'
+import { getUserInfo, getToken } from '@/utils/auth'
+import FirebaseAuthInstance from '../utils/firebase'
 export default {
   name: 'Post',
   components: {
@@ -190,6 +192,7 @@ export default {
           console.log(response)
           if (response.data.code === 200) {
             this.articleId = response.data.id
+            this.savePostIdToFirestore(this.articleId)
             this.$bvModal.msgBoxOk(response.data.message)
               .then(() => {
                 this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
@@ -206,6 +209,7 @@ export default {
         updateArticleById(this.data).then(response => {
           console.log(response)
           if (response.data.code === 200) {
+            this.savePostIdToFirestore(this.$route.params.ArticleID)
             this.$bvModal.msgBoxOk(response.data.message)
               .then(() => {
                 this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
@@ -246,6 +250,13 @@ export default {
     },
     onEditorEdit(editor) {
       this.currentEditingEditor = editor
+    },
+    savePostIdToFirestore(articleId) {
+      const db = FirebaseAuthInstance.db
+      const userRef = db.collection('users').doc(getUserInfo().uid)
+      userRef.update({
+        editPostIds: firebase.firestore.FieldValue.arrayUnion(articleId)
+      })
     }
   }
 }

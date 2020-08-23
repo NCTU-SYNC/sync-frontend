@@ -1,4 +1,5 @@
 import firebase from 'firebase/app'
+import 'firebase/firestore'
 import 'firebase/auth'
 import { setToken, removeToken, removeUserInfo } from '@/utils/auth'
 import { firebaseConfig } from '../../config/firebaseConfig'
@@ -11,6 +12,7 @@ class FirebaseAuth {
     this.displayName = ''
     this.isLogin = false
     firebase.initializeApp(firebaseConfig)
+    this.db = firebase.firestore()
   }
 
   get auth() {
