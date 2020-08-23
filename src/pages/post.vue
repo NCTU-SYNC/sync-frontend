@@ -11,7 +11,10 @@
         <b-card no-body>
           <b-card-body>
             <b-form inline>
-              <label class="sr-only" for="post-title">標題</label>
+              <label
+                class="sr-only"
+                for="post-title"
+              >標題</label>
               <b-input
                 id="post-title"
                 v-model="postTitle"
@@ -20,7 +23,10 @@
                 required
               />
 
-              <label class="sr-only" for="post-datepicker" />
+              <label
+                class="sr-only"
+                for="post-datepicker"
+              />
               <b-form-datepicker
                 id="post-datepicker"
                 v-model="postDateValue"
@@ -32,7 +38,10 @@
                 label-help=""
               />
 
-              <label class="sr-only" for="post-timepicker" />
+              <label
+                class="sr-only"
+                for="post-timepicker"
+              />
               <b-form-timepicker
                 id="post-timepicker"
                 v-model="postTimeValue"
@@ -60,22 +69,40 @@
           </b-card-body>
           <b-card-footer>
             編輯者：
-            <b-link v-for="postAuthor in postAuthors" :key="postAuthor.uid" href="#" class="card-link">{{ postAuthor.displayName }}</b-link>
+            <b-link
+              v-for="postAuthor in postAuthors"
+              :key="postAuthor.uid"
+              href="#"
+              class="card-link"
+            >
+              {{ postAuthor.displayName }}
+            </b-link>
           </b-card-footer>
         </b-card>
         <hr>
         <div>
           <br>
-          <b-col cols="12" class="text-center">
+          <b-col
+            cols="12"
+            class="text-center"
+          >
             <b-button
               variant="outline-secondary"
               style="border-radius: 100px; margin-bottom: 1rem;"
               @click="handleAddBlack"
-            >+ 段落</b-button>
+            >
+              + 段落
+            </b-button>
           </b-col>
         </div>
-        <div v-for="block in blocks" :key="block.id">
-          <b-card no-body border-variant="white">
+        <div
+          v-for="block in blocks"
+          :key="block.id"
+        >
+          <b-card
+            no-body
+            border-variant="white"
+          >
             <TiptapEditor
               :content.sync="block.content"
               :block-title.sync="block.blockTitle"
@@ -84,20 +111,38 @@
             />
           </b-card>
           <br>
-          <b-col cols="12" class="text-center">
+          <b-col
+            cols="12"
+            class="text-center"
+          >
             <b-button
               variant="outline-secondary"
               style="border-radius: 100px; margin-bottom: 1rem;"
               @click="handleAddBlack"
-            >+ 段落</b-button>
+            >
+              + 段落
+            </b-button>
           </b-col>
         </div>
         <b-container>
           <hr>
           <b-row>
             <b-col class="mr-auto" />
-            <b-button class="mr-4" variant="transparent" @click="handleSaveArticle">儲存</b-button>
-            <b-button class="mr-auto" variant="dark" @click="handlePublish">發布</b-button></b-row>
+            <b-button
+              class="mr-4"
+              variant="transparent"
+              @click="handleSaveArticle"
+            >
+              儲存
+            </b-button>
+            <b-button
+              class="mr-auto"
+              variant="dark"
+              @click="handlePublish"
+            >
+              發布
+            </b-button>
+          </b-row>
         </b-container>
       </b-col>
       <b-col
@@ -106,22 +151,21 @@
         <NewsPanel @importNews="importNews" />
       </b-col>
     </b-row>
-
   </b-container>
 </template>
 
 <script>
 import { getArticleById, createArticle, updateArticleById } from '@/api/article'
 import TiptapEditor from '@/components/Post/TiptapEditor'
-import NewsPanel from './NewsPanel'
 import { getToken } from '@/utils/auth'
+import NewsPanel from '@/components/NewsPanel'
 export default {
   name: 'Post',
   components: {
     TiptapEditor,
     NewsPanel
   },
-  data() {
+  data () {
     return {
       articleId: undefined,
       currentEditingEditor: null,
@@ -136,13 +180,13 @@ export default {
       postTags: []
     }
   },
-  created() {
+  created () {
     this.handleClearPost()
     // 從route中獲得此文章的ID
     const articleId = this.articleId = this.$route.params.ArticleID
     this.isNewPost = !(articleId || false)
     if (articleId) {
-      getArticleById(articleId).then(response => {
+      getArticleById(articleId).then((response) => {
         if (response.data.code === 200) {
           this.data = response.data.data
           const data = this.data
@@ -154,13 +198,13 @@ export default {
           this.postTimeValue = this.sperateDateAndTime(dateTime).time
           this.blocks = data.blocks
         }
-      }).catch(err => {
+      }).catch((err) => {
         console.error(err)
       })
     }
   },
   methods: {
-    handleAddBlack() {
+    handleAddBlack () {
       const currentBlockCount = this.blocks.length
       this.blocks.push({
         id: currentBlockCount + 1,
@@ -168,7 +212,7 @@ export default {
         content: null
       })
     },
-    handleSaveArticle() {
+    handleSaveArticle () {
       this.data = {
         title: this.postTitle,
         tags: this.postTags,
@@ -178,7 +222,7 @@ export default {
       }
       localStorage.setItem('post', this.data)
     },
-    handlePublish() {
+    handlePublish () {
       // return if the user is not login
       if (!getToken()) {
         this.$bvModal.msgBoxOk('Please Login First')
@@ -186,51 +230,51 @@ export default {
       }
       this.handleSaveArticle()
       if (this.isNewPost) {
-        createArticle(this.data).then(response => {
+        createArticle(this.data).then((response) => {
           console.log(response)
           if (response.data.code === 200) {
             this.articleId = response.data.id
             this.$bvModal.msgBoxOk(response.data.message)
               .then(() => {
-                this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
+                this.$router.push({ name: 'Article', params: { ArticleID: this.articleId } })
               })
           } else {
             this.$bvModal.msgBoxOk(response.data.message)
           }
-        }).catch(err => {
+        }).catch((err) => {
           console.error(err)
           this.$bvModal.msgBoxOk(err.data.message)
         })
       } else {
         this.data.id = this.$route.params.ArticleID
-        updateArticleById(this.data).then(response => {
+        updateArticleById(this.data).then((response) => {
           console.log(response)
           if (response.data.code === 200) {
             this.$bvModal.msgBoxOk(response.data.message)
               .then(() => {
-                this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
+                this.$router.push({ name: 'Article', params: { ArticleID: this.articleId } })
               })
           } else {
             this.$bvModal.msgBoxOk(response.data.message)
           }
-        }).catch(err => {
+        }).catch((err) => {
           console.error(err)
           this.$bvModal.msgBoxOk(err.data.message)
         })
       }
     },
-    importNews(content) {
+    importNews (content) {
       if (this.currentEditingEditor === null) {
         this.$bvModal.msgBoxOk('請選擇編輯區塊，或是先新增段落後再引入')
         return
       }
-      var str = this.currentEditingEditor.getHTML()
-      content.forEach(text => {
+      let str = this.currentEditingEditor.getHTML()
+      content.forEach((text) => {
         str += `<p>${text}</p>`
       })
       this.currentEditingEditor.setContent(str, true)
     },
-    handleClearPost() {
+    handleClearPost () {
       this.blocks = []
       this.data = {}
       this.postAuthors = []
@@ -239,12 +283,14 @@ export default {
       this.postTimeValue = ''
       this.postTags = []
     },
-    sperateDateAndTime(dateTimeString) {
+    sperateDateAndTime (dateTimeString) {
       const dateTime = new Date(dateTimeString)
-      return { date: dateTime.toISOString().slice(0, 10),
-        time: dateTime.toLocaleTimeString('en-US', { hour12: false }) }
+      return {
+        date: dateTime.toISOString().slice(0, 10),
+        time: dateTime.toLocaleTimeString('en-US', { hour12: false })
+      }
     },
-    onEditorEdit(editor) {
+    onEditorEdit (editor) {
       this.currentEditingEditor = editor
     }
   }

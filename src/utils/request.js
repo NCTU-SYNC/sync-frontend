@@ -11,7 +11,7 @@ const service = axios.create({
 
 // request interceptor
 service.interceptors.request.use(
-  config => {
+  (config) => {
     // do something before request is sent
 
     // if (store.getters.token) {
@@ -22,7 +22,7 @@ service.interceptors.request.use(
     // }
     return config
   },
-  error => {
+  (error) => {
     // do something with request error
     console.log(error) // for debug
     return Promise.reject(error)
@@ -41,7 +41,7 @@ service.interceptors.response.use(
    * Here is just an example
    * You can also judge the status by HTTP Status Code
    */
-  response => {
+  (response) => {
     const res = response
     console.log(res)
 
@@ -64,7 +64,7 @@ service.interceptors.response.use(
       return Promise.resolve(res)
     }
   },
-  error => {
+  (error) => {
     console.log(error) // for debug
     return Promise.reject(error)
   }

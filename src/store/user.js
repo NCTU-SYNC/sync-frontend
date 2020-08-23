@@ -17,7 +17,7 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const mutations = {
-  SET_USER(state, user) {
+  SET_USER (state, user) {
     // state = {
     //   ...state,
     //   authenticated: !!user,
@@ -30,16 +30,16 @@ const mutations = {
     state.email = user ? user.email : null
     state.authenticated = !!user
   },
-  SET_TOKEN(state, payload) {
+  SET_TOKEN (state, payload) {
     state.token = payload
   },
-  RESET_USER(state) {
+  RESET_USER (state) {
     Object.assign(state, getDefaultState())
   }
 }
 
 const actions = {
-  sendToken({ commit, dispatch }, userdata) {
+  sendToken ({ commit }, userdata) {
     return new Promise((resolve, reject) => {
       login(userdata).then(response => {
         const { data } = response
@@ -53,11 +53,11 @@ const actions = {
       })
     })
   },
-  sendUserInfo({ commit }, userInfo) {
+  sendUserInfo ({ commit }, userInfo) {
     commit('SET_USER', userInfo)
     setUserInfo(userInfo)
   },
-  removeUser({ commit }) {
+  removeUser ({ commit }) {
     commit('RESET_USER')
   }
 }

@@ -5,7 +5,7 @@ import { firebaseConfig } from '../../config/firebaseConfig'
 import store from '../store/index'
 
 class FirebaseAuth {
-  constructor() {
+  constructor () {
     this.email = ''
     this.password = ''
     this.displayName = ''
@@ -13,18 +13,18 @@ class FirebaseAuth {
     firebase.initializeApp(firebaseConfig)
   }
 
-  get auth() {
+  get auth () {
     return this.instance
   }
 
-  async setupFirebase() {
+  setupFirebase () {
     console.log('setupFirebase')
     try {
       this.instance = firebase.auth()
-      const handler = async(user) => {
+      const handler = async (user) => {
         if (user) {
           const token = await user.getIdToken()
-          var data = {
+          const data = {
             displayName: user.displayName,
             email: user.email,
             emailVerified: user.emailVerified,
@@ -49,13 +49,13 @@ class FirebaseAuth {
     }
   }
 
-  setUserInfo(email, password, displayName = '') {
+  setUserInfo (email, password, displayName = '') {
     this.email = email
     this.password = password
     this.displayName = displayName
   }
 
-  async handleSignup(email, password, displayName) {
+  async handleSignup (email, password, displayName) {
     try {
       this.setUserInfo(email, password, displayName)
       const { user } = await this.auth.createUserWithEmailAndPassword(email, password)
@@ -70,7 +70,7 @@ class FirebaseAuth {
     }
   }
 
-  async handleLogin(email, password) {
+  async handleLogin (email, password) {
     try {
       const { user } = await this.auth.signInWithEmailAndPassword(email, password)
       this.setUserInfo(email, password, user.displayName)
@@ -83,7 +83,7 @@ class FirebaseAuth {
     }
   }
 
-  handleLogout() {
+  handleLogout () {
     firebase
       .auth()
       .signOut()
@@ -97,7 +97,7 @@ class FirebaseAuth {
       })
   }
 
-  async loginWithGoogle() {
+  async loginWithGoogle () {
     try {
       const provider = new firebase.auth.GoogleAuthProvider()
       provider.addScope('profile')

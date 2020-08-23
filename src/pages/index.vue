@@ -39,15 +39,15 @@ import { getArticles } from '@/api/article'
 
 export default {
   name: 'Home',
-  data() {
+  data () {
     return {
       articles: [
 
       ]
     }
   },
-  created() {
-    getArticles().then(response => {
+  created () {
+    getArticles().then((response) => {
       const { data } = response
       console.log(data)
       if (data.code === 200) {

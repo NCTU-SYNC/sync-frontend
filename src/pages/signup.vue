@@ -9,7 +9,15 @@
         mode="out-in"
         :duration="250"
       >
-        <b-col v-if="isInFirstPage" key="v-first-form" xl="5" lg="6" md="8" sm="10" cols="12">
+        <b-col
+          v-if="isInFirstPage"
+          key="v-first-form"
+          xl="5"
+          lg="6"
+          md="8"
+          sm="10"
+          cols="12"
+        >
           <b-card class="p-sm-3">
             <h1>建立您的帳戶</h1>
             <b-form @submit.stop.prevent="handleSubmit">
@@ -67,7 +75,10 @@
                     @change="handleChangeDate('year')"
                   />
 
-                  <label for="birthday-month" class="ml-sm-1">月</label>
+                  <label
+                    for="birthday-month"
+                    class="ml-sm-1"
+                  >月</label>
                   <b-form-select
                     id="birthday-month"
                     v-model="userData.birthday.month"
@@ -77,7 +88,10 @@
                     @change="handleChangeDate('month')"
                   />
 
-                  <label for="birthday-day" class="ml-sm-1">日</label>
+                  <label
+                    for="birthday-day"
+                    class="ml-sm-1"
+                  >日</label>
                   <b-form-select
                     id="birthday-day"
                     v-model="userData.birthday.day"
@@ -86,7 +100,10 @@
                     :state="validBirthday()"
                     @change="handleChangeDate('day')"
                   />
-                  <b-form-invalid-feedback id="invalid-birthday" :state="validBirthday()">
+                  <b-form-invalid-feedback
+                    id="invalid-birthday"
+                    :state="validBirthday()"
+                  >
                     請輸入正確的生日
                   </b-form-invalid-feedback>
                 </div>
@@ -102,12 +119,26 @@
                 />
               </b-form-group>
               <div class="d-flex justify-content-end">
-                <b-button type="button" variant="primary" @click="handleNextPage">下一步</b-button>
+                <b-button
+                  type="button"
+                  variant="primary"
+                  @click="handleNextPage"
+                >
+                  下一步
+                </b-button>
               </div>
             </b-form>
           </b-card>
         </b-col>
-        <b-col v-else key="v-second-form" xl="5" lg="6" md="8" sm="10" cols="10">
+        <b-col
+          v-else
+          key="v-second-form"
+          xl="5"
+          lg="6"
+          md="8"
+          sm="10"
+          cols="10"
+        >
           <b-card class="p-3">
             <h1>設定您的密碼</h1>
             <b-form @submit.stop.prevent="handleSubmit">
@@ -128,7 +159,11 @@
                   debounce="500"
                   @change="hasChanged.password = true"
                 />
-                <b-button class="btn-icon btn-icon-only" variant="outer-link" @click="isPeerPassword = !isPeerPassword">
+                <b-button
+                  class="btn-icon btn-icon-only"
+                  variant="outer-link"
+                  @click="isPeerPassword = !isPeerPassword"
+                >
                   <b-icon :icon="togglePeerPasswordIcon" />
                 </b-button>
                 <b-form-invalid-feedback id="invalid-password">
@@ -152,7 +187,11 @@
                   debounce="500"
                   @change="hasChanged.repeatPassword = true"
                 />
-                <b-button class="btn-icon btn-icon-only" variant="outer-link" @click="isPeerPassword = !isPeerPassword">
+                <b-button
+                  class="btn-icon btn-icon-only"
+                  variant="outer-link"
+                  @click="isPeerPassword = !isPeerPassword"
+                >
                   <b-icon :icon="togglePeerPasswordIcon" />
                 </b-button>
                 <b-form-invalid-feedback id="invalid-confirmPassword">
@@ -161,8 +200,19 @@
               </div>
 
               <div class="d-flex justify-content-between mt-4">
-                <b-button variant="transparent" @click="isInFirstPage = true">返回</b-button>
-                <b-button type="button" variant="primary" @click="handleSubmit">註冊</b-button>
+                <b-button
+                  variant="transparent"
+                  @click="isInFirstPage = true"
+                >
+                  返回
+                </b-button>
+                <b-button
+                  type="button"
+                  variant="primary"
+                  @click="handleSubmit"
+                >
+                  註冊
+                </b-button>
               </div>
             </b-form>
           </b-card>
@@ -178,7 +228,7 @@ import moment from 'moment'
 
 export default {
   name: 'SignUp',
-  data() {
+  data () {
     return {
       auth: null,
       userData: {
@@ -219,34 +269,34 @@ export default {
     }
   },
   computed: {
-    togglePeerPasswordIcon() {
+    togglePeerPasswordIcon () {
       return `eye${this.isPeerPassword ? '' : '-slash'}`
     },
-    togglePeerPasswordInput() {
+    togglePeerPasswordInput () {
       return `${this.isPeerPassword ? 'text' : 'password'}`
     },
-    slide() {
+    slide () {
       return this.isInFirstPage ? 'slide-right' : 'slide-left'
     }
   },
   watch: {
     $route: {
-      handler(route) {
+      handler (route) {
         this.redirect = route.query && route.query.redirect
       },
       immediate: true
     }
   },
-  created() {
+  created () {
     const d = new Date()
     this.birthdayOptions.year = Array.from(Array(d.getFullYear() - 1899), (_, i) => i + 1900).reverse()
     this.birthdayOptions.month = Array.from(Array(12), (_, i) => i + 1)
     this.birthdayOptions.day = Array.from(Array(31), (_, i) => i + 1)
   },
   methods: {
-    handleChangeDate(changedField) {
+    handleChangeDate (changedField) {
       this.hasChanged.birthday = true
-      var date = this.userData.birthday
+      const date = this.userData.birthday
       const valid = this.validBirthday()
       if (valid !== true) {
         if (changedField === 'year') {
@@ -258,36 +308,36 @@ export default {
       const days = this.getDaysInMonth(date.month, date.year)
       this.birthdayOptions.day = Array.from(Array(days), (_, i) => i + 1)
     },
-    validName() {
+    validName () {
       this.validations.name = this.userData.name.length >= 2
       return this.hasChanged.name ? this.validations.name : null
     },
-    validEmail() {
-      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    validEmail () {
+      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       this.validations.email = re.test(this.userData.email)
       return this.hasChanged.email ? this.validations.email : null
     },
-    validGender() {
+    validGender () {
       this.validations.gender = (this.userData.gender !== '')
       return this.hasChanged.gender ? this.validations.gender : null
     },
-    validPassword() {
-      var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
+    validPassword () {
+      const re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
       return this.hasChanged.password ? re.test(this.password) : null
     },
-    validRepeatPassword() {
+    validRepeatPassword () {
       return this.hasChanged.repeatPassword ? this.password === this.repeatPassword && this.repeatPassword.length > 0 : null
     },
-    validBirthday() {
-      var date = this.userData.birthday
-      const d = moment(`${date.year}-${date.month}-${date.day}`, `YYYY-M-D`, true)
+    validBirthday () {
+      const date = this.userData.birthday
+      const d = moment(`${date.year}-${date.month}-${date.day}`, 'YYYY-M-D', true)
       this.validations.birthday = d.isValid()
       return this.hasChanged.birthday ? this.validations.birthday : null
     },
-    getDaysInMonth(month, year) {
+    getDaysInMonth (month, year) {
       return new Date(year, month, 0).getDate()
     },
-    handleNextPage() {
+    handleNextPage () {
       this.hasChanged.name = true
       this.hasChanged.email = true
       this.hasChanged.birthday = true
@@ -298,10 +348,10 @@ export default {
         return this.validations[key]
       })) {
         this.isInFirstPage = true
-      }*/
+      } */
 
-      var validationResult = true
-      for (var v in this.validations) {
+      let validationResult = true
+      for (const v in this.validations) {
         if (!this.validations[v]) {
           validationResult = false
           break
@@ -310,7 +360,7 @@ export default {
       console.log(!validationResult)
       this.isInFirstPage = !validationResult
     },
-    async handleSignup() {
+    async handleSignup () {
       try {
         await firebase.handleSignup(this.userData.email, this.password, this.userData.name)
         this.$router.push({ path: this.redirect || '/' })
@@ -319,7 +369,7 @@ export default {
         this.$bvModal.msgBoxOk(error.message)
       }
     },
-    handleSubmit() {
+    handleSubmit () {
       this.hasChanged.password = true
       this.hasChanged.repeatPassword = true
       if (this.validPassword() && this.validRepeatPassword()) {
