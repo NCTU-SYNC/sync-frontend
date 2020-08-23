@@ -142,7 +142,7 @@
 import { getArticleById, updateArticleById } from '@/api/article'
 import { Editor, EditorContent } from 'tiptap'
 import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder } from 'tiptap-extensions'
-import { getToken } from '@/utils/auth'
+import { getToken } from '@/plugins/auth'
 
 export default {
   name: 'Article',

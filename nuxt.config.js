@@ -1,4 +1,3 @@
-
 export default {
   /*
   ** Nuxt rendering mode
@@ -43,6 +42,7 @@ export default {
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: [
+    '~/plugins/firebase'
   ],
   /*
   ** Auto import components
@@ -55,6 +55,7 @@ export default {
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
+    ['@nuxtjs/dotenv', { path: './' }],
     '@nuxtjs/style-resources'
   ],
   /*
@@ -66,6 +67,9 @@ export default {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios'
   ],
+  bootstrapVue: {
+    icons: true // Install the IconsPlugin (in addition to BootStrapVue plugin
+  },
   /*
   ** Axios module configuration
   ** See https://axios.nuxtjs.org/options

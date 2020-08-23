@@ -1,17 +1,16 @@
 import axios from 'axios'
-import store from '@/store'
 // import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  baseURL: process.env.BASE_API_URL, // url = base url + request url
   withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
 
 // request interceptor
 service.interceptors.request.use(
-  (config) => {
+  config => {
     // do something before request is sent
 
     // if (store.getters.token) {
@@ -22,7 +21,7 @@ service.interceptors.request.use(
     // }
     return config
   },
-  (error) => {
+  error => {
     // do something with request error
     console.log(error) // for debug
     return Promise.reject(error)
@@ -41,7 +40,7 @@ service.interceptors.response.use(
    * Here is just an example
    * You can also judge the status by HTTP Status Code
    */
-  (response) => {
+  response => {
     const res = response
     console.log(res)
 
@@ -55,7 +54,7 @@ service.interceptors.response.use(
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
       if (res.status === 508 || res.status === 512 || res.status === 514) {
         // to re-login
-        store.dispatch('user/resetToken').then(() => {
+        this.$store.dispatch('user/resetToken').then(() => {
           location.reload()
         })
       }
@@ -64,7 +63,7 @@ service.interceptors.response.use(
       return Promise.resolve(res)
     }
   },
-  (error) => {
+  error => {
     console.log(error) // for debug
     return Promise.reject(error)
   }

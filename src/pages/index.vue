@@ -1,6 +1,9 @@
 <template>
   <b-container>
-    <b-card-group deck>
+    <b-card-group
+      v-if="articles.length !== 0"
+      deck
+    >
       <div
         v-for="article in articles"
         :key="article.lastUpdatedAt"
@@ -8,7 +11,8 @@
       >
         <b-link
           v-if="article._id"
-          :to="{ name: 'Article', params: { ArticleID: article._id }}"
+          :to="{ name: 'article-ArticleID', params: { ArticleID: article._id }}"
+          :prefetch="true"
         >
           <b-card
             no-body
@@ -31,6 +35,9 @@
         </b-link>
       </div>
     </b-card-group>
+    <h1 v-else>
+      暫時無文章
+    </h1>
   </b-container>
 </template>
 
@@ -39,22 +46,20 @@ import { getArticles } from '@/api/article'
 
 export default {
   name: 'Home',
+  async asyncData () {
+    const { data } = await getArticles()
+    const articles = data.data
+    console.log(data)
+    return {
+      articles: articles.sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
+    }
+  },
   data () {
     return {
       articles: [
 
       ]
     }
-  },
-  created () {
-    getArticles().then((response) => {
-      const { data } = response
-      console.log(data)
-      if (data.code === 200) {
-        this.articles = data.data
-        this.articles.sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
-      }
-    }).catch(err => console.error(err))
   }
 }
 </script>
@@ -63,5 +68,12 @@ export default {
   a {
     color: gray;
     text-decoration: none;
+  }
+
+  .fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
   }
 </style>

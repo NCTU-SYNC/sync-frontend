@@ -223,7 +223,7 @@
 </template>
 
 <script>
-import firebase from '@/utils/firebase'
+import firebase from '@/plugins/firebase'
 import moment from 'moment'
 
 export default {

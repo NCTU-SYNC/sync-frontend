@@ -132,10 +132,10 @@
 </template>
 
 <script>
-import firebase from '@/utils/firebase'
+import firebase from '@/plugins/firebase'
 
 export default {
-  name: 'Auth',
+  name: 'Login',
   data () {
     return {
       auth: null,

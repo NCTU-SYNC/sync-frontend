@@ -20,6 +20,7 @@
     <b-navbar-brand
       id="brand"
       to="/"
+      :prefetch="true"
       class="centered-block"
     >
       SYNC
@@ -52,13 +53,15 @@
       <b-navbar-nav class="ml-auto d-flex align-items-center">
         <b-nav-item
           v-show="!getLoginStatus"
-          :to="{ name: 'SignUp', query: getRedirectPath }"
+          :to="{ path: '/signup', query: getRedirectPath }"
+          :prefetch="true"
         >
           註冊
         </b-nav-item>
         <b-nav-item
           v-show="!getLoginStatus"
-          :to="{ name: 'Login', query: getRedirectPath}"
+          :to="{ path: '/login', query: getRedirectPath}"
+          :prefetch="true"
         >
           登入
         </b-nav-item>
@@ -123,7 +126,7 @@
 </template>
 
 <script>
-import firebase from '@/utils/firebase'
+import firebase from '@/plugins/firebase'
 
 export default {
   name: 'NavBar',

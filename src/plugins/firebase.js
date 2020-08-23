@@ -1,8 +1,8 @@
+import Vue from 'vue'
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import { setToken, removeToken, removeUserInfo } from '@/utils/auth'
+import { setToken, removeToken, removeUserInfo } from '@/plugins/auth'
 import { firebaseConfig } from '../../config/firebaseConfig'
-import store from '../store/index'
 
 class FirebaseAuth {
   constructor () {
@@ -10,7 +10,7 @@ class FirebaseAuth {
     this.password = ''
     this.displayName = ''
     this.isLogin = false
-    firebase.initializeApp(firebaseConfig)
+    this.setupFirebase()
   }
 
   get auth () {
@@ -20,6 +20,9 @@ class FirebaseAuth {
   setupFirebase () {
     console.log('setupFirebase')
     try {
+      if (!firebase.app.length) {
+        firebase.initializeApp(firebaseConfig)
+      }
       this.instance = firebase.auth()
       const handler = async (user) => {
         if (user) {
@@ -34,8 +37,8 @@ class FirebaseAuth {
             providerData: user.providerData,
             idToken: token
           }
-          store.dispatch('user/sendToken', data)
-          store.dispatch('user/sendUserInfo', user)
+          this.$store.dispatch('user/sendToken', data)
+          this.$store.dispatch('user/sendUserInfo', user)
           console.log('signed in')
           this.isLogin = true
         } else {
@@ -62,7 +65,7 @@ class FirebaseAuth {
       user.updateProfile({
         displayName
       })
-      store.dispatch('user/sendUserInfo', user)
+      this.$store.dispatch('user/sendUserInfo', user)
       return Promise.resolve(user)
     } catch (error) {
       console.log(error)
@@ -74,7 +77,7 @@ class FirebaseAuth {
     try {
       const { user } = await this.auth.signInWithEmailAndPassword(email, password)
       this.setUserInfo(email, password, user.displayName)
-      store.dispatch('user/sendUserInfo', user)
+      this.$store.dispatch('user/sendUserInfo', user)
       setToken(user.idToken)
       return Promise.resolve(user)
     } catch (error) {
@@ -91,7 +94,7 @@ class FirebaseAuth {
         if (this.isLogin) {
           removeToken()
           removeUserInfo()
-          store.dispatch('user/removeUser')
+          this.$store.dispatch('user/removeUser')
           console.log('logout successfully')
         }
       })
@@ -107,7 +110,7 @@ class FirebaseAuth {
       const idToken = result.credential.idToken
       const user = result.user
       console.log(result)
-      store.dispatch('user/sendUserInfo', user)
+      this.$store.dispatch('user/sendUserInfo', user)
       setToken(idToken)
       return Promise.resolve(user)
     } catch (error) {
@@ -117,5 +120,7 @@ class FirebaseAuth {
   }
 }
 
+Vue.prototype.$firebaseAuth = FirebaseAuth
 const FirebaseAuthInstance = new FirebaseAuth()
+
 export default FirebaseAuthInstance

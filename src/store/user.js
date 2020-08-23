@@ -1,5 +1,5 @@
 import { login } from '@/api/user'
-import { getToken, setToken, setExpiredTime, setUserInfo, getUserInfo } from '@/utils/auth'
+import { getToken, setToken, setExpiredTime, setUserInfo, getUserInfo } from '@/plugins/auth'
 
 const getDefaultState = () => {
   return {
@@ -14,9 +14,9 @@ const getDefaultState = () => {
   }
 }
 
-const state = getDefaultState()
+export const state = () => { return getDefaultState() }
 
-const mutations = {
+export const mutations = {
   SET_USER (state, user) {
     // state = {
     //   ...state,
@@ -38,7 +38,7 @@ const mutations = {
   }
 }
 
-const actions = {
+export const actions = {
   sendToken ({ commit }, userdata) {
     return new Promise((resolve, reject) => {
       login(userdata).then(response => {
@@ -60,11 +60,4 @@ const actions = {
   removeUser ({ commit }) {
     commit('RESET_USER')
   }
-}
-
-export default {
-  namespaced: true,
-  state,
-  mutations,
-  actions
 }
