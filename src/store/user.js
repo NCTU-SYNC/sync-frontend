@@ -1,5 +1,5 @@
 import { login } from '@/api/user'
-import { getToken, setToken, setExpiredTime, setUserInfo, getUserInfo } from '@/plugins/auth'
+import { getToken, setToken, setExpiredTime, setUserInfo, getUserInfo } from '@/utils/auth'
 
 const getDefaultState = () => {
   return {

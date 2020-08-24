@@ -11,7 +11,7 @@
       >
         <b-link
           v-if="article._id"
-          :to="{ name: 'article-ArticleID', params: { ArticleID: article._id }}"
+          :to="{ name: 'Article', params: { ArticleID: article._id }}"
           :prefetch="true"
         >
           <b-card
@@ -56,18 +56,16 @@ export default {
   },
   data () {
     return {
-      articles: [
-
-      ]
+      articles: []
     }
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   a {
-    color: gray;
-    text-decoration: none;
+    color: gray !important;
+    text-decoration: none !important;
   }
 
   .fade-enter-active, .fade-leave-active {

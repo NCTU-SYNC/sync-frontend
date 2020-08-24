@@ -157,7 +157,7 @@
 <script>
 import { getArticleById, createArticle, updateArticleById } from '@/api/article'
 import TiptapEditor from '@/components/Post/TiptapEditor'
-import { getToken } from '@/plugins/auth'
+import { getToken } from '@/utils/auth'
 import NewsPanel from '@/components/NewsPanel'
 export default {
   name: 'Post',

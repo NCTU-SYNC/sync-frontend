@@ -4,3 +4,5 @@ export const getters = {
   displayName: state => state.user.displayName,
   photoURL: state => state.user.photoURL
 }
+
+export const store = this

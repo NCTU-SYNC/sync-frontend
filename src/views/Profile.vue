@@ -237,14 +237,14 @@ export default {
     }
   },
   created () {
-    window.addEventListener('scroll', this.handleScroll)
+    // window.addEventListener('scroll', this.handleScroll)
   },
   destroyed () {
-    window.removeEventListener('scroll', this.handleScroll)
+    // window.removeEventListener('scroll', this.handleScroll)
   },
   methods: {
     handleScroll () {
-      this.scrollY = window.scrollY
+      // this.scrollY = window.scrollY
     }
   }
 }

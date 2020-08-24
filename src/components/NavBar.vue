@@ -143,6 +143,9 @@ export default {
       return this.$store.getters.isLogin
     }
   },
+  beforeCreate () {
+    firebase.setUpFirebase(this.$store)
+  },
   methods: {
     handleLogout () {
       firebase.handleLogout()
