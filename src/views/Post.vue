@@ -115,7 +115,6 @@ import { getArticleById, createArticle, updateArticleById } from '@/api/article'
 import TiptapEditor from '@/components/Post/TiptapEditor'
 import NewsPanel from './NewsPanel'
 import { getUserInfo, getToken } from '@/utils/auth'
-import { storeArticleIdToFirestore } from '@/api/user'
 export default {
   name: 'Post',
   components: {
@@ -175,7 +174,8 @@ export default {
         tags: this.postTags,
         authors: this.postAuthors,
         blocks: this.blocks,
-        createdAt: `${this.postDateValue} ${this.postTimeValue}`
+        createdAt: `${this.postDateValue} ${this.postTimeValue}`,
+        uid: getUserInfo().uid
       }
       localStorage.setItem('post', this.data)
     },
@@ -187,13 +187,9 @@ export default {
       }
       this.handleSaveArticle()
       if (this.isNewPost) {
-        createArticle(this.data).then(response => {
-          console.log(response)
+        createArticle(...this.data).then(response => {
           if (response.data.code === 200) {
             this.articleId = response.data.id
-            storeArticleIdToFirestore(getUserInfo().uid, this.articleId)
-              .then(res => console.log(res.data))
-              .catch(err => console.log(err))
             this.$bvModal.msgBoxOk(response.data.message)
               .then(() => {
                 this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
@@ -208,11 +204,7 @@ export default {
       } else {
         this.data.id = this.$route.params.ArticleID
         updateArticleById(this.data).then(response => {
-          console.log(response)
           if (response.data.code === 200) {
-            storeArticleIdToFirestore(getUserInfo().uid, this.$route.params.ArticleID)
-              .then(res => console.log(res.data))
-              .catch(err => console.log(err))
             this.$bvModal.msgBoxOk(response.data.message)
               .then(() => {
                 this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
