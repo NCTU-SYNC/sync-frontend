@@ -187,7 +187,7 @@ export default {
       }
       this.handleSaveArticle()
       if (this.isNewPost) {
-        createArticle(...this.data).then(response => {
+        createArticle(this.data).then(response => {
           if (response.data.code === 200) {
             this.articleId = response.data.id
             this.$bvModal.msgBoxOk(response.data.message)
