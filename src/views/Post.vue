@@ -111,12 +111,11 @@
 </template>
 
 <script>
-import firebase from 'firebase/app'
 import { getArticleById, createArticle, updateArticleById } from '@/api/article'
 import TiptapEditor from '@/components/Post/TiptapEditor'
 import NewsPanel from './NewsPanel'
 import { getUserInfo, getToken } from '@/utils/auth'
-import FirebaseAuthInstance from '../utils/firebase'
+import { storeArticleIdToFirestore } from '@/api/user'
 export default {
   name: 'Post',
   components: {
@@ -192,7 +191,9 @@ export default {
           console.log(response)
           if (response.data.code === 200) {
             this.articleId = response.data.id
-            this.savePostIdToFirestore(this.articleId)
+            storeArticleIdToFirestore(getUserInfo().uid, this.articleId)
+              .then(res => console.log(res.data))
+              .catch(err => console.log(err))
             this.$bvModal.msgBoxOk(response.data.message)
               .then(() => {
                 this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
@@ -209,7 +210,9 @@ export default {
         updateArticleById(this.data).then(response => {
           console.log(response)
           if (response.data.code === 200) {
-            this.savePostIdToFirestore(this.$route.params.ArticleID)
+            storeArticleIdToFirestore(getUserInfo().uid, this.$route.params.ArticleID)
+              .then(res => console.log(res.data))
+              .catch(err => console.log(err))
             this.$bvModal.msgBoxOk(response.data.message)
               .then(() => {
                 this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
@@ -250,13 +253,6 @@ export default {
     },
     onEditorEdit(editor) {
       this.currentEditingEditor = editor
-    },
-    savePostIdToFirestore(articleId) {
-      const db = FirebaseAuthInstance.db
-      const userRef = db.collection('users').doc(getUserInfo().uid)
-      userRef.update({
-        editPostIds: firebase.firestore.FieldValue.arrayUnion(articleId)
-      })
     }
   }
 }

@@ -8,3 +8,11 @@ export function login(data) {
     data
   })
 }
+
+export function storeArticleIdToFirestore(uid, articleId) {
+  return request({
+    url: config.baseURL + '/storeArticleId',
+    method: 'post',
+    data: { uid, articleId }
+  })
+}
