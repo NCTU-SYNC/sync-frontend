@@ -7,7 +7,7 @@ const getDefaultState = () => {
     name: '',
     displayName: getUserInfo() ? getUserInfo().displayName : '',
     email: getUserInfo() ? getUserInfo().email : '',
-    uid: getUserInfo() ? getUserInfo().providerData.uid : '',
+    uid: getUserInfo() ? getUserInfo().uid : '',
     gender: '',
     photoURL: null,
     authenticated: false
