@@ -114,7 +114,6 @@
 import { getArticleById, createArticle, updateArticleById } from '@/api/article'
 import TiptapEditor from '@/components/Post/TiptapEditor'
 import NewsPanel from './NewsPanel'
-import { getToken } from '@/utils/auth'
 export default {
   name: 'Post',
   components: {
@@ -174,20 +173,20 @@ export default {
         tags: this.postTags,
         authors: this.postAuthors,
         blocks: this.blocks,
-        createdAt: `${this.postDateValue} ${this.postTimeValue}`
+        createdAt: `${this.postDateValue} ${this.postTimeValue}`,
+        uid: this.$store.getters.uid
       }
       localStorage.setItem('post', this.data)
     },
     handlePublish() {
       // return if the user is not login
-      if (!getToken()) {
+      if (!this.$store.getters.token) {
         this.$bvModal.msgBoxOk('Please Login First')
         return
       }
       this.handleSaveArticle()
       if (this.isNewPost) {
         createArticle(this.data).then(response => {
-          console.log(response)
           if (response.data.code === 200) {
             this.articleId = response.data.id
             this.$bvModal.msgBoxOk(response.data.message)
@@ -204,7 +203,6 @@ export default {
       } else {
         this.data.id = this.$route.params.ArticleID
         updateArticleById(this.data).then(response => {
-          console.log(response)
           if (response.data.code === 200) {
             this.$bvModal.msgBoxOk(response.data.message)
               .then(() => {
