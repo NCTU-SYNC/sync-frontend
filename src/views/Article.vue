@@ -59,6 +59,9 @@
       <b-row>
         <div class="last-update">(最後更新時間：{{ new Date (block.blockDateTime).toLocaleString() }})</div>
       </b-row>
+      <b-row>
+        <div class="block-revision">版本： {{ block.blockRevision }}</div>
+      </b-row>
       <hr>
     </div>
   </b-container>
