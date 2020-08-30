@@ -71,7 +71,6 @@
 import { getArticleById, updateArticleById } from '@/api/article'
 import { Editor, EditorContent } from 'tiptap'
 import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder } from 'tiptap-extensions'
-import { getToken } from '@/utils/auth'
 
 export default {
   name: 'Article',
@@ -117,7 +116,7 @@ export default {
       console.error(err)
     })
     // check if user logged in
-    this.isLogin = !!getToken()
+    this.isLogin = !!this.$store.getters.token
   },
   methods: {
     createEditor(initializedContent) {
