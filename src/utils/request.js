@@ -13,13 +13,13 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-    /*
-    if (store.getters.token) {
-      // let each request carry token
-      // ['X-Token'] is a custom headers key
-      // please modify it according to the actual situation
-      config.headers['X-Token'] = getToken()
-    }*/
+
+    // if (store.getters.token) {
+    //   // let each request carry token
+    //   // ['X-Token'] is a custom headers key
+    //   // please modify it according to the actual situation
+    //   config.headers['X-Token'] = getToken()
+    // }
     return config
   },
   error => {
@@ -42,7 +42,8 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
-    const res = response.data
+    const res = response
+    console.log(res)
 
     // download file
     if (!response.headers['content-type'].includes('application/json')) {
@@ -50,9 +51,9 @@ service.interceptors.response.use(
     }
 
     // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 200) {
+    if (res.status !== 200) {
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 508 || res.code === 512 || res.code === 514) {
+      if (res.status === 508 || res.status === 512 || res.status === 514) {
         // to re-login
         store.dispatch('user/resetToken').then(() => {
           location.reload()
