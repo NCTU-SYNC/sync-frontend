@@ -11,7 +11,7 @@
       >
         <b-link
           v-if="article._id"
-          :to="{ name: 'Article', params: { ArticleID: article._id }}"
+          :to="{ name: 'article-ArticleID', params: { ArticleID: article._id }}"
           :prefetch="true"
         >
           <b-card
