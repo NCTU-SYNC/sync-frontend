@@ -149,8 +149,9 @@ export default {
   components: {
     EditorContent
   },
-  async asyncData ({ route }) {
+  async asyncData ({ route, store }) {
     const { ArticleID } = route.params
+    console.log(store.getters.isLogin)
     const { data } = await getArticleById(ArticleID)
     if (data.code === 200) {
       const responseData = data.data

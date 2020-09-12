@@ -159,6 +159,13 @@ import { getArticleById, createArticle, updateArticleById } from '@/api/article'
 import TiptapEditor from '@/components/Post/TiptapEditor'
 import { getToken } from '@/utils/auth'
 import NewsPanel from '@/components/NewsPanel'
+const seperateDateAndTime = (dateTimeString) => {
+  const dateTime = new Date(dateTimeString)
+  return {
+    date: dateTime.toISOString().slice(0, 10),
+    time: dateTime.toLocaleTimeString('en-US', { hour12: false })
+  }
+}
 export default {
   name: 'Post',
   components: {
@@ -166,6 +173,31 @@ export default {
     NewsPanel
   },
   middleware: 'authenticated',
+  async asyncData ({ route }) {
+    const { ArticleID } = route.params
+    const isNewPost = !(ArticleID || false)
+    if (ArticleID) {
+      const { data } = await getArticleById(ArticleID)
+      if (data.code === 200) {
+        const postData = data.data
+        return {
+          data: postData,
+          postAuthors: postData.authors,
+          postTitle: postData.title,
+          postTags: postData.tags,
+          postDateTime: postData.createdAt,
+          postDateValue: seperateDateAndTime(postData.createdAt).date,
+          postTimeValue: seperateDateAndTime(postData.createdAt).time,
+          blocks: postData.blocks,
+          isNewPost
+        }
+      }
+    } else {
+      return {
+        isNewPost
+      }
+    }
+  },
   data () {
     return {
       articleId: undefined,
@@ -181,29 +213,29 @@ export default {
       postTags: []
     }
   },
-  created () {
-    this.handleClearPost()
-    // 從route中獲得此文章的ID
-    const articleId = this.articleId = this.$route.params.ArticleID
-    this.isNewPost = !(articleId || false)
-    if (articleId) {
-      getArticleById(articleId).then((response) => {
-        if (response.data.code === 200) {
-          this.data = response.data.data
-          const data = this.data
-          this.postAuthors = data.authors
-          this.postTitle = data.title
-          this.postTags = data.tags
-          const dateTime = this.postDateTime = data.createdAt
-          this.postDateValue = this.sperateDateAndTime(dateTime).date
-          this.postTimeValue = this.sperateDateAndTime(dateTime).time
-          this.blocks = data.blocks
-        }
-      }).catch((err) => {
-        console.error(err)
-      })
-    }
-  },
+  // created () {
+  // this.handleClearPost()
+  // // 從route中獲得此文章的ID
+  // const articleId = this.articleId = this.$route.params.ArticleID
+  // this.isNewPost = !(articleId || false)
+  // if (articleId) {
+  //   getArticleById(articleId).then((response) => {
+  //     if (response.data.code === 200) {
+  //       this.data = response.data.data
+  //       const data = this.data
+  //       this.postAuthors = data.authors
+  //       this.postTitle = data.title
+  //       this.postTags = data.tags
+  //       const dateTime = this.postDateTime = data.createdAt
+  //       this.postDateValue = this.sperateDateAndTime(dateTime).date
+  //       this.postTimeValue = this.sperateDateAndTime(dateTime).time
+  //       this.blocks = data.blocks
+  //     }
+  //   }).catch((err) => {
+  //     console.error(err)
+  //   })
+  // }
+  // },
   methods: {
     handleAddBlack () {
       const currentBlockCount = this.blocks.length
@@ -283,13 +315,6 @@ export default {
       this.postDateValue = ''
       this.postTimeValue = ''
       this.postTags = []
-    },
-    sperateDateAndTime (dateTimeString) {
-      const dateTime = new Date(dateTimeString)
-      return {
-        date: dateTime.toISOString().slice(0, 10),
-        time: dateTime.toLocaleTimeString('en-US', { hour12: false })
-      }
     },
     onEditorEdit (editor) {
       this.currentEditingEditor = editor

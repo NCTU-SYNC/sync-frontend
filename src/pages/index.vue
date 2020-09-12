@@ -47,7 +47,6 @@ import { getArticles } from '@/api/article'
 export default {
   name: 'Home',
   async asyncData () {
-    console.log('in asyncData')
     const { data } = await getArticles()
     const articles = data.data
     return {
