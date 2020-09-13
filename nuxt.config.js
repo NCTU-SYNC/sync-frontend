@@ -54,8 +54,7 @@ export default {
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
     ['@nuxtjs/dotenv', { path: './' }],
-    '@nuxtjs/style-resources',
-    ['@nuxtjs/router', { path: './src/router/' }]
+    '@nuxtjs/style-resources'
   ],
   /*
   ** Nuxt.js modules

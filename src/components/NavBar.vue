@@ -96,7 +96,7 @@
     <b-navbar-nav class="ml-auto d-block d-lg-none">
       <b-nav-item
         v-if="getLoginStatus"
-        to="profile"
+        to="/profile"
       >
         <img
           class="avatar-user"
@@ -105,7 +105,7 @@
       </b-nav-item>
       <b-nav-item
         v-else
-        to="login"
+        to="/login"
       >
         <b-iconstack font-scale="2.5">
           <b-icon

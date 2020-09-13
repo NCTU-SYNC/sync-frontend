@@ -11,7 +11,7 @@
       >
         <b-link
           v-if="article._id"
-          :to="{ name: 'Article', params: { ArticleID: article._id }}"
+          :to="{ name: 'article-ArticleID', params: { ArticleID: article._id }}"
           :prefetch="true"
         >
           <b-card
@@ -47,7 +47,6 @@ import { getArticles } from '@/api/article'
 export default {
   name: 'Home',
   async asyncData () {
-    console.log('in asyncData')
     const { data } = await getArticles()
     const articles = data.data
     return {

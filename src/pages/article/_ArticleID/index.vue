@@ -143,96 +143,35 @@ import { getArticleById, updateArticleById } from '@/api/article'
 import { Editor, EditorContent } from 'tiptap'
 import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder } from 'tiptap-extensions'
 import { getToken } from '@/utils/auth'
-const createEditor = (initializedContent) => {
-  const editor = new Editor({
-    autoFocus: true,
-    onInit: () => {
-      // editor is initialized
-    },
-    onUpdate: () => {
-      // console.log(state, transaction)
-      // console.log(getHTML(), getJSON())
-      // console.log(JSON.stringify(getJSON()))
-    },
-    extensions: [
-      new Heading({ levels: [1, 2, 3] }),
-      new Bold(),
-      new Italic(),
-      new Strike(),
-      new Underline(),
-      new BulletList(),
-      new ListItem(),
-      new Placeholder({
-        emptyEditorClass: 'is-editor-empty',
-        emptyNodeClass: 'is-empty',
-        emptyNodeText: '輸入內文...',
-        showOnlyWhenEditable: true,
-        showOnlyCurrent: true
-      })
-    ],
-    content: initializedContent,
-    editable: false
-  })
-  return editor
-}
+
 export default {
   name: 'Article',
   components: {
     EditorContent
   },
-  // async fetch () {
-  //   const articleId = this.$route.params.ArticleID
-  //   const { data } = await getArticleById(articleId)
-
-  //   if (data.code === 200) {
-  //     const responseData = data.data
-  //     const { title, tags, author, createdAt, blocks } = responseData
-  //     this.title = title
-  //     this.tags = tags
-  //     this.author = author
-  //     this.createdAt = createdAt
-  //     this.blocks = blocks
-  //     this.editors = []
-  //     this.editableBlocks = []
-  //     this.isLogin = !!getToken()
-  //     blocks.forEach((block) => {
-  //       this.editors[block._id] = createEditor(block.content)
-  //       this.editableBlocks[block._id] = false
-  //     })
-  //   }
-  // },
-  // asyncData ({ route }) {
-  //   // 從route中獲得此文章的ID
-  //   console.log('in Article asyncData')
-  //   const { ArticleID } = route.params
-  //   return getArticleById(ArticleID).then(res => {
-  //     const { data } = res
-  //     if (data.code === 200) {
-  //       const responseData = data.data
-  //       const { title, tags, author, createdAt, blocks } = responseData
-  //       const newState = {
-  //         title,
-  //         tags,
-  //         author,
-  //         createdAt,
-  //         blocks,
-  //         editors: [],
-  //         editableBlocks: [],
-  //         isLogin: !!getToken()
-  //       }
-  //       blocks.forEach((block) => {
-  //         newState.editors[block._id] = createEditor(block.content)
-  //         newState.editableBlocks[block._id] = false
-  //       })
-  //       return newState
-  //     } else {
-  //       return {
-  //         isLogin: !!getToken()
-  //       }
-  //     }
-  //   })
-  //   // const { data } = await getArticleById(ArticleID)
-  // },
+  async asyncData ({ route, store }) {
+    const { ArticleID } = route.params
+    console.log(store.getters.isLogin)
+    const { data } = await getArticleById(ArticleID)
+    if (data.code === 200) {
+      const responseData = data.data
+      const { title, tags, author, createdAt, blocks } = responseData
+      return {
+        title,
+        tags,
+        author,
+        createdAt,
+        blocks,
+        editors: [],
+        editableBlocks: [],
+        isLogin: !!getToken()
+      }
+    } else {
+      return {
+        isLogin: !!getToken()
+      }
+    }
+  },
   data () {
     return {
       data: null,
@@ -253,27 +192,46 @@ export default {
     this.editors.forEach(editor => editor.destroy())
   },
   created () {
-    const articleId = this.$route.params.ArticleID
-    getArticleById(articleId).then((response) => {
-      if (response.data.code === 200) {
-        const data = this.data = response.data.data
-        this.title = data.title
-        this.tags = data.tags
-        this.author = data.author
-        this.createdAt = data.createdAt
-        this.blocks = data.blocks
-        this.blocks.forEach((block) => {
-          this.editors[block._id] = createEditor(block.content)
-          this.editableBlocks[block._id] = false
-        })
-      }
-    }).catch((err) => {
-      console.error(err)
-    })
-    // check if user logged in
-    this.isLogin = !!getToken()
+    if (process.client) {
+      this.blocks.forEach((block) => {
+        this.editors[block._id] = this.createEditor(block.content)
+        this.editableBlocks[block._id] = false
+      })
+    }
   },
   methods: {
+    createEditor (initializedContent) {
+      const editor = new Editor({
+        autoFocus: true,
+        onInit: () => {
+          // editor is initialized
+        },
+        onUpdate: () => {
+          // console.log(state, transaction)
+          // console.log(getHTML(), getJSON())
+          // console.log(JSON.stringify(getJSON()))
+        },
+        extensions: [
+          new Heading({ levels: [1, 2, 3] }),
+          new Bold(),
+          new Italic(),
+          new Strike(),
+          new Underline(),
+          new BulletList(),
+          new ListItem(),
+          new Placeholder({
+            emptyEditorClass: 'is-editor-empty',
+            emptyNodeClass: 'is-empty',
+            emptyNodeText: '輸入內文...',
+            showOnlyWhenEditable: true,
+            showOnlyCurrent: true
+          })
+        ],
+        content: initializedContent,
+        editable: false
+      })
+      return editor
+    },
     getEditable (blockId) {
       return this.editors[blockId] !== undefined ? this.editableBlocks[blockId] : false
     },
