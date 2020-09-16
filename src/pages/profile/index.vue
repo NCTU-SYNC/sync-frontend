@@ -221,6 +221,7 @@
 </template>
 
 <script>
+import { getArticleById } from '@/api/article'
 export default {
   middleware: 'authenticated',
   name: 'Profile',
@@ -239,6 +240,27 @@ export default {
   },
   created () {
     // window.addEventListener('scroll', this.handleScroll)
+    this.$store.dispatch('user/getEditPostIds', this.$store.getters.token)
+      .then(res => {
+        console.log(res)
+        const editPostIds = res
+        editPostIds.forEach(async id => {
+          const { data } = await getArticleById(id)
+          console.log(data)
+          if (data.code === 200) {
+            const responseData = data.data
+            const { title, tags, author, createdAt, blocks } = responseData
+            console.log(title)
+            return {
+              title,
+              tags,
+              author,
+              createdAt,
+              blocks
+            }
+          }
+        })
+      })
   },
   destroyed () {
     // window.removeEventListener('scroll', this.handleScroll)
