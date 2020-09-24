@@ -182,6 +182,7 @@ export default {
         const postData = data.data
         return {
           data: postData,
+          articleId: ArticleID,
           postAuthors: postData.authors,
           postTitle: postData.title,
           postTags: postData.tags,
@@ -269,7 +270,8 @@ export default {
             this.articleId = response.data.id
             this.$bvModal.msgBoxOk(response.data.message)
               .then(() => {
-                this.$router.push({ name: 'Article', params: { ArticleID: this.articleId } })
+                console.log(this.articleId)
+                this.$router.push({ name: 'article-ArticleID', params: { ArticleID: this.articleId } })
               })
           } else {
             this.$bvModal.msgBoxOk(response.data.message)
@@ -285,7 +287,8 @@ export default {
           if (response.data.code === 200) {
             this.$bvModal.msgBoxOk(response.data.message)
               .then(() => {
-                this.$router.push({ name: 'Article', params: { ArticleID: this.articleId } })
+                console.log(this.articleId)
+                this.$router.push({ name: 'article-ArticleID', params: { ArticleID: this.articleId } })
               })
           } else {
             this.$bvModal.msgBoxOk(response.data.message)
