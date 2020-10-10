@@ -252,7 +252,8 @@ export default {
         tags: this.postTags,
         authors: this.postAuthors,
         blocks: this.blocks,
-        createdAt: `${this.postDateValue} ${this.postTimeValue}`
+        createdAt: `${this.postDateValue} ${this.postTimeValue}`,
+        token: this.$store.getters.token
       }
       localStorage.setItem('post', this.data)
     },
@@ -282,6 +283,7 @@ export default {
         })
       } else {
         this.data.id = this.$route.params.ArticleID
+        this.data.token = this.$store.getters.token
         updateArticleById(this.data).then((response) => {
           console.log(response)
           if (response.data.code === 200) {

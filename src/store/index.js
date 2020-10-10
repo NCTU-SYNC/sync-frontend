@@ -7,13 +7,15 @@ export const getters = {
 
 export const store = this
 
+const cookieparser = process.server ? require('cookieparser') : undefined
+
 export const actions = {
   nuxtServerInit ({ commit }, { req }) {
     const hasCookieInReq = !!req.headers.cookie
     if (hasCookieInReq) {
       try {
-        console.log(req.headers.cookie)
-        const { userInfo } = req.headers.cookie
+        const { userInfo } = cookieparser.parse(req.headers.cookie)
+        console.log(userInfo)
         commit('user/SET_USER', userInfo)
       } catch (error) {
         console.log(error)

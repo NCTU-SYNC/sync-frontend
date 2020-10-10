@@ -42,7 +42,7 @@ service.interceptors.response.use(
    */
   response => {
     const res = response
-    console.log(res)
+    // console.log(res)
 
     // download file
     if (!response.headers['content-type'].includes('application/json')) {
