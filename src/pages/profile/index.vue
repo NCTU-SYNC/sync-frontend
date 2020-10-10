@@ -226,7 +226,6 @@ export default {
   middleware: 'authenticated',
   name: 'Profile',
   async asyncData ({ route, store }) {
-    console.log(store.getters.token)
     store.dispatch('user/getEditPostIds', store.getters.token)
       .then(res => {
         console.log(res)
@@ -235,8 +234,6 @@ export default {
           console.log(id)
           const { data } = await getArticleById(id)
           if (data.code === 200) {
-            console.log('%c  data ', 'background: green;')
-            console.log(data)
             try {
               const responseData = data.data
               const { title, tags, author, createdAt, blocks } = responseData

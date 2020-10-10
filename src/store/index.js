@@ -10,13 +10,13 @@ export const store = this
 const cookieparser = process.server ? require('cookieparser') : undefined
 
 export const actions = {
-  nuxtServerInit ({ commit }, { req }) {
+  async nuxtServerInit ({ commit }, { req }) {
     const hasCookieInReq = !!req.headers.cookie
     if (hasCookieInReq) {
       try {
         const { userInfo } = cookieparser.parse(req.headers.cookie)
-        console.log(userInfo)
-        commit('user/SET_USER', userInfo)
+        await commit('user/SET_USER', userInfo)
+        await commit('user/SET_TOKEN', JSON.parse(userInfo).stsTokenManager.accessToken)
       } catch (error) {
         console.log(error)
       }

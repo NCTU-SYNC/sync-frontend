@@ -18,7 +18,6 @@ const setUpFirebase = (storeContext) => {
     const handler = async (user) => {
       if (user) {
         const token = await user.getIdToken()
-        console.log('token=', token)
         const data = {
           displayName: user.displayName,
           email: user.email,
