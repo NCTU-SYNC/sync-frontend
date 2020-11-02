@@ -1,4 +1,4 @@
-import { login, getEditPostIds } from '@/api/user'
+import { login } from '@/api/user'
 import { getToken, setToken, setExpiredTime, setUserInfo, getUserInfo } from '@/utils/auth'
 
 const getDefaultState = () => {
@@ -10,8 +10,8 @@ const getDefaultState = () => {
     id: '',
     gender: '',
     photoURL: null,
-    authenticated: false,
-    editPostIds: []
+    authenticated: false
+    // editPostIds: []
   }
 }
 
@@ -29,10 +29,10 @@ export const mutations = {
   },
   RESET_USER (state) {
     Object.assign(state, getDefaultState())
-  },
-  GET_EDIT_POST_ID (state, payload) {
-    state.editPostIds = payload
   }
+  // GET_EDIT_POST_ID (state, payload) {
+  //   state.editPostIds = payload
+  // }
 }
 
 export const actions = {
@@ -56,16 +56,16 @@ export const actions = {
   },
   removeUser ({ commit }) {
     commit('RESET_USER')
-  },
-  getEditPostIds ({ commit }, idToken) {
-    return new Promise((resolve, reject) => {
-      getEditPostIds(idToken).then(response => {
-        const { data } = response
-        commit('GET_EDIT_POST_ID', data.editPostIds)
-        resolve(data.editPostIds)
-      }).catch(error => {
-        reject(error)
-      })
-    })
   }
+  // getEditPostIds ({ commit }, idToken) {
+  //   return new Promise((resolve, reject) => {
+  //     getEditPostIds(idToken).then(response => {
+  //       const { data } = response
+  //       commit('GET_EDIT_POST_ID', data.editPostIds)
+  //       resolve(data.editPostIds)
+  //     }).catch(error => {
+  //       reject(error)
+  //     })
+  //   })
+  // }
 }

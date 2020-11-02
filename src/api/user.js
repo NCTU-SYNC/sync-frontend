@@ -9,9 +9,9 @@ export function login (data) {
   })
 }
 
-export function getEditPostIds (idToken) {
-  return request({
-    url: config.baseURL + `/user/editPostIds?idToken=${idToken}`,
-    method: 'get'
-  })
-}
+// export function getEditPostIds (idToken) {
+//   return request({
+//     url: config.baseURL + `/user/editPostIds?idToken=${idToken}`,
+//     method: 'get'
+//   })
+// }

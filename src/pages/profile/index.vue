@@ -221,40 +221,43 @@
 </template>
 
 <script>
-import { getArticleById } from '@/api/article'
+// import { getArticleById } from '@/api/article'
 export default {
   middleware: 'authenticated',
   name: 'Profile',
-  async asyncData ({ route, store }) {
-    store.dispatch('user/getEditPostIds', store.getters.token)
-      .then(res => {
-        console.log(res)
-        const editPostIds = res
-        editPostIds.forEach(async id => {
-          console.log(id)
-          const { data } = await getArticleById(id)
-          if (data.code === 200) {
-            try {
-              const responseData = data.data
-              const { title, tags, author, createdAt, blocks } = responseData
-              return {
-                title,
-                tags,
-                author,
-                createdAt,
-                blocks
-              }
-            } catch (err) {
-              console.log(err)
-            }
-          }
-        })
-      })
-      .catch(err => console.log(err))
-  },
+  // async asyncData ({ route, store }) {
+  //   let articles = []
+  //   store.dispatch('user/getEditPostIds', store.getters.token)
+  //     .then(res => {
+  //       const editPostIds = res
+  //       editPostIds.forEach(async id => {
+  //         console.log(id)
+  //         const { data } = await getArticleById(id)
+  //         if (data.code === 200) {
+  //           try {
+  //             const responseData = data.data
+  //             console.log('responseData=')
+  //             console.log(responseData)
+  //             // const { title, tags, author, createdAt, blocks } = responseData
+  //             articles = [...articles, responseData]
+  //             console.log(articles)
+  //           } catch (err) {
+  //             console.log(err)
+  //           }
+  //         }
+  //       })
+  //     })
+  //     .catch(err => console.log(err))
+  //   console.log(articles)
+  //   return {
+  //     articles,
+  //     test: 'test'
+  //   }
+  // },
   data () {
     return {
-      scrollY: 0
+      scrollY: 0,
+      articles: []
     }
   },
   computed: {
@@ -265,33 +268,6 @@ export default {
       return this.$store.state.user.email
     }
   },
-  // created () {
-  //   // window.addEventListener('scroll', this.handleScroll)
-  //   this.$store.dispatch('user/getEditPostIds', this.$store.getters.token)
-  //     .then(res => {
-  //       console.log(res)
-  //       const editPostIds = res
-  //       // TODO: Cannot read property 'forEach' of undefined when refresh page
-  //       // maybe need to use asyncData
-  //       editPostIds.forEach(async id => {
-  //         const { data } = await getArticleById(id)
-  //         console.log(data)
-  //         if (data.code === 200) {
-  //           console.log('%c  data ', 'background: green;')
-  //           console.log(data)
-  //           const responseData = data.data
-  //           const { title, tags, author, createdAt, blocks } = responseData
-  //           return {
-  //             title,
-  //             tags,
-  //             author,
-  //             createdAt,
-  //             blocks
-  //           }
-  //         }
-  //       })
-  //     })
-  // },
   destroyed () {
     // window.removeEventListener('scroll', this.handleScroll)
   },

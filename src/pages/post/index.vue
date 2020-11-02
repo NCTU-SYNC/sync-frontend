@@ -214,29 +214,6 @@ export default {
       postTags: []
     }
   },
-  // created () {
-  // this.handleClearPost()
-  // // 從route中獲得此文章的ID
-  // const articleId = this.articleId = this.$route.params.ArticleID
-  // this.isNewPost = !(articleId || false)
-  // if (articleId) {
-  //   getArticleById(articleId).then((response) => {
-  //     if (response.data.code === 200) {
-  //       this.data = response.data.data
-  //       const data = this.data
-  //       this.postAuthors = data.authors
-  //       this.postTitle = data.title
-  //       this.postTags = data.tags
-  //       const dateTime = this.postDateTime = data.createdAt
-  //       this.postDateValue = this.sperateDateAndTime(dateTime).date
-  //       this.postTimeValue = this.sperateDateAndTime(dateTime).time
-  //       this.blocks = data.blocks
-  //     }
-  //   }).catch((err) => {
-  //     console.error(err)
-  //   })
-  // }
-  // },
   methods: {
     handleAddBlack () {
       const currentBlockCount = this.blocks.length
@@ -271,7 +248,6 @@ export default {
             this.articleId = response.data.id
             this.$bvModal.msgBoxOk(response.data.message)
               .then(() => {
-                console.log(this.articleId)
                 this.$router.push({ name: 'article-ArticleID', params: { ArticleID: this.articleId } })
               })
           } else {
@@ -289,7 +265,6 @@ export default {
           if (response.data.code === 200) {
             this.$bvModal.msgBoxOk(response.data.message)
               .then(() => {
-                console.log(this.articleId)
                 this.$router.push({ name: 'article-ArticleID', params: { ArticleID: this.articleId } })
               })
           } else {
