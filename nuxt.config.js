@@ -33,7 +33,7 @@ export default {
   ],
   styleResources: {
     sass: [],
-    scss: ['@/assets/_variables.scss'],
+    scss: ['@/assets/styles.scss'],
     less: [],
     stylus: []
   },
