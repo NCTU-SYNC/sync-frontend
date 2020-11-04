@@ -8,3 +8,10 @@ export function login (data) {
     data
   })
 }
+
+// export function getEditPostIds (idToken) {
+//   return request({
+//     url: config.baseURL + `/user/editPostIds?idToken=${idToken}`,
+//     method: 'get'
+//   })
+// }

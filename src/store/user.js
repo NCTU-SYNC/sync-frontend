@@ -11,6 +11,7 @@ const getDefaultState = () => {
     gender: '',
     photoURL: null,
     authenticated: false
+    // editPostIds: []
   }
 }
 
@@ -18,13 +19,6 @@ export const state = () => { return getDefaultState() }
 
 export const mutations = {
   SET_USER (state, user) {
-    // state = {
-    //   ...state,
-    //   authenticated: !!user,
-    //   email: user ? user.email : null,
-    //   displayName: user ? user.displayName : null,
-    //   photoURL: user ? user.photoURL : null
-    // }
     state.photoURL = user ? user.photoURL : null
     state.displayName = user ? user.displayName : null
     state.email = user ? user.email : null
@@ -36,6 +30,9 @@ export const mutations = {
   RESET_USER (state) {
     Object.assign(state, getDefaultState())
   }
+  // GET_EDIT_POST_ID (state, payload) {
+  //   state.editPostIds = payload
+  // }
 }
 
 export const actions = {
@@ -60,4 +57,15 @@ export const actions = {
   removeUser ({ commit }) {
     commit('RESET_USER')
   }
+  // getEditPostIds ({ commit }, idToken) {
+  //   return new Promise((resolve, reject) => {
+  //     getEditPostIds(idToken).then(response => {
+  //       const { data } = response
+  //       commit('GET_EDIT_POST_ID', data.editPostIds)
+  //       resolve(data.editPostIds)
+  //     }).catch(error => {
+  //       reject(error)
+  //     })
+  //   })
+  // }
 }

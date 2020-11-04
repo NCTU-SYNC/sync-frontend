@@ -221,12 +221,43 @@
 </template>
 
 <script>
+// import { getArticleById } from '@/api/article'
 export default {
   middleware: 'authenticated',
   name: 'Profile',
+  // async asyncData ({ route, store }) {
+  //   let articles = []
+  //   store.dispatch('user/getEditPostIds', store.getters.token)
+  //     .then(res => {
+  //       const editPostIds = res
+  //       editPostIds.forEach(async id => {
+  //         console.log(id)
+  //         const { data } = await getArticleById(id)
+  //         if (data.code === 200) {
+  //           try {
+  //             const responseData = data.data
+  //             console.log('responseData=')
+  //             console.log(responseData)
+  //             // const { title, tags, author, createdAt, blocks } = responseData
+  //             articles = [...articles, responseData]
+  //             console.log(articles)
+  //           } catch (err) {
+  //             console.log(err)
+  //           }
+  //         }
+  //       })
+  //     })
+  //     .catch(err => console.log(err))
+  //   console.log(articles)
+  //   return {
+  //     articles,
+  //     test: 'test'
+  //   }
+  // },
   data () {
     return {
-      scrollY: 0
+      scrollY: 0,
+      articles: []
     }
   },
   computed: {
@@ -236,9 +267,6 @@ export default {
     getEmail () {
       return this.$store.state.user.email
     }
-  },
-  created () {
-    // window.addEventListener('scroll', this.handleScroll)
   },
   destroyed () {
     // window.removeEventListener('scroll', this.handleScroll)

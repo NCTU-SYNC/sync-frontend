@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import { setToken, removeToken, removeUserInfo } from '@/utils/auth'
+import { setToken, removeToken, removeUserInfo, setUserInfo } from '@/utils/auth'
 import { firebaseConfig } from '../../config/firebaseConfig'
 
 let app = null
@@ -60,7 +60,7 @@ const handleSignup = async (email, password, displayName) => {
 const handleLogin = async (email, password) => {
   try {
     const { user } = await firebase.auth().signInWithEmailAndPassword(email, password)
-    this.setUserInfo(email, password, user.displayName)
+    setUserInfo(email, password, user.displayName)
     store.dispatch('user/sendUserInfo', user)
     setToken(user.idToken)
     return Promise.resolve(user)

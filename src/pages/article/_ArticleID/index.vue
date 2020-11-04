@@ -253,6 +253,7 @@ export default {
       // TODO: 或許需要判定編輯哪個Block，只傳更改的Block到後端
       this.handleEditBlockStatusChange(blockId)
       this.data.id = this.$route.params.ArticleID
+      this.data.token = this.$store.getters.token
       // 取代更新Block
       block.content = this.editors[blockId].getJSON()
       updateArticleById(this.data).then((response) => {
