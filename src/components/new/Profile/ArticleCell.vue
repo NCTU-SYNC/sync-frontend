@@ -1,0 +1,67 @@
+<template>
+  <b-container class="cell-container border border-secondary mt-5">
+    <b-row class="mt-3 mx-2">
+      <div class="title">
+        川普新冠肺炎染疫事件經過
+      </div>
+    </b-row>
+    <b-row class="mt-3 mx-2 pb-2 d-flex justify-content-between border-bottom border-bottom-secondary">
+      <div class="d-flex">
+        <img src="@/assets/images/ModifiedTimeIcon.svg">
+        <div class="modified-info">
+          最後更新時間 10/14  17:35
+        </div>
+      </div>
+      <div class="d-flex">
+        <img src="@/assets/images/EditorsIcon.svg">
+        <div class="modified-info">
+          11 位編輯者
+        </div>
+      </div>
+    </b-row>
+    <b-row />
+    <b-row class="mx-2 mb-2 pt-2">
+      <div class="d-flex">
+        <b-button
+          v-for="(tag, index) in tags"
+          :key="index"
+          class="mr-4"
+          variant="outline-secondary"
+          pill
+        >
+          # {{ tag }}
+        </b-button>
+      </div>
+    </b-row>
+  </b-container>
+</template>
+
+<script>
+export default {
+  name: 'ArticleCell',
+  data () {
+    return {
+      tags: ['美國大選', '新冠病毒', '川普染疫']
+    }
+  }
+}
+</script>
+
+<style scoped lang="scss">
+.cell-container {
+  width: 50%;
+}
+
+.title {
+  font-family: 'Noto Sans CJK TC';
+  font-size: 26px;
+  font-weight: bold;
+  letter-spacing: 3px;
+}
+
+.modified-info {
+  font-size: 14px;
+  font-weight: medium;
+  margin-left: 7.7px;
+}
+</style>
