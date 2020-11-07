@@ -2,20 +2,20 @@
   <b-container class="cell-container border border-secondary mt-5">
     <b-row class="mt-3 mx-2">
       <div class="title">
-        川普新冠肺炎染疫事件經過
+        {{ title }}
       </div>
     </b-row>
     <b-row class="mt-3 mx-2 pb-2 d-flex justify-content-between border-bottom border-bottom-secondary">
       <div class="d-flex">
         <img src="@/assets/images/ModifiedTimeIcon.svg">
         <div class="modified-info">
-          最後更新時間 10/14  17:35
+          最後更新時間 {{ lastModifiedTime }}
         </div>
       </div>
       <div class="d-flex">
         <img src="@/assets/images/EditorsIcon.svg">
         <div class="modified-info">
-          11 位編輯者
+          {{ editorsCount }} 位編輯者
         </div>
       </div>
     </b-row>
@@ -39,9 +39,14 @@
 <script>
 export default {
   name: 'ArticleCell',
+  props: {
+    title: { type: String, default: '' },
+    lastModifiedTime: { type: String, default: '' },
+    editorsCount: { type: Number, default: 0 },
+    tags: { type: Array, default: () => [] }
+  },
   data () {
     return {
-      tags: ['美國大選', '新冠病毒', '川普染疫']
     }
   }
 }
@@ -49,7 +54,7 @@ export default {
 
 <style scoped lang="scss">
 .cell-container {
-  width: 50%;
+  width: 70%;
 }
 
 .title {

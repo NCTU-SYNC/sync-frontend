@@ -10,7 +10,17 @@
         </b-row>
       </b-col>
       <b-col cols="9">
-        <ArticleCell />
+        <b-row
+          v-for="(article, index) in articleList"
+          :key="index"
+        >
+          <ArticleCell
+            :title="article.title"
+            :last-modified-time="article.lastModifiedTime"
+            :editors-count="article.editorsCount"
+            :tags="article.tags"
+          />
+        </b-row>
       </b-col>
     </b-row>
   </b-container>
@@ -25,7 +35,27 @@ export default {
   components: { ArticleCell, UserInfo, ButtonStack },
   data () {
     return {
-
+      articleList: [{
+        title: '川普染疫',
+        lastModifiedTime: '10/14  17:35',
+        editorsCount: 11,
+        tags: ['美國大選', '川普', '新冠肺炎']
+      }, {
+        title: '拜登發表談話',
+        lastModifiedTime: '10/14  17:23',
+        editorsCount: 33,
+        tags: ['美國大選', '川普', '拜登']
+      }, {
+        title: '川普指控選舉舞弊',
+        lastModifiedTime: '11/7  14:20',
+        editorsCount: 1,
+        tags: ['美國大選', '川普', '拜登', '密西根']
+      }, {
+        title: 'empty',
+        lastModifiedTime: '??/??  17:35',
+        editorsCount: 0,
+        tags: []
+      }]
     }
   }
 }
