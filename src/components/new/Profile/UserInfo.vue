@@ -73,7 +73,7 @@ export default {
   border-radius: 50%;
   height: 96px;
   width: 96px;
-  background: gray;
+  background: $gray-500;
   .edit-icon {
     position: relative;
     top: calc(96px - 30px);
@@ -94,6 +94,6 @@ export default {
 }
 .start-time {
     font-size: 14px;
-    color: #B3B3B3;
+    color: $gray-500;
 }
 </style>

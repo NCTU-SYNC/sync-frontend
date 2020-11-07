@@ -41,11 +41,10 @@ export default {
   letter-spacing: 2px;
   cursor: pointer;
   height: 89px;
-  // TODO: color
-  color: #B3B3B3;
+  color: $gray-500;
 }
 .active {
-  border-right: 5px solid #B3B3B3;
-  color: #000000;
+  border-right: 5px solid $gray-300;
+  color: $gray-900;
 }
 </style>
