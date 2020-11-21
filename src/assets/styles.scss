@@ -14,7 +14,7 @@
 
   &:focus {
     box-shadow: none !important;
-    outline: none;
+    outline: none !important;
   }
 }
 
@@ -48,4 +48,8 @@ a {
 #brand {
   font-size : 1.5rem;
   color: grey
+}
+
+input {
+  border: 1px solid $primary !important;
 }

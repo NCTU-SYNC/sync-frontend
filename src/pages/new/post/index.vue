@@ -9,13 +9,25 @@
         xs="12"
       >
         <b-row>
-          <b-col>
-            <b-breadcrumb :items="items" />
+          <b-col class="d-flex justify-content-between align-items-center">
+            <b-breadcrumb
+              :items="items"
+              class="bg-transparent p-0 m-0"
+            />
+            <div class="editor-hint-step">
+              <span>Help!</span>
+              <span>1. 編輯文章主題區塊</span>
+              <span>2. 撰寫段落標題與內容</span>
+              <span>3. 右側搜尋新聞加入文章</span>
+              <b-button variant="link">
+                <b-icon icon="x" />
+              </b-button>
+            </div>
           </b-col>
         </b-row>
         <b-card
           no-body
-          class="bg-light"
+          class="mt-2 bg-light border-0"
         >
           <b-card-body>
             <b-form>
@@ -31,66 +43,55 @@
                 required
               />
             </b-form>
-            <div class="py-3">
-              <span
-                v-for="(tag, tagIndex) in postTags"
-                :key="tagIndex"
-                :class="['p-2', 'm-1', 'flex-shrink-0', 'shadow-sm', 'rounded', 'border']"
-              >
-                {{ tag }}
-                <b-button variant="outline-primary">
-                  <b-icon icon="x" />
+            <div class="d-flex justify-content-between py-2">
+              <div class="d-flex justify-content-start">
+                <b-button
+                  v-for="(tag, tagIndex) in postTags"
+                  :key="tagIndex"
+                  variant="outline-primary"
+                  size="sm"
+                  class="tag tag-pill"
+                >
+                  #{{ tag }}
+                  <b-icon
+                    icon="x"
+                    class="ml-1"
+                  />
                 </b-button>
-              </span>
-              <b-button variant="link">
-                <b-icon icon="plus" />
-              </b-button>
-              <b-form-checkbox
-                v-model="isAnonymous"
-                value="true"
-                unchecked-value="false"
-              >
-                匿名發文
-              </b-form-checkbox>
-              <span>
-                編輯者：Shang
-              </span>
-              <b-link>
-                +其他10位
-              </b-link>
+                <b-button
+                  variant="outline-primary"
+                  class="tag tag-add-btn"
+                >
+                  <b-icon icon="plus" />
+                </b-button>
+              </div>
+              <div class="d-flex justify-content-end align-items-center">
+                <b-form-checkbox
+                  v-model="isAnonymous"
+                  value="true"
+                  unchecked-value="false"
+                >
+                  匿名發文
+                </b-form-checkbox>
+                <span class="mx-2 text-secondary">
+                  編輯者：Shang
+                </span>
+                <b-link class="text-secondary">
+                  +其他10位
+                </b-link>
+              </div>
             </div>
-            <label for="post-tags" />
-            <b-form-tags
-              v-model="postTags"
-              input-id="post-tags"
-              separator=" "
-              placeholder="新增標籤 (空白或Enter鍵分隔)"
-              remove-on-delete
-              duplicate-tag-text="重複的標籤"
-            />
           </b-card-body>
-          <b-card-footer>
-            編輯者：
-            <b-link
-              v-for="postAuthor in postAuthors"
-              :key="postAuthor.uid"
-              href="#"
-              class="card-link"
-            >
-              {{ postAuthor.displayName }}
-            </b-link>
-          </b-card-footer>
         </b-card>
-        <hr>
-        <div class="d-flex justify-content-center">
+        <div class="d-flex justify-content-center mt-3">
           <div class="block-divider" />
           <div class="flex-grow-1">
             <b-button
               variant="outline-primary"
-              style="border-radius: 100px; margin-bottom: 1rem; min-width: 6rem; height: 2rem"
+              class="add-block-btn"
               @click="handleAddBlack"
             >
-              + 段落
+              <span>+ 段落</span>
             </b-button>
           </div>
           <div class="block-divider" />
@@ -101,7 +102,7 @@
         >
           <b-card
             no-body
-            border-variant="white"
+            class="bg-light border-0 min-vh-50"
           >
             <TiptapEditor
               :content.sync="block.content"
@@ -110,41 +111,40 @@
               @onEdit="onEditorEdit"
             />
           </b-card>
-          <br>
-          <b-col
-            cols="12"
-            class="text-center"
-          >
-            <b-button
-              variant="outline-secondary"
-              style="border-radius: 3rem; text-align: center; line-height: 1rem;"
-              class="text-center"
-              @click="handleAddBlack"
-            >
-              + 段落
-            </b-button>
-          </b-col>
+          <div class="d-flex justify-content-center mt-3">
+            <div class="block-divider" />
+            <div class="flex-grow-1">
+              <b-button
+                variant="outline-primary"
+                class="add-block-btn"
+                @click="handleAddBlack"
+              >
+                <span>+ 段落</span>
+              </b-button>
+            </div>
+            <div class="block-divider" />
+          </div>
         </div>
-        <b-container>
-          <hr>
-          <b-row>
-            <b-col class="mr-auto" />
+        <b-row>
+          <b-col class="d-flex justify-content-between">
             <b-button
-              class="mr-4"
-              variant="transparent"
+              variant="outline-primary"
+              size="lg"
+              class="px-3"
               @click="handleSaveArticle"
             >
               儲存
             </b-button>
             <b-button
-              class="mr-auto"
-              variant="dark"
+              variant="outline-primary"
+              size="lg"
+              class="px-3"
               @click="handlePublish"
             >
               發布
             </b-button>
-          </b-row>
-        </b-container>
+          </b-col>
+        </b-row>
       </b-col>
       <b-col
         class="h-100 d-inline-block py-4 py-lg-2"
@@ -167,6 +167,7 @@ const seperateDateAndTime = (dateTimeString) => {
     time: dateTime.toLocaleTimeString('en-US', { hour12: false })
   }
 }
+
 export default {
   name: 'Post',
   components: {
@@ -205,6 +206,7 @@ export default {
       articleId: undefined,
       currentEditingEditor: null,
       isNewPost: false,
+      isAnonymous: false,
       blocks: [],
       data: {},
       postAuthors: ['內部測試'],
@@ -231,7 +233,29 @@ export default {
       this.blocks.push({
         id: currentBlockCount + 1,
         blockDateTime: new Date().toISOString(),
-        content: null
+        content: {
+          type: 'doc',
+          content: [
+            {
+              type: 'paragraph'
+            },
+            {
+              type: 'paragraph'
+            },
+            {
+              type: 'paragraph'
+            },
+            {
+              type: 'paragraph'
+            },
+            {
+              type: 'paragraph'
+            },
+            {
+              type: 'paragraph'
+            }
+          ]
+        }
       })
     },
     handleSaveArticle () {
@@ -321,5 +345,48 @@ export default {
   width: 100%;
   height: 1rem;
   border-bottom: 1px solid $primary;
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3rem;
+  border: 1px solid $primary;
+  margin: 0.25rem !important;
+
+  &-pill {
+    height: 2rem !important;
+    text-decoration: none;
+    padding: 0.25rem 0.5rem 0.25rem 0.75rem !important;
+  }
+
+  &-add-btn {
+    height: 2rem !important;
+    width: 2rem !important;
+  }
+}
+
+.add-block-btn {
+  border-radius: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  width: 5rem;
+  height: 2rem;
+}
+
+.editor-hint-step {
+  display: inline-flex;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: $light;
+  border-radius: 3rem;
+  padding: 0 0 0 1rem;
+
+  span {
+    margin: 0rem 0.5rem;
+  }
 }
 </style>

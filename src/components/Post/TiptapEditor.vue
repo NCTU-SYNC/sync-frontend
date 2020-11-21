@@ -1,6 +1,6 @@
 <template>
   <div style="margin: 20px;">
-    <b-form inline>
+    <div class="d-flex justify-content-end w-100">
       <label
         class="sr-only"
         :for="`block-title-${blockId}`"
@@ -9,238 +9,141 @@
         :id="`block-title-${blockId}`"
         v-model="tempData.blockTitle"
         class="mb-2 mr-sm-2 mb-sm-0 pl-2"
-        placeholder="輸入標題..."
+        placeholder="新聞段落標題"
         @change="handleChangeTitle()"
       />
 
-      <label
-        class="sr-only"
-        :for="`block-datepicker-${blockId}`"
-      />
-      <b-form-datepicker
-        :id="`block-datepicker-${blockId}`"
-        v-model="tempData.blockDateValue"
-        class="mb-2 mr-sm-2 mb-sm-0"
-        :hide-header="true"
-        locale="zh"
-        :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
-        label-no-date-selected="日期"
-        label-help=""
-        @input="handleChangeDate"
-      />
+      <div class="d-flex justify-content-center align-items-center border rounded bg-white datetime-container">
+        <b-dropdown
+          text="2020年12月1日"
+          toggle-class="py-0 border-0"
+          variant="link"
+          no-caret
+        >
+          <b-calendar
+            v-model="tempData.blockDateValue"
+            locale="zh"
+            :hide-header="true"
+            label=""
+          />
+        </b-dropdown>
+        <span>|</span>
+        <b-dropdown
+          text="時間"
+          toggle-class="py-0 border-0"
+          variant="link"
+          no-caret
+        >
+          <b-calendar
+            v-model="tempData.blockDateValue"
+            locale="zh"
+            :hide-header="true"
+            label=""
+          />
+        </b-dropdown>
+      </div>
 
-      <label
-        class="sr-only"
-        :for="`block-timepicker-${blockId}`"
-      />
-      <b-form-timepicker
-        :id="`block-timepicker-${blockId}`"
-        v-model="tempData.blockTimeValue"
-        class="mb-2 mr-sm-2 mb-sm-0"
-        :hour12="false"
-        locale="zh"
-        :now-button="true"
-        :show-seconds="false"
-        :minutes-step="10"
-        :no-close-button="true"
-        label-now-button="現在時間"
-        label-no-time-selected="時間"
-        :hide-header="true"
-        @input="handleChangeTime"
-      />
-    </b-form>
+      <div class="d-none">
+        <label
+          class="sr-only"
+          :for="`block-datepicker-${blockId}`"
+        />
+        <b-form-datepicker
+          :id="`block-datepicker-${blockId}`"
+          v-model="tempData.blockDateValue"
+          class="mb-2 mr-sm-2 mb-sm-0"
+          :hide-header="true"
+          locale="zh"
+          :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+          label-no-date-selected="日期"
+          label-help=""
+          calendar-width="100%"
+          @input="handleChangeDate"
+        />
+
+        <label
+          class="sr-only"
+          :for="`block-timepicker-${blockId}`"
+        />
+        <b-form-timepicker
+          :id="`block-timepicker-${blockId}`"
+          v-model="tempData.blockTimeValue"
+          class="mb-2 mr-sm-2 mb-sm-0"
+          :hour12="false"
+          locale="zh"
+          :now-button="true"
+          :show-seconds="false"
+          :minutes-step="10"
+          :no-close-button="true"
+          label-now-button="現在時間"
+          label-no-time-selected="時間"
+          :hide-header="true"
+          @input="handleChangeTime"
+        />
+      </div>
+    </div>
 
     <b-row class="my-2">
-      <b-col
-        cols="12"
-        class="editor"
-      >
+      <b-col class="editor">
         <editor-menu-bar
           v-slot="{ commands, isActive }"
           :editor="editor"
         >
-          <b-row class="my-1">
-            <b-col>
+          <div class="d-flex justify-content-between">
+            <div>
               <button
                 variant="outline-secondary"
                 class="menubar__button"
                 :class="{ 'is-active': isActive.bold() }"
                 @click="commands.bold"
               >
-                <b>B</b>
+                <b-icon icon="type-bold" />
               </button>
-            </b-col>
-            <b-col>
-              <button
-                variant="outline-secondary"
-                class="menubar__button"
-                :class="{ 'is-active': isActive.italic() }"
-                @click="commands.italic"
-              >
-                <i>I</i>
-              </button>
-            </b-col>
-            <b-col>
-              <button
-                variant="outline-secondary"
-                class="menubar__button"
-                :class="{ 'is-active': isActive.strike() }"
-                @click="commands.strike"
-              >
-                <s>S</s>
-              </button>
-            </b-col>
-            <b-col>
-              <button
-                variant="outline-secondary"
-                class="menubar__button"
-                :class="{ 'is-active': isActive.underline() }"
-                @click="commands.underline"
-              >
-                <u>T</u>
-              </button>
-            </b-col>
-            <b-col>
-              <button
-                variant="outline-secondary"
-                class="menubar__button"
-                :class="{ 'is-active': isActive.heading({ level: 1 }) }"
-                @click="commands.heading({ level: 1 })"
-              >
-                H1
-              </button>
-            </b-col>
-            <b-col>
-              <button
-                variant="outline-secondary"
-                class="menubar__button"
-                :class="{ 'is-active': isActive.heading({ level: 2 }) }"
-                @click="commands.heading({ level: 2 })"
-              >
-                H2
-              </button>
-            </b-col>
-            <b-col>
-              <button
-                variant="outline-secondary"
-                class="menubar__button"
-                :class="{ 'is-active': isActive.heading({ level: 3 }) }"
-                @click="commands.heading({ level: 3 })"
-              >
-                H3
-              </button>
-            </b-col>
-            <b-col>
               <button
                 variant="outline-secondary"
                 class="menubar__button"
                 :class="{ 'is-active': isActive.bullet_list() }"
                 @click="commands.bullet_list"
               >
-                ul
+                <b-icon icon="list-ul" />
               </button>
-            </b-col>
-            <b-col>
               <button
                 variant="outline-secondary"
                 class="menubar__button"
                 :class="{ 'is-active': isActive.ordered_list() }"
                 @click="commands.ordered_list"
               >
-                ol
+                <b-icon icon="list-ol" />
               </button>
-            </b-col>
-          </b-row>
+              <button
+                variant="outline-secondary"
+                class="menubar__button"
+              >
+                <b-icon icon="chat-quote-fill" />
+              </button>
+            </div>
+            <div class="d-flex justify-content-end align-items-center">
+              <b-form-checkbox
+                value="true"
+                unchecked-value="false"
+              >
+                匿名發文
+              </b-form-checkbox>
+              <span class="mx-2 text-secondary">
+                編輯者：Shang
+              </span>
+              <b-link class="text-secondary">
+                +其他10位
+              </b-link>
+            </div>
+          </div>
         </editor-menu-bar>
       </b-col>
-
-      <b-col cols="12">
-        <hr>
-        <br>
-        <editor-floating-menu
-          v-slot="{ commands, isActive, menu }"
-          :editor="editor"
-        >
-          <div
-            class="editor__floating-menu"
-            :class="{ 'is-active': menu.isActive }"
-            :style="`top: ${menu.top}px`"
-          >
-            <button
-              class="menubar__button"
-              :class="{ 'is-active': isActive.bold() }"
-              @click="commands.bold"
-            >
-              <b>B</b>
-            </button>
-
-            <button
-              class="menubar__button"
-              :class="{ 'is-active': isActive.italic() }"
-              @click="commands.italic"
-            >
-              <i>I</i>
-            </button>
-
-            <button
-              class="menubar__button"
-              :class="{ 'is-active': isActive.strike() }"
-              @click="commands.strike"
-            >
-              <s>S</s>
-            </button>
-
-            <button
-              class="menubar__button"
-              :class="{ 'is-active': isActive.underline() }"
-              @click="commands.underline"
-            >
-              <u>T</u>
-            </button>
-
-            <button
-              class="menubar__button"
-              :class="{ 'is-active': isActive.heading({ level: 1 }) }"
-              @click="commands.heading({ level: 1 })"
-            >
-              H1
-            </button>
-
-            <button
-              class="menubar__button"
-              :class="{ 'is-active': isActive.heading({ level: 2 }) }"
-              @click="commands.heading({ level: 2 })"
-            >
-              H2
-            </button>
-
-            <button
-              class="menubar__button"
-              :class="{ 'is-active': isActive.heading({ level: 3 }) }"
-              @click="commands.heading({ level: 3 })"
-            >
-              H3
-            </button>
-
-            <button
-              class="menubar__button"
-              :class="{ 'is-active': isActive.bullet_list() }"
-              @click="commands.bullet_list"
-            >
-              ul
-            </button>
-
-            <button
-              class="menubar__button"
-              :class="{ 'is-active': isActive.ordered_list() }"
-              @click="commands.ordered_list"
-            >
-              ol
-            </button>
-          </div>
-        </editor-floating-menu>
+    </b-row>
+    <b-row>
+      <b-col>
         <editor-content
-          class="editor__content"
+          class="rounded border bg-white min-vh-50 editor__content p-3"
           :editor="editor"
         />
       </b-col>
@@ -249,15 +152,14 @@
 </template>
 
 <script>
-import { Editor, EditorContent, EditorMenuBar, EditorFloatingMenu } from 'tiptap'
+import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
 import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder, OrderedList } from 'tiptap-extensions'
 
 export default {
   name: 'TiptapEditPage',
   components: {
     EditorContent,
-    EditorMenuBar,
-    EditorFloatingMenu
+    EditorMenuBar
   },
   props: {
     content: {
@@ -356,7 +258,6 @@ export default {
 @import "@/assets/Post/main";
 
 .editor {
-  position: relative;
   &__floating-menu {
     position: absolute;
     z-index: 1;
@@ -368,6 +269,29 @@ export default {
       opacity: 1;
       visibility: visible;
     }
+  }
+}
+
+.editor p.is-editor-empty:first-child::before {
+  content: attr(data-empty-text);
+  float: left;
+  color: #aaa;
+  pointer-events: none;
+  height: 0;
+  font-style: italic;
+}
+
+.datetime-container {
+  button {
+    padding: 0 !important;
+    border: none !important;
+  }
+}
+
+.a {
+button {
+    padding: 0 !important;
+    border: none !important;
   }
 }
 </style>

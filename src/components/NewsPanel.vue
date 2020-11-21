@@ -1,38 +1,59 @@
 <template>
-  <b-card>
-    <b-input-group
-      class="mt-3"
-      style="margin-bottom: 20px;"
-    >
-      <b-form-input
-        v-model="searchKeyword"
-        placeholder="搜尋新聞"
-      />
-      <b-input-group-append>
+  <b-card class="border-0 pt-3">
+    <div class="d-flex justify-content-center">
+      <div
+        class="search-news-container mr-2"
+      >
+        <b-form-input
+          id="search-news"
+          v-model="searchKeyword"
+          class="border-0"
+          placeholder="搜尋新聞"
+        />
+        <div />
         <b-button
-          variant="outline-secondary"
+          class="mr-1"
+          variant="link"
           @click="getNews"
         >
-          搜尋
+          <b-icon icon="search" />
         </b-button>
-      </b-input-group-append>
-    </b-input-group>
+      </div>
+      <div class="search-news-container">
+        <b-button
+          variant="link"
+        >
+          <b-icon icon="chevron-left" />
+        </b-button>
+        <div />
+        <b-button
+          variant="link"
+        >
+          <b-icon icon="chevron-right" />
+        </b-button>
+      </div>
+    </div>
+
+    <label
+      class="text-secondary"
+      for="search-news"
+    >尋找新聞並加到編輯區（建立連結）</label>
     <b-row align-h="start">
-      <b-col sm="3">
+      <b-col>
         <b-dropdown
-          variant="outline-secondary"
+          variant="outline-primary"
           text="時間"
-          disabled
+          toggle-class="search-select"
+          class="mr-1"
         >
           <b-dropdown-item>2020/7/4</b-dropdown-item>
           <b-dropdown-item>2020/7/5</b-dropdown-item>
         </b-dropdown>
-      </b-col>
-      <b-col sm="3">
         <b-dropdown
-          variant="outline-secondary"
+          variant="outline-primary"
           text="新聞來源"
-          disabled
+          toggle-tag="span"
+          toggle-class="search-select"
         >
           <b-dropdown-item>三立</b-dropdown-item>
           <b-dropdown-item>中天</b-dropdown-item>
@@ -94,6 +115,34 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="scss">
+.search-news-container {
+  display: inline-flex;
+  border-radius: 3rem;
+  border: 1px solid $primary;
+  justify-content: flex-end;
+  align-items: center;
 
+  input {
+    border-radius: 3rem;
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  div {
+    padding: 0.25rem 0;
+    height: 1.5rem;
+    width: 1px;
+    border-left: 1px solid $secondary;
+  }
+}
+
+.search-select {
+  border-radius: 3rem !important;
+  margin-right: 1rem;
+  border: 1px solid $red;
+}
 </style>
