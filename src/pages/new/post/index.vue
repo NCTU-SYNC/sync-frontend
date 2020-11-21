@@ -2,11 +2,11 @@
   <b-container>
     <b-row>
       <b-col
-        class="py-2"
-        lg="8"
+        class="py-2 main-editor-area"
+        lg="7"
         md="12"
         sm="12"
-        xs="12"
+        cols="12"
       >
         <b-row>
           <b-col class="d-flex justify-content-between align-items-center">
@@ -147,7 +147,9 @@
         </b-row>
       </b-col>
       <b-col
-        class="h-100 d-inline-block py-4 py-lg-2"
+        lg="5"
+        cols="12"
+        class="py-4 py-lg-2 news-area"
       >
         <NewsPanel @importNews="importNews" />
       </b-col>
@@ -235,26 +237,7 @@ export default {
         blockDateTime: new Date().toISOString(),
         content: {
           type: 'doc',
-          content: [
-            {
-              type: 'paragraph'
-            },
-            {
-              type: 'paragraph'
-            },
-            {
-              type: 'paragraph'
-            },
-            {
-              type: 'paragraph'
-            },
-            {
-              type: 'paragraph'
-            },
-            {
-              type: 'paragraph'
-            }
-          ]
+          content: null
         }
       })
     },
@@ -388,5 +371,17 @@ export default {
   span {
     margin: 0rem 0.5rem;
   }
+}
+
+.main-editor-area {
+  display:inline-block;
+  height: calc(100vh - 100px);
+  overflow-y: scroll;
+}
+
+.news-area {
+  display:inline-block;
+  height: calc(100vh - 100px);
+  overflow-y: scroll;
 }
 </style>

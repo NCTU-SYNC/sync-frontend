@@ -1,9 +1,7 @@
 <template>
   <b-card class="border-0 pt-3">
-    <div class="d-flex justify-content-center">
-      <div
-        class="search-news-container mr-2"
-      >
+    <div class="w-100 d-flex justify-content-start">
+      <div class="search-news-container mr-2 flex-grow-1">
         <b-form-input
           id="search-news"
           v-model="searchKeyword"
@@ -37,29 +35,34 @@
     <label
       class="text-secondary"
       for="search-news"
-    >尋找新聞並加到編輯區（建立連結）</label>
-    <b-row align-h="start">
+    >
+      尋找新聞並加到編輯區（建立連結）
+    </label>
+    <b-row>
       <b-col>
         <b-dropdown
           variant="outline-primary"
-          text="時間"
-          toggle-class="search-select"
-          class="mr-1"
+          toggle-class="badge-pill px-4"
         >
-          <b-dropdown-item>2020/7/4</b-dropdown-item>
-          <b-dropdown-item>2020/7/5</b-dropdown-item>
+          <template v-slot:button-content>
+            時間
+          </template>
+          <b-dropdown-item>213</b-dropdown-item>
+          <b-dropdown-item>1235</b-dropdown-item>
         </b-dropdown>
         <b-dropdown
           variant="outline-primary"
-          text="新聞來源"
-          toggle-tag="span"
-          toggle-class="search-select"
+          toggle-class="badge-pill px-4"
         >
+          <template v-slot:button-content>
+            新聞來源
+          </template>
           <b-dropdown-item>三立</b-dropdown-item>
           <b-dropdown-item>中天</b-dropdown-item>
         </b-dropdown>
       </b-col>
     </b-row>
+    <hr>
     <div
       v-for="(news, index) in newsList"
       :key="index"
@@ -141,8 +144,17 @@ export default {
 }
 
 .search-select {
+  background-color: $primary;
   border-radius: 3rem !important;
   margin-right: 1rem;
   border: 1px solid $red;
+}
+
+.search-dropdown {
+  button {
+    border-radius: 3rem !important;
+    margin-right: 1rem;
+    border: 1px solid $red;
+  }
 }
 </style>

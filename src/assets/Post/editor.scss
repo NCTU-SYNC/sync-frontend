@@ -1,12 +1,11 @@
 .editor {
   &__content {
-
     overflow-wrap: break-word;
     word-wrap: break-word;
     word-break: break-word;
 
     * {
-      caret-color: currentColor;
+      caret-color: $primary;
     }
 
     pre {
@@ -29,6 +28,15 @@
       font-weight: bold;
       background: rgba($color-black, 0.1);
       color: rgba($color-black, 0.8);
+    }
+
+    p.is-editor-empty:first-child::before {
+      content: attr(data-empty-text);
+      float: left;
+      color: #aaa;
+      pointer-events: none;
+      height: 0;
+      font-style: italic;
     }
 
     ul,

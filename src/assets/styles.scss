@@ -27,7 +27,7 @@ h1, h2 {
 }
 
 a {
-  text-decoration: none !important;
+  color: $secondary;
 }
 
 .focus {
@@ -52,4 +52,15 @@ a {
 
 input {
   border: 1px solid $primary !important;
+
+  &:-webkit-autofill { 
+    background-clip: text;
+    -webkit-background-clip: text;
+  }
 }
+
+.active .ProseMirror {
+  min-height: 200px !important;
+}
+
+@import './Post/main.scss';

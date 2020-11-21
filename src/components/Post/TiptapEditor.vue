@@ -143,7 +143,8 @@
     <b-row>
       <b-col>
         <editor-content
-          class="rounded border bg-white min-vh-50 editor__content p-3"
+          ref="editorContent"
+          :class="['rounded', 'border' ,'bg-white', 'editor__content', 'p-3', { 'active': initialized}]"
           :editor="editor"
         />
       </b-col>
@@ -214,7 +215,8 @@ export default {
           })
         ],
         content: this.content
-      })
+      }),
+      initialized: false
     }
   },
   beforeDestroy () {
@@ -227,6 +229,7 @@ export default {
     this.tempData.blockTitle = this.blockTitle
     this.tempData.blockDateValue = this.sperateDateAndTime(this.blockDateTime).date
     this.tempData.blockTimeValue = this.sperateDateAndTime(this.blockDateTime).time
+    this.initialized = true
   },
   methods: {
     handleChangeTitle () {
@@ -255,8 +258,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/Post/main";
-
 .editor {
   &__floating-menu {
     position: absolute;
@@ -270,15 +271,6 @@ export default {
       visibility: visible;
     }
   }
-}
-
-.editor p.is-editor-empty:first-child::before {
-  content: attr(data-empty-text);
-  float: left;
-  color: #aaa;
-  pointer-events: none;
-  height: 0;
-  font-style: italic;
 }
 
 .datetime-container {

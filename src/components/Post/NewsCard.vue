@@ -1,51 +1,46 @@
 <template>
-  <b-card no-body>
+  <b-card
+    no-body
+    class="border"
+  >
     <b-card-header
       header-tag="header"
-      class="p-1"
-      role="tab"
+      class="p-1 bg-light"
     >
-      <b-button
-        v-b-toggle="newsCardId"
-        block
-        variant="light"
-      >
-        {{ title }}
-      </b-button>
+      <div class="news-header px-3 py-2">
+        <b>{{ title }}</b>
+        <div class="news-info">
+          <p>中央社</p>
+          <p>2020.10.26 18:00</p>
+        </div>
+      </div>
     </b-card-header>
-    <b-collapse
-      :id="newsCardId"
-      visible
-      accordion="newsList"
-      role="tabpanel"
-    >
-      <b-card-body>
-        <b-card-text>{{ outline }}</b-card-text>
-        <b-row align-h="between">
-          <b-col>
-            <b-link
-              :href="url"
-              target="_blank"
-              class="pt-2"
-            >
-              查看全文
-            </b-link>
-          </b-col><b-col>
-            <b-button
-              style="float: right"
-              @click="importNews"
-            >
-              引入全文
-            </b-button>
-          </b-col>
-        </b-row>
-        <input
-          id="copy"
-          type="hidden"
-          :value="content"
-        >
-      </b-card-body>
-    </b-collapse>
+    <b-card-body>
+      <b-card-text>{{ outline }}</b-card-text>
+      <b-row>
+        <b-col class="d-flex justify-content-between align-items-center">
+          <b-link
+            :href="url"
+            target="_blank"
+          >
+            查看全文
+          </b-link>
+          <b-button
+            variant="outline-primary"
+            pill
+            class="px-3"
+            @click="importNews"
+          >
+            引入全文
+          </b-button>
+        </b-col>
+      </b-row>
+      <input
+        id="copy"
+        type="hidden"
+        :value="content"
+      >
+    </b-card-body>
   </b-card>
 </template>
 
@@ -89,6 +84,28 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="scss">
+.news-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
+  b {
+    font-size: 1.1rem;
+  }
+
+}
+.news-info {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  text-align: right;
+
+  p {
+    white-space: nowrap;
+    margin: 0 0;
+    color: $secondary;
+    font-size: 0.9rem;
+  }
+}
 </style>
