@@ -209,7 +209,7 @@ export default {
           new Placeholder({
             emptyEditorClass: 'is-editor-empty',
             emptyNodeClass: 'is-empty',
-            emptyNodeText: '輸入內文...',
+            emptyNodeText: '1. 撰寫內容\n2. 使用右邊欄位搜尋相關新聞引入內文',
             showOnlyWhenEditable: true,
             showOnlyCurrent: true
           })

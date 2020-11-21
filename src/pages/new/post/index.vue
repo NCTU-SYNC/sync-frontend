@@ -235,10 +235,7 @@ export default {
       this.blocks.push({
         id: currentBlockCount + 1,
         blockDateTime: new Date().toISOString(),
-        content: {
-          type: 'doc',
-          content: null
-        }
+        content: null
       })
     },
     handleSaveArticle () {

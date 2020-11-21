@@ -47,8 +47,11 @@
           <template v-slot:button-content>
             時間
           </template>
-          <b-dropdown-item>213</b-dropdown-item>
-          <b-dropdown-item>1235</b-dropdown-item>
+          <b-dropdown-item>過去 1 小時</b-dropdown-item>
+          <b-dropdown-item>過去 24 小時</b-dropdown-item>
+          <b-dropdown-item>過去 1 週</b-dropdown-item>
+          <b-dropdown-item>過去 1 個月</b-dropdown-item>
+          <b-dropdown-item>過去 1 年</b-dropdown-item>
         </b-dropdown>
         <b-dropdown
           variant="outline-primary"
