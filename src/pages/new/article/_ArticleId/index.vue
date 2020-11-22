@@ -151,10 +151,7 @@ export default {
     if (data.code === 200) {
       const responseData = data.data
       const { title, tags, author, createdAt, blocks, lastUpdatedAt } = responseData
-      blocks.forEach(block => {
-        console.log(block)
-        block.content.content.forEach(content => console.log(content.content))
-      })
+      console.log('getToken = ', getToken())
       return {
         news: {
           title,
@@ -179,7 +176,7 @@ export default {
     return {
       tagName: '美國總統大選',
       order: 'time',
-      news: { category: '國際', title: '美國總統大選漸落幕，但你知道拜登的「離岸懲罰稅」是什麼嗎？', viewCount: 32, tags: ['美國總統大選', '拜登', '離岸懲罰稅', '智慧製造', '美國', '美國製造業'] },
+      news: { category: '國際', title: '', viewCount: 32, tags: [] },
       timeId: null,
       time: moment()
     }

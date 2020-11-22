@@ -55,7 +55,8 @@ export default {
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
     ['@nuxtjs/dotenv', { path: './' }],
-    '@nuxtjs/style-resources'
+    '@nuxtjs/style-resources',
+    'cookie-universal-nuxt'
   ],
   /*
   ** Nuxt.js modules
