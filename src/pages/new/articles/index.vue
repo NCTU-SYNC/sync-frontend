@@ -68,7 +68,6 @@
                 <b-button
                   variant="outline-primary"
                   class="shadow-sm btn-icon mx-2 mt-1"
-                  @click="handleEditPostRoute"
                 >
                   <b-icon icon="pencil-square" />
                 </b-button>
@@ -182,13 +181,7 @@ export default {
   beforeDestroy () {
     clearInterval(this.timeId)
     this.time = null
-  },
-  methods: {
-    handleEditPostRoute () {
-
-    }
   }
-
 }
 </script>
 
