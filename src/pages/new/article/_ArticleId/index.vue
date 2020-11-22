@@ -142,7 +142,6 @@
 // test id:  5f5113349779a26bd0444b26
 import moment from 'moment'
 import { getArticleById } from '@/api/article'
-import { getToken } from '@/utils/auth'
 export default {
   name: 'Article',
   async asyncData ({ route, store }) {
@@ -151,7 +150,6 @@ export default {
     if (data.code === 200) {
       const responseData = data.data
       const { title, tags, author, createdAt, blocks, lastUpdatedAt } = responseData
-      console.log('getToken = ', getToken())
       return {
         news: {
           title,
@@ -164,11 +162,11 @@ export default {
         blocks,
         editors: [],
         editableBlocks: [],
-        isLogin: !!getToken()
+        isLogin: store.getters.isLogin
       }
     } else {
       return {
-        isLogin: !!getToken()
+        isLogin: store.getters.isLogin
       }
     }
   },
