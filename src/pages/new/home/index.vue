@@ -80,7 +80,10 @@
           v-for="(news, newsIndex) in newsBlock.content"
           :key="newsIndex"
         >
-          <div class="pb-4">
+          <div
+            class="pb-4"
+            @click="handleArticleRoute(news._id)"
+          >
             <p class="news-category">
               {{ news.category }}
             </p>
@@ -88,7 +91,7 @@
               {{ news.title }}
             </p>
             <div class="news-info">
-              <span class="mr-3">更新於3小時前</span>
+              <span class="mr-3">{{ `更新於 ${formatLastUpdate(news.lastUpdatedAt)} 前` }}</span>
               <b-icon
                 icon="eye-fill"
                 class="mr-1"
@@ -110,12 +113,24 @@
 </template>
 
 <script>
+import moment from 'moment'
+import { getArticles } from '@/api/article'
 export default {
   name: 'HomeNew',
-  data () {
+  async asyncData () {
+    const { data } = await getArticles()
+    const articles = data.data.sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
+    const realNews = {
+      title: '未分類新聞',
+      content: []
+    }
+    articles.forEach(article => {
+      const { category, _id, title, lastUpdatedAt } = article
+      realNews.content.push({
+        _id, category, title, lastUpdatedAt, viewCount: 32
+      })
+    })
     return {
-      categoryList: ['即時', '政經', '國際', '社會', '科技', '環境', '生活', '運動'],
-      hotTags: ['台海危機', '美國大選', '振興三倍券', '新冠病毒', '美國豬牛', '黃鴻升'],
       newsList: [
         {
           title: '最新新聞',
@@ -149,8 +164,25 @@ export default {
             { category: '政經', title: '陽明交大徵合校首任校長教育部登報徵才', viewCount: 32 },
             { category: '政經', title: '川普夫婦確診新冠病毒 各國領袖表關心', viewCount: 32 }
           ]
-        }
+        },
+        realNews
       ]
+    }
+  },
+  data () {
+    return {
+      categoryList: ['即時', '政經', '國際', '社會', '科技', '環境', '生活', '運動'],
+      hotTags: ['台海危機', '美國大選', '振興三倍券', '新冠病毒', '美國豬牛', '黃鴻升']
+    }
+  },
+  methods: {
+    handleArticleRoute (_id) {
+      if (!_id) return
+      this.$router.push({ path: `/new/article/${_id}` })
+    },
+    formatLastUpdate (lastUpdatedAt) {
+      if (!lastUpdatedAt) return '3小時'
+      else return moment(lastUpdatedAt).toNow(true)
     }
   }
 }
