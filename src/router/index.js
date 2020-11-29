@@ -13,31 +13,31 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      component: () => import('@/views/Home')
+      component: () => import('@/views/new/Home')
     },
     {
       path: '/login',
       name: 'Login',
-      component: () => import('@/views/Login'),
+      component: () => import('@/views/new/Login'),
       hidden: true
     },
     {
       path: '/signup',
       name: 'SignUp',
-      component: () => import('@/views/SignUp'),
+      component: () => import('@/views/new/SignUp'),
       hidden: true
     },
     {
       path: '/article/:ArticleID',
       name: 'Article',
-      component: () => import('@/views/Article')
+      component: () => import('@/views/new/Article')
     },
     {
       path: '/profile',
       name: 'Profile',
-      component: () => import('@/views/Profile'),
+      component: () => import('@/views/new/Profile'),
       beforeEnter: (to, from, next) => {
-        isLogin() ? next() : next('/login')
+        isLogin() ? next() : next('/new/login')
       }
     },
     {
@@ -46,24 +46,19 @@ export default new Router({
       component: () => import('@/views/OldArticle')
     },
     {
-      path: '/article/:ArticleID/Post',
-      component: () => import('@/views/Post'),
+      path: '/article/:ArticleID/post',
+      component: () => import('@/views/new/Post'),
       beforeEnter: (to, from, next) => {
-        isLogin() ? next() : next('/login')
+        isLogin() ? next() : next('/new/login')
       }
     },
     {
       path: '/post',
       name: 'Post',
-      component: () => import('@/views/Post'),
+      component: () => import('@/views/new/Post'),
       beforeEnter: (to, from, next) => {
-        isLogin() ? next() : next('/login')
+        isLogin() ? next() : next('/new/login')
       }
-    },
-    {
-      path: '/test',
-      name: 'HandCodedEditPage',
-      component: () => import('@/views/HandCodedEditPage')
     },
     {
       path: '/NewsPanel',
