@@ -24,7 +24,7 @@
             v-model="tempData.blockDateValue"
             locale="zh"
             :hide-header="true"
-            label=""
+            label-help="請選擇新聞事件發生的時間"
           />
         </b-dropdown>
         <span>|</span>
@@ -103,7 +103,7 @@
                 匿名發文
               </b-form-checkbox>
               <span class="mx-2 text-secondary">
-                編輯者：Shang
+                編輯者：{{ $store.getters.displayName }}
               </span>
               <b-link class="text-secondary">
                 +其他10位

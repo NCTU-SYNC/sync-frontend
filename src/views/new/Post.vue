@@ -74,7 +74,7 @@
                   匿名發文
                 </b-form-checkbox>
                 <span class="mx-2 text-secondary">
-                  編輯者：Shang
+                  編輯者：{{ $store.getters.displayName }}
                 </span>
                 <b-link class="text-secondary">
                   +其他10位
@@ -89,7 +89,7 @@
             <b-button
               variant="outline-primary"
               class="add-block-btn"
-              @click="handleAddBlack"
+              @click="handleAddBlock"
             >
               <span>+ 段落</span>
             </b-button>
@@ -117,7 +117,7 @@
               <b-button
                 variant="outline-primary"
                 class="add-block-btn"
-                @click="handleAddBlack"
+                @click="handleAddBlock"
               >
                 <span>+ 段落</span>
               </b-button>
@@ -230,8 +230,14 @@ export default {
       ]
     }
   },
+  created() {
+    // TODO: Get blocks
+    if (this.blocks.length === 0) {
+      this.handleAddBlock()
+    }
+  },
   methods: {
-    handleAddBlack() {
+    handleAddBlock() {
       const currentBlockCount = this.blocks.length
       this.blocks.push({
         id: currentBlockCount + 1,
