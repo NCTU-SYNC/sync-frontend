@@ -151,7 +151,8 @@ import moment from 'moment'
 import { getArticleById } from '@/api/article'
 import { Editor, EditorContent } from 'tiptap'
 import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder } from 'tiptap-extensions'
-import Link from '@/components/new/tiptap-extensions/Link'
+import Link from '@/components/Editor/TiptapExtensions/Link'
+
 export default {
   name: 'Article',
   components: {
@@ -325,5 +326,43 @@ p {
 
 #date {
   font-size: 1.5rem;
+}
+.reference {
+  color: gray;
+  text-decoration-line: underline;
+}
+
+ul {
+  padding-inline-start: 0;
+  list-style: none;
+}
+
+p {
+  padding: 2rem 0;
+}
+
+hr {
+  padding-bottom: 1rem;
+}
+
+.last-update {
+  margin: auto;
+  color: gray;
+}
+
+.title-bar {
+  display: flex;
+}
+
+.author {
+  display: inline-block;
+  margin-left: auto !important;
+  color: gray;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.5rem;
+  color: gray;
 }
 </style>

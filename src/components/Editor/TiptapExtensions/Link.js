@@ -2,7 +2,7 @@ import { Plugin } from 'tiptap'
 import { getMarkRange } from 'tiptap-utils'
 import { TextSelection } from 'prosemirror-state'
 import { Link as TiptapLink } from 'tiptap-extensions'
-import AddLinkCommandButton from '@/components/new/MenuCommands/Link/AddLinkCommandButton.vue'
+import AddLinkCommandButton from '@/components/Editor/MenuCommands/AddLinkCommandButton.vue'
 
 function getAttrs(dom) {
   return {

@@ -6,10 +6,16 @@ module.exports = {
   css: {
     loaderOptions: {
       sass: {
-        additionalData: `
-          @import "@/assets/styles.scss";
-        `
+        additionalData: `@import "@/assets/scss/custom.scss";`
       }
     }
+  },
+  chainWebpack: config => {
+    config
+      .plugin('html')
+      .tap(args => {
+        args[0].title = 'SYNC 新聞同步'
+        return args
+      })
   }
 }

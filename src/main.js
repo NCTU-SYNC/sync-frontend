@@ -1,17 +1,14 @@
-import Vue from 'vue'
-import App from './App.vue'
-import store from './store'
-import FirebaseAuth from '@/utils/firebase.js'
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
-
 // Support old IE
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
 import 'intersection-observer'
-
+import Vue from 'vue'
+import App from './App.vue'
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import store from './store'
+import FirebaseAuth from '@/utils/firebase.js'
 import router from './router'
+import '@/assets/scss/main.scss'
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)

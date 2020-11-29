@@ -50,6 +50,7 @@
 
 <script>
 import { insertHTML } from '@/utils/editorUtil'
+
 export default {
   name: 'AddLinkCommandButton',
   props: {
@@ -62,7 +63,7 @@ export default {
       required: true
     }
   },
-  data () {
+  data() {
     return {
       linkAttrs: {
         href: '',
@@ -75,7 +76,7 @@ export default {
     }
   },
   methods: {
-    addLink () {
+    addLink() {
       const from = this.editor.state.selection.from
       const to = this.editor.state.selection.to
       console.log(from, to)
@@ -97,7 +98,7 @@ export default {
       this.$emit('handleInsertLink', { ...this.linkAttrs, currentReferenceIndex: this.currentReferenceIndex })
       this.closeAddLinkDialog()
     },
-    openAddLinkDialog () {
+    openAddLinkDialog() {
       this.linkAttrs.href = ''
       this.linkAttrs.text = ''
       const { selection, state } = this.editor
@@ -123,9 +124,13 @@ export default {
       this.currentReferenceIndex = linkCount + 1
       this.addLinkDialogVisible = true
     },
-    closeAddLinkDialog () {
+    closeAddLinkDialog() {
       this.addLinkDialogVisible = false
     }
   }
 }
 </script>
+
+<style lang="scss">
+@import '@/assets/scss/post/main.scss'
+</style>

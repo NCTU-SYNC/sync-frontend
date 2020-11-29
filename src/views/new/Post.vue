@@ -2,80 +2,108 @@
   <b-container>
     <b-row>
       <b-col
-        class="py-2"
-        lg="8"
+        class="py-2 main-editor-area"
+        lg="7"
         md="12"
         sm="12"
-        xs="12"
+        cols="12"
       >
-        <b-card no-body>
+        <b-row>
+          <b-col class="d-flex justify-content-between align-items-center">
+            <b-breadcrumb
+              :items="items"
+              class="bg-transparent p-0 m-0"
+            />
+            <div class="editor-hint-step">
+              <span>Help!</span>
+              <span>1. 編輯文章主題區塊</span>
+              <span>2. 撰寫段落標題與內容</span>
+              <span>3. 右側搜尋新聞加入文章</span>
+              <b-button variant="link">
+                <b-icon icon="x" />
+              </b-button>
+            </div>
+          </b-col>
+        </b-row>
+        <b-card
+          no-body
+          class="mt-2 bg-light border-0"
+        >
           <b-card-body>
-            <b-form inline>
-              <label class="sr-only" for="post-title">標題</label>
-              <b-input
+            <b-form>
+              <label
+                class="sr-only"
+                for="post-title"
+              >標題</label>
+              <b-form-input
                 id="post-title"
                 v-model="postTitle"
                 class="mb-0 mr-sm-2 mb-sm-0"
                 placeholder="輸入標題..."
                 required
               />
-
-              <label class="sr-only" for="post-datepicker" />
-              <b-form-datepicker
-                id="post-datepicker"
-                v-model="postDateValue"
-                class="mb-0 mr-sm-2 mb-sm-0"
-                :hide-header="true"
-                locale="zh"
-                :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
-                label-no-date-selected="日期"
-                label-help=""
-              />
-
-              <label class="sr-only" for="post-timepicker" />
-              <b-form-timepicker
-                id="post-timepicker"
-                v-model="postTimeValue"
-                class="mb-0 mr-sm-2 mb-sm-0"
-                :hour12="false"
-                locale="zh"
-                :now-button="true"
-                :show-seconds="false"
-                :minutes-step="10"
-                :no-close-button="true"
-                label-now-button="現在時間"
-                label-no-time-selected="時間"
-                :hide-header="true"
-              />
             </b-form>
-            <label for="post-tags" />
-            <b-form-tags
-              v-model="postTags"
-              input-id="post-tags"
-              separator=" "
-              placeholder="新增標籤 (空白或Enter鍵分隔)"
-              remove-on-delete
-              duplicate-tag-text="重複的標籤"
-            />
+            <div class="d-flex justify-content-between py-2">
+              <div class="d-flex justify-content-start">
+                <b-button
+                  v-for="(tag, tagIndex) in postTags"
+                  :key="tagIndex"
+                  variant="outline-primary"
+                  size="sm"
+                  class="tag tag-pill"
+                >
+                  #{{ tag }}
+                  <b-icon
+                    icon="x"
+                    class="ml-1"
+                  />
+                </b-button>
+                <b-button
+                  variant="outline-primary"
+                  class="tag tag-add-btn"
+                >
+                  <b-icon icon="plus" />
+                </b-button>
+              </div>
+              <div class="d-flex justify-content-end align-items-center">
+                <b-form-checkbox
+                  v-model="isAnonymous"
+                  value="true"
+                  unchecked-value="false"
+                >
+                  匿名發文
+                </b-form-checkbox>
+                <span class="mx-2 text-secondary">
+                  編輯者：{{ $store.getters.displayName }}
+                </span>
+                <b-link class="text-secondary">
+                  +其他10位
+                </b-link>
+              </div>
+            </div>
           </b-card-body>
-          <b-card-footer>
-            編輯者：
-            <b-link v-for="postAuthor in postAuthors" :key="postAuthor.uid" href="#" class="card-link">{{ postAuthor.displayName }}</b-link>
-          </b-card-footer>
         </b-card>
-        <hr>
-        <div>
-          <br>
-          <b-col cols="12" class="text-center">
+        <div class="d-flex justify-content-center mt-3">
+          <div class="block-divider" />
+          <div class="flex-grow-1">
             <b-button
-              variant="outline-secondary"
-              style="border-radius: 100px; margin-bottom: 1rem;"
-              @click="handleAddBlack"
-            >+ 段落</b-button>
-          </b-col>
+              variant="outline-primary"
+              class="add-block-btn"
+              @click="handleAddBlock"
+            >
+              <span>+ 段落</span>
+            </b-button>
+          </div>
+          <div class="block-divider" />
         </div>
-        <div v-for="block in blocks" :key="block.id">
-          <b-card no-body border-variant="white">
+        <div
+          v-for="block in blocks"
+          :key="block.id"
+        >
+          <b-card
+            no-body
+            class="bg-light border-0 min-vh-50"
+          >
             <TiptapEditor
               :content.sync="block.content"
               :block-title.sync="block.blockTitle"
@@ -83,30 +111,49 @@
               @onEdit="onEditorEdit"
             />
           </b-card>
-          <br>
-          <b-col cols="12" class="text-center">
-            <b-button
-              variant="outline-secondary"
-              style="border-radius: 100px; margin-bottom: 1rem;"
-              @click="handleAddBlack"
-            >+ 段落</b-button>
-          </b-col>
+          <div class="d-flex justify-content-center mt-3">
+            <div class="block-divider" />
+            <div class="flex-grow-1">
+              <b-button
+                variant="outline-primary"
+                class="add-block-btn"
+                @click="handleAddBlock"
+              >
+                <span>+ 段落</span>
+              </b-button>
+            </div>
+            <div class="block-divider" />
+          </div>
         </div>
-        <b-container>
-          <hr>
-          <b-row>
-            <b-col class="mr-auto" />
-            <b-button class="mr-4" variant="transparent" @click="handleSaveArticle">儲存</b-button>
-            <b-button class="mr-auto" variant="dark" @click="handlePublish">發布</b-button></b-row>
-        </b-container>
+        <b-row>
+          <b-col class="d-flex justify-content-between">
+            <b-button
+              variant="outline-primary"
+              size="lg"
+              class="px-3"
+              @click="handleSaveArticle"
+            >
+              儲存
+            </b-button>
+            <b-button
+              variant="outline-primary"
+              size="lg"
+              class="px-3"
+              @click="handlePublish"
+            >
+              發布
+            </b-button>
+          </b-col>
+        </b-row>
       </b-col>
       <b-col
-        class="h-100 d-inline-block py-4 py-lg-2"
+        lg="5"
+        cols="12"
+        class="py-4 py-lg-2 news-area"
       >
         <NewsPanel @importNews="importNews" />
       </b-col>
     </b-row>
-
   </b-container>
 </template>
 
@@ -114,7 +161,7 @@
 import { getArticleById, createArticle, updateArticleById } from '@/api/article'
 import TiptapEditor from '@/components/Post/TiptapEditor'
 import { getToken } from '@/utils/auth'
-import NewsPanel from '@/components/new/NewsPanel'
+import NewsPanel from '@/components/NewsPanel'
 
 export default {
   name: 'Post',
@@ -140,7 +187,7 @@ export default {
       items: [
         {
           text: '首頁',
-          to: '/'
+          to: '/home'
         },
         {
           text: '編輯新聞',
@@ -150,7 +197,7 @@ export default {
     }
   },
   created() {
-    this.handleClearPost()
+    // this.handleClearPost()
     // 從route中獲得此文章的ID
     const articleId = this.articleId = this.$route.params.ArticleID
     this.isNewPost = !(articleId || false)
@@ -163,9 +210,12 @@ export default {
           this.postTitle = data.title
           this.postTags = data.tags
           const dateTime = this.postDateTime = data.createdAt
-          this.postDateValue = this.sperateDateAndTime(dateTime).date
-          this.postTimeValue = this.sperateDateAndTime(dateTime).time
+          this.postDateValue = this.seperateDateAndTime(dateTime).date
+          this.postTimeValue = this.seperateDateAndTime(dateTime).time
           this.blocks = data.blocks
+          if (this.blocks.length === 0) {
+            this.handleAddBlock()
+          }
         }
       }).catch(err => {
         console.error(err)
@@ -173,7 +223,7 @@ export default {
     }
   },
   methods: {
-    handleAddBlack() {
+    handleAddBlock() {
       const currentBlockCount = this.blocks.length
       this.blocks.push({
         id: currentBlockCount + 1,
@@ -257,17 +307,19 @@ export default {
     onEditorEdit(editor) {
       this.currentEditingEditor = editor
     },
-    sperateDateAndTime(dateTimeString) {
+    seperateDateAndTime(dateTimeString) {
       const dateTime = new Date(dateTimeString)
-      return { date: dateTime.toISOString().slice(0, 10),
-        time: dateTime.toLocaleTimeString('en-US', { hour12: false }) }
+      return {
+        date: dateTime.toISOString().slice(0, 10),
+        time: dateTime.toLocaleTimeString('en-US', { hour12: false })
+      }
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/Post/editor.scss";
+@import "@/assets/scss/post/editor.scss";
 
 .block-divider {
   width: 100%;
@@ -321,12 +373,14 @@ export default {
 .main-editor-area {
   display:inline-block;
   height: calc(100vh - 100px);
+  overflow-x: hidden;
   overflow-y: scroll;
 }
 
 .news-area {
   display:inline-block;
   height: calc(100vh - 100px);
+  overflow-x: hidden;
   overflow-y: scroll;
 }
 </style>
