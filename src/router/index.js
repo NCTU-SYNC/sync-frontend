@@ -37,19 +37,14 @@ export default new Router({
       name: 'Profile',
       component: () => import('@/views/new/Profile'),
       beforeEnter: (to, from, next) => {
-        isLogin() ? next() : next('/new/login')
+        isLogin() ? next() : next('/login')
       }
-    },
-    {
-      path: '/oldArticle',
-      name: 'OldArticle',
-      component: () => import('@/views/OldArticle')
     },
     {
       path: '/article/:ArticleID/post',
       component: () => import('@/views/new/Post'),
       beforeEnter: (to, from, next) => {
-        isLogin() ? next() : next('/new/login')
+        isLogin() ? next() : next('/login')
       }
     },
     {
@@ -57,7 +52,7 @@ export default new Router({
       name: 'Post',
       component: () => import('@/views/new/Post'),
       beforeEnter: (to, from, next) => {
-        isLogin() ? next() : next('/new/login')
+        isLogin() ? next() : next('/login')
       }
     },
     {

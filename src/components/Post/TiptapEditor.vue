@@ -111,63 +111,65 @@
             </div>
           </div>
         </editor-menu-bar>
-        <editor-menu-bubble
-          v-slot="{ commands, isActive, getMarkAttrs, menu }"
-          class="menububble"
-          :editor="editor"
-          @hide="hideLinkMenu"
-        >
-          <div
-            class="menububble"
-            :class="{ 'is-active': menu.isActive }"
-            :style="`left: ${menu.left}px; bottom: ${menu.bottom}px;`"
-          >
-            <form
-              v-if="linkMenuIsActive"
-              class="menububble__form"
-              @submit.prevent="setLinkUrl(commands.link, linkUrl)"
-            >
-              <input
-                ref="linkInput"
-                v-model="linkUrl"
-                class="menububble__input"
-                type="text"
-                placeholder="貼上引用連結或點選右邊搜尋欄新聞"
-                @keydown.esc="hideLinkMenu"
-              >
-              <button
-                class="menububble__button"
-                type="button"
-                @click="setLinkUrl(commands.link, null)"
-              >
-                <b-icon
-                  icon="x"
-                  scale="1.5"
-                />
-              </button>
-            </form>
-
-            <template v-else>
-              <button
-                class="menububble__button"
-                :class="{ 'is-active': isActive.link() }"
-                @click="showLinkMenu(getMarkAttrs('link'))"
-              >
-                <span>{{ isActive.link() ? '更新引用連結' : '新增引用連結' }}</span>
-                <b-icon
-                  class="ml-2"
-                  icon="link45deg"
-                  scale="1.5"
-                />
-              </button>
-            </template>
-          </div>
-        </editor-menu-bubble>
       </b-col>
     </b-row>
     <b-row>
       <b-col>
         <div class="rounded border bg-white">
+          <editor-menu-bubble
+            v-slot="{ commands, isActive, getMarkAttrs, menu }"
+            class="menububble"
+            :editor="editor"
+            @hide="hideLinkMenu"
+          >
+            <div
+              ref="menuBubble"
+              class="menububble"
+              :class="{ 'is-active': menu.isActive }"
+              :style="`left: ${menu.left}px; bottom: ${menu.bottom}px;`"
+            >
+              <form
+                v-if="linkMenuIsActive"
+                class="menububble__form"
+                @submit.prevent="setLinkUrl(commands.link, linkUrl, isActive.link())"
+              >
+                <input
+                  ref="linkInput"
+                  v-model="linkUrl"
+                  class="menububble__input"
+                  style="min-width: 15rem !important;"
+                  type="text"
+                  placeholder="貼上引用連結或點選右邊搜尋欄新聞"
+                  @keydown.esc="hideLinkMenu"
+                >
+                <button
+                  class="menububble__button ml-1"
+                  type="button"
+                  @click="setLinkUrl(commands.link, null, false)"
+                >
+                  <b-icon
+                    icon="x"
+                    scale="1.5"
+                  />
+                </button>
+              </form>
+
+              <template v-else>
+                <button
+                  class="menububble__button"
+                  :class="{ 'is-active': isActive.link() }"
+                  @click="showLinkMenu(getMarkAttrs('link'))"
+                >
+                  <span>{{ isActive.link() ? '更新引用連結' : '新增引用連結' }}</span>
+                  <b-icon
+                    class="ml-2"
+                    icon="link45deg"
+                    scale="1.5"
+                  />
+                </button>
+              </template>
+            </div>
+          </editor-menu-bubble>
           <editor-content
             ref="editorContent"
             :class="['editor__content', 'px-3', 'pt-3', { 'active': initialized}]"
@@ -179,13 +181,13 @@
             class="px-3 pb-3"
           >
             <span class="px-2 border">{{ link.currentReferenceIndex }}</span>
-            <a
+            <b-link
               class="static-link ml-1"
               :href="link.href"
               target="_blank"
             >
               {{ link.title }}
-            </a>
+            </b-link>
           </div>
         </div>
       </b-col>
@@ -196,8 +198,8 @@
 <script>
 import { Editor, EditorContent, EditorMenuBar, EditorMenuBubble } from 'tiptap'
 import { Blockquote, Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder, OrderedList } from 'tiptap-extensions'
-import Link from '@/components/new/tiptap-extensions/Link'
-import AddLinkCommandButton from '@/components/new/MenuCommands/Link/AddLinkCommandButton'
+import Link from '@/components/Editor/TiptapExtensions/Link'
+import AddLinkCommandButton from '@/components/Editor/MenuCommands/AddLinkCommandButton.vue'
 
 export default {
   name: 'TiptapEditPage',
@@ -238,7 +240,7 @@ export default {
         onUpdate: ({ getJSON }) => {
           // console.log(state, transaction)
           // 將資料回傳給父物件
-          // console.log(getJSON())
+          console.log(getJSON())
           this.$emit('update:content', getJSON())
         },
         onFocus: () => {
@@ -276,7 +278,7 @@ export default {
   created() {
     // 產生隨機ID，讓元件綁上id
     this.blockId = Math.random().toString(36).substring(7)
-    // console.log('Random block id: ', this.blockId)
+    console.log('Random block id: ', this.blockId)
     this.tempData.blockTitle = this.blockTitle
     this.tempData.blockDateValue = this.sperateDateAndTime(this.blockDateTime).date
     this.tempData.blockTimeValue = this.sperateDateAndTime(this.blockDateTime).time
@@ -287,11 +289,11 @@ export default {
       this.$emit('update:blockTitle', this.tempData.blockTitle)
     },
     handleChangeDate() {
-      // console.log('handleChangeDate')
+      console.log('handleChangeDate')
       this.$emit('update:blockDateTime', `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`)
     },
     handleChangeTime() {
-      // console.log('handleChangeTime')
+      console.log('handleChangeTime')
       this.$emit('update:blockDateTime', `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`)
     },
     sperateDateAndTime(dateTimeString) {
@@ -305,13 +307,26 @@ export default {
       this.$emit('onEdit', this.editor)
     },
     handleInsertLink(linkAttrs) {
-      // console.log(linkAttrs)
+      console.log(linkAttrs)
       this.links.push(linkAttrs)
+    },
+    handleUpdateLink(index, linkAttrs) {
+      if (index >= 0 && index < this.links.length) {
+        this.links[index].title = linkAttrs.title || this.links[index].title
+        this.links[index].href = linkAttrs.href || this.links[index].href
+        this.links[index].currentReferenceIndex = linkAttrs.currentReferenceIndex || this.links[index].currentReferenceIndex
+      }
     },
     showLinkMenu(attrs) {
       this.linkUrl = attrs.href
       this.linkMenuIsActive = true
       this.$nextTick(() => {
+        const menuBubble = this.$refs.menuBubble
+        if (menuBubble.offsetLeft <= menuBubble.offsetWidth / 2 - 15) {
+          menuBubble.style.left = `${menuBubble.offsetWidth / 2}px`
+        } else if (menuBubble.offsetLeft >= menuBubble.parentElement.offsetWidth + 30 - menuBubble.offsetWidth / 2) {
+          menuBubble.style.left = `${menuBubble.parentElement.offsetWidth + 30 - menuBubble.offsetWidth / 2}px`
+        }
         this.$refs.linkInput.focus()
       })
     },
@@ -319,16 +334,50 @@ export default {
       this.linkUrl = null
       this.linkMenuIsActive = false
     },
-    setLinkUrl(command, url) {
-      command({ href: url })
-      this.handleInsertLink({ href: url, title: url, currentReferenceIndex: this.links.length + 1 })
+    setLinkUrl(command, url, isActiveLink) {
       this.hideLinkMenu()
+      if (url) {
+        const state = this.editor.state
+        const { from, to } = state.selection
+        if (isActiveLink) {
+          let marks = []
+          state.doc.nodesBetween(from, to, (node) => {
+            marks = [...marks, ...node.marks]
+          })
+          const mark = marks.find((markItem) => markItem.type.name === 'link')
+          let findIndex
+
+          this.links.some((linkAttr, index) => {
+            if (linkAttr.href === mark.attrs.href) {
+              findIndex = index
+              return true
+            }
+          })
+          console.log(findIndex, this.links[findIndex], url)
+          this.handleUpdateLink(findIndex, { href: url })
+          command({ href: url })
+          this.editor.setSelection(to, to)
+          this.editor.focus()
+        } else {
+          command({ href: url })
+          this.editor.setSelection(to, to)
+          this.editor.focus()
+          const nextIndex = this.links.length + 1
+          this.handleInsertLink({ href: url, title: url, currentReferenceIndex: nextIndex })
+          const transaction = this.editor.state.tr.insertText(` [${nextIndex}]`)
+          this.editor.view.dispatch(transaction)
+        }
+      } else {
+        command({ href: url })
+      }
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+@import '@/assets/scss/post/main.scss';
+
 .editor {
   &__floating-menu {
     position: absolute;

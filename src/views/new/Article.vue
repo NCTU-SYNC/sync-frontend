@@ -142,7 +142,7 @@
 import { getArticleById, updateArticleById } from '@/api/article'
 import { Editor, EditorContent } from 'tiptap'
 import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder } from 'tiptap-extensions'
-import Link from '@/components/new/tiptap-extensions/Link'
+import Link from '@/components/Editor/TiptapExtensions/Link'
 
 export default {
   name: 'Article',
@@ -282,36 +282,42 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/Article/main";
-  .reference {
-    color: gray;
-    text-decoration-line: underline;
-  }
-  ul {
-    padding-inline-start: 0;
-    list-style: none;
-  }
-  p {
-    padding: 2rem 0;
-  }
-  hr {
-    padding-bottom: 1rem;
-  }
-  .last-update {
-    margin: auto;
-    color: gray;
-  }
-  .title-bar {
-    display: flex;
-  }
-  .author {
-    display: inline-block;
-    margin-left: auto !important;
-    color: gray;
-  }
-  .tag {
-    display: inline-block;
-    padding: 0.5rem;
-    color: gray;
-  }
+.reference {
+  color: gray;
+  text-decoration-line: underline;
+}
+
+ul {
+  padding-inline-start: 0;
+  list-style: none;
+}
+
+p {
+  padding: 2rem 0;
+}
+
+hr {
+  padding-bottom: 1rem;
+}
+
+.last-update {
+  margin: auto;
+  color: gray;
+}
+
+.title-bar {
+  display: flex;
+}
+
+.author {
+  display: inline-block;
+  margin-left: auto !important;
+  color: gray;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.5rem;
+  color: gray;
+}
 </style>
