@@ -9,7 +9,15 @@
         mode="out-in"
         :duration="250"
       >
-        <b-col v-if="isInFirstPage" key="v-first-form" xl="5" lg="6" md="8" sm="10" cols="12">
+        <b-col
+          v-if="isInFirstPage"
+          key="v-first-form"
+          xl="5"
+          lg="6"
+          md="8"
+          sm="10"
+          cols="12"
+        >
           <b-card class="p-sm-3">
             <h1>建立您的帳戶</h1>
             <b-form @submit.stop.prevent="handleSubmit">
@@ -67,7 +75,10 @@
                     @change="handleChangeDate('year')"
                   />
 
-                  <label for="birthday-month" class="ml-sm-1">月</label>
+                  <label
+                    for="birthday-month"
+                    class="ml-sm-1"
+                  >月</label>
                   <b-form-select
                     id="birthday-month"
                     v-model="userData.birthday.month"
@@ -77,7 +88,10 @@
                     @change="handleChangeDate('month')"
                   />
 
-                  <label for="birthday-day" class="ml-sm-1">日</label>
+                  <label
+                    for="birthday-day"
+                    class="ml-sm-1"
+                  >日</label>
                   <b-form-select
                     id="birthday-day"
                     v-model="userData.birthday.day"
@@ -86,7 +100,10 @@
                     :state="validBirthday()"
                     @change="handleChangeDate('day')"
                   />
-                  <b-form-invalid-feedback id="invalid-birthday" :state="validBirthday()">
+                  <b-form-invalid-feedback
+                    id="invalid-birthday"
+                    :state="validBirthday()"
+                  >
                     請輸入正確的生日
                   </b-form-invalid-feedback>
                 </div>
@@ -102,12 +119,26 @@
                 />
               </b-form-group>
               <div class="d-flex justify-content-end">
-                <b-button type="button" variant="primary" @click="handleNextPage">下一步</b-button>
+                <b-button
+                  type="button"
+                  variant="primary"
+                  @click="handleNextPage"
+                >
+                  下一步
+                </b-button>
               </div>
             </b-form>
           </b-card>
         </b-col>
-        <b-col v-else key="v-second-form" xl="5" lg="6" md="8" sm="10" cols="10">
+        <b-col
+          v-else
+          key="v-second-form"
+          xl="5"
+          lg="6"
+          md="8"
+          sm="10"
+          cols="10"
+        >
           <b-card class="p-3">
             <h1>設定您的密碼</h1>
             <b-form @submit.stop.prevent="handleSubmit">
@@ -128,7 +159,11 @@
                   debounce="500"
                   @change="hasChanged.password = true"
                 />
-                <b-button class="btn-icon btn-icon-only" variant="outer-link" @click="isPeerPassword = !isPeerPassword">
+                <b-button
+                  class="btn-icon btn-icon-only"
+                  variant="outer-link"
+                  @click="isPeerPassword = !isPeerPassword"
+                >
                   <b-icon :icon="togglePeerPasswordIcon" />
                 </b-button>
                 <b-form-invalid-feedback id="invalid-password">
@@ -152,7 +187,11 @@
                   debounce="500"
                   @change="hasChanged.repeatPassword = true"
                 />
-                <b-button class="btn-icon btn-icon-only" variant="outer-link" @click="isPeerPassword = !isPeerPassword">
+                <b-button
+                  class="btn-icon btn-icon-only"
+                  variant="outer-link"
+                  @click="isPeerPassword = !isPeerPassword"
+                >
                   <b-icon :icon="togglePeerPasswordIcon" />
                 </b-button>
                 <b-form-invalid-feedback id="invalid-confirmPassword">
@@ -161,8 +200,19 @@
               </div>
 
               <div class="d-flex justify-content-between mt-4">
-                <b-button variant="transparent" @click="isInFirstPage = true">返回</b-button>
-                <b-button type="button" variant="primary" @click="handleSubmit">註冊</b-button>
+                <b-button
+                  variant="transparent"
+                  @click="isInFirstPage = true"
+                >
+                  返回
+                </b-button>
+                <b-button
+                  type="button"
+                  variant="primary"
+                  @click="handleSubmit"
+                >
+                  註冊
+                </b-button>
               </div>
             </b-form>
           </b-card>
@@ -246,7 +296,7 @@ export default {
   methods: {
     handleChangeDate(changedField) {
       this.hasChanged.birthday = true
-      var date = this.userData.birthday
+      const date = this.userData.birthday
       const valid = this.validBirthday()
       if (valid !== true) {
         if (changedField === 'year') {
@@ -263,7 +313,7 @@ export default {
       return this.hasChanged.name ? this.validations.name : null
     },
     validEmail() {
-      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       this.validations.email = re.test(this.userData.email)
       return this.hasChanged.email ? this.validations.email : null
     },
@@ -272,15 +322,15 @@ export default {
       return this.hasChanged.gender ? this.validations.gender : null
     },
     validPassword() {
-      var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
+      const re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
       return this.hasChanged.password ? re.test(this.password) : null
     },
     validRepeatPassword() {
       return this.hasChanged.repeatPassword ? this.password === this.repeatPassword && this.repeatPassword.length > 0 : null
     },
     validBirthday() {
-      var date = this.userData.birthday
-      const d = moment(`${date.year}-${date.month}-${date.day}`, `YYYY-M-D`, true)
+      const date = this.userData.birthday
+      const d = moment(`${date.year}-${date.month}-${date.day}`, 'YYYY-M-D', true)
       this.validations.birthday = d.isValid()
       return this.hasChanged.birthday ? this.validations.birthday : null
     },
@@ -298,10 +348,10 @@ export default {
         return this.validations[key]
       })) {
         this.isInFirstPage = true
-      }*/
+      } */
 
-      var validationResult = true
-      for (var v in this.validations) {
+      let validationResult = true
+      for (const v in this.validations) {
         if (!this.validations[v]) {
           validationResult = false
           break
@@ -333,27 +383,5 @@ export default {
 <style lang="scss" scoped>
 .custom-select {
   min-width: 25%;
-}
-
-.slide-left-enter-active,
-.slide-left-leave-active,
-.slide-right-enter-active,
-.slide-right-leave-active {
-  transition-duration: 0.25s;
-  transition-property: height, opacity, transform;
-  transition-timing-function: cubic-bezier(0.55, 0, 0.1, 1);
-  overflow: hidden;
-}
-
-.slide-left-enter,
-.slide-right-leave-active {
-  opacity: 0;
-  transform: translate(2em, 0);
-}
-
-.slide-left-leave-active,
-.slide-right-enter {
-  opacity: 0;
-  transform: translate(-2em, 0);
 }
 </style>
