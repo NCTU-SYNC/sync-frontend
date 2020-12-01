@@ -101,8 +101,7 @@
           :key="block.id"
         >
           <b-card
-            no-body
-            class="bg-light border-0 min-vh-50"
+            class="bg-light border-0"
           >
             <TiptapEditor
               :content.sync="block.content"
@@ -126,6 +125,22 @@
           </div>
         </div>
         <b-row>
+          <b-col>
+            <b-card
+              class="bg-light border-0 citations-container"
+            >
+              <p>引用貼文</p>
+              <div v-for="(citation, index) in post.citations" :key="index">
+                <div class="d-flex justify-content-start">
+                  <span class="border px-2 align-middle">{{ index + 1 }}</span>
+                  <b-link class="ml-2" :href="citation.url" target="_blank">{{ citation.title }}</b-link>
+                </div>
+              </div>
+            </b-card>
+          </b-col>
+        </b-row>
+        <div class="block-divider" />
+        <b-row class="mt-3">
           <b-col class="d-flex justify-content-between">
             <b-button
               variant="outline-primary"
@@ -158,6 +173,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { getArticleById, createArticle, updateArticleById } from '@/api/article'
 import TiptapEditor from '@/components/Post/TiptapEditor'
 import { getToken } from '@/utils/auth'
@@ -169,7 +185,6 @@ export default {
     TiptapEditor,
     NewsPanel
   },
-  middleware: 'authenticated',
   data() {
     return {
       articleId: undefined,
@@ -196,6 +211,9 @@ export default {
       ]
     }
   },
+  computed: {
+    ...mapGetters({ post: 'post' })
+  },
   created() {
     // this.handleClearPost()
     // 從route中獲得此文章的ID
@@ -220,6 +238,8 @@ export default {
       }).catch(err => {
         console.error(err)
       })
+    } else {
+      this.handleAddBlock()
     }
   },
   methods: {
@@ -382,5 +402,11 @@ export default {
   height: calc(100vh - 100px);
   overflow-x: hidden;
   overflow-y: scroll;
+}
+
+.citations-container {
+  a {
+    text-decoration: underline;
+  }
 }
 </style>

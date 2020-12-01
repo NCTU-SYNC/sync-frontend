@@ -59,3 +59,12 @@ input {
   text-decoration: underline;
   color: $primary;
 }
+
+.msgbox-footer {
+  display: grid;
+  justify-content: center;
+  grid-auto-flow: column;
+  grid-gap: 1rem;
+  grid-auto-columns: minmax(6rem, auto);
+  border: none;
+}

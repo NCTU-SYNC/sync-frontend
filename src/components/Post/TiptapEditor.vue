@@ -1,5 +1,5 @@
 <template>
-  <div style="margin: 20px;">
+  <div>
     <div class="d-flex justify-content-end w-100">
       <label
         class="sr-only"
@@ -15,6 +15,7 @@
 
       <div class="d-flex justify-content-center align-items-center border rounded bg-white datetime-container">
         <b-dropdown
+          class="date-dropdown"
           :text="tempData.blockDateValue"
           toggle-class="py-0 border-0"
           variant="link"
@@ -29,7 +30,8 @@
         </b-dropdown>
         <span>|</span>
         <b-dropdown
-          :text="tempData.blockTimeValue"
+          class="time-dropdown"
+          :text="getTime"
           toggle-class="py-0 border-0"
           variant="link"
           no-caret
@@ -44,6 +46,7 @@
             label-now-button="現在時間"
             label-no-time-selected="時間"
             :hide-header="true"
+            @input="handleChangeTime"
           />
         </b-dropdown>
       </div>
@@ -94,6 +97,19 @@
                 :editor="editor"
                 @handleInsertLink="handleInsertLink"
               />
+              <button
+                class="menubar__button"
+                @click="commands.undo"
+              >
+                <b-icon icon="arrow90deg-left" />
+              </button>
+
+              <button
+                class="menubar__button"
+                @click="commands.redo"
+              >
+                <b-icon icon="arrow90deg-right" />
+              </button>
             </div>
             <div class="d-flex justify-content-end align-items-center">
               <b-form-checkbox
@@ -197,9 +213,10 @@
 
 <script>
 import { Editor, EditorContent, EditorMenuBar, EditorMenuBubble } from 'tiptap'
-import { Blockquote, Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder, OrderedList } from 'tiptap-extensions'
+import { History, Blockquote, Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder, OrderedList } from 'tiptap-extensions'
 import Link from '@/components/Editor/TiptapExtensions/Link'
 import AddLinkCommandButton from '@/components/Editor/MenuCommands/AddLinkCommandButton.vue'
+import moment from 'moment'
 
 export default {
   name: 'TiptapEditPage',
@@ -247,6 +264,7 @@ export default {
           this.onEditorFocus()
         },
         extensions: [
+          new History(),
           new Blockquote(),
           new Heading({ levels: [1, 2, 3] }),
           new Bold(),
@@ -272,6 +290,11 @@ export default {
       initialized: false
     }
   },
+  computed: {
+    getTime() {
+      return moment(this.blockDateTime).format('LT')
+    }
+  },
   beforeDestroy() {
     this.editor.destroy()
   },
@@ -280,8 +303,8 @@ export default {
     this.blockId = Math.random().toString(36).substring(7)
     console.log('Random block id: ', this.blockId)
     this.tempData.blockTitle = this.blockTitle
-    this.tempData.blockDateValue = this.sperateDateAndTime(this.blockDateTime).date
-    this.tempData.blockTimeValue = this.sperateDateAndTime(this.blockDateTime).time
+    this.tempData.blockDateValue = moment(this.blockDateTime).format('YYYY-MM-DD')
+    this.tempData.blockTimeValue = moment(this.blockDateTime).format('HH:mm:ss')
     this.initialized = true
   },
   methods: {
@@ -293,7 +316,7 @@ export default {
       this.$emit('update:blockDateTime', `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`)
     },
     handleChangeTime() {
-      console.log('handleChangeTime')
+      console.log('handleChangeTime', this.tempData.blockTimeValue)
       this.$emit('update:blockDateTime', `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`)
     },
     sperateDateAndTime(dateTimeString) {
@@ -353,19 +376,11 @@ export default {
               return true
             }
           })
-          console.log(findIndex, this.links[findIndex], url)
           this.handleUpdateLink(findIndex, { href: url })
           command({ href: url })
-          this.editor.setSelection(to, to)
-          this.editor.focus()
         } else {
           command({ href: url })
-          this.editor.setSelection(to, to)
-          this.editor.focus()
-          const nextIndex = this.links.length + 1
-          this.handleInsertLink({ href: url, title: url, currentReferenceIndex: nextIndex })
-          const transaction = this.editor.state.tr.insertText(` [${nextIndex}]`)
-          this.editor.view.dispatch(transaction)
+          this.handleInsertLink({ href: url, title: url })
         }
       } else {
         command({ href: url })
@@ -394,6 +409,14 @@ export default {
 }
 
 .datetime-container {
+  .date-dropdown {
+    width: 7rem;
+  }
+
+  .time-dropdown {
+    width: 6rem;
+  }
+
   button {
     padding: 0 !important;
     border: none !important;
