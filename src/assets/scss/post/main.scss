@@ -19,6 +19,16 @@
   box-sizing: border-box;
 }
 
+li {
+  a {
+    text-decoration: none !important;
+  }
+}
+
+a {
+  text-decoration: underline !important;
+}
+
 @import "./editor";
 @import "./menubar";
 @import "./menububble";

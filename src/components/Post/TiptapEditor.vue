@@ -95,7 +95,6 @@
               <AddLinkCommandButton
                 :commands="commands"
                 :editor="editor"
-                @handleInsertLink="handleInsertLink"
               />
               <button
                 class="menubar__button"
@@ -191,20 +190,6 @@
             :class="['editor__content', 'px-3', 'pt-3', { 'active': initialized}]"
             :editor="editor"
           />
-          <div
-            v-for="(link, index) in links"
-            :key="index"
-            class="px-3 pb-3"
-          >
-            <span class="px-2 border">{{ link.currentReferenceIndex }}</span>
-            <b-link
-              class="static-link ml-1"
-              :href="link.href"
-              target="_blank"
-            >
-              {{ link.title }}
-            </b-link>
-          </div>
         </div>
       </b-col>
     </b-row>
@@ -248,7 +233,6 @@ export default {
         blockDateValue: '',
         blockTimeValue: ''
       },
-      links: [],
       editor: new Editor({
         autoFocus: true,
         onInit: () => {
@@ -329,17 +313,6 @@ export default {
     onEditorFocus() {
       this.$emit('onEdit', this.editor)
     },
-    handleInsertLink(linkAttrs) {
-      console.log(linkAttrs)
-      this.links.push(linkAttrs)
-    },
-    handleUpdateLink(index, linkAttrs) {
-      if (index >= 0 && index < this.links.length) {
-        this.links[index].title = linkAttrs.title || this.links[index].title
-        this.links[index].href = linkAttrs.href || this.links[index].href
-        this.links[index].currentReferenceIndex = linkAttrs.currentReferenceIndex || this.links[index].currentReferenceIndex
-      }
-    },
     showLinkMenu(attrs) {
       this.linkUrl = attrs.href
       this.linkMenuIsActive = true
@@ -357,31 +330,10 @@ export default {
       this.linkUrl = null
       this.linkMenuIsActive = false
     },
-    setLinkUrl(command, url, isActiveLink) {
+    async setLinkUrl(command, url, isActiveLink) {
       this.hideLinkMenu()
-      if (url) {
-        const state = this.editor.state
-        const { from, to } = state.selection
-        if (isActiveLink) {
-          let marks = []
-          state.doc.nodesBetween(from, to, (node) => {
-            marks = [...marks, ...node.marks]
-          })
-          const mark = marks.find((markItem) => markItem.type.name === 'link')
-          let findIndex
-
-          this.links.some((linkAttr, index) => {
-            if (linkAttr.href === mark.attrs.href) {
-              findIndex = index
-              return true
-            }
-          })
-          this.handleUpdateLink(findIndex, { href: url })
-          command({ href: url })
-        } else {
-          command({ href: url })
-          this.handleInsertLink({ href: url, title: url })
-        }
+      if (isActiveLink) {
+        command({ href: url })
       } else {
         command({ href: url })
       }

@@ -12,6 +12,7 @@
         <b-button
           class="mr-1"
           variant="link"
+          :disabled="searchKeyword.length === 0"
           @click="getNews"
         >
           <b-icon icon="search" />
@@ -54,6 +55,7 @@
           <b-dropdown-item>過去 1 年</b-dropdown-item>
         </b-dropdown>
         <b-dropdown
+          class="ml-2"
           variant="outline-primary"
           toggle-class="badge-pill px-4"
         >
@@ -76,6 +78,8 @@
         :outline="getNewsOutline(news.content)"
         :content="news.content"
         :url="news.url"
+        :source="news.news_club"
+        :timestamp="news.date"
         @importNews="emitToEditPage"
       />
     </div>
@@ -101,6 +105,7 @@ export default {
       this.$emit('importNews', content)
     },
     getNews() {
+      this.newsList = []
       getNews({ q: this.searchKeyword }).then(
         (response) => {
           this.newsList = response.data.data
@@ -109,13 +114,15 @@ export default {
       )
     },
     getNewsOutline(newsContent) {
-      let str = ''
-      newsContent.forEach(
-        (text, i) => {
-          if (i === 0) { return }
-          str += text + ' '
-        })
-      return str.substring(0, 120) + ' ...'
+      if (newsContent) {
+        let str = ''
+        newsContent.forEach(
+          (text, i) => {
+            if (i === 0) { return }
+            str += text + ' '
+          })
+        return str.substring(0, 120) + ' ...'
+      }
     }
   }
 }

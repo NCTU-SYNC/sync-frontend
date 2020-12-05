@@ -44,7 +44,7 @@
               />
             </b-form>
             <div class="d-flex justify-content-between py-2">
-              <div class="d-flex justify-content-start">
+              <div class="tag-contianer">
                 <b-button
                   v-for="(tag, tagIndex) in postTags"
                   :key="tagIndex"
@@ -56,16 +56,33 @@
                   <b-icon
                     icon="x"
                     class="ml-1"
+                    @click="removeTag(tagIndex)"
                   />
                 </b-button>
-                <b-button
-                  variant="outline-primary"
-                  class="tag tag-add-btn"
-                >
-                  <b-icon icon="plus" />
-                </b-button>
+                <div class="tag tag-add-btn">
+                  <span v-if="isAddingTag">#</span>
+                  <b-form-input
+                    v-if="isAddingTag"
+                    v-model="addTagText"
+                    class="pl-0"
+                    size="sm"
+                    autofocus
+                    @keyup.enter="addTag"
+                  />
+                  <b-button
+                    variant="outline-primary"
+                    size="sm"
+                    class="border-0"
+                    @click="addTag"
+                  >
+                    <b-icon
+                      icon="plus"
+                      :class="{'tag-cross': isAddingTag && addTagText.length === 0}"
+                    />
+                  </b-button>
+                </div>
               </div>
-              <div class="d-flex justify-content-end align-items-center">
+              <div class="d-flex justify-content-end align-items-start text-nowrap">
                 <b-form-checkbox
                   v-model="isAnonymous"
                   value="true"
@@ -124,22 +141,25 @@
             <div class="block-divider" />
           </div>
         </div>
-        <b-row>
-          <b-col>
-            <b-card
-              class="bg-light border-0 citations-container"
-            >
-              <p>引用貼文</p>
-              <div v-for="(citation, index) in post.citations" :key="index">
-                <div class="d-flex justify-content-start">
-                  <span class="border px-2 align-middle">{{ index + 1 }}</span>
-                  <b-link class="ml-2" :href="citation.url" target="_blank">{{ citation.title }}</b-link>
+        <div v-if="post.citations.length > 0">
+          <b-row>
+            <b-col>
+              <b-card
+                class="bg-light border-0 citations-container"
+              >
+                <p>引用貼文</p>
+                <div v-for="(citation, index) in post.citations" :key="index">
+                  <div class="d-flex justify-content-start">
+                    <span class="border px-2 align-middle">{{ index + 1 }}</span>
+                    <b-link class="ml-2 text-primary" :href="citation.url" target="_blank">{{ citation.title }}</b-link>
+                  </div>
                 </div>
-              </div>
-            </b-card>
-          </b-col>
-        </b-row>
-        <div class="block-divider" />
+              </b-card>
+            </b-col>
+          </b-row>
+          <div class="block-divider" />
+        </div>
+
         <b-row class="mt-3">
           <b-col class="d-flex justify-content-between">
             <b-button
@@ -191,6 +211,7 @@ export default {
       currentEditingEditor: null,
       isNewPost: false,
       isAnonymous: false,
+      isAddingTag: false,
       blocks: [],
       data: {},
       postAuthors: ['內部測試'],
@@ -208,7 +229,8 @@ export default {
           text: '編輯新聞',
           active: true
         }
-      ]
+      ],
+      addTagText: ''
     }
   },
   computed: {
@@ -333,6 +355,18 @@ export default {
         date: dateTime.toISOString().slice(0, 10),
         time: dateTime.toLocaleTimeString('en-US', { hour12: false })
       }
+    },
+    removeTag(index) {
+      this.postTags.splice(index, 1)
+    },
+    addTag() {
+      if (this.isAddingTag) {
+        if (this.addTagText.length > 0) {
+          this.postTags.push(this.addTagText)
+          this.addTagText = ''
+        }
+      }
+      this.isAddingTag = !this.isAddingTag
     }
   }
 }
@@ -348,12 +382,19 @@ export default {
 }
 
 .tag {
-  display: flex;
+  display: inline-block;
   align-items: center;
   justify-content: center;
   border-radius: 3rem;
   border: 1px solid $primary;
   margin: 0.25rem !important;
+  white-space:nowrap;
+
+  &-contianer {
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+  }
 
   &-pill {
     height: 2rem !important;
@@ -363,7 +404,34 @@ export default {
 
   &-add-btn {
     height: 2rem !important;
-    width: 2rem !important;
+    display: flex;
+    justify-content: flex-end;
+
+    span {
+      padding: 0.25rem 0 0.25rem 0.75rem !important;
+      font-size: 0.875rem
+    }
+
+    button {
+      width: 2rem;
+      height: 2rem !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 3rem;
+      margin: 0 !important;
+    }
+
+    input {
+      width: 6rem;
+      border: none !important;
+      background-color: transparent !important;
+      padding: 0;
+    }
+  }
+
+  &-cross {
+    transform: rotate(45deg);
   }
 }
 
