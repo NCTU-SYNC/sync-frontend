@@ -1,3 +1,10 @@
+// Override theme variables
+@import './custom.scss';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap.scss';
+@import '~bootstrap-vue/src/index.scss';
+
 // Animations
 @import './animations.scss';
 
