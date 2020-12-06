@@ -8,6 +8,7 @@ import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import store from './store'
 import FirebaseAuth from '@/utils/firebase.js'
 import router from './router'
+import '@/assets/scss/main.scss'
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)

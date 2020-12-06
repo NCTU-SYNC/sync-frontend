@@ -392,7 +392,7 @@ export default {
 
   &-contianer {
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     flex-wrap: wrap;
   }
 
