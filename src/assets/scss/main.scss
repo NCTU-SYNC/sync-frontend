@@ -72,3 +72,9 @@ input {
   grid-auto-columns: minmax(6rem, auto);
   border: none;
 }
+
+.text {
+  &-sm {
+    font-size: 0.875rem;
+  }
+}

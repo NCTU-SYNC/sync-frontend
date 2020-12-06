@@ -30,7 +30,7 @@
           class="mt-2 bg-light border-0"
         >
           <b-card-body>
-            <b-form>
+            <b-form inline class="d-flex justify-content-end align-items-stretch w-100">
               <label
                 class="sr-only"
                 for="post-title"
@@ -38,10 +38,38 @@
               <b-form-input
                 id="post-title"
                 v-model="postTitle"
-                class="mb-0 mr-sm-2 mb-sm-0"
+                class="mb-0 mr-sm-2 mb-sm-0 d-flex flex-grow-1"
                 placeholder="輸入標題..."
                 required
               />
+              <div class="border rounded bg-white date-time-container">
+                <b-dropdown
+                  class="w-100 h-100"
+                  :text="postCategories.length > 0 ? postCategories.join(', ') : '文章主題分類'"
+                  toggle-class="text-truncate"
+                  variant="link"
+                >
+                  <b-row class="no-gutters pl-2">
+                    <b-col
+                      v-for="(category, categoryIndex) in categoryList"
+                      :key="categoryIndex"
+                      cols="6"
+                      class="d-flex justify-content-center align-items-center py-1 pr-2"
+                    >
+                      <label
+                        :class="['btn',{ 'btn-outline-primary': postCategories.includes(category) }, 'w-100' ]"
+                      >
+                        <input
+                          v-model="postCategories"
+                          type="checkbox"
+                          :value="category"
+                        >
+                        <span>{{ category }}</span>
+                      </label>
+                    </b-col>
+                  </b-row>
+                </b-dropdown>
+              </div>
             </b-form>
             <div class="d-flex justify-content-between py-2">
               <div class="tag-contianer">
@@ -82,7 +110,7 @@
                   </b-button>
                 </div>
               </div>
-              <div class="d-flex justify-content-end align-items-start text-nowrap">
+              <div class="d-flex justify-content-end align-items-center text-nowrap text-sm">
                 <b-form-checkbox
                   v-model="isAnonymous"
                   value="true"
@@ -216,9 +244,11 @@ export default {
       data: {},
       postAuthors: ['內部測試'],
       postTitle: '',
+      postCategories: [],
       postDateTime: '',
       postDateValue: '',
       postTimeValue: '',
+      categoryList: ['政經', '國際', '社會', '科技', '環境', '生活', '運動'],
       postTags: ['美國總統大選', '川普'],
       items: [
         {
@@ -373,7 +403,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/scss/post/editor.scss";
+@import "@/assets/scss/post/main.scss";
 
 .block-divider {
   width: 100%;
@@ -476,5 +506,18 @@ export default {
   a {
     text-decoration: underline;
   }
+}
+
+/* HIDE RADIO */
+[type=checkbox] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* IMAGE STYLES */
+[type=checkbox] {
+  cursor: pointer;
 }
 </style>

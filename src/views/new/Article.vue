@@ -6,36 +6,14 @@
           <div class="sync-timeline">
             <div class="sync-timeline-title" />
           </div>
-          <div class="sync-timeline">
-            <div class="sync-timeline-time">
-              2020.10.02
-            </div>
-            <div class="sync-timeline-title">
-              <p>川普染疫確診</p>
-            </div>
-          </div>
-          <div class="sync-timeline">
-            <div class="sync-timeline-time">
-              2020.10.02
-            </div>
-            <div class="sync-timeline-title">
-              <p>川普染疫確診</p>
-            </div>
-          </div>
-          <div class="sync-timeline">
-            <div class="sync-timeline-time">
-              2020.10.02
-            </div>
-            <div class="sync-timeline-title">
-              <p>川普染疫確診</p>
-            </div>
-          </div>
-          <div class="sync-timeline">
-            <div class="sync-timeline-time">
-              2020.10.02
-            </div>
-            <div class="sync-timeline-title pl-2 pt-2">
-              <p>川普染疫確診</p>
+          <div v-for="(block, blockIndex) in blocks" :key="blockIndex">
+            <div class="sync-timeline">
+              <div class="sync-timeline-time">
+                {{ formatDate(block.blockDateTime) }}
+              </div>
+              <div class="sync-timeline-title">
+                <p>{{ block.blockTitle }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -43,7 +21,6 @@
       <b-col cols="8">
         <b-row>
           <b-col>
-            <p>[2020 美國總統大選] 這邊不知道是要填什麼資料</p>
             <h2>
               {{ title }}
             </h2>
@@ -117,16 +94,16 @@
       <b-col cols="2">
         <div class="sync-blank-container" />
         <div class="sync-time-container py-2">
-          <p>{{ time.year() }}</p>
+          <p class="mb-0">{{ time.year() }}</p>
           <span
             id="month"
             class="mb-2"
           >{{ time.month() + 1 }} 月</span>
           <span
             id="date"
-            class="mb-2"
+            class="mb-2 ml-2"
           >{{ time.date() }} 日</span>
-          <p class="mt-4 mb-0">
+          <p class="mt-2 mb-0">
             {{ time.format('hh:mm a') }}
           </p>
         </div>
@@ -225,6 +202,9 @@ export default {
   methods: {
     handleEditPostRoute(route) {
       if (this.isLogin) { this.$router.push(route) } else { this.$bvModal.msgBoxOk('Please Login First') }
+    },
+    formatDate(timeString) {
+      return moment(timeString).format('YYYY.MM.DD')
     },
     formatTime(timeString) {
       return moment(timeString).format('YYYY-MM-DD HH:mm')
@@ -335,10 +315,6 @@ p {
 ul {
   padding-inline-start: 0;
   list-style: none;
-}
-
-p {
-  padding: 2rem 0;
 }
 
 hr {

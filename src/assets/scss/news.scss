@@ -16,6 +16,9 @@ a {
 .news-grid {
   display: grid;
   padding: 2rem 4rem !important;
+  a {
+    text-decoration: none !important;
+  }
 
   grid-template-columns: 1fr;
   grid-gap: 4rem 4rem;

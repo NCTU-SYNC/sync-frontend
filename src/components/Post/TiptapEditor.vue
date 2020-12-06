@@ -13,7 +13,7 @@
         @change="handleChangeTitle()"
       />
 
-      <div class="d-flex justify-content-center align-items-center border rounded bg-white datetime-container">
+      <div class="d-flex justify-content-center align-items-center border rounded bg-white date-time-container">
         <b-dropdown
           class="date-dropdown"
           :text="tempData.blockDateValue"
@@ -110,7 +110,7 @@
                 <b-icon icon="arrow90deg-right" />
               </button>
             </div>
-            <div class="d-flex justify-content-end align-items-center">
+            <div class="d-flex justify-content-end align-items-center text-wrap text-sm">
               <b-form-checkbox
                 value="true"
                 unchecked-value="false"
@@ -357,21 +357,6 @@ export default {
       opacity: 1;
       visibility: visible;
     }
-  }
-}
-
-.datetime-container {
-  .date-dropdown {
-    width: 7rem;
-  }
-
-  .time-dropdown {
-    width: 6rem;
-  }
-
-  button {
-    padding: 0 !important;
-    border: none !important;
   }
 }
 
