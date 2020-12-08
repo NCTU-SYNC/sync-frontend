@@ -15,6 +15,7 @@
       <b-navbar-toggle target="nav-collapse" />
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto d-flex align-items-center">
+        <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><img src="@/assets/images/search-icon.svg"></b-nav-item>
         <b-nav-item v-show="!getLoginStatus" :to="{ name: 'SignUp', query: getRedirectPath }">註冊</b-nav-item>
         <b-nav-item v-show="!getLoginStatus" :to="{ name: 'Login', query: getRedirectPath}">登入</b-nav-item>
         <b-nav-item-dropdown v-show="getLoginStatus" no-caret right>
