@@ -1,5 +1,5 @@
 <template>
-  <b-container class="border-top">
+  <b-container class="border-top footer">
     <b-row>
       <b-col cols="6" class="description px-5">
         一個新聞協作平台<b>「新聞版的維基百科：SYNC」</b>。<br>使離散的資訊透過眾人的力量匯集起來使多元<br>的觀點在同一件事被同步與整合。
@@ -33,7 +33,7 @@
         </b-row>
       </b-col>
     </b-row>
-    <b-row align-h="center" class="my-5">Copyright © 2020 ＳＹＮＣ.</b-row>
+    <b-row align-h="center" class="mt-5 mb-3">Copyright © 2020 ＳＹＮＣ.</b-row>
   </b-container>
 </template>
 
@@ -56,8 +56,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.footer {
+  position: absolute;
+  bottom: 0;
+}
 .footer-button {
-  font-size: 21px;
+  font-size: 1.2em;
   font-family: 'Noto Sans CJK TC';
   color:#B3B3B3;
 }
