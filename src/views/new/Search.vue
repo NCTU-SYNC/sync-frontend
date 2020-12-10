@@ -48,13 +48,47 @@
         </b-col>
       </b-row>
     </b-container>
+    <b-container fluid="xl">
+      <b-row
+        v-for="(newsBlock, newsBlockIndex) in newsList"
+        :key="newsBlockIndex"
+        class="sync-row mt-3 py-2 d-flex flex-column"
+      >
+        <div class="p-3 news-grid">
+          <b-link
+            v-for="(news, newsIndex) in newsBlock.content"
+            :key="newsIndex"
+          >
+            <div
+              class="pb-4"
+              @click="handleArticleRoute(news._id)"
+            >
+              <p class="news-category">
+                {{ news.category }}
+              </p>
+              <p class="news-title">
+                {{ news.title }}
+              </p>
+              <div class="news-info">
+                <span class="mr-3">{{ `更新於 ${formatLastUpdate(news.lastUpdatedAt)} 前` }}</span>
+                <b-icon
+                  icon="eye-fill"
+                  class="mr-1"
+                /><span>{{ news.viewCount }} 個人正在閱讀</span>
+              </div>
+            </div>
+          </b-link>
+        </div>
+      </b-row>
+    </b-container>
     <Footer />
   </div>
 </template>
 
 <script>
+import moment from 'moment'
 import Footer from '@/components/Footer'
-
+import { getArticles } from '@/api/article'
 export default {
   name: 'Search',
   components: {
@@ -62,15 +96,46 @@ export default {
   },
   data() {
     return {
-
+      newsList: []
+    }
+  },
+  created() {
+    getArticles().then(response => {
+      const { data } = response
+      if (data.code === 200) {
+        const articles = data.data.sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
+        const realNews = {
+          title: '未分類新聞',
+          content: []
+        }
+        articles.forEach(article => {
+          const { category, _id, title, lastUpdatedAt } = article
+          realNews.content.push({
+            _id, category, title, lastUpdatedAt, viewCount: 32
+          })
+        })
+        this.newsList = [...this.newsList, realNews]
+      }
+    }).catch(err => console.error(err))
+  },
+  methods: {
+    handleArticleRoute(_id) {
+      if (!_id) return
+      this.$router.push({ path: `/article/${_id}` })
+    },
+    formatLastUpdate(lastUpdatedAt) {
+      if (!lastUpdatedAt) return '3小時'
+      else return moment(lastUpdatedAt).toNow(true)
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+@import '@/assets/scss/news.scss';
+
 .search-bar-field {
-  height: 232px;
+  height: 20vh;
   background: #F3F3F3;
   .search-bar {
     border-bottom: 1px solid $gray;
