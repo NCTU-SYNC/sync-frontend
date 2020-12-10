@@ -117,25 +117,6 @@ import moment from 'moment'
 import { getArticles } from '@/api/article'
 export default {
   name: 'Home',
-  async asyncData() {
-    const { data } = await getArticles()
-    const articles = data.data.sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
-    const realNews = {
-      title: '未分類新聞',
-      content: []
-    }
-    articles.forEach(article => {
-      const { category, _id, title, lastUpdatedAt } = article
-      realNews.content.push({
-        _id, category, title, lastUpdatedAt, viewCount: 32
-      })
-    })
-    return {
-      newsList: [
-        realNews
-      ]
-    }
-  },
   data() {
     return {
       categoryList: ['即時', '政經', '國際', '社會', '科技', '環境', '生活', '運動'],
