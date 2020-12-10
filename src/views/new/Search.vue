@@ -3,7 +3,7 @@
     <b-container fluid="xl" class="search-bar-field d-flex flex-column justify-content-center">
       <b-row align-h="center">
         <b-col cols="8" class="d-flex justify-content-between search-bar px-1">
-          <b-form-input type="text" placeholder="搜尋..." debounce="300" class="pl-1" />
+          <b-form-input v-model="keyword" type="text" placeholder="搜尋..." class="pl-1" @input="handleSearch" />
           <img src="@/assets/images/search-icon.svg">
         </b-col>
       </b-row>
@@ -80,6 +80,7 @@
       :total-rows="rows"
       :per-page="perPage"
       align="center"
+      hide-goto-end-buttons
       @change="handleChange"
     />
     <Footer />
@@ -97,20 +98,22 @@ export default {
   },
   data() {
     return {
+      keyword: '',
       perPage: 12,
       currentPage: 1,
-      newsArr: []
+      newsArr: [],
+      filteredNewsArr: []
     }
   },
   computed: {
     items() {
-      return this.newsArr.slice(
+      return this.filteredNewsArr.slice(
         (this.currentPage - 1) * this.perPage,
         this.currentPage * this.perPage
       )
     },
     rows() {
-      return this.newsArr.length
+      return this.filteredNewsArr.length
     }
   },
   created() {
@@ -125,9 +128,15 @@ export default {
           })
         })
       }
+      this.filteredNewsArr = this.newsArr
     }).catch(err => console.error(err))
   },
   methods: {
+    handleSearch() {
+      this.filteredNewsArr = this.newsArr
+      if (this.keyword === '') return
+      this.filteredNewsArr = this.newsArr.filter(news => news.title.includes(this.keyword))
+    },
     handleArticleRoute(_id) {
       if (!_id) return
       this.$router.push({ path: `/article/${_id}` })
