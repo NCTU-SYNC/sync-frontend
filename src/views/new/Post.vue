@@ -45,7 +45,7 @@
               <div class="border rounded bg-white date-time-container">
                 <b-dropdown
                   class="w-100 h-100"
-                  :text="postCategories.length > 0 ? postCategories.join(', ') : '文章主題分類'"
+                  :text="postCategories.length > 3 ? `${postCategories[0]}, ${postCategories[1]}, ...等${postCategories.length}個` : postCategories.length > 0 ? postCategories.join(', ') : '文章主題分類'"
                   toggle-class="text-truncate"
                   variant="link"
                 >
