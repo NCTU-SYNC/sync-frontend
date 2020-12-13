@@ -7,9 +7,17 @@ module.exports = {
     loaderOptions: {
       sass: {
         additionalData: `
-          @import "@/assets/styles.scss";
+          @import "@/assets/scss/custom.scss";
         `
       }
     }
+  },
+  chainWebpack: config => {
+    config
+      .plugin('html')
+      .tap(args => {
+        args[0].title = 'SYNC 新聞同步'
+        return args
+      })
   }
 }

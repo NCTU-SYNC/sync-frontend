@@ -1,5 +1,4 @@
 .menubar {
-
   margin-bottom: 1rem;
   transition: visibility 0.2s 0.4s, opacity 0.2s 0.4s;
 
@@ -15,22 +14,27 @@
   }
 
   &__button {
-    font-weight: bold;
     display: inline-flex;
     background: transparent;
-    border: 0;
-    color: $color-black;
+    border: 1px solid $white;
+    color: $primary;
     padding: 0.2rem 0.5rem;
     margin-right: 0.2rem;
-    border-radius: 3px;
+    border-radius: 0.25rem;
     cursor: pointer;
+    height: 2rem;
+    width: 2rem;
+    justify-content: center;
+    align-items: center;
 
     &:hover {
-      background-color: rgba($color-black, 0.05);
+      background-color: rgba(0, 0, 0, 0.5);
+      color: $white;
     }
 
     &.is-active {
-      background-color: rgba($color-black, 0.1);
+      background-color: $primary;
+      color: $white;
     }
   }
 
