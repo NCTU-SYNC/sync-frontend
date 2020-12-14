@@ -53,6 +53,14 @@ export default new Router({
       }
     },
     {
+      path: '/history/:ArticleID/',
+      component: () => import('@/views/new/History')
+    },
+    {
+      path: '/revision/:BlockID/',
+      component: () => import('@/views/new/Revision')
+    },
+    {
       path: '/post',
       name: 'Post',
       component: () => import('@/views/new/Post'),

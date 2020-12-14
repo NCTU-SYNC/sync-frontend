@@ -3,7 +3,7 @@
     <b-button v-b-toggle.sidebar class="px-0 px-md-2" title="目錄" variant="transparent">
       <b-icon icon="list" scale="1.5" aria-hidden="true" />
     </b-button>
-    <b-navbar-brand id="brand" to="/" class="centered-block">SYNC</b-navbar-brand>
+    <b-navbar-brand id="brand" to="/" class="centered-block"><Logo /></b-navbar-brand>
     <b-collapse id="nav-collapse" is-nav>
       <!-- <b-nav-form class="mx-2">
         <b-form-input size="md" class="mr-sm-2 rounded-pill form-control" placeholder="搜尋" type="search" />
@@ -49,9 +49,11 @@
 
 <script>
 import firebase from '@/utils/firebase'
+import Logo from '@/components/Logo.vue'
 
 export default {
   name: 'NavBar',
+  components: { Logo },
   computed: {
     getRedirectPath() {
       // 設置重新導向，若在首頁、註冊、登入頁面做切換不需設置redirect，其他頁面則需要重新導向，若已經設置重新導向頁面，則註冊、登入切換時，並不會互相把自己的頁面給放進重新導向內

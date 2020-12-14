@@ -35,7 +35,7 @@
                   v-for="(tag, tagIndex) in tags"
                   :key="tagIndex"
                   variant="outline-primary"
-                  :class="['m-1', 'flex-shrink-0', 'shadow-sm']"
+                  :class="['m-1', 'flex-shrink-0']"
                   pill
                 >
                   {{ tag }}
@@ -44,20 +44,21 @@
               <div class="d-flex flex-grow-1 justify-content-end">
                 <b-button
                   variant="outline-primary"
-                  class="shadow-sm btn-icon mx-2 mt-1"
+                  class="btn-icon mx-2 mt-1"
                   @click="handleEditPostRoute(`${$route.path}/post`)"
                 >
                   <b-icon icon="pencil-square" />
                 </b-button>
                 <b-button
                   variant="outline-primary"
-                  class="shadow-sm btn-icon mx-2 mt-1"
+                  class="btn-icon mx-2 mt-1"
+                  @click="handleHistoryRoute"
                 >
                   <b-icon icon="clock-history" />
                 </b-button>
                 <b-button
                   variant="outline-primary"
-                  class="shadow-sm btn-icon ml-2 mt-1"
+                  class="btn-icon ml-2 mt-1"
                 >
                   <b-icon icon="bookmark" />
                 </b-button>
@@ -126,6 +127,7 @@
 // test id:  5f5113349779a26bd0444b26
 import moment from 'moment'
 import { getArticleById } from '@/api/article'
+import { getArticleRevisionById } from '@/api/revision'
 import { Editor, EditorContent } from 'tiptap'
 import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder } from 'tiptap-extensions'
 import Link from '@/components/Editor/TiptapExtensions/Link'
@@ -163,35 +165,41 @@ export default {
     },
     getMonth() {
       return this.time.getMonth()
+    },
+    articleId() {
+      return this.$route.params.ArticleID
     }
   },
   created() {
     this.timeId = setInterval(() => {
       this.time = moment()
     }, 1000)
-    const articleId = this.$route.params.ArticleID
-    getArticleById(articleId).then(response => {
-      if (response.data.code === 200) {
-        const { title, authors, tags, createdAt, blocks, lastUpdatedAt, category, editedCount, editingCount, isPopular } = response.data.data
-        console.log(response.data.data)
-        this.title = title
-        this.authors = authors
-        this.tags = tags
-        this.createdAt = createdAt
-        this.lastUpdatedAt = lastUpdatedAt
-        this.blocks = blocks
-        this.category = category
-        this.editedCount = editedCount
-        this.editingCount = editingCount
-        this.isPopular = isPopular
-        this.blocks.forEach(block => {
-          this.editors[block._id] = this.createEditor(block.content)
-          this.editableBlocks[block._id] = false
-        })
-      }
-    }).catch(err => {
-      console.error(err)
-    })
+    if (this.articleId) {
+      getArticleRevisionById(this.articleId)
+      getArticleById(this.articleId).then(response => {
+        if (response.data.code === 200) {
+          const { title, authors, tags, createdAt, blocks, lastUpdatedAt, category, editedCount, editingCount, isPopular } = response.data.data
+          console.log(response.data.data)
+          this.title = title
+          this.authors = authors
+          this.tags = tags
+          this.createdAt = createdAt
+          this.lastUpdatedAt = lastUpdatedAt
+          this.blocks = blocks
+          this.category = category
+          this.editedCount = editedCount
+          this.editingCount = editingCount
+          this.isPopular = isPopular
+          this.blocks.forEach(block => {
+            this.editors[block._id] = this.createEditor(block.content)
+            this.editableBlocks[block._id] = false
+          })
+        }
+      }).catch(err => {
+        console.error(err)
+      })
+    }
+
     // check if user logged in
     this.isLogin = !!this.$store.getters.token
   },
@@ -202,6 +210,9 @@ export default {
   methods: {
     handleEditPostRoute(route) {
       if (this.isLogin) { this.$router.push(route) } else { this.$bvModal.msgBoxOk('Please Login First') }
+    },
+    handleHistoryRoute() {
+      this.$router.push(`/history/${this.articleId}`)
     },
     formatDate(timeString) {
       return moment(timeString).format('YYYY.MM.DD')
@@ -262,6 +273,8 @@ p {
   width: 3rem !important;
   padding-top: 0.25rem;
   border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
 }
 
 .sync-blank-container {
