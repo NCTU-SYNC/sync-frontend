@@ -127,7 +127,6 @@
 // test id:  5f5113349779a26bd0444b26
 import moment from 'moment'
 import { getArticleById } from '@/api/article'
-import { getArticleRevisionById } from '@/api/revision'
 import { Editor, EditorContent } from 'tiptap'
 import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder } from 'tiptap-extensions'
 import Link from '@/components/Editor/TiptapExtensions/Link'
@@ -175,7 +174,6 @@ export default {
       this.time = moment()
     }, 1000)
     if (this.articleId) {
-      getArticleRevisionById(this.articleId)
       getArticleById(this.articleId).then(response => {
         if (response.data.code === 200) {
           const { title, authors, tags, createdAt, blocks, lastUpdatedAt, category, editedCount, editingCount, isPopular } = response.data.data
