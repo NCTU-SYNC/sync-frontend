@@ -139,7 +139,6 @@ export default {
         if (response.data.code === 200) {
           const { title, tags, blocks } = response.data.data
           console.log(response.data.data)
-          console.log(blocks)
           this.title = title
           this.tags = tags
           this.blocks = blocks

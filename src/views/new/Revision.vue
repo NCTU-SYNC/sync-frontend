@@ -98,6 +98,49 @@
         </b-row>
       </b-col>
     </b-row>
+    <!-- <b-row>
+      <b-col>
+        <div
+          v-for="(diff, index) in diffArr"
+          :key="index"
+          class="test-span"
+          :style="{ color: diff.added ? 'green'
+            : diff.removed ? 'red' : 'black', fontSize: '22px' }"
+        >
+          {{ diff.value }}
+          <span
+            :style="{ color: 'green'}"
+          >{{ (diff.removed && index !== diffArr.length - 1 && diffArr[index+1].added) ? ' > ' : '' }}</span>
+        </div>
+      </b-col>
+    </b-row> -->
+    <b-row>
+      <b-col>
+        <div
+          v-for="(diff, index) in diffArr"
+          :key="index"
+          class="test-span"
+          :style="{ color: diff.added ? 'green'
+            : diff.removed ? 'red' : 'black', fontSize: '22px', textDecoration: diff.removed ? 'line-through' : 'initial' }"
+        >
+          {{ diff.value }}
+        </div>
+      </b-col>
+    </b-row>
+    <br>
+    <b-row>
+      <b-col>
+        <div
+          v-for="(diff, index) in googleDiffArr"
+          :key="index"
+          class="test-span"
+          :style="{ color: diff[0] === 1 ? 'green'
+            : diff[0] === -1 ? 'red' : 'black', fontSize: '22px', textDecoration: diff[0] === -1 ? 'line-through' : 'initial'}"
+        >
+          {{ diff[1] }}
+        </div>
+      </b-col>
+    </b-row>
   </b-container>
 </template>
 
@@ -105,6 +148,9 @@
 import { Editor, EditorContent } from 'tiptap'
 import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem } from 'tiptap-extensions'
 import Link from '@/components/Editor/TiptapExtensions/Link'
+import { diffChars } from 'diff'
+import { getArticleById } from '@/api/article'
+import DiffMatchPatch from 'diff-match-patch'
 
 export default {
   name: 'Revision',
@@ -117,7 +163,12 @@ export default {
       tags: [],
       title: '',
       blocks: [],
-      editors: []
+      editors: [],
+      items: [],
+      testBlock1: {},
+      testBlock2: {},
+      diffArr: [],
+      googleDiffArr: []
     }
   },
   computed: {
@@ -131,21 +182,23 @@ export default {
       this.articleId = '5fd2de1713154979181a04b1'
     }, 1000)
     if (this.blockId) {
-      /* getArticleById(this.articleId).then(response => {
+      // test article id = 5f50fa0c9779a26bd0444b1c => 2, 3
+      // test article id = 5fddf662bb5e4349b8ba9dc2 => 0, 1
+      getArticleById('5f50fa0c9779a26bd0444b1c').then(response => {
         if (response.data.code === 200) {
-          const { title, tags, blocks } = response.data.data
+          const { blocks } = response.data.data
           console.log(response.data.data)
-          console.log(blocks)
-          this.title = title
-          this.tags = tags
           this.blocks = blocks
-          this.blocks.forEach(block => {
-            this.editors[block._id] = this.createEditor(block.content)
-          })
+          this.testBlock1 = blocks[2]
+          this.testBlock2 = blocks[3]
+          // this.testBlock1 = blocks[0]
+          // this.testBlock2 = blocks[1]
+          this.diffArr = this.compareContent(this.testBlock1.content, this.testBlock2.content)
+          this.googleDiffArr = this.compareContentGoogle(this.testBlock1.content, this.testBlock2.content)
         }
       }).catch(err => {
         console.error(err)
-      })*/
+      })
     }
   },
   methods: {
@@ -177,6 +230,53 @@ export default {
     },
     handleClickArticle() {
       this.$router.push(`/history/${this.articleId}`)
+    },
+    compareContent(doc1, doc2) {
+      let firstBlock = ''
+      let secondBlock = ''
+      doc1.content.forEach(paragraph => {
+        if (!paragraph.content) firstBlock += '\n'
+        else {
+          paragraph.content.forEach(text => {
+            firstBlock += text.text
+          })
+        }
+      })
+      doc2.content.forEach(paragraph => {
+        if (!paragraph.content) secondBlock += '\n'
+        else {
+          paragraph.content.forEach(text => {
+            secondBlock += text.text
+          })
+        }
+      })
+      const diffArr = diffChars(firstBlock, secondBlock)
+      return diffArr
+    },
+    compareContentGoogle(doc1, doc2) {
+      const dmp = new DiffMatchPatch()
+      let firstBlock = ''
+      let secondBlock = ''
+      doc1.content.forEach(paragraph => {
+        if (!paragraph.content) firstBlock += '\n'
+        else {
+          paragraph.content.forEach(text => {
+            firstBlock += text.text
+          })
+        }
+      })
+      doc2.content.forEach(paragraph => {
+        if (!paragraph.content) secondBlock += '\n'
+        else {
+          paragraph.content.forEach(text => {
+            secondBlock += text.text
+          })
+        }
+      })
+      const diff = dmp.diff_main(firstBlock, secondBlock)
+      dmp.diff_cleanupSemantic(diff)
+      // console.log(diff)
+      return diff
     }
   }
 
@@ -248,5 +348,11 @@ export default {
 .history-block {
   height: 20rem !important;
   overflow-y: auto;
+}
+
+.test-span {
+  white-space: pre-wrap;
+  display: inline;
+  word-break: break-all
 }
 </style>
