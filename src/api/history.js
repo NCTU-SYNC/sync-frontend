@@ -10,9 +10,12 @@ export function getArticleVersionById(data) {
     }
   })
 }
-export function getBlockRevisionById(blockId) {
+export function getBlockRevisionById(data) {
   return request({
-    url: config.baseURL + `/revision/${blockId}`,
-    method: 'get'
+    url: config.baseURL + `/revision/${data.blockId}`,
+    method: 'get',
+    params: {
+      blockIndex: data.revisionIndex
+    }
   })
 }
