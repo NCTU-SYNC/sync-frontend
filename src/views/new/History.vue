@@ -69,6 +69,7 @@
                 :key="versionIndex"
                 :class="{ 'history-active-version': true}"
                 href="#"
+                @click="handleGetArticleVersion(versionIndex)"
               >
                 <p>{{ version.title }} | {{ getUpdateDate(version.updatedAt) }} | 目前版本</p>
                 <b-icon icon="person" />
@@ -161,6 +162,7 @@ export default {
         this.versions = versions
         this.blocks = currentVersion.blocks
         this.blocks.forEach(block => {
+          if (this.editors[block.blockId]) this.editors[block.blockId].destroy()
           this.editors[block.blockId] = this.createEditor(block.content)
         })
       } catch (error) {

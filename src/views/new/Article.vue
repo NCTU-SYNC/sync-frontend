@@ -219,7 +219,7 @@ export default {
       return moment(timeString).format('YYYY-MM-DD HH:mm')
     },
     formatAuthor(author, isTheLastAuthor) {
-      return isTheLastAuthor ? author : author + ', '
+      return isTheLastAuthor ? author.name : author.name + ', '
     },
     createEditor(initializedContent) {
       const editor = new Editor({

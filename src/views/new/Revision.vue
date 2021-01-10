@@ -33,7 +33,7 @@
                 v-for="(block, index) in blocks"
                 :key="index"
                 class="text-decoration-none history-block history-card"
-                :to="`/revision/${block._id}`"
+                :to="`/revision/${block.blockId}`"
               >
                 <b-card
                   border-variant="primary"
@@ -68,28 +68,13 @@
         <b-row class="mt-3">
           <b-col>
             <b-list-group flush>
-              <b-list-group-item :class="{ 'history-active-version': true}" href="#">
-                <p>4月15日，下午5:10 | 目前版本</p>
-                <b-icon icon="person" />
-                <b-link class="ml-2">ShangHsun</b-link>
-              </b-list-group-item>
-              <b-list-group-item href="#">
-                <p>4月14日，下午5:10</p>
-                <b-icon icon="person" />
-                <b-link class="ml-2">ShangHsun</b-link>
-              </b-list-group-item>
-              <b-list-group-item href="#">
-                <p>4月14日，下午5:10</p>
-                <b-icon icon="person" />
-                <b-link class="ml-2">ShangHsun</b-link>
-              </b-list-group-item>
-              <b-list-group-item href="#">
-                <p>4月14日，下午5:10</p>
-                <b-icon icon="person" />
-                <b-link class="ml-2">ShangHsun</b-link>
-              </b-list-group-item>
-              <b-list-group-item href="#">
-                <p>4月14日，下午5:10</p>
+              <b-list-group-item
+                v-for="(revision, revisionIndex) in revisions"
+                :key="revisionIndex"
+                :class="{ 'history-active-version': true}"
+                href="#"
+              >
+                <p>{{ revision.blockTitle }} | {{ getUpdateDate(revision.updatedAt) }} | 目前版本</p>
                 <b-icon icon="person" />
                 <b-link class="ml-2">ShangHsun</b-link>
               </b-list-group-item>
@@ -145,12 +130,14 @@
 </template>
 
 <script>
+import { getBlockRevisionById } from '@/api/history'
 import { Editor, EditorContent } from 'tiptap'
 import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem } from 'tiptap-extensions'
 import Link from '@/components/Editor/TiptapExtensions/Link'
 import { diffChars } from 'diff'
-import { getArticleById } from '@/api/article'
+// import { getArticleById } from '@/api/article'
 import DiffMatchPatch from 'diff-match-patch'
+import moment from 'moment'
 
 export default {
   name: 'Revision',
@@ -164,11 +151,19 @@ export default {
       title: '',
       blocks: [],
       editors: [],
-      items: [],
-      testBlock1: {},
-      testBlock2: {},
       diffArr: [],
-      googleDiffArr: []
+      googleDiffArr: [],
+      items: [
+        {
+          text: '閱讀文章',
+          to: `/article/${this.$route.params.ArticleID
+          }`
+        },
+        {
+          text: '全文編輯紀錄',
+          active: true
+        }
+      ]
     }
   },
   computed: {
@@ -178,27 +173,28 @@ export default {
   },
   created() {
     console.log(this.blockId)
-    setTimeout(() => {
-      this.articleId = '5fd2de1713154979181a04b1'
-    }, 1000)
+    // setTimeout(() => {
+    //   this.articleId = '5fd2de1713154979181a04b1'
+    // }, 1000)
     if (this.blockId) {
+      this.handleGetBlockRevision()
       // test article id = 5f50fa0c9779a26bd0444b1c => 2, 3
       // test article id = 5fddf662bb5e4349b8ba9dc2 => 0, 1
-      getArticleById('5f50fa0c9779a26bd0444b1c').then(response => {
-        if (response.data.code === 200) {
-          const { blocks } = response.data.data
-          console.log(response.data.data)
-          this.blocks = blocks
-          this.testBlock1 = blocks[2]
-          this.testBlock2 = blocks[3]
-          // this.testBlock1 = blocks[0]
-          // this.testBlock2 = blocks[1]
-          this.diffArr = this.compareContent(this.testBlock1.content, this.testBlock2.content)
-          this.googleDiffArr = this.compareContentGoogle(this.testBlock1.content, this.testBlock2.content)
-        }
-      }).catch(err => {
-        console.error(err)
-      })
+      // getArticleById('5f50fa0c9779a26bd0444b1c').then(response => {
+      //   if (response.data.code === 200) {
+      //     const { blocks } = response.data.data
+      //     console.log(response.data.data)
+      //     this.blocks = blocks
+      //     this.testBlock1 = blocks[2]
+      //     this.testBlock2 = blocks[3]
+      //     // this.testBlock1 = blocks[0]
+      //     // this.testBlock2 = blocks[1]
+      //     this.diffArr = this.compareContent(this.testBlock1.content, this.testBlock2.content)
+      //     this.googleDiffArr = this.compareContentGoogle(this.testBlock1.content, this.testBlock2.content)
+      //   }
+      // }).catch(err => {
+      //   console.error(err)
+      // })
     }
   },
   methods: {
@@ -228,8 +224,27 @@ export default {
       })
       return editor
     },
+    async handleGetBlockRevision(revisionIndex = undefined) {
+      try {
+        const { data } = await getBlockRevisionById({ blockId: this.blockId, revisionIndex })
+        const { currentRevision, revisions } = data.data
+        console.log(data.data)
+        this.title = currentRevision[0].blockTitle
+        this.revisions = revisions
+        this.blocks = currentRevision
+        this.blocks.forEach(block => {
+          this.editors[block._id] = this.createEditor(block.content)
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    getUpdateDate(date) {
+      return moment(date).format('MM月DD日 HH:mm')
+    },
     handleClickArticle() {
-      this.$router.push(`/history/${this.articleId}`)
+      // this.$router.push(`/history/${this.articleId}`)
+      this.$router.push(`/history/${this.blockId}`)
     },
     compareContent(doc1, doc2) {
       let firstBlock = ''
