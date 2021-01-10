@@ -70,7 +70,6 @@
                 :class="{ 'history-active-version': currentIndex === versionIndex}"
                 href="#"
                 :to="`/history/${articleId}?version=${versionStartFrom + versions.length - versionIndex}`"
-
                 @click="handleGetArticleVersion(versionIndex)"
               >
                 <p>{{ version.title }} | {{ getUpdateDate(version.updatedAt) }} | 倒數第{{ versionIndex }}版 </p>
@@ -169,9 +168,10 @@ export default {
     },
     async handleGetArticleVersion(versionIndex = undefined) {
       try {
+        /* 最舊的 index 傳 1, 最新的 index 傳 versions.length 或是undefined */
         if (versionIndex !== undefined) {
           this.currentIndex = versionIndex
-          versionIndex += 1
+          versionIndex = this.versions.length - versionIndex
         }
         const { data } = await getArticleVersionById({ articleId: this.articleId, versionIndex })
         const { currentVersion, versions, from } = data.data

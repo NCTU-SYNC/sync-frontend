@@ -30,25 +30,49 @@
             </div>
             <div class="d-flex flex-column">
               <b-link
-                v-for="(block, index) in blocks"
+                v-for="(block, index) in displayBlocks"
                 :key="index"
-                class="text-decoration-none history-block history-card"
+                class="text-decoration-none history-block history-card mt-3"
                 :to="`/revision/${block.blockId}`"
               >
+                <h4 class="text-primary">
+                  <b-row>
+                    <b-col>
+                      <h4
+                        v-for="(diff, diffIndex) in index === 0 ? titleDiffArr : titleDiffArr2"
+                        :key="diffIndex"
+                        class="test-span"
+                        :style="{ color: diff[0] === 1 ? 'green'
+                          : diff[0] === -1 ? 'red' : 'black', textDecoration: diff[0] === -1 ? 'line-through' : 'initial'}"
+                      >
+                        {{ diff[1] }}
+                      </h4>
+                    </b-col>
+                  </b-row>
+                </h4>
                 <b-card
                   border-variant="primary"
                   class="border-0"
                 >
-                  <h3 class="text-primary">
-                    {{ block.blockTitle }}
-                  </h3>
                   <editor-content
                     class="editor__content"
                     :editor="editors[block._id]"
                   />
+                  <b-row>
+                    <b-col>
+                      <div
+                        v-for="(diff, diffIndex) in index === 0 ? googleDiffArr : googleDiffArr2"
+                        :key="diffIndex"
+                        class="test-span"
+                        :style="{ color: diff[0] === 1 ? 'green'
+                          : diff[0] === -1 ? 'red' : 'black', fontSize: '22px', textDecoration: diff[0] === -1 ? 'line-through' : 'initial'}"
+                      >
+                        {{ diff[1] }}
+                      </div>
+                    </b-col>
+                  </b-row>
                 </b-card>
               </b-link>
-
             </div>
           </b-col>
         </b-row>
@@ -71,10 +95,11 @@
               <b-list-group-item
                 v-for="(revision, revisionIndex) in revisions"
                 :key="revisionIndex"
-                :class="{ 'history-active-version': currentIndex === revisionIndex}"
+                :class="{ 'history-active-version': currentRevisionIndex === revisionIndex}"
                 href="#"
+                @click="changeRevision(revisionIndex)"
               >
-                <p>{{ revision.blockTitle }} | {{ getUpdateDate(revision.updatedAt) }} | {{ revisionIndex === 0 ? '目前版本' : '第' + revisionIndex + '版' }}</p>
+                <p>{{ revision.blockTitle }} | {{ getUpdateDate(revision.updatedAt) }} | 倒數第{{ revisionIndex }}版</p>
                 <b-icon icon="person" />
                 <b-link class="ml-2">{{ revision.author.name }}</b-link>
               </b-list-group-item>
@@ -99,7 +124,7 @@
         </div>
       </b-col>
     </b-row> -->
-    <b-row>
+    <!-- <b-row>
       <b-col>
         <div
           v-for="(diff, index) in diffArr"
@@ -111,22 +136,8 @@
           {{ diff.value }}
         </div>
       </b-col>
-    </b-row>
+    </b-row> -->
     <br>
-    <b-row><h2>比對結果</h2></b-row>
-    <b-row>
-      <b-col>
-        <div
-          v-for="(diff, index) in googleDiffArr"
-          :key="index"
-          class="test-span"
-          :style="{ color: diff[0] === 1 ? 'green'
-            : diff[0] === -1 ? 'red' : 'black', fontSize: '22px', textDecoration: diff[0] === -1 ? 'line-through' : 'initial'}"
-        >
-          {{ diff[1] }}
-        </div>
-      </b-col>
-    </b-row>
   </b-container>
 </template>
 
@@ -149,14 +160,18 @@ export default {
     return {
       articleId: '',
       tags: [],
-      title: '',
+      title: '段落版本比對',
       blocks: [],
       editors: [],
       diffArr: [],
       revisions: [],
       currentRevision: [],
-      currentIndex: 0,
+      currentRevisionIndex: 0,
+      displayBlocks: [],
       googleDiffArr: [],
+      googleDiffArr2: [],
+      titleDiffArr: [],
+      titleDiffArr2: [],
       items: [
         {
           text: '閱讀文章',
@@ -179,24 +194,6 @@ export default {
     console.log(this.blockId)
     if (this.blockId) {
       this.handleGetBlockRevision()
-
-      // test article id = 5f50fa0c9779a26bd0444b1c => 2, 3
-      // test article id = 5fddf662bb5e4349b8ba9dc2 => 0, 1
-      // getArticleById('5f50fa0c9779a26bd0444b1c').then(response => {
-      //   if (response.data.code === 200) {
-      //     const { blocks } = response.data.data
-      //     console.log(response.data.data)
-      //     this.blocks = blocks
-      //     this.testBlock1 = blocks[2]
-      //     this.testBlock2 = blocks[3]
-      //     // this.testBlock1 = blocks[0]
-      //     // this.testBlock2 = blocks[1]
-      //     this.diffArr = this.compareContent(this.testBlock1.content, this.testBlock2.content)
-      //     this.googleDiffArr = this.compareContentGoogle(this.testBlock1.content, this.testBlock2.content)
-      //   }
-      // }).catch(err => {
-      //   console.error(err)
-      // })
     }
   },
   methods: {
@@ -230,14 +227,23 @@ export default {
       try {
         const { data } = await getBlockRevisionById({ blockId: this.blockId, revisionIndex })
         const { currentRevision, revisions } = data.data
-        console.log(data.data)
         this.currentRevision = currentRevision
-        this.title = currentRevision[0].blockTitle
         this.revisions = revisions
         this.blocks = currentRevision
-        this.blocks.forEach(block => {
-          this.editors[block._id] = this.createEditor(block.content)
-        })
+        this.displayBlocks = JSON.parse(JSON.stringify(currentRevision))
+        this.displayBlocks.splice(2)
+        // this.blocks.forEach(block => {
+        //   this.editors[block._id] = this.createEditor(block.content)
+        // })
+        this.googleDiffArr = this.compareContentGoogle(this.displayBlocks[1].content, this.displayBlocks[0].content)
+        this.googleDiffArr2 = this.compareContentGoogle(this.displayBlocks[0].content, this.displayBlocks[1].content)
+        const dmp = new DiffMatchPatch()
+        const diff = dmp.diff_main(this.displayBlocks[1].blockTitle, this.displayBlocks[0].blockTitle)
+        dmp.diff_cleanupSemantic(diff)
+        this.titleDiffArr = diff
+        const diff2 = dmp.diff_main(this.displayBlocks[0].blockTitle, this.displayBlocks[1].blockTitle)
+        dmp.diff_cleanupSemantic(diff2)
+        this.titleDiffArr2 = diff2
       } catch (error) {
         console.log(error)
       }
@@ -295,6 +301,19 @@ export default {
       dmp.diff_cleanupSemantic(diff)
       // console.log(diff)
       return diff
+    },
+    changeRevision(revisionIndex) {
+      this.currentRevisionIndex = revisionIndex
+      this.displayBlocks = [this.blocks[revisionIndex], revisionIndex === this.blocks.length - 1 ? { content: { content: [] }, blockTitle: '' } : this.blocks[revisionIndex + 1]]
+      this.googleDiffArr = this.compareContentGoogle(this.displayBlocks[1].content, this.displayBlocks[0].content)
+      this.googleDiffArr2 = this.compareContentGoogle(this.displayBlocks[0].content, this.displayBlocks[1].content)
+      const dmp = new DiffMatchPatch()
+      const diff = dmp.diff_main(this.displayBlocks[1].blockTitle, this.displayBlocks[0].blockTitle)
+      dmp.diff_cleanupSemantic(diff)
+      this.titleDiffArr = diff
+      const diff2 = dmp.diff_main(this.displayBlocks[0].blockTitle, this.displayBlocks[1].blockTitle)
+      dmp.diff_cleanupSemantic(diff2)
+      this.titleDiffArr2 = diff2
     }
   }
 
