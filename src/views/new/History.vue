@@ -69,9 +69,11 @@
                 :key="versionIndex"
                 :class="{ 'history-active-version': currentIndex === versionIndex}"
                 href="#"
+                :to="`/history/${articleId}?version=${versionStartFrom + versions.length - versionIndex}`"
+
                 @click="handleGetArticleVersion(versionIndex)"
               >
-                <p>{{ version.title }} | {{ getUpdateDate(version.updatedAt) }} |  {{ versionIndex === 0 ? '目前版本' : '第' + versionIndex + '版' }}</p>
+                <p>{{ version.title }} | {{ getUpdateDate(version.updatedAt) }} | 倒數第{{ versionIndex }}版 </p>
                 <b-icon icon="person" />
                 <b-link class="ml-2">{{ version.author.name }}</b-link>
               </b-list-group-item>
@@ -113,12 +115,23 @@ export default {
       blocks: [],
       editors: [],
       versions: [],
-      currentIndex: 0
+      currentIndex: 0,
+      versionStartFrom: 0
     }
   },
   computed: {
     articleId() {
       return this.$route.params.ArticleID
+    },
+    currentViewVersion() {
+      return this.$route.query.version
+    }
+  },
+  watch: {
+    currentViewVersion(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.handleGetArticleVersion(newValue)
+      }
     }
   },
   created() {
@@ -161,13 +174,17 @@ export default {
           versionIndex += 1
         }
         const { data } = await getArticleVersionById({ articleId: this.articleId, versionIndex })
-        const { currentVersion, versions } = data.data
+        const { currentVersion, versions, from } = data.data
         this.title = currentVersion.title
+        this.versionStartFrom = from
         this.versions = versions
         this.blocks = currentVersion.blocks
         this.blocks.forEach(block => {
-          if (this.editors[block.blockId]) this.editors[block.blockId].destroy()
-          this.editors[block.blockId] = this.createEditor(block.content)
+          if (this.editors[block.blockId]) {
+            this.editors[block.blockId].setContent(block.content)
+          } else {
+            this.editors[block.blockId] = this.createEditor(block.content)
+          }
         })
       } catch (error) {
         console.log(error)
