@@ -71,12 +71,12 @@
               <b-list-group-item
                 v-for="(revision, revisionIndex) in revisions"
                 :key="revisionIndex"
-                :class="{ 'history-active-version': true}"
+                :class="{ 'history-active-version': currentIndex === revisionIndex}"
                 href="#"
               >
-                <p>{{ revision.blockTitle }} | {{ getUpdateDate(revision.updatedAt) }} | 目前版本</p>
+                <p>{{ revision.blockTitle }} | {{ getUpdateDate(revision.updatedAt) }} | {{ revisionIndex === 0 ? '目前版本' : '第' + revisionIndex + '版' }}</p>
                 <b-icon icon="person" />
-                <b-link class="ml-2">ShangHsun</b-link>
+                <b-link class="ml-2">{{ revision.author.name }}</b-link>
               </b-list-group-item>
             </b-list-group>
           </b-col>
@@ -113,6 +113,7 @@
       </b-col>
     </b-row>
     <br>
+    <b-row><h2>比對結果</h2></b-row>
     <b-row>
       <b-col>
         <div
@@ -152,6 +153,9 @@ export default {
       blocks: [],
       editors: [],
       diffArr: [],
+      revisions: [],
+      currentRevision: [],
+      currentIndex: 0,
       googleDiffArr: [],
       items: [
         {
@@ -173,11 +177,9 @@ export default {
   },
   created() {
     console.log(this.blockId)
-    // setTimeout(() => {
-    //   this.articleId = '5fd2de1713154979181a04b1'
-    // }, 1000)
     if (this.blockId) {
       this.handleGetBlockRevision()
+
       // test article id = 5f50fa0c9779a26bd0444b1c => 2, 3
       // test article id = 5fddf662bb5e4349b8ba9dc2 => 0, 1
       // getArticleById('5f50fa0c9779a26bd0444b1c').then(response => {
@@ -229,6 +231,7 @@ export default {
         const { data } = await getBlockRevisionById({ blockId: this.blockId, revisionIndex })
         const { currentRevision, revisions } = data.data
         console.log(data.data)
+        this.currentRevision = currentRevision
         this.title = currentRevision[0].blockTitle
         this.revisions = revisions
         this.blocks = currentRevision

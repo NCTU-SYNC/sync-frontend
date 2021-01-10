@@ -67,13 +67,13 @@
               <b-list-group-item
                 v-for="(version, versionIndex) in versions"
                 :key="versionIndex"
-                :class="{ 'history-active-version': true}"
+                :class="{ 'history-active-version': currentIndex === versionIndex}"
                 href="#"
                 @click="handleGetArticleVersion(versionIndex)"
               >
-                <p>{{ version.title }} | {{ getUpdateDate(version.updatedAt) }} | 目前版本</p>
+                <p>{{ version.title }} | {{ getUpdateDate(version.updatedAt) }} |  {{ versionIndex === 0 ? '目前版本' : '第' + versionIndex + '版' }}</p>
                 <b-icon icon="person" />
-                <b-link class="ml-2">ShangHsun</b-link>
+                <b-link class="ml-2">{{ version.author.name }}</b-link>
               </b-list-group-item>
             </b-list-group>
           </b-col>
@@ -112,7 +112,8 @@ export default {
       title: '',
       blocks: [],
       editors: [],
-      versions: []
+      versions: [],
+      currentIndex: 0
     }
   },
   computed: {
@@ -155,9 +156,12 @@ export default {
     },
     async handleGetArticleVersion(versionIndex = undefined) {
       try {
+        if (versionIndex !== undefined) {
+          this.currentIndex = versionIndex
+          versionIndex += 1
+        }
         const { data } = await getArticleVersionById({ articleId: this.articleId, versionIndex })
         const { currentVersion, versions } = data.data
-        console.log(data.data)
         this.title = currentVersion.title
         this.versions = versions
         this.blocks = currentVersion.blocks
