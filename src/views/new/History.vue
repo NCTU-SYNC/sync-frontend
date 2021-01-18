@@ -72,7 +72,7 @@
                 :to="`/history/${articleId}?version=${versionStartFrom + versions.length - versionIndex}`"
                 @click="handleGetArticleVersion(versionIndex)"
               >
-                <p>{{ version.title }} | {{ getUpdateDate(version.updatedAt) }} | 倒數第{{ versionIndex }}版 </p>
+                <p>{{ version.title }} | {{ getUpdateDate(version.updatedAt) }} | 第{{ version.versionIndex }}版 </p>
                 <b-icon icon="person" />
                 <b-link class="ml-2">{{ version.author.name }}</b-link>
               </b-list-group-item>

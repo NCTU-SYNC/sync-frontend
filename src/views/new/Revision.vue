@@ -99,7 +99,7 @@
                 href="#"
                 @click="changeRevision(revisionIndex)"
               >
-                <p>{{ revision.blockTitle }} | {{ getUpdateDate(revision.updatedAt) }} | 倒數第{{ revisionIndex }}版</p>
+                <p>{{ revision.blockTitle }} | {{ getUpdateDate(revision.updatedAt) }} | 第{{ revision.revisionIndex }}版</p>
                 <b-icon icon="person" />
                 <b-link class="ml-2">{{ revision.author.name }}</b-link>
               </b-list-group-item>
