@@ -219,8 +219,6 @@ export default {
       try {
         const { data } = await getBlockRevisionById({ blockId: this.blockId, revisionIndex })
         const { currentRevision, revisions, from } = data.data
-        console.error('getBlockRevisionById data')
-        console.log(data.data)
         this.currentRevision = currentRevision
         this.revisions = revisions
         this.blocks = currentRevision

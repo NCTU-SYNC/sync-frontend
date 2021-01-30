@@ -14,13 +14,25 @@
         </b-row>
         <b-row class="border-bottom mb-4">
           <b-col v-if="isDiff" cols="12">
-            <div
-              v-for="(diff, diffIndex) in diffArr"
-              :key="diffIndex"
-              class="comparision-result"
-              :style="{ color: diff[0] === 1 ? 'green'
-                : diff[0] === -1 ? 'red' : 'black', textDecoration: diff[0] === -1 ? 'line-through' : 'initial'}"
-            >{{ diff[1] }}</div>
+            <b-row v-for="block in articleDiff" :key="JSON.stringify(block)" class="py-3">
+              <b-col cols="12">
+                <h3
+                  v-for="diff in block.titleDiff"
+                  :key="JSON.stringify(diff)"
+                  class="comparision-result text-primary"
+                  :style="{ backgroundColor: diff[0] === 1 ? 'rgba(26, 225, 91, 0.3)'
+                    : diff[0] === -1 ? 'rgba(255, 79, 79, 0.3)' : 'none', textDecoration: diff[0] === -1 ? 'line-through' : 'initial'}"
+                >{{ diff[1] }}</h3>
+                <div class="fake-margin" />
+                <div
+                  v-for="diff in block.contentDiff"
+                  :key="JSON.stringify(diff)"
+                  class="comparision-result"
+                  :style="{ backgroundColor: diff[0] === 1 ? 'rgba(26, 225, 91, 0.3)'
+                    : diff[0] === -1 ? 'rgba(255, 79, 79, 0.3)' : 'none', textDecoration: diff[0] === -1 ? 'line-through' : 'initial'}"
+                >{{ diff[1] }}</div>
+              </b-col>
+            </b-row>
           </b-col>
           <b-col v-else cols="12">
             <b-row
@@ -54,7 +66,6 @@
         </b-row>
       </b-col>
     </b-row>
-
   </b-container>
 </template>
 
@@ -81,7 +92,7 @@ export default {
       type: Boolean,
       default: false
     },
-    diffArr: {
+    articleDiff: {
       type: Array,
       default() {
         return []
@@ -115,6 +126,8 @@ export default {
   white-space: pre-wrap;
   display: inline;
   word-break: break-all;
-  font-size: 1em;
+}
+.fake-margin {
+  height: 8px;
 }
 </style>

@@ -27,7 +27,7 @@
     </b-row>
     <b-row>
       <b-col cols="6" class="px-0 border-right border-secondary"><comparison-block :version="versions[1]" /></b-col>
-      <b-col cols="6" class="px-0 border-left border-secondary"><comparison-block :version="versions[0]" :is-diff="true" :diff-arr="diffArr" /></b-col>
+      <b-col cols="6" class="px-0 border-left border-secondary"><comparison-block :version="versions[0]" :is-diff="true" :article-diff="articleDiff" /></b-col>
     </b-row>
   </b-container>
 </template>
@@ -58,15 +58,14 @@ export default {
         }
       ],
       versions: {},
-      diffArr: []
+      articleDiff: []
     }
   },
   created() {
     Promise.all([this.handleGetArticleVersion(1),
       this.handleGetArticleVersion(0)])
       .then(() => {
-        console.error(this.versions[1])
-        this.diffArr = this.compareContent(this.versions[1].blocks, this.versions[0].blocks)
+        this.articleDiff = this.compareContent(this.versions[1].blocks, this.versions[0].blocks)
       })
   },
   methods: {
@@ -114,31 +113,66 @@ export default {
         console.log(error)
       }
     },
-    compareTitle(title1, title2) {
-      const dmp = new DiffMatchPatch()
-      const diff = dmp.diff_main(title1, title2)
-      dmp.diff_cleanupSemantic(diff)
-      return diff
-    },
     compareContent(blocks1, blocks2) {
-      const getPlainText = blocks => {
-        let plainText = ''
+      const dmp = new DiffMatchPatch()
+      const getDiffs = blocks => {
+        const diffs = []
         blocks.forEach(block => {
+          const { blockTitle } = block.blockInfo
+          let content = ''
           block.content.content.forEach(paragraph => {
             if (paragraph.content) {
               paragraph.content.forEach(text => {
-                plainText += text.text
+                content += text.text
               })
             }
-            plainText += '\n\n'
+            content += '\n\n'
           })
+          diffs.push({ blockTitle, content })
         })
-        return plainText
+        return diffs
       }
-      const dmp = new DiffMatchPatch()
-      const diffArr = dmp.diff_main(getPlainText(blocks1), getPlainText(blocks2))
-      dmp.diff_cleanupSemantic(diffArr)
-      return diffArr
+
+      const article1 = getDiffs(blocks1)
+      const article2 = getDiffs(blocks2)
+
+      const articleDiff = []
+      if (article1.length > article2.length) {
+        article1.forEach((diff1, index) => {
+          if (index < article2.length) {
+            const diff2 = article2[index]
+            const titleDiff = dmp.diff_main(diff1.blockTitle, diff2.blockTitle)
+            const contentDiff = dmp.diff_main(diff1.content, diff2.content)
+            dmp.diff_cleanupSemantic(titleDiff)
+            dmp.diff_cleanupSemantic(contentDiff)
+            articleDiff.push({ titleDiff, contentDiff })
+          } else {
+            const titleDiff = dmp.diff_main(diff1.blockTitle, '')
+            const contentDiff = dmp.diff_main(diff1.content, '')
+            dmp.diff_cleanupSemantic(titleDiff)
+            dmp.diff_cleanupSemantic(contentDiff)
+            articleDiff.push({ titleDiff, contentDiff })
+          }
+        })
+      } else {
+        article2.forEach((diff2, index) => {
+          if (index < article1.length) {
+            const diff1 = article1[index]
+            const titleDiff = dmp.diff_main(diff1.blockTitle, diff2.blockTitle)
+            const contentDiff = dmp.diff_main(diff1.content, diff2.content)
+            dmp.diff_cleanupSemantic(titleDiff)
+            dmp.diff_cleanupSemantic(contentDiff)
+            articleDiff.push({ titleDiff, contentDiff })
+          } else {
+            const titleDiff = dmp.diff_main('', diff2.blockTitle)
+            const contentDiff = dmp.diff_main('', diff2.content)
+            dmp.diff_cleanupSemantic(titleDiff)
+            dmp.diff_cleanupSemantic(contentDiff)
+            articleDiff.push({ titleDiff, contentDiff })
+          }
+        })
+      }
+      return articleDiff
     }
   }
 }
