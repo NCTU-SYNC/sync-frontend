@@ -26,14 +26,17 @@
       </b-col>
     </b-row>
     <b-row>
-      <b-col cols="6"><comparison-block :version-index="1" /></b-col>
-      <b-col cols="6"><comparison-block :version-index="0" /></b-col>
+      <b-col cols="6"><comparison-block :version="versions[1]" /></b-col>
+      <b-col cols="6"><comparison-block :version="versions[0]" /></b-col>
     </b-row>
   </b-container>
 </template>
 
 <script>
+import { Editor } from 'tiptap'
+import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Link } from 'tiptap-extensions'
 import ComparisonBlock from '@/components/ComparisonBlock'
+import { getArticleVersionById } from '@/api/history'
 export default {
   components: {
     ComparisonBlock
@@ -52,11 +55,60 @@ export default {
           text: '版本比較',
           active: true
         }
-      ]
+      ],
+      versions: {}
     }
   },
+  created() {
+    this.handleGetArticleVersion(1)
+    this.handleGetArticleVersion(0)
+  },
   methods: {
-
+    createEditor(initializedContent) {
+      const editor = new Editor({
+        autoFocus: true,
+        onInit: () => {},
+        onUpdate: () => {},
+        extensions: [
+          new Heading({ levels: [1, 2, 3] }),
+          new Bold(),
+          new Italic(),
+          new Strike(),
+          new Underline(),
+          new BulletList(),
+          new ListItem(),
+          new Link()
+        ],
+        content: initializedContent,
+        editable: false
+      })
+      return editor
+    },
+    async handleGetArticleVersion(versionIndex = undefined) {
+      try {
+        const { data } = await getArticleVersionById({ articleId: '60043867621475aa00007541', versionIndex })
+        const { currentVersion } = data.data
+        const title = currentVersion.title
+        const blocks = currentVersion.blocks
+        const editors = {}
+        blocks.forEach(block => {
+          console.log(JSON.stringify(block.content))
+          if (editors[block.blockId]) {
+            editors[block.blockId].setContent(block.content)
+          } else {
+            editors[block.blockId] = this.createEditor(block.content)
+          }
+        })
+        this.versions = {
+          ...this.versions,
+          [versionIndex]: {
+            title, blocks, editors
+          }
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 }
 </script>
