@@ -77,6 +77,11 @@ export default new Router({
       path: '/history',
       name: 'History',
       component: () => import('@/views/History')
+    },
+    {
+      path: '/edit_comparison',
+      name: 'EditComparison',
+      component: () => import('@/views/EditComparison')
     }
   ]
 })

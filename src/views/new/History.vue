@@ -112,7 +112,7 @@ export default {
       tags: [],
       title: '',
       blocks: [],
-      editors: [],
+      editors: {},
       versions: [],
       currentIndex: 0,
       versionStartFrom: 0
