@@ -5,7 +5,7 @@
         2020/12/29  18:27 | CindyLin
       </b-col>
     </b-row>
-    <b-row class="pt-5 article-container">
+    <b-row class="pt-5 article-container mx-1">
       <b-col cols="12">
         <b-row>
           <b-col>
@@ -89,7 +89,7 @@ export default {
 }
 .article-container {
   overflow: scroll;
-  height: 52vh;
+  height: 58vh;
 }
 .header {
   z-index: 2;
