@@ -13,30 +13,40 @@
           </b-col>
         </b-row>
         <b-row class="border-bottom mb-4">
-          <b-col cols="12"><b-row
-            v-for="(block, index) in version.blocks"
-            :key="index"
-            class="py-3"
-          >
-            <b-col>
-              <div class="d-flex justify-content-between">
-                <h3 class="text-primary">
-                  {{ block.blockInfo.blockTitle }}
-                </h3>
-              </div>
-              <b-card
-                border-variant="white"
-                no-body
-              >
-                <editor-content
-                  class="editor__content"
-                  :editor="version.editors[block.blockId]"
-                />
-              </b-card>
-            </b-col>
-          </b-row></b-col>
+          <b-col v-if="isDiff" cols="12">
+            <div
+              v-for="(diff, diffIndex) in diffArr"
+              :key="diffIndex"
+              class="comparision-result"
+              :style="{ color: diff[0] === 1 ? 'green'
+                : diff[0] === -1 ? 'red' : 'black', textDecoration: diff[0] === -1 ? 'line-through' : 'initial'}"
+            >{{ diff[1] }}</div>
+          </b-col>
+          <b-col v-else cols="12">
+            <b-row
+              v-for="(block, index) in version.blocks"
+              :key="index"
+              class="py-3"
+            >
+              <b-col>
+                <div class="d-flex justify-content-between">
+                  <h3 class="text-primary">
+                    {{ block.blockInfo.blockTitle }}
+                  </h3>
+                </div>
+                <b-card
+                  border-variant="white"
+                  no-body
+                >
+                  <editor-content
+                    class="editor__content"
+                    :editor="version.editors[block.blockId]"
+                  />
+                </b-card>
+              </b-col>
+            </b-row>
+          </b-col>
         </b-row>
-
         <b-row class="mb-5">
           <b-col cols="12">
             <h3>新聞來源</h3>
@@ -66,15 +76,20 @@ export default {
           editors: {}
         }
       }
+    },
+    isDiff: {
+      type: Boolean,
+      default: false
+    },
+    diffArr: {
+      type: Array,
+      default() {
+        return []
+      }
     }
   },
   data() {
     return {
-    }
-  },
-  watch: {
-    version: function(newValue) {
-      console.log(newValue)
     }
   },
   methods: {
@@ -95,5 +110,11 @@ export default {
   z-index: 2;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
   height: 60px;
+}
+.comparision-result {
+  white-space: pre-wrap;
+  display: inline;
+  word-break: break-all;
+  font-size: 1em;
 }
 </style>

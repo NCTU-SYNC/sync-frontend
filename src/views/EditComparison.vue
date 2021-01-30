@@ -27,13 +27,14 @@
     </b-row>
     <b-row>
       <b-col cols="6" class="px-0 border-right border-secondary"><comparison-block :version="versions[1]" /></b-col>
-      <b-col cols="6" class="px-0 border-left border-secondary"><comparison-block :version="versions[0]" /></b-col>
+      <b-col cols="6" class="px-0 border-left border-secondary"><comparison-block :version="versions[0]" :is-diff="true" :diff-arr="diffArr" /></b-col>
     </b-row>
   </b-container>
 </template>
 
 <script>
 import { Editor } from 'tiptap'
+import DiffMatchPatch from 'diff-match-patch'
 import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Link } from 'tiptap-extensions'
 import ComparisonBlock from '@/components/ComparisonBlock'
 import { getArticleVersionById } from '@/api/history'
@@ -56,12 +57,17 @@ export default {
           active: true
         }
       ],
-      versions: {}
+      versions: {},
+      diffArr: []
     }
   },
   created() {
-    this.handleGetArticleVersion(1)
-    this.handleGetArticleVersion(0)
+    Promise.all([this.handleGetArticleVersion(1),
+      this.handleGetArticleVersion(0)])
+      .then(() => {
+        console.error(this.versions[1])
+        this.diffArr = this.compareContent(this.versions[1].blocks, this.versions[0].blocks)
+      })
   },
   methods: {
     createEditor(initializedContent) {
@@ -92,7 +98,6 @@ export default {
         const blocks = currentVersion.blocks
         const editors = {}
         blocks.forEach(block => {
-          console.log(JSON.stringify(block.content))
           if (editors[block.blockId]) {
             editors[block.blockId].setContent(block.content)
           } else {
@@ -108,6 +113,32 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    compareTitle(title1, title2) {
+      const dmp = new DiffMatchPatch()
+      const diff = dmp.diff_main(title1, title2)
+      dmp.diff_cleanupSemantic(diff)
+      return diff
+    },
+    compareContent(blocks1, blocks2) {
+      const getPlainText = blocks => {
+        let plainText = ''
+        blocks.forEach(block => {
+          block.content.content.forEach(paragraph => {
+            if (paragraph.content) {
+              paragraph.content.forEach(text => {
+                plainText += text.text
+              })
+            }
+            plainText += '\n\n'
+          })
+        })
+        return plainText
+      }
+      const dmp = new DiffMatchPatch()
+      const diffArr = dmp.diff_main(getPlainText(blocks1), getPlainText(blocks2))
+      dmp.diff_cleanupSemantic(diffArr)
+      return diffArr
     }
   }
 }
