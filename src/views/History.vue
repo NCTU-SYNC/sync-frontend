@@ -19,16 +19,15 @@
           <b-dropdown-item-button disabled>100</b-dropdown-item-button>
         </b-dropdown>
         <div class="h-100 d-flex align-items-center">
-          <span class="ml-3">1-30</span>
-          <span class="ml-1">|</span>
-          <span class="ml-1"> 共有41個版本</span>
+          <span class="ml-3 pr-1 link-right">1-30</span>
+          <span class="ml-1 pl-1"> 共有41個版本</span>
         </div>
 
         <div>
           <b-button variant="link">
             <b-icon icon="chevron-left" />
           </b-button>
-          <span>|</span>
+          <span class="link-right" />
           <b-button variant="link">
             <b-icon icon="chevron-right" />
           </b-button>
@@ -36,24 +35,40 @@
 
       </b-col>
     </b-row>
-    <b-row>
-      <b-col>
-        <b-table hover :items="tableItems" :fields="tableFields" :tbody-tr-class="rowClass" table-class="table-class" thead-class="font-weight-normal" stacked="md">
-          <template #cell(actions)="data">
-            <div v-if="typeof data.value === 'string'" class="no-headers">
-              <span>{{ data.value }}</span>
-            </div>
-            <div v-else>
-              <b-link>最新</b-link> | <b-link>前一版</b-link>
-            </div>
-          </template>
-          <template #cell(editTextCounts)="data">
-            <span v-if="data.value[0]" class="bg-success px-2 py-1 m-2">{{ data.value[0] }}</span>
-            <span v-if="data.value[1]" class="bg-danger px-2 py-1 m-2">{{ data.value[1] }}</span>
-          </template>
-        </b-table>
+    <b-row class="history-header">
+      <b-col sm="2" />
+      <b-col sm="3">
+        版本日期
+      </b-col>
+      <b-col sm="5">
+        編輯者
+      </b-col>
+      <b-col sm="2" class="text-center">
+        編輯更動字數
       </b-col>
     </b-row>
+    <b-row v-for="(item, itemIndex) in tableItems" :key="itemIndex" class="history-row">
+      <b-col sm="2" class="compare-options">
+        <div v-if="typeof item.actions === 'string'" class="no-headers">
+          <h5>{{ item.actions }}</h5>
+        </div>
+        <div v-else>
+          <b-link class="pr-2 link-right">最新</b-link>
+          <b-link class="pl-2">前一版</b-link>
+        </div>
+      </b-col>
+      <b-col sm="3">
+        {{ item.date }}
+      </b-col>
+      <b-col sm="5">
+        {{ item.author }}
+      </b-col>
+      <b-col v-if="item.editTextCounts" sm="2">
+        <span v-if="item.editTextCounts[0]" class="bg-diff-add px-2 py-1 m-2">{{ item.editTextCounts[0] }}</span>
+        <span v-if="item.editTextCounts[1]" class="bg-diff-delete px-2 py-1 m-2">{{ item.editTextCounts[1] }}</span>
+      </b-col>
+    </b-row>
+
   </b-container>
 </template>
 
@@ -112,7 +127,48 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.history-header {
+  height: 4rem;
+  border-bottom: 1px solid;
+  div {
+    display: flex;
+    align-items: center
+  }
+}
 
+.history-row {
+  height: 4rem;
+  border-bottom: 1px solid $gray-500;
+  div {
+    display: flex;
+    align-items: center
+  }
+
+  .compare-options {
+    justify-content: center
+  }
+
+  &:hover {
+    background-color: $light;
+  }
+}
+
+h5 {
+  margin: 0;
+}
+
+.link-right {
+  border-right: 1px solid $gray-400;
+}
+
+.bg-diff {
+  &-add {
+    background-color: #1AE158;
+  }
+  &-delete {
+    background-color: #FF4F4F;
+  }
+}
 </style>
 
 <style lang="scss">
@@ -124,4 +180,5 @@ export default {
   font-weight: normal !important;
   border-top: none !important;
 }
+
 </style>
