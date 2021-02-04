@@ -28,9 +28,32 @@
                   v-for="diff in block.contentDiff"
                   :key="JSON.stringify(diff)"
                   class="comparision-result"
-                  :style="{ backgroundColor: diff[0] === 1 ? 'rgba(26, 225, 91, 0.3)'
-                    : diff[0] === -1 ? 'rgba(255, 79, 79, 0.3)' : 'none', textDecoration: diff[0] === -1 ? 'line-through' : 'initial'}"
-                >{{ diff[1] }}</div>
+                >
+                  <div
+                    v-if="diff[1].includes('__@@@@@__')"
+                    class="comparision-result"
+                    :style="{ backgroundColor: diff[0] === 1 ? 'rgba(26, 225, 91, 0.3)'
+                      : diff[0] === -1 ? 'rgba(255, 79, 79, 0.3)' : 'none', textDecoration: 'initial'}"
+                  >{{ diff[1].split('__@@@@@__')[0] }}</div>
+                  <div
+                    v-if="diff[1].includes('__@@@@@__')"
+                    class="comparision-result"
+                    :style="{ backgroundColor: diff[0] === 1 ? 'rgba(26, 225, 91, 0.3)'
+                      : diff[0] === -1 ? 'rgba(255, 79, 79, 0.3)' : 'none', textDecoration: 'underline'}"
+                  >{{ diff[1].split('__@@@@@__')[1] }}</div>
+                  <div
+                    v-if="diff[1].includes('__@@@@@__')"
+                    class="comparision-result"
+                    :style="{ backgroundColor: diff[0] === 1 ? 'rgba(26, 225, 91, 0.3)'
+                      : diff[0] === -1 ? 'rgba(255, 79, 79, 0.3)' : 'none', textDecoration: 'initial'}"
+                  >{{ diff[1].split('__@@@@@__')[2] }}</div>
+                  <div
+                    v-else
+                    class="comparision-result"
+                    :style="{ backgroundColor: diff[0] === 1 ? 'rgba(26, 225, 91, 0.3)'
+                      : diff[0] === -1 ? 'rgba(255, 79, 79, 0.3)' : 'none', textDecoration: diff[0] === -1 ? 'line-through' : 'initial'}"
+                  >{{ diff[1] }}</div>
+                </div>
               </b-col>
             </b-row>
           </b-col>
@@ -112,7 +135,12 @@ export default {
     }
   },
   methods: {
-
+    getText(diff, isAdded) {
+      if (diff.includes('__@@@@@__') && isAdded) {
+        const temp = diff.split('__@@@@@__')
+        return temp[1]
+      } else return diff
+    }
   }
 }
 </script>

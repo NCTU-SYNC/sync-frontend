@@ -158,7 +158,9 @@ export default {
           block.content.content.forEach(paragraph => {
             if (paragraph.content) {
               paragraph.content.forEach(text => {
-                content += text.text
+                if (text.marks && text.marks.some(mark => mark.type === 'link')) {
+                  content += `龗龗龗龗龗${text.text}龗龗龗龗龗`
+                } else { content += text.text }
               })
             }
             content += '\n\n'
@@ -170,6 +172,9 @@ export default {
 
       const article1 = getDiffs(blocks1)
       const article2 = getDiffs(blocks2)
+
+      console.log(JSON.stringify(blocks1[0].content))
+      console.log(JSON.stringify(blocks2[0].content))
 
       const articleDiff = []
       if (article1.length > article2.length) {
