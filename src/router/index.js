@@ -53,10 +53,6 @@ export default new Router({
       }
     },
     {
-      path: '/history/:ArticleID/',
-      component: () => import('@/views/new/History')
-    },
-    {
       path: '/revision/:BlockID/',
       component: () => import('@/views/new/Revision')
     },
@@ -74,7 +70,7 @@ export default new Router({
       component: () => import('@/views/NewsPanel')
     },
     {
-      path: '/history',
+      path: '/history/:ArticleID/',
       name: 'History',
       component: () => import('@/views/History')
     },

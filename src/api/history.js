@@ -1,12 +1,13 @@
 import request from '@/utils/request'
 import config from './config'
 
-export function getArticleVersionById(data) {
+export function getArticleVersionsById(data) {
   return request({
     url: config.baseURL + `/history/${data.articleId}`,
     method: 'get',
     params: {
-      versionIndex: data.versionIndex
+      limit: data.limit,
+      page: data.page
     }
   })
 }

@@ -7,16 +7,28 @@
     </b-row>
     <b-row>
       <b-col class="text-center">
-        <h4>拜登就職演說</h4>
+        <h4>{{ title }}</h4>
       </b-col>
     </b-row>
     <b-row>
       <b-col class="d-flex justify-content-end align-items-center">
         每頁顯示：
-        <b-dropdown text="30" class="m-2" variant="transparent">
-          <b-dropdown-item-button active>30</b-dropdown-item-button>
-          <b-dropdown-item-button>50</b-dropdown-item-button>
-          <b-dropdown-item-button disabled>100</b-dropdown-item-button>
+        <b-dropdown :text="historyShowCount.toString()" class="m-2" variant="transparent">
+          <b-dropdown-item-button
+            :active="historyShowCount === 3"
+            @click="onLimitDropdownClicked(3)"
+          >3
+          </b-dropdown-item-button>
+          <b-dropdown-item-button
+            :active="historyShowCount === 5"
+            @click="onLimitDropdownClicked(5)"
+          >5
+          </b-dropdown-item-button>
+          <b-dropdown-item-button
+            :active="historyShowCount === 10"
+            @click="onLimitDropdownClicked(10)"
+          >10
+          </b-dropdown-item-button>
         </b-dropdown>
         <div class="h-100 d-flex align-items-center">
           <span class="ml-3 pr-1 link-right">1-30</span>
@@ -24,11 +36,19 @@
         </div>
 
         <div>
-          <b-button variant="link">
+          <b-button
+            variant="link"
+            :disabled="!isPrevPageButtonEnable"
+            @click="onPrevPageClicked"
+          >
             <b-icon icon="chevron-left" />
           </b-button>
           <span class="link-right" />
-          <b-button variant="link">
+          <b-button
+            variant="link"
+            :disabled="!isNextPageButtonEnable"
+            @click="onNextPageClicked"
+          >
             <b-icon icon="chevron-right" />
           </b-button>
         </div>
@@ -47,10 +67,10 @@
         編輯更動字數
       </b-col>
     </b-row>
-    <b-row v-for="(item, itemIndex) in tableItems" :key="itemIndex" class="history-row">
+    <b-row v-for="(item, itemIndex) in historyItems" :key="itemIndex" class="history-row">
       <b-col sm="2" class="compare-options">
-        <div v-if="typeof item.actions === 'string'" class="no-headers">
-          <h5>{{ item.actions }}</h5>
+        <div v-if="item.type === 'header'" class="no-headers">
+          <h5>{{ item.month }}</h5>
         </div>
         <div v-else>
           <b-link class="pr-2 link-right">最新</b-link>
@@ -58,7 +78,7 @@
         </div>
       </b-col>
       <b-col sm="3">
-        {{ item.date }}
+        {{ item.updatedAt }}
       </b-col>
       <b-col sm="5">
         {{ item.author }}
@@ -73,55 +93,117 @@
 </template>
 
 <script>
+import { getArticleVersionsById } from '@/api/history'
+import moment from 'moment'
+
 export default {
+  name: 'History',
   data() {
     return {
       breadcrumbItems: [
         {
-          text: '拜登就職演說',
-          href: '#'
+          text: this.title,
+          to: `/article/${this.articleId}`
         },
         {
           text: '編輯紀錄',
           active: true
         }
       ],
-      tableFields: [
-        {
-          key: 'actions',
-          label: '比較',
-          thClass: 'font-weight-normal'
-        },
-        {
-          key: 'date',
-          label: '版本日期',
-          thClass: 'font-weight-normal',
-          sortable: false
-        },
-        {
-          key: 'author',
-          label: '編輯者',
-          thClass: 'font-weight-normal'
-        },
-        {
-          key: 'editTextCounts',
-          label: '編輯更動字數',
-          thClass: 'font-weight-normal'
-        }
-      ],
-      tableItems: [
-        { actions: '2020/12' },
-        { actions: { previous: '1', current: '2' }, author: 'armuro', date: '2020/12/31 10:20（最新版）', editTextCounts: [31, -16] },
-        { actions: { previous: '1', current: '2' }, author: 'Jin An', date: '2020/12/29 20:16', editTextCounts: [30, 0] },
-        { actions: { previous: '1', current: '2' }, author: 'Shang', date: '2020/12/12 06:16', editTextCounts: [0, 20] },
-        { actions: { previous: '1', current: '2' }, author: 'Test', date: '2020/12/1 13:16', editTextCounts: [20, -20] }
-      ]
+      historyItems: [],
+      currentVersion: null,
+      historyShowCount: 3,
+      currentViewPage: 1,
+      versionsLength: 0
+    }
+  },
+  computed: {
+    articleId() {
+      return this.$route.params.ArticleID
+    },
+    currentViewVersion() {
+      return this.$route.query.version
+    },
+    title() {
+      return this.currentVersion && this.currentVersion.title
+    },
+    isNextPageButtonEnable() {
+      return this.currentViewPage < this.versionsLength / this.historyShowCount
+    },
+    isPrevPageButtonEnable() {
+      return this.currentViewPage > 1
+    }
+  },
+  watch: {
+    title(value) {
+      this.breadcrumbItems[0].text = value
+      this.breadcrumbItems[0].to = `/article/${this.articleId}`
+    }
+  },
+  created() {
+    console.log(this.articleId)
+    this.historyShowCount = this.$route.query.limit || 3
+    this.currentViewPage = this.$route.query.page || 1
+
+    if (this.articleId) {
+      this.handleGetArticleVersions()
     }
   },
   methods: {
-    rowClass(item, type) {
-      if (!item || type !== 'row') return
-      if (typeof item.actions === 'string') return 'd-none d-md-table-row'
+    async handleGetArticleVersions() {
+      this.historyItems = []
+      try {
+        const { data } = await getArticleVersionsById({
+          articleId: this.articleId,
+          limit: this.historyShowCount,
+          page: this.currentViewPage
+        })
+        const { currentVersion, versions, length, limit, page } = data.data
+        this.currentVersion = currentVersion
+        this.versionsLength = length
+        const monthDict = {}
+        for (const version of versions) {
+          let updatedAt = moment(version.updatedAt).format('YYYY/MM/DD HH:mm')
+          if (version.versionIndex === length) {
+            updatedAt += '（最新版）'
+          }
+
+          const monthStr = moment(version.updatedAt).format('YYYY/MM')
+          if (!monthDict[monthStr]) {
+            this.historyItems.push({
+              type: 'header',
+              month: monthStr
+            })
+            monthDict[monthStr] = true
+          }
+          this.historyItems.push({
+            blockId: version._id,
+            author: version.author.name,
+            updatedAt,
+            index: version.versionIndex,
+            editTextCounts: ['0', '0']
+          })
+        }
+        this.historyShowCount = limit
+        this.currentViewPage = page
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    onLimitDropdownClicked(value) {
+      this.historyShowCount = value
+      this.handleGetArticleVersions()
+    },
+    onNextPageClicked() {
+      if (!this.isNextPageButtonEnable) { return }
+      this.currentViewPage += 1
+      this.handleGetArticleVersions()
+    },
+    onPrevPageClicked() {
+      console.log(this.currentViewPage)
+      if (!this.isPrevPageButtonEnable) { return }
+      this.currentViewPage -= 1
+      this.handleGetArticleVersions()
     }
   }
 }
