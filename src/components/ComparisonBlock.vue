@@ -2,7 +2,7 @@
   <b-container fluid="xl" class="container">
     <b-row>
       <b-col cols="12" class="header d-flex justify-content-between align-items-center">
-        2020/12/29  18:27 | CindyLin
+        {{ editInfo }}
       </b-col>
     </b-row>
     <b-row class="pt-5 article-container mx-1">
@@ -71,6 +71,7 @@
 
 <script>
 import { EditorContent } from 'tiptap'
+import moment from 'moment'
 
 export default {
   name: 'ComparisonBlock',
@@ -84,7 +85,9 @@ export default {
         return {
           title: '',
           blocks: [],
-          editors: {}
+          editors: {},
+          author: { uid: '', name: '' },
+          updateAt: ''
         }
       }
     },
@@ -101,6 +104,11 @@ export default {
   },
   data() {
     return {
+    }
+  },
+  computed: {
+    editInfo() {
+      return `${moment(this.version.updatedAt).format('YYYY/MM/DD HH:mm')} | ${this.version.author.name}`
     }
   },
   methods: {

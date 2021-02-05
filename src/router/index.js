@@ -70,12 +70,12 @@ export default new Router({
       component: () => import('@/views/NewsPanel')
     },
     {
-      path: '/history/:ArticleID/',
+      path: '/history/:ArticleID',
       name: 'History',
       component: () => import('@/views/History')
     },
     {
-      path: '/edit_comparison',
+      path: '/compare/:ArticleID',
       name: 'EditComparison',
       component: () => import('@/views/EditComparison')
     }

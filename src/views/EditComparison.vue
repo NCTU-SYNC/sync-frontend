@@ -7,18 +7,18 @@
     </b-row>
     <b-row>
       <b-col class="text-center">
-        <h4>拜登就職演說</h4>
+        <h4>{{ title }}</h4>
       </b-col>
     </b-row>
     <b-row class="mt-2 pb-2">
       <b-col class="d-flex justify-content-center align-items-center">
         <div>
-          <b-button variant="link">
+          <b-button variant="link" :disabled="base <= 1" @click="onPrevArticleClicked">
             <b-icon icon="chevron-left" />
             上一版
           </b-button>
           <span> &nbsp; | &nbsp;</span>
-          <b-button variant="link">
+          <b-button variant="link" :disabled="base + 1 >= versionsLength" @click="onNextArticleClicked">
             下一版
             <b-icon icon="chevron-right" />
           </b-button>
@@ -37,7 +37,8 @@ import { Editor } from 'tiptap'
 import DiffMatchPatch from 'diff-match-patch'
 import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Link } from 'tiptap-extensions'
 import ComparisonBlock from '@/components/ComparisonBlock'
-import { getArticleVersionById } from '@/api/history'
+import { getArticlesComparisonByVersionIndexes } from '@/api/history'
+
 export default {
   components: {
     ComparisonBlock
@@ -50,7 +51,8 @@ export default {
           href: '#'
         },
         {
-          text: '編輯紀錄'
+          text: '編輯紀錄',
+          to: `/history/${this.articleId}`
         },
         {
           text: '版本比較',
@@ -58,15 +60,32 @@ export default {
         }
       ],
       versions: {},
-      articleDiff: []
+      baseVersion: {},
+      comparedVersion: {},
+      articleDiff: [],
+      versionsLength: 0,
+      base: undefined,
+      compare: undefined,
+      title: ''
+    }
+  },
+  computed: {
+    articleId() {
+      return this.$route.params.ArticleID
+    }
+  },
+  watch: {
+    title(value) {
+      this.breadcrumbItems[0].text = value
+      this.breadcrumbItems[0].to = `/article/${this.articleId}`
+      this.breadcrumbItems[1].to = `/history/${this.articleId}`
     }
   },
   created() {
-    Promise.all([this.handleGetArticleVersion(1),
-      this.handleGetArticleVersion(0)])
-      .then(() => {
-        this.articleDiff = this.compareContent(this.versions[1].blocks, this.versions[0].blocks)
-      })
+    this.base = this.$route.query.base
+    this.compare = this.$route.query.compare
+    console.log(this.base, this.compare)
+    this.handleGetArticlesComparison()
   },
   methods: {
     createEditor(initializedContent) {
@@ -89,26 +108,42 @@ export default {
       })
       return editor
     },
-    async handleGetArticleVersion(versionIndex = undefined) {
+    async handleGetArticlesComparison() {
       try {
-        const { data } = await getArticleVersionById({ articleId: '60043867621475aa00007541', versionIndex })
-        const { currentVersion } = data.data
-        const title = currentVersion.title
-        const blocks = currentVersion.blocks
-        const editors = {}
-        blocks.forEach(block => {
-          if (editors[block.blockId]) {
-            editors[block.blockId].setContent(block.content)
-          } else {
-            editors[block.blockId] = this.createEditor(block.content)
-          }
+        const { data } = await getArticlesComparisonByVersionIndexes({
+          articleId: this.articleId,
+          base: this.base,
+          compare: this.compare
         })
-        this.versions = {
-          ...this.versions,
-          [versionIndex]: {
-            title, blocks, editors
+        const { articles, length, base, compare, title } = data.data
+        this.versionsLength = length
+        if (this.$route.query.base !== base.toString() || this.$route.query.compare !== compare.toString()) {
+          this.$router.replace({ query: { base, compare }})
+        }
+        this.base = base
+        this.compare = compare
+        this.title = title
+
+        for (let i = 0; i < 2; i += 1) {
+          const title = articles[i].title
+          const blocks = articles[i].blocks
+          const editors = {}
+          const author = articles[i].author
+          const updateAt = articles[i].updateAt
+          blocks.forEach(block => {
+            if (editors[block.blockId]) {
+              editors[block.blockId].setContent(block.content)
+            } else {
+              editors[block.blockId] = this.createEditor(block.content)
+            }
+          })
+          this.versions = {
+            ...this.versions,
+            [i]: { title, blocks, editors, author, updateAt }
           }
         }
+
+        this.articleDiff = this.compareContent(this.versions[1].blocks, this.versions[0].blocks)
       } catch (error) {
         console.log(error)
       }
@@ -173,6 +208,24 @@ export default {
         })
       }
       return articleDiff
+    },
+    onPrevArticleClicked() {
+      if (this.base <= 1) {
+        return
+      }
+      this.base -= 1
+      this.compare = this.base + 1
+      console.log(this.base, this.compare)
+      this.handleGetArticlesComparison()
+    },
+    onNextArticleClicked() {
+      if (this.base >= this.versionsLength - 1) {
+        return
+      }
+      this.base += 1
+      this.compare = this.base + 1
+      console.log(this.base, this.compare)
+      this.handleGetArticlesComparison()
     }
   }
 }

@@ -11,12 +11,24 @@ export function getArticleVersionsById(data) {
     }
   })
 }
+
 export function getBlockRevisionById(data) {
   return request({
     url: config.baseURL + `/revision/${data.blockId}`,
     method: 'get',
     params: {
       blockIndex: data.revisionIndex
+    }
+  })
+}
+
+export function getArticlesComparisonByVersionIndexes(data) {
+  return request({
+    url: config.baseURL + `/compare/${data.articleId}`,
+    method: 'get',
+    params: {
+      base: data.base,
+      compare: data.compare
     }
   })
 }

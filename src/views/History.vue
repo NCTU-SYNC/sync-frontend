@@ -31,8 +31,8 @@
           </b-dropdown-item-button>
         </b-dropdown>
         <div class="h-100 d-flex align-items-center">
-          <span class="ml-3 pr-1 link-right">1-30</span>
-          <span class="ml-1 pl-1"> 共有41個版本</span>
+          <span class="ml-1 pr-2 link-right">{{ from }}-{{ to }}</span>
+          <span class="ml-1 pl-2">共有{{ versionsLength }}個版本</span>
         </div>
 
         <div>
@@ -73,8 +73,8 @@
           <h5>{{ item.month }}</h5>
         </div>
         <div v-else>
-          <b-link class="pr-2 link-right">最新</b-link>
-          <b-link class="pl-2">前一版</b-link>
+          <b-link class="pr-2 link-right" :to="`/compare/${articleId}?base=${item.index}&compare=${versionsLength}`" :disabled="item.index === versionsLength">最新</b-link>
+          <b-link class="pl-2" :to="`/compare/${articleId}?base=${item.index}&compare=${item.index - 1}`" :disabled="item.index === versionsLength || item.index === 1">前一版</b-link>
         </div>
       </b-col>
       <b-col sm="3">
@@ -114,7 +114,9 @@ export default {
       currentVersion: null,
       historyShowCount: 3,
       currentViewPage: 1,
-      versionsLength: 0
+      versionsLength: 0,
+      from: 0,
+      to: 0
     }
   },
   computed: {
@@ -152,15 +154,19 @@ export default {
   methods: {
     async handleGetArticleVersions() {
       this.historyItems = []
+      this.$route.query.limit = this.historyShowCount
+      this.$route.query.page = this.currentViewPage
       try {
         const { data } = await getArticleVersionsById({
           articleId: this.articleId,
           limit: this.historyShowCount,
           page: this.currentViewPage
         })
-        const { currentVersion, versions, length, limit, page } = data.data
+        const { currentVersion, versions, length, limit, page, from, to } = data.data
         this.currentVersion = currentVersion
         this.versionsLength = length
+        this.from = from
+        this.to = to
         const monthDict = {}
         for (const version of versions) {
           let updatedAt = moment(version.updatedAt).format('YYYY/MM/DD HH:mm')
@@ -192,17 +198,20 @@ export default {
     },
     onLimitDropdownClicked(value) {
       this.historyShowCount = value
+      this.$router.replace({ query: { limit: this.historyShowCount, page: this.currentViewPage }})
       this.handleGetArticleVersions()
     },
     onNextPageClicked() {
       if (!this.isNextPageButtonEnable) { return }
       this.currentViewPage += 1
+      this.$router.replace({ query: { limit: this.historyShowCount, page: this.currentViewPage }})
       this.handleGetArticleVersions()
     },
     onPrevPageClicked() {
       console.log(this.currentViewPage)
       if (!this.isPrevPageButtonEnable) { return }
       this.currentViewPage -= 1
+      this.$router.replace({ query: { limit: this.historyShowCount, page: this.currentViewPage }})
       this.handleGetArticleVersions()
     }
   }
@@ -263,4 +272,9 @@ h5 {
   border-top: none !important;
 }
 
+.disabled:hover {
+  text-decoration: none;
+  color: $secondary;
+  cursor: auto;
+}
 </style>
