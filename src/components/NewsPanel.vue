@@ -78,8 +78,8 @@
         :outline="getNewsOutline(news.content)"
         :content="news.content"
         :url="news.url"
-        :source="news.news_club"
-        :timestamp="news.date"
+        :source="news.media"
+        :datetime="news.modified_date"
         @importNews="emitToEditPage"
       />
     </div>
@@ -118,7 +118,7 @@ export default {
         let str = ''
         newsContent.forEach(
           (text, i) => {
-            if (i === 0) { return }
+            // if (i === 0) { return }
             str += text + ' '
           })
         return str.substring(0, 120) + ' ...'

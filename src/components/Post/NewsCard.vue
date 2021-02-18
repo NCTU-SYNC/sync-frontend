@@ -82,9 +82,9 @@ export default {
   },
   computed: {
     getDateTime() {
-      const datetime = moment(this.dateTime)
+      const datetime = moment(this.datetime)
       if (datetime.isValid()) {
-        return datetime.format('YYYY.MM.DD HH.mm')
+        return datetime.format('YYYY.MM.DD HH:mm')
       }
       return ''
     }

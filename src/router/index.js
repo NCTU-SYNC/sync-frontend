@@ -53,6 +53,10 @@ export default new Router({
       }
     },
     {
+      path: '/revision/:BlockID/',
+      component: () => import('@/views/new/Revision')
+    },
+    {
       path: '/post',
       name: 'Post',
       component: () => import('@/views/new/Post'),
@@ -64,6 +68,16 @@ export default new Router({
       path: '/NewsPanel',
       name: 'NewsPanel',
       component: () => import('@/views/NewsPanel')
+    },
+    {
+      path: '/history/:ArticleID',
+      name: 'History',
+      component: () => import('@/views/History')
+    },
+    {
+      path: '/compare/:ArticleID',
+      name: 'EditComparison',
+      component: () => import('@/views/EditComparison')
     }
   ]
 })

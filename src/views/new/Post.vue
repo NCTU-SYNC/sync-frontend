@@ -242,7 +242,7 @@ export default {
       isAddingTag: false,
       blocks: [],
       data: {},
-      postAuthors: ['內部測試'],
+      postAuthors: [],
       postTitle: '',
       postCategories: [],
       postDateTime: '',
