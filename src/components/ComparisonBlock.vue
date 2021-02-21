@@ -32,20 +32,17 @@
                   <div
                     v-if="diff[1].includes(linkContainer)"
                     class="comparision-result"
-                    :style="{ backgroundColor: diff[0] === 1 ? 'rgba(26, 225, 91, 0.3)'
-                      : diff[0] === -1 ? 'rgba(255, 79, 79, 0.3)' : 'none', textDecoration: 'initial'}"
+                    :style="getLinkNeighborStyle(diff)"
                   >{{ diff[1].split(linkContainer)[0] }}</div>
                   <div
                     v-if="diff[1].includes(linkContainer)"
                     class="comparision-result"
-                    :style="{ backgroundColor: diff[0] === 1 ? 'rgba(26, 225, 91, 0.3)'
-                      : diff[0] === -1 ? 'rgba(255, 79, 79, 0.3)' : 'none', textDecoration: 'underline'}"
+                    :style="getLinkStyle(diff)"
                   >{{ diff[1].split(linkContainer)[1] }}</div>
                   <div
                     v-if="diff[1].includes(linkContainer)"
                     class="comparision-result"
-                    :style="{ backgroundColor: diff[0] === 1 ? 'rgba(26, 225, 91, 0.3)'
-                      : diff[0] === -1 ? 'rgba(255, 79, 79, 0.3)' : 'none', textDecoration: 'initial'}"
+                    :style="getLinkNeighborStyle(diff)"
                   >{{ diff[1].split(linkContainer)[2] }}</div>
                   <div
                     v-else
@@ -139,11 +136,13 @@ export default {
     }
   },
   methods: {
-    getText(diff, isAdded) {
-      if (diff.includes('__@@@@@__') && isAdded) {
-        const temp = diff.split('__@@@@@__')
-        return temp[1]
-      } else return diff
+    getLinkNeighborStyle(diff) {
+      return { backgroundColor: diff[0] === 1 ? 'rgba(26, 225, 91, 0.3)'
+        : diff[0] === -1 ? 'rgba(255, 79, 79, 0.3)' : 'none', textDecoration: 'initial' }
+    },
+    getLinkStyle(diff) {
+      return { backgroundColor: diff[0] === 1 ? 'rgba(26, 225, 91, 0.3)'
+        : diff[0] === -1 ? 'rgba(255, 79, 79, 0.3)' : 'none', textDecoration: 'underline' }
     }
   }
 }
