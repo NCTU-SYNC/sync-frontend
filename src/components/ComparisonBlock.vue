@@ -30,23 +30,23 @@
                   class="comparision-result"
                 >
                   <div
-                    v-if="diff[1].includes('__@@@@@__')"
+                    v-if="diff[1].includes(linkContainer)"
                     class="comparision-result"
                     :style="{ backgroundColor: diff[0] === 1 ? 'rgba(26, 225, 91, 0.3)'
                       : diff[0] === -1 ? 'rgba(255, 79, 79, 0.3)' : 'none', textDecoration: 'initial'}"
-                  >{{ diff[1].split('__@@@@@__')[0] }}</div>
+                  >{{ diff[1].split(linkContainer)[0] }}</div>
                   <div
-                    v-if="diff[1].includes('__@@@@@__')"
+                    v-if="diff[1].includes(linkContainer)"
                     class="comparision-result"
                     :style="{ backgroundColor: diff[0] === 1 ? 'rgba(26, 225, 91, 0.3)'
                       : diff[0] === -1 ? 'rgba(255, 79, 79, 0.3)' : 'none', textDecoration: 'underline'}"
-                  >{{ diff[1].split('__@@@@@__')[1] }}</div>
+                  >{{ diff[1].split(linkContainer)[1] }}</div>
                   <div
-                    v-if="diff[1].includes('__@@@@@__')"
+                    v-if="diff[1].includes(linkContainer)"
                     class="comparision-result"
                     :style="{ backgroundColor: diff[0] === 1 ? 'rgba(26, 225, 91, 0.3)'
                       : diff[0] === -1 ? 'rgba(255, 79, 79, 0.3)' : 'none', textDecoration: 'initial'}"
-                  >{{ diff[1].split('__@@@@@__')[2] }}</div>
+                  >{{ diff[1].split(linkContainer)[2] }}</div>
                   <div
                     v-else
                     class="comparision-result"
@@ -123,6 +123,10 @@ export default {
       default() {
         return []
       }
+    },
+    linkContainer: {
+      type: String,
+      default: ''
     }
   },
   data() {

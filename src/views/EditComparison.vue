@@ -27,7 +27,7 @@
     </b-row>
     <b-row>
       <b-col cols="6" class="px-0 border-right border-secondary"><comparison-block :version="versions[1]" /></b-col>
-      <b-col cols="6" class="px-0 border-left border-secondary"><comparison-block :version="versions[0]" :is-diff="true" :article-diff="articleDiff" /></b-col>
+      <b-col cols="6" class="px-0 border-left border-secondary"><comparison-block :version="versions[0]" :is-diff="true" :article-diff="articleDiff" :link-container="linkContainer" /></b-col>
     </b-row>
   </b-container>
 </template>
@@ -66,7 +66,8 @@ export default {
       versionsLength: 0,
       base: undefined,
       compare: undefined,
-      title: ''
+      title: '',
+      linkContainer: '龗龗龗龗龗'
     }
   },
   computed: {
@@ -150,69 +151,44 @@ export default {
     },
     compareContent(blocks1, blocks2) {
       const dmp = new DiffMatchPatch()
-      const getDiffs = blocks => {
-        const diffs = []
-        blocks.forEach(block => {
-          const { blockTitle } = block.blockInfo
-          let content = ''
-          block.content.content.forEach(paragraph => {
-            if (paragraph.content) {
-              paragraph.content.forEach(text => {
-                if (text.marks && text.marks.some(mark => mark.type === 'link')) {
-                  content += `龗龗龗龗龗${text.text}龗龗龗龗龗`
-                } else { content += text.text }
-              })
-            }
-            content += '\n\n'
-          })
-          diffs.push({ blockTitle, content })
-        })
-        return diffs
-      }
 
-      const article1 = getDiffs(blocks1)
-      const article2 = getDiffs(blocks2)
+      const plainTextBlocks1 = this.getPlainTextBlocks(blocks1)
+      const plainTextBlocks2 = this.getPlainTextBlocks(blocks2)
 
-      console.log(JSON.stringify(blocks1[0].content))
-      console.log(JSON.stringify(blocks2[0].content))
+      const longer = plainTextBlocks1.length > plainTextBlocks2.length ? plainTextBlocks1 : plainTextBlocks2
+      const shorter = plainTextBlocks1.length <= plainTextBlocks2.length ? plainTextBlocks1 : plainTextBlocks2
 
       const articleDiff = []
-      if (article1.length > article2.length) {
-        article1.forEach((diff1, index) => {
-          if (index < article2.length) {
-            const diff2 = article2[index]
-            const titleDiff = dmp.diff_main(diff1.blockTitle, diff2.blockTitle)
-            const contentDiff = dmp.diff_main(diff1.content, diff2.content)
-            dmp.diff_cleanupSemantic(titleDiff)
-            dmp.diff_cleanupSemantic(contentDiff)
-            articleDiff.push({ titleDiff, contentDiff })
-          } else {
-            const titleDiff = dmp.diff_main(diff1.blockTitle, '')
-            const contentDiff = dmp.diff_main(diff1.content, '')
-            dmp.diff_cleanupSemantic(titleDiff)
-            dmp.diff_cleanupSemantic(contentDiff)
-            articleDiff.push({ titleDiff, contentDiff })
-          }
-        })
-      } else {
-        article2.forEach((diff2, index) => {
-          if (index < article1.length) {
-            const diff1 = article1[index]
-            const titleDiff = dmp.diff_main(diff1.blockTitle, diff2.blockTitle)
-            const contentDiff = dmp.diff_main(diff1.content, diff2.content)
-            dmp.diff_cleanupSemantic(titleDiff)
-            dmp.diff_cleanupSemantic(contentDiff)
-            articleDiff.push({ titleDiff, contentDiff })
-          } else {
-            const titleDiff = dmp.diff_main('', diff2.blockTitle)
-            const contentDiff = dmp.diff_main('', diff2.content)
-            dmp.diff_cleanupSemantic(titleDiff)
-            dmp.diff_cleanupSemantic(contentDiff)
-            articleDiff.push({ titleDiff, contentDiff })
-          }
-        })
-      }
+
+      longer.forEach((block, index) => {
+        const comparedBlock = index < shorter.length ? shorter[index] : { blockTitle: '', content: '' }
+        const titleDiff = dmp.diff_main(block.blockTitle, comparedBlock.blockTitle)
+        const contentDiff = dmp.diff_main(block.content, comparedBlock.content)
+        dmp.diff_cleanupSemantic(titleDiff)
+        dmp.diff_cleanupSemantic(contentDiff)
+        articleDiff.push({ titleDiff, contentDiff })
+      })
+
       return articleDiff
+    },
+    getPlainTextBlocks(blocks) {
+      const plainTextBlocks = []
+      blocks.forEach(block => {
+        const { blockTitle } = block.blockInfo
+        let content = ''
+        block.content.content.forEach(paragraph => {
+          if (paragraph.content) {
+            paragraph.content.forEach(text => {
+              if (text.marks && text.marks.some(mark => mark.type === 'link')) {
+                content += this.linkContainer + text.text + this.linkContainer
+              } else { content += text.text }
+            })
+          }
+          content += '\n\n'
+        })
+        plainTextBlocks.push({ blockTitle, content })
+      })
+      return plainTextBlocks
     },
     onPrevArticleClicked() {
       if (this.base <= 1) {
