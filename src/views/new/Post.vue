@@ -45,7 +45,7 @@
               <div class="border rounded bg-white date-time-container">
                 <b-dropdown
                   class="w-100 h-100"
-                  :text="postCategories.length > 3 ? `${postCategories[0]}, ${postCategories[1]}, ...等${postCategories.length}個` : postCategories.length > 0 ? postCategories.join(', ') : '文章主題分類'"
+                  :text="currentSelectedCategory.length === 0 ? '文章主題分類': currentSelectedCategory"
                   toggle-class="text-truncate"
                   variant="link"
                 >
@@ -57,11 +57,11 @@
                       class="d-flex justify-content-center align-items-center py-1 pr-2"
                     >
                       <label
-                        :class="['btn',{ 'btn-outline-primary': postCategories.includes(category) }, 'w-100' ]"
+                        :class="['btn',{ 'btn-outline-primary': currentSelectedCategory === category }, 'w-100' ]"
                       >
                         <input
-                          v-model="postCategories"
-                          type="checkbox"
+                          v-model="currentSelectedCategory"
+                          type="radio"
                           :value="category"
                         >
                         <span>{{ category }}</span>
@@ -244,12 +244,12 @@ export default {
       data: {},
       postAuthors: [],
       postTitle: '',
-      postCategories: [],
       postDateTime: '',
       postDateValue: '',
       postTimeValue: '',
       categoryList: ['政經', '國際', '社會', '科技', '環境', '生活', '運動'],
-      postTags: ['美國總統大選', '川普'],
+      currentSelectedCategory: '',
+      postTags: [],
       items: [
         {
           text: '首頁',
@@ -509,7 +509,7 @@ export default {
 }
 
 /* HIDE RADIO */
-[type=checkbox] {
+[type=radio] {
   position: absolute;
   opacity: 0;
   width: 0;
@@ -517,7 +517,7 @@ export default {
 }
 
 /* IMAGE STYLES */
-[type=checkbox] {
+[type=radio] {
   cursor: pointer;
 }
 </style>

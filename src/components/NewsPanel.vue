@@ -21,12 +21,16 @@
       <div class="search-news-container">
         <b-button
           variant="link"
+          :disabled="newsList.length === 0 || pageNumber === 0"
+          @click="onPreviousPageClicked"
         >
           <b-icon icon="chevron-left" />
         </b-button>
         <div />
         <b-button
           variant="link"
+          :disabled="newsList.length === 0"
+          @click="onNextPageClicked"
         >
           <b-icon icon="chevron-right" />
         </b-button>
@@ -46,13 +50,11 @@
           toggle-class="badge-pill px-4"
         >
           <template v-slot:button-content>
-            時間
+            {{ timeQueryText }}
           </template>
-          <b-dropdown-item>過去 1 小時</b-dropdown-item>
-          <b-dropdown-item>過去 24 小時</b-dropdown-item>
-          <b-dropdown-item>過去 1 週</b-dropdown-item>
-          <b-dropdown-item>過去 1 個月</b-dropdown-item>
-          <b-dropdown-item>過去 1 年</b-dropdown-item>
+          <slot v-for="timeQuery in timeQueries">
+            <b-dropdown-item @click="onTimeDropdownClicked(timeQuery[0])">{{ timeQuery[1] }}</b-dropdown-item>
+          </slot>
         </b-dropdown>
         <b-dropdown
           class="ml-2"
@@ -62,8 +64,9 @@
           <template v-slot:button-content>
             新聞來源
           </template>
-          <b-dropdown-item>三立</b-dropdown-item>
-          <b-dropdown-item>中天</b-dropdown-item>
+          <b-dropdown-item disabled>聯合</b-dropdown-item>
+          <b-dropdown-item disabled>中時</b-dropdown-item>
+          <b-dropdown-item disabled>ettoday</b-dropdown-item>
         </b-dropdown>
       </b-col>
     </b-row>
@@ -97,7 +100,22 @@ export default {
   data() {
     return {
       searchKeyword: '',
-      newsList: []
+      newsList: [],
+      pageNumber: 0,
+      queryDateRange: 'qdr:a',
+      timeQueries: [
+        ['qdr:a', '不限時間'],
+        ['qdr:h', '過去 1 小時'],
+        ['qdr:d', '過去 24 小時'],
+        ['qdr:w', '過去 1 週'],
+        ['qdr:m', '過去 1 個月'],
+        ['qdr:y', '過去 1 年']
+      ]
+    }
+  },
+  computed: {
+    timeQueryText() {
+      return this.queryDateRange.length > 0 ? this.timeQueries.find(e => e[0] === this.queryDateRange)[1] : '時間'
     }
   },
   methods: {
@@ -106,12 +124,14 @@ export default {
     },
     getNews() {
       this.newsList = []
-      getNews({ q: this.searchKeyword }).then(
-        (response) => {
-          this.newsList = response.data.data
-          console.log(response.data)
-        }
-      )
+      if (this.searchKeyword) {
+        getNews({ q: this.searchKeyword, page: this.pageNumber, tbs: this.queryDateRange }).then(
+          (response) => {
+            this.newsList = response.data.data
+            console.log(response.data)
+          }
+        )
+      }
     },
     getNewsOutline(newsContent) {
       if (newsContent) {
@@ -123,6 +143,19 @@ export default {
           })
         return str.substring(0, 120) + ' ...'
       }
+    },
+    onPreviousPageClicked() {
+      if (this.pageNumber === 0) return
+      this.pageNumber -= 1
+      this.getNews()
+    },
+    onNextPageClicked() {
+      this.pageNumber += 1
+      this.getNews()
+    },
+    onTimeDropdownClicked(timeString) {
+      this.queryDateRange = timeString
+      this.getNews()
     }
   }
 }

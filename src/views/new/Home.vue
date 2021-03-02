@@ -85,17 +85,19 @@
             @click="handleArticleRoute(news._id)"
           >
             <p class="news-category">
-              {{ news.category }}
+              {{ getCategory(news) }}
             </p>
             <p class="news-title">
               {{ news.title }}
             </p>
             <div class="news-info">
               <span class="mr-3">{{ `更新於 ${formatLastUpdate(news.lastUpdatedAt)} 前` }}</span>
+
               <b-icon
                 icon="eye-fill"
                 class="mr-1"
-              /><span>{{ news.viewCount }} 個人正在閱讀</span>
+              /><span>{{ news.viewsCount }} 次觀看</span>
+
             </div>
           </div>
         </b-link>
@@ -124,34 +126,34 @@ export default {
       newsList: [{
         title: '最新新聞',
         content: [
-          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewCount: 32 },
-          { category: '國際', title: '加州今年野火面積破紀錄逼近1/4個台灣', viewCount: 32 },
-          { category: '政經', title: '川普新冠肺炎染疫事件經過', viewCount: 32 },
-          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewCount: 32 },
-          { category: '政經', title: '陽明交大徵合校首任校長教育部登報徵才', viewCount: 32 },
-          { category: '政經', title: '川普夫婦確診新冠病毒 各國領袖表關心', viewCount: 32 }
+          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
+          { category: '國際', title: '加州今年野火面積破紀錄逼近1/4個台灣', viewsCount: 32 },
+          { category: '政經', title: '川普新冠肺炎染疫事件經過', viewsCount: 32 },
+          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
+          { category: '政經', title: '陽明交大徵合校首任校長教育部登報徵才', viewsCount: 32 },
+          { category: '政經', title: '川普夫婦確診新冠病毒 各國領袖表關心', viewsCount: 32 }
         ]
       },
       {
         title: '熱門新聞',
         content: [
-          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewCount: 32 },
-          { category: '國際', title: '加州今年野火面積破紀錄逼近1/4個台灣', viewCount: 32 },
-          { category: '政經', title: '川普新冠肺炎染疫事件經過', viewCount: 32 },
-          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewCount: 32 },
-          { category: '政經', title: '陽明交大徵合校首任校長教育部登報徵才', viewCount: 32 },
-          { category: '政經', title: '川普夫婦確診新冠病毒 各國領袖表關心', viewCount: 32 }
+          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
+          { category: '國際', title: '加州今年野火面積破紀錄逼近1/4個台灣', viewsCount: 32 },
+          { category: '政經', title: '川普新冠肺炎染疫事件經過', viewsCount: 32 },
+          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
+          { category: '政經', title: '陽明交大徵合校首任校長教育部登報徵才', viewsCount: 32 },
+          { category: '政經', title: '川普夫婦確診新冠病毒 各國領袖表關心', viewsCount: 32 }
         ]
       },
       {
         title: '推薦您的新聞',
         content: [
-          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewCount: 32 },
-          { category: '國際', title: '加州今年野火面積破紀錄逼近1/4個台灣', viewCount: 32 },
-          { category: '政經', title: '川普新冠肺炎染疫事件經過', viewCount: 32 },
-          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewCount: 32 },
-          { category: '政經', title: '陽明交大徵合校首任校長教育部登報徵才', viewCount: 32 },
-          { category: '政經', title: '川普夫婦確診新冠病毒 各國領袖表關心', viewCount: 32 }
+          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
+          { category: '國際', title: '加州今年野火面積破紀錄逼近1/4個台灣', viewsCount: 32 },
+          { category: '政經', title: '川普新冠肺炎染疫事件經過', viewsCount: 32 },
+          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
+          { category: '政經', title: '陽明交大徵合校首任校長教育部登報徵才', viewsCount: 32 },
+          { category: '政經', title: '川普夫婦確診新冠病毒 各國領袖表關心', viewsCount: 32 }
         ]
       }]
     }
@@ -166,9 +168,9 @@ export default {
           content: []
         }
         articles.forEach(article => {
-          const { category, _id, title, lastUpdatedAt } = article
+          const { category, _id, title, lastUpdatedAt, viewsCount } = article
           realNews.content.push({
-            _id, category, title, lastUpdatedAt, viewCount: 32
+            _id, category, title, lastUpdatedAt, viewsCount
           })
         })
         this.newsList = [...this.newsList, realNews]
@@ -183,6 +185,14 @@ export default {
     formatLastUpdate(lastUpdatedAt) {
       if (!lastUpdatedAt) return '3小時'
       else return moment(lastUpdatedAt).toNow(true)
+    },
+    getCategory(news) {
+      const { category } = news
+      if (typeof category === 'string') {
+        return category
+      } else if (Array.isArray(category)) {
+        if (category.length === 0) { return '未分類' } else return category.join(', ')
+      }
     }
   }
 }
