@@ -123,46 +123,47 @@ export default {
     return {
       categoryList: ['即時', '政經', '國際', '社會', '科技', '環境', '生活', '運動'],
       hotTags: ['台海危機', '美國大選', '振興三倍券', '新冠病毒', '美國豬牛', '黃鴻升'],
-      newsList: [{
-        title: '最新新聞',
-        content: [
-          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
-          { category: '國際', title: '加州今年野火面積破紀錄逼近1/4個台灣', viewsCount: 32 },
-          { category: '政經', title: '川普新冠肺炎染疫事件經過', viewsCount: 32 },
-          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
-          { category: '政經', title: '陽明交大徵合校首任校長教育部登報徵才', viewsCount: 32 },
-          { category: '政經', title: '川普夫婦確診新冠病毒 各國領袖表關心', viewsCount: 32 }
-        ]
-      },
-      {
-        title: '熱門新聞',
-        content: [
-          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
-          { category: '國際', title: '加州今年野火面積破紀錄逼近1/4個台灣', viewsCount: 32 },
-          { category: '政經', title: '川普新冠肺炎染疫事件經過', viewsCount: 32 },
-          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
-          { category: '政經', title: '陽明交大徵合校首任校長教育部登報徵才', viewsCount: 32 },
-          { category: '政經', title: '川普夫婦確診新冠病毒 各國領袖表關心', viewsCount: 32 }
-        ]
-      },
-      {
-        title: '推薦您的新聞',
-        content: [
-          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
-          { category: '國際', title: '加州今年野火面積破紀錄逼近1/4個台灣', viewsCount: 32 },
-          { category: '政經', title: '川普新冠肺炎染疫事件經過', viewsCount: 32 },
-          { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
-          { category: '政經', title: '陽明交大徵合校首任校長教育部登報徵才', viewsCount: 32 },
-          { category: '政經', title: '川普夫婦確診新冠病毒 各國領袖表關心', viewsCount: 32 }
-        ]
-      }]
+      newsList: []
+      // newsList: [{
+      //   title: '最新新聞',
+      //   content: [
+      //     { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
+      //     { category: '國際', title: '加州今年野火面積破紀錄逼近1/4個台灣', viewsCount: 32 },
+      //     { category: '政經', title: '川普新冠肺炎染疫事件經過', viewsCount: 32 },
+      //     { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
+      //     { category: '政經', title: '陽明交大徵合校首任校長教育部登報徵才', viewsCount: 32 },
+      //     { category: '政經', title: '川普夫婦確診新冠病毒 各國領袖表關心', viewsCount: 32 }
+      //   ]
+      // },
+      // {
+      //   title: '熱門新聞',
+      //   content: [
+      //     { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
+      //     { category: '國際', title: '加州今年野火面積破紀錄逼近1/4個台灣', viewsCount: 32 },
+      //     { category: '政經', title: '川普新冠肺炎染疫事件經過', viewsCount: 32 },
+      //     { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
+      //     { category: '政經', title: '陽明交大徵合校首任校長教育部登報徵才', viewsCount: 32 },
+      //     { category: '政經', title: '川普夫婦確診新冠病毒 各國領袖表關心', viewsCount: 32 }
+      //   ]
+      // },
+      // {
+      //   title: '推薦您的新聞',
+      //   content: [
+      //     { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
+      //     { category: '國際', title: '加州今年野火面積破紀錄逼近1/4個台灣', viewsCount: 32 },
+      //     { category: '政經', title: '川普新冠肺炎染疫事件經過', viewsCount: 32 },
+      //     { category: '政經', title: '王金平將率團到福建參加第12屆海峽論壇', viewsCount: 32 },
+      //     { category: '政經', title: '陽明交大徵合校首任校長教育部登報徵才', viewsCount: 32 },
+      //     { category: '政經', title: '川普夫婦確診新冠病毒 各國領袖表關心', viewsCount: 32 }
+      //   ]
+      // }]
     }
   },
   created() {
     getArticles().then(response => {
       const { data } = response
       if (data.code === 200) {
-        const articles = data.data.sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
+        const articles = data.data[0].sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
         const realNews = {
           title: '未分類新聞',
           content: []
@@ -173,7 +174,18 @@ export default {
             _id, category, title, lastUpdatedAt, viewsCount
           })
         })
-        this.newsList = [...this.newsList, realNews]
+        this.newsList = [{
+          title: '最新新聞',
+          content: data.data[1]
+        },
+        {
+          title: '熱門新聞',
+          content: data.data[1]
+        },
+        {
+          title: '推薦您的新聞',
+          content: data.data[1]
+        }, realNews]
       }
     }).catch(err => console.error(err))
   },
