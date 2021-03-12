@@ -62,11 +62,11 @@
           toggle-class="badge-pill px-4"
         >
           <template v-slot:button-content>
-            新聞來源
+            {{ mediaSourceText }}
           </template>
-          <b-dropdown-item disabled>聯合</b-dropdown-item>
-          <b-dropdown-item disabled>中時</b-dropdown-item>
-          <b-dropdown-item disabled>ettoday</b-dropdown-item>
+          <slot v-for="mediaSource in mediaSourceQueries">
+            <b-dropdown-item @click="onMeidaDropdownClicked(mediaSource)">{{ mediaSource }}</b-dropdown-item>
+          </slot>
         </b-dropdown>
       </b-col>
     </b-row>
@@ -102,7 +102,8 @@ export default {
       searchKeyword: '',
       newsList: [],
       pageNumber: 0,
-      queryDateRange: 'qdr:a',
+      queryTimeSelected: 'qdr:a',
+      mediaSelected: '',
       timeQueries: [
         ['qdr:a', '不限時間'],
         ['qdr:h', '過去 1 小時'],
@@ -110,27 +111,45 @@ export default {
         ['qdr:w', '過去 1 週'],
         ['qdr:m', '過去 1 個月'],
         ['qdr:y', '過去 1 年']
-      ]
+      ],
+      mediaSourceQueries: ['不限新聞來源', '中時', '中央社', '華視', '東森', 'ettoday', '台灣事實查核中心', '自由時報', '風傳媒', '聯合']
     }
   },
   computed: {
     timeQueryText() {
-      return this.queryDateRange.length > 0 ? this.timeQueries.find(e => e[0] === this.queryDateRange)[1] : '時間'
+      return this.queryTimeSelected.length > 0 ? this.timeQueries.find(e => e[0] === this.queryTimeSelected)[1] : '時間'
+    },
+    mediaSourceText() {
+      return this.mediaSelected.length > 0 ? this.mediaSelected : '不限新聞來源'
     }
   },
   methods: {
     emitToEditPage(content) {
       this.$emit('importNews', content)
     },
-    getNews() {
+    async getNews() {
       this.newsList = []
       if (this.searchKeyword) {
-        getNews({ q: this.searchKeyword, page: this.pageNumber, tbs: this.queryDateRange }).then(
-          (response) => {
-            this.newsList = response.data.data
-            console.log(response.data)
+        try {
+          const { data } = await getNews(
+            {
+              q: this.searchKeyword,
+              page: this.pageNumber,
+              tbs: this.queryDateRange,
+              media: this.mediaSelected
+            }
+          )
+          const type = data.type
+          const payload = data.data
+          if (type === 'success') {
+            this.newsList = payload
+          } else {
+            throw new Error(data.message)
           }
-        )
+        } catch (error) {
+          console.error(error.message)
+          this.$bvModal.msgBoxOk(error.message)
+        }
       }
     },
     getNewsOutline(newsContent) {
@@ -154,7 +173,11 @@ export default {
       this.getNews()
     },
     onTimeDropdownClicked(timeString) {
-      this.queryDateRange = timeString
+      this.queryTimeSelected = timeString
+      this.getNews()
+    },
+    onMeidaDropdownClicked(mediaString) {
+      this.mediaSelected = mediaString
       this.getNews()
     }
   }
