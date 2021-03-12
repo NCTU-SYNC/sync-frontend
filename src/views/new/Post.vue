@@ -14,12 +14,12 @@
               :items="items"
               class="bg-transparent p-0 m-0"
             />
-            <div class="editor-hint-step">
+            <div v-if="isShowHint" class="editor-hint-step">
               <span>Help!</span>
               <span>1. 編輯文章主題區塊</span>
               <span>2. 撰寫段落標題與內容</span>
               <span>3. 右側搜尋新聞加入文章</span>
-              <b-button variant="link">
+              <b-button variant="link" @click="onHintClosed">
                 <b-icon icon="x" />
               </b-button>
             </div>
@@ -45,7 +45,7 @@
               <div class="border rounded bg-white date-time-container">
                 <b-dropdown
                   class="w-100 h-100"
-                  :text="currentSelectedCategory.length === 0 ? '文章主題分類': currentSelectedCategory"
+                  :text="categorySelected.length === 0 ? '文章主題分類': categorySelected"
                   toggle-class="text-truncate"
                   variant="link"
                 >
@@ -57,10 +57,10 @@
                       class="d-flex justify-content-center align-items-center py-1 pr-2"
                     >
                       <label
-                        :class="['btn',{ 'btn-outline-primary': currentSelectedCategory === category }, 'w-100' ]"
+                        :class="['btn',{ 'btn-outline-primary': categorySelected === category }, 'w-100' ]"
                       >
                         <input
-                          v-model="currentSelectedCategory"
+                          v-model="categorySelected"
                           type="radio"
                           :value="category"
                         >
@@ -240,6 +240,7 @@ export default {
       isNewPost: false,
       isAnonymous: false,
       isAddingTag: false,
+      isShowHint: localStorage.getItem('hint') === null,
       blocks: [],
       data: {},
       postAuthors: [],
@@ -248,12 +249,12 @@ export default {
       postDateValue: '',
       postTimeValue: '',
       categoryList: ['政經', '國際', '社會', '科技', '環境', '生活', '運動'],
-      currentSelectedCategory: '',
+      categorySelected: '',
       postTags: [],
       items: [
         {
           text: '首頁',
-          to: '/home'
+          to: '/'
         },
         {
           text: '編輯新聞',
@@ -265,6 +266,11 @@ export default {
   },
   computed: {
     ...mapGetters({ post: 'post' })
+  },
+  watch: {
+    categorySelected(newValue) {
+      this.data.category = newValue
+    }
   },
   created() {
     // this.handleClearPost()
@@ -283,6 +289,7 @@ export default {
           this.postDateValue = this.seperateDateAndTime(dateTime).date
           this.postTimeValue = this.seperateDateAndTime(dateTime).time
           this.blocks = data.blocks
+          this.categorySelected = data.category
           if (this.blocks.length === 0) {
             this.handleAddBlock()
           }
@@ -310,7 +317,9 @@ export default {
         authors: this.postAuthors,
         blocks: this.blocks,
         createdAt: `${this.postDateValue} ${this.postTimeValue}`,
-        token: this.$store.getters.token
+        token: this.$store.getters.token,
+        isAnonymous: this.isAnonymous,
+        category: this.categorySelected
       }
       localStorage.setItem('post', this.data)
     },
@@ -397,6 +406,10 @@ export default {
         }
       }
       this.isAddingTag = !this.isAddingTag
+    },
+    onHintClosed() {
+      localStorage.setItem('hint', true)
+      this.isShowHint = false
     }
   }
 }
