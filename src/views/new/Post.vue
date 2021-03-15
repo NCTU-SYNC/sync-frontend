@@ -194,14 +194,6 @@
               variant="outline-primary"
               size="lg"
               class="px-3"
-              @click="handleSaveArticle"
-            >
-              儲存
-            </b-button>
-            <b-button
-              variant="outline-primary"
-              size="lg"
-              class="px-3"
               @click="handlePublish"
             >
               發布
@@ -310,26 +302,12 @@ export default {
         content: null
       })
     },
-    handleSaveArticle() {
-      this.data = {
-        title: this.postTitle,
-        tags: this.postTags,
-        authors: this.postAuthors,
-        blocks: this.blocks,
-        createdAt: `${this.postDateValue} ${this.postTimeValue}`,
-        token: this.$store.getters.token,
-        isAnonymous: this.isAnonymous,
-        category: this.categorySelected
-      }
-      localStorage.setItem('post', this.data)
-    },
     handlePublish() {
       // return if the user is not login
       if (!getToken()) {
         this.$bvModal.msgBoxOk('Please Login First')
         return
       }
-      this.handleSaveArticle()
       if (this.isNewPost) {
         createArticle(this.data).then((response) => {
           // console.log(response)
