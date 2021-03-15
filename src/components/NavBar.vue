@@ -1,16 +1,10 @@
 <template>
   <b-navbar class="header-navbar" toggleable="lg" type="light" variant="faded">
-    <b-button v-b-toggle.sidebar class="px-0 px-md-2" title="目錄" variant="transparent">
-      <b-icon icon="list" scale="1.5" aria-hidden="true" />
+    <b-button class="px-0 px-md-2" variant="transparent" to="/post">
+      <b-icon icon="pencil-square" scale="1.2" aria-hidden="true" />
     </b-button>
     <b-navbar-brand id="brand" to="/" class="centered-block"><Logo /></b-navbar-brand>
     <b-collapse id="nav-collapse" is-nav>
-      <!-- <b-nav-form class="mx-2">
-        <b-form-input size="md" class="mr-sm-2 rounded-pill form-control" placeholder="搜尋" type="search" />
-        <b-button class="border-0 rounded-pill ml-n5 p-2" type="submit" variant="transparent">
-          <b-icon icon="search" aria-hidden="true" />
-        </b-button>
-      </b-nav-form> -->
 
       <b-navbar-toggle target="nav-collapse" />
       <!-- Right aligned nav items -->
