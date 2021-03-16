@@ -28,7 +28,8 @@ export default {
   watch: {
     '$route': function(newRoute) {
       const routerName = newRoute.name
-      const pagesHideFooter = ['SignUp', 'Login', 'Post']
+      const pagesHideFooter = ['SignUp', 'Login', 'Post', 'EditComparison']
+      console.log(newRoute, pagesHideFooter.indexOf(routerName) === -1)
       this.$store.commit('SET_FOOTER', pagesHideFooter.indexOf(routerName) === -1)
       console.log('showFooter', this.showFooter)
     }
