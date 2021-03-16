@@ -78,3 +78,12 @@ input {
     font-size: 0.875rem;
   }
 }
+
+.modal-footer-confirm {
+  display: grid;
+  justify-content: center;
+  grid-auto-flow: column;
+  grid-gap: 1rem;
+  grid-auto-columns: minmax(6rem, auto);
+  border: none;
+}
