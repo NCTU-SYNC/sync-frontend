@@ -105,7 +105,6 @@ export default {
         text: '',
         title: ''
       },
-      addLinkDialogVisible: false,
       currentText: '',
       currentEditingCitation: ''
     }
@@ -146,7 +145,6 @@ export default {
           okTitle: '確定'
         })
       }
-      this.closeAddLinkDialog()
     },
     openAddLinkDialog() {
       this.currentEditingCitation = ''
@@ -167,10 +165,6 @@ export default {
       if (mark) {
         this.linkAttrs.url = mark.attrs.href
       }
-      this.addLinkDialogVisible = true
-    },
-    closeAddLinkDialog() {
-      this.addLinkDialogVisible = false
     },
     onDropdownClicked(citation) {
       if (citation) {
