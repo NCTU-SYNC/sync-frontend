@@ -113,8 +113,8 @@
               <div class="d-flex justify-content-end align-items-center text-nowrap text-sm">
                 <b-form-checkbox
                   v-model="isAnonymous"
-                  value="true"
-                  unchecked-value="false"
+                  :value="true"
+                  :unchecked-value="false"
                 >
                   匿名發文
                 </b-form-checkbox>
@@ -317,7 +317,20 @@ export default {
         this.$bvModal.msgBoxOk('Please Login First')
         return
       }
+      this.data = {
+        title: this.postTitle,
+        tags: this.postTags,
+        authors: this.postAuthors,
+        blocks: this.blocks,
+        createdAt: `${this.postDateValue} ${this.postTimeValue}`,
+        uid: this.$store.getters.uid,
+        token: this.$store.getters.token,
+        isAnonymous: this.isAnonymous,
+        ...this.data
+      }
+
       if (this.isNewPost) {
+        console.log(this.data)
         createArticle(this.data).then((response) => {
           // console.log(response)
           if (response.data.code === 200) {
@@ -335,7 +348,6 @@ export default {
         })
       } else {
         this.data.id = this.$route.params.ArticleID
-        this.data.token = this.$store.getters.token
         updateArticleById(this.data).then((response) => {
           // console.log(response)
           if (response.data.code === 200) {
