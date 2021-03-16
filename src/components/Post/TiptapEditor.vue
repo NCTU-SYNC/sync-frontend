@@ -110,20 +110,6 @@
                 <b-icon icon="arrow90deg-right" />
               </button>
             </div>
-            <div class="d-flex justify-content-end align-items-center text-wrap text-sm">
-              <b-form-checkbox
-                value="true"
-                unchecked-value="false"
-              >
-                匿名發文
-              </b-form-checkbox>
-              <span class="mx-2 text-secondary">
-                編輯者：{{ $store.getters.displayName }}
-              </span>
-              <b-link class="text-secondary">
-                +其他10位
-              </b-link>
-            </div>
           </div>
         </editor-menu-bar>
       </b-col>
