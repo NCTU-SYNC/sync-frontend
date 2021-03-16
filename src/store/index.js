@@ -24,12 +24,12 @@ const store = new Vuex.Store({
     photoURL: state => state.user.photoURL,
     uid: state => state.user.uid,
     post: state => state.post,
+    user: state => state.user,
     showFooter: state => state.showFooter
   },
   mutations: {
     SET_FOOTER(state, show) {
       state.showFooter = show
-      console.log(show)
     }
   }
 })

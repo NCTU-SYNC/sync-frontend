@@ -177,9 +177,18 @@
               >
                 <p>引用貼文</p>
                 <div v-for="(citation, index) in post.citations" :key="index">
-                  <div class="d-flex justify-content-start">
-                    <span class="border px-2 align-middle">{{ index + 1 }}</span>
-                    <b-link class="ml-2 text-primary" :href="citation.url" target="_blank">{{ citation.title }}</b-link>
+                  <div class="d-flex justify-content-start align-items-center mt-2">
+                    <div class="citation-list-tag">
+                      <div class="period" :data-label="index + 1" />
+                    </div>
+                    <div class="w-100 pl-2 ">
+                      <b-link class="text-primary" :href="citation.url" target="_blank">{{ citation.title }}</b-link>
+                    </div>
+                    <div class="citation-list-remove">
+                      <b-button variant="outline-primary" class="citation-list-remove-btn" @click="onCitationRemoved(index)">
+                        <b-icon icon="x" />
+                      </b-button>
+                    </div>
                   </div>
                 </div>
               </b-card>
@@ -188,8 +197,8 @@
           <div class="block-divider" />
         </div>
 
-        <b-row class="mt-3">
-          <b-col class="d-flex justify-content-between">
+        <b-row class="mt-3 mb-5">
+          <b-col class="d-flex justify-content-end">
             <b-button
               variant="outline-primary"
               size="lg"
@@ -388,6 +397,23 @@ export default {
     onHintClosed() {
       localStorage.setItem('hint', true)
       this.isShowHint = false
+    },
+    onCitationRemoved(index) {
+      if (this.post.citations[index]) {
+        this.$bvModal.msgBoxConfirm(`是否刪除引用：${this.post.citations[index].title}？`, {
+          title: '刪除引用',
+          okVariant: 'danger',
+          okTitle: '刪除',
+          cancelTitle: '取消',
+          cancelVariant: 'outline-primary',
+          footerClass: 'modal-footer-confirm',
+          centered: true
+        }).then(value => {
+          if (value) {
+            this.post.citations.splice(index, 1)
+          }
+        })
+      }
     }
   }
 }
@@ -510,5 +536,43 @@ export default {
 /* IMAGE STYLES */
 [type=radio] {
   cursor: pointer;
+}
+
+.citation-list-tag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid #939393;
+}
+
+.citation-list-remove {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.citation-list-remove-btn {
+  border: none;
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.period {
+  &:before {
+    content: attr(data-label);
+    color: #939393;
+    width: 2rem;
+  }
 }
 </style>

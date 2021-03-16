@@ -40,13 +40,14 @@ export default new Router({
     {
       path: '/profile',
       name: 'Profile',
-      component: () => import('@/views/new/Profile'),
+      component: () => import('@/views/Profile'),
       beforeEnter: (to, from, next) => {
         isLogin() ? next() : next('/login')
       }
     },
     {
       path: '/article/:ArticleID/post',
+      name: 'Post',
       component: () => import('@/views/new/Post'),
       beforeEnter: (to, from, next) => {
         isLogin() ? next() : next('/login')

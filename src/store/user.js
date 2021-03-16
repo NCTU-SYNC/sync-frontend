@@ -10,25 +10,25 @@ const getDefaultState = () => {
     uid: getUserInfo() ? getUserInfo().uid : '',
     gender: '',
     photoURL: null,
-    authenticated: false
+    authenticated: false,
+    createAt: ''
   }
 }
 
 const state = getDefaultState()
 
+const getters = {
+  createAt: state => state.createAt
+}
+
 const mutations = {
   SET_USER(state, user) {
-    // state = {
-    //   ...state,
-    //   authenticated: !!user,
-    //   email: user ? user.email : null,
-    //   displayName: user ? user.displayName : null,
-    //   photoURL: user ? user.photoURL : null
-    // }
+    console.log(user.metadata)
     state.photoURL = user ? user.photoURL : null
     state.displayName = user ? user.displayName : null
     state.email = user ? user.email : null
     state.authenticated = !!user
+    state.createAt = user ? user.metadata.a : ''
   },
   SET_TOKEN(state, payload) {
     state.token = payload
@@ -65,6 +65,7 @@ const actions = {
 export default {
   namespaced: true,
   state,
+  getters,
   mutations,
   actions
 }
