@@ -153,7 +153,6 @@ export default {
   border-top: 2px solid #E6E6E6;
 }
 .article-container {
-  overflow: scroll;
   height: 58vh;
 }
 .header {
