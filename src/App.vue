@@ -33,6 +33,9 @@ export default {
       this.$store.commit('SET_FOOTER', pagesHideFooter.indexOf(routerName) === -1)
       console.log('showFooter', this.showFooter)
     }
+  },
+  mounted() {
+    this.$store.dispatch('article/INITIALIZE')
   }
 }
 </script>

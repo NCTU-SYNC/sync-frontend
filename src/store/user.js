@@ -3,6 +3,7 @@ import { getToken, setToken, setExpiredTime, setUserInfo, getUserInfo } from '@/
 
 const getDefaultState = () => {
   return {
+    isInitialized: false,
     token: getToken(),
     name: '',
     displayName: getUserInfo() ? getUserInfo().displayName : '',
@@ -23,12 +24,13 @@ const getters = {
 
 const mutations = {
   SET_USER(state, user) {
-    console.log(user.metadata)
     state.photoURL = user ? user.photoURL : null
     state.displayName = user ? user.displayName : null
     state.email = user ? user.email : null
     state.authenticated = !!user
     state.createAt = user ? user.metadata.a : ''
+    state.uid = user ? user.uid : ''
+    state.isInitialized = true
   },
   SET_TOKEN(state, payload) {
     state.token = payload

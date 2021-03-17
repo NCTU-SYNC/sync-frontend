@@ -1,5 +1,5 @@
 <template>
-  <b-container>
+  <b-container fluid="lg">
     <b-row>
       <b-col>
         <b-breadcrumb :items="breadcrumbItems" class="bg-transparent" />
@@ -15,19 +15,19 @@
         每頁顯示：
         <b-dropdown :text="historyShowCount.toString()" class="m-2" variant="transparent">
           <b-dropdown-item-button
-            :active="historyShowCount === 3"
-            @click="onLimitDropdownClicked(3)"
-          >3
-          </b-dropdown-item-button>
-          <b-dropdown-item-button
-            :active="historyShowCount === 5"
-            @click="onLimitDropdownClicked(5)"
-          >5
-          </b-dropdown-item-button>
-          <b-dropdown-item-button
             :active="historyShowCount === 10"
             @click="onLimitDropdownClicked(10)"
           >10
+          </b-dropdown-item-button>
+          <b-dropdown-item-button
+            :active="historyShowCount === 30"
+            @click="onLimitDropdownClicked(30)"
+          >30
+          </b-dropdown-item-button>
+          <b-dropdown-item-button
+            :active="historyShowCount === 50"
+            @click="onLimitDropdownClicked(50)"
+          >50
           </b-dropdown-item-button>
         </b-dropdown>
         <div class="h-100 d-flex align-items-center">
@@ -73,8 +73,18 @@
           <h5>{{ item.month }}</h5>
         </div>
         <div v-else>
-          <b-link class="pr-2 link-right" :to="`/compare/${articleId}?base=${item.index}&compare=${versionsLength}`" :disabled="item.index === versionsLength">最新</b-link>
-          <b-link class="pl-2" :to="`/compare/${articleId}?base=${item.index}&compare=${item.index - 1}`" :disabled="item.index === versionsLength || item.index === 1">前一版</b-link>
+          <b-link
+            class="pr-2 link-right"
+            :class="{ 'text-primary': item.index !== versionsLength}"
+            :to="`/compare/${articleId}?base=${versionsLength}&compare=${item.index}`"
+            :disabled="item.index === versionsLength"
+          >最新</b-link>
+          <b-link
+            class="pl-2"
+            :class="{ 'text-primary': item.index !== 1}"
+            :to="`/compare/${articleId}?base=${item.index}&compare=${item.index - 1}`"
+            :disabled="item.index === 1"
+          >前一版</b-link>
         </div>
       </b-col>
       <b-col sm="3">
@@ -112,7 +122,7 @@ export default {
       ],
       historyItems: [],
       currentVersion: null,
-      historyShowCount: 3,
+      historyShowCount: 10,
       currentViewPage: 1,
       versionsLength: 0,
       from: 0,
@@ -143,8 +153,7 @@ export default {
     }
   },
   created() {
-    console.log(this.articleId)
-    this.historyShowCount = this.$route.query.limit || 3
+    this.historyShowCount = this.$route.query.limit || 10
     this.currentViewPage = this.$route.query.page || 1
 
     if (this.articleId) {
@@ -208,7 +217,6 @@ export default {
       this.handleGetArticleVersions()
     },
     onPrevPageClicked() {
-      console.log(this.currentViewPage)
       if (!this.isPrevPageButtonEnable) { return }
       this.currentViewPage -= 1
       this.$router.replace({ query: { limit: this.historyShowCount, page: this.currentViewPage }})

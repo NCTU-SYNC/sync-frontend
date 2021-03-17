@@ -335,6 +335,7 @@ export default {
           // console.log(response)
           if (response.data.code === 200) {
             this.articleId = response.data.id
+            this.$store.commit('post/RESET_POST')
             this.$bvModal.msgBoxOk(response.data.message)
               .then(() => {
                 this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})

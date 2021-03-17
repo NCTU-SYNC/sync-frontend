@@ -3,18 +3,18 @@
     <b-col>
       <div class="p-3 border-bottom">
         <div>
-          <p class="text-gray">Category</p>
-          <h3>Title</h3>
-          <p>Outline</p>
+          <p class="text-gray">{{ article.category || '未分類' }}</p>
+          <h3>{{ article.title }}</h3>
+          <p>{{ JSON.stringify(article.block) }}</p>
         </div>
         <div class="d-flex justify-content-start align-items-center">
           <div class="mr-2">
             <b-icon icon="clock" />
-            最後更新時間
+            最後更新時間 {{ getLastUpdateTime(article.lastUpdatedAt) }}
           </div>
           <div>
             <b-icon icon="eye" />
-            100 次觀看
+            {{ article.viewsCount || 0 }} 次觀看
           </div>
         </div>
       </div>
@@ -23,8 +23,21 @@
 </template>
 
 <script>
+import moment from 'moment'
+
 export default {
-  name: 'ArticleListItem'
+  name: 'ArticleListItem',
+  props: {
+    article: {
+      type: Object,
+      required: true
+    }
+  },
+  methods: {
+    getLastUpdateTime(time) {
+      return moment(time)
+    }
+  }
 }
 </script>
 

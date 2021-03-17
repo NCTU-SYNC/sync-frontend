@@ -64,6 +64,7 @@ export default {
   methods: {
     handleLogout() {
       firebase.handleLogout()
+      this.$store.commit('article/RESET')
     }
   }
 }

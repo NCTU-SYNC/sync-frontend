@@ -1,13 +1,6 @@
-/*
-interface ICitation {
-  title: string;
-  url: string;
-}
-*/
-
 const getDefaultState = () => {
   return {
-    citations: [] // as ICitation[]
+    citations: []
   }
 }
 
@@ -20,7 +13,7 @@ const mutations = {
   PUSH_CITATION(state, citation) {
     state.citations.push(citation)
   },
-  RESET_USER(state) {
+  RESET_POST(state) {
     Object.assign(state, getDefaultState())
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid="xl">
+  <b-container fluid="lg">
     <b-row>
       <b-col cols="8">
         <b-row class="history-top-row">

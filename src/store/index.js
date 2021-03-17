@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import user from './user'
 import post from './post'
+import article from './article'
 Vue.use(Vuex)
 
 const getDefaultState = () => {
@@ -14,10 +15,11 @@ const state = getDefaultState()
 
 const store = new Vuex.Store({
   modules: {
-    user, post
+    user, post, article
   },
   state,
   getters: {
+    isInitialized: state => state.user.isInitialized,
     isLogin: state => state.user.authenticated,
     token: state => state.user.token,
     displayName: state => state.user.displayName,

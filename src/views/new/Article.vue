@@ -57,8 +57,9 @@
                   <b-icon icon="clock-history" />
                 </b-button>
                 <b-button
-                  variant="outline-primary"
+                  :variant="isSubscribed ? 'primary' : 'outline-primary'"
                   class="btn-icon ml-2 mt-1"
+                  @click="handleClickBookmark"
                 >
                   <b-icon icon="bookmark" />
                 </b-button>
@@ -76,9 +77,9 @@
               <h3 class="text-primary">
                 {{ block.blockTitle }}
               </h3>
-              <b-link class="text-gray">
+              <span class="text-gray">
                 {{ formatTime(block.blockDateTime) }}
-              </b-link>
+              </span>
             </div>
             <b-card
               border-variant="white"
@@ -112,11 +113,10 @@
           <p class="mb-1">
             編輯者：
           </p>
-          <b-link
+          <span
             v-for="(author, index) in authors"
             :key="index"
-          >{{ formatAuthor(author, index === authors.length-1) }}</b-link>
-          <!-- <b-link>吳先生</b-link>, <b-link>吳先生</b-link>, <b-link>吳先生</b-link>, <b-link>吳先生</b-link> -->
+          >{{ formatAuthor(author, index === authors.length-1) }}</span>
         </div>
       </b-col>
     </b-row>
@@ -167,6 +167,13 @@ export default {
     },
     articleId() {
       return this.$route.params.ArticleID
+    },
+    isSubscribed() {
+      const list = this.$store.getters['article/subscribedList']
+      if (list) {
+        return list.includes(this.articleId)
+      }
+      return false
     }
   },
   created() {
@@ -200,6 +207,9 @@ export default {
 
     // check if user logged in
     this.isLogin = !!this.$store.getters.token
+    if (this.isLogin) {
+      this.$store.dispatch('article/VIEW', this.articleId)
+    }
   },
   beforeDestroy() {
     clearInterval(this.timeId)
@@ -253,6 +263,13 @@ export default {
         editable: false
       })
       return editor
+    },
+    handleClickBookmark() {
+      if (!this.isSubscribed) {
+        this.$store.dispatch('article/SUBSCRIBE', this.articleId)
+      } else {
+        this.$store.dispatch('article/UNSUBSCRIBE', this.articleId)
+      }
     }
   }
 
