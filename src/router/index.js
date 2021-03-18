@@ -47,7 +47,6 @@ export default new Router({
     },
     {
       path: '/article/:ArticleID/post',
-      name: 'Post',
       component: () => import('@/views/new/Post'),
       beforeEnter: (to, from, next) => {
         isLogin() ? next() : next('/login')
