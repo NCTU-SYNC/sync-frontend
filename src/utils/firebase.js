@@ -23,7 +23,7 @@ class FirebaseAuth {
       this.instance = firebase.auth()
       const handler = async(user) => {
         if (user) {
-          const token = await user.getIdToken()
+          const token = await this.instance.currentUser.getIdToken()
           var data = {
             displayName: user.displayName,
             email: user.email,
