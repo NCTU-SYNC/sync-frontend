@@ -2,6 +2,7 @@
   <b-row>
     <b-col>
       <b-link
+        class="item-link"
         :to="`/article/${article._id}`"
       >
         <div
@@ -13,9 +14,9 @@
             <p>{{ JSON.stringify(article.block) }}</p>
           </div>
           <div class="d-flex justify-content-start align-items-center">
-            <div class="mr-2">
+            <div class="mr-3">
               <b-icon icon="clock" />
-              最後更新時間 {{ getLastUpdateTime(article.lastUpdatedAt) }}
+              最後更新時間：{{ getLastUpdateTime(article.lastUpdatedAt) }}
             </div>
             <div>
               <b-icon icon="eye" />
@@ -40,12 +41,14 @@ export default {
   },
   methods: {
     getLastUpdateTime(time) {
-      return moment(time)
+      return moment(time).format('YYYY年MM月DD日 HH:mm')
     }
   }
 }
 </script>
 
-<style>
-
+<style scoped lang="scss">
+.item-link {
+  text-decoration: none;
+}
 </style>
