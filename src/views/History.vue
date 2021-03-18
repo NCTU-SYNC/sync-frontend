@@ -31,7 +31,8 @@
           </b-dropdown-item-button>
         </b-dropdown>
         <div class="h-100 d-flex align-items-center">
-          <span class="ml-1 pr-2 link-right">{{ from }}-{{ to }}</span>
+          <!-- issue: https://github.com/vuejs/eslint-plugin-vue/issues/370 -->
+          <span class="ml-1 pr-2 link-right">{{ from + 1 }}-{{ versionsLength &lt; to ? versionsLength: to }}</span>
           <span class="ml-1 pl-2">共有{{ versionsLength }}個版本</span>
         </div>
 
