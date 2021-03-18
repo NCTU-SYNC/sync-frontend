@@ -100,10 +100,10 @@ export default {
       this.currentShowingIndex = index
       switch (index) {
         case 2:
-          this.showingArticles = this.articles.viewed
+          this.showingArticles = this.articles.subscribed
           break
         case 1:
-          this.showingArticles = this.articles.subscribed
+          this.showingArticles = this.articles.viewed
           break
         case 0:
         default:
