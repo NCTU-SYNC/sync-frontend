@@ -225,7 +225,6 @@
 import { mapGetters } from 'vuex'
 import { getArticleById, createArticle, updateArticleById } from '@/api/article'
 import TiptapEditor from '@/components/Post/TiptapEditor'
-import { getToken } from '@/utils/auth'
 import NewsPanel from '@/components/NewsPanel'
 
 export default {
@@ -266,6 +265,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['isLogin', 'uid', 'token']),
     ...mapGetters({ post: 'post' })
   },
   watch: {
@@ -311,58 +311,53 @@ export default {
         content: null
       })
     },
-    handlePublish() {
-      // return if the user is not login
-      if (!getToken()) {
-        this.$bvModal.msgBoxOk('Please Login First')
+    async handlePublish() {
+      if (!this.token || !this.isLogin) {
+        await this.$bvModal.msgBoxOk('登入逾時或失效，請重新登入')
+        this.$router.push('/login')
         return
       }
+
       this.data = {
         title: this.postTitle,
         tags: this.postTags,
         authors: this.postAuthors,
         blocks: this.blocks,
         createdAt: `${this.postDateValue} ${this.postTimeValue}`,
-        uid: this.$store.getters.uid,
-        token: this.$store.getters.token,
+        uid: this.uid,
+        token: this.token,
         isAnonymous: this.isAnonymous,
         ...this.data
       }
 
       if (this.isNewPost) {
-        console.log(this.data)
-        createArticle(this.data).then((response) => {
-          // console.log(response)
-          if (response.data.code === 200) {
-            this.articleId = response.data.id
+        try {
+          console.log(this.data)
+          const { data } = await createArticle(this.data)
+          if (data.code === 200) {
+            this.articleId = data.id
             this.$store.commit('post/RESET_POST')
-            this.$bvModal.msgBoxOk(response.data.message)
-              .then(() => {
-                this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
-              })
+            await this.$bvModal.msgBoxOk(data.message)
+            this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
           } else {
-            this.$bvModal.msgBoxOk(response.data.message)
+            this.$bvModal.msgBoxOk(data.message)
           }
-        }).catch((err) => {
-          console.error(err)
-          this.$bvModal.msgBoxOk(err.data.message)
-        })
+        } catch (error) {
+          this.$bvModal.msgBoxOk(error.message)
+        }
       } else {
-        this.data.id = this.$route.params.ArticleID
-        updateArticleById(this.data).then((response) => {
-          // console.log(response)
-          if (response.data.code === 200) {
-            this.$bvModal.msgBoxOk(response.data.message)
-              .then(() => {
-                this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
-              })
+        this.data.id = this.articleId
+        try {
+          const { data } = await updateArticleById(this.data)
+          if (data.code === 200) {
+            await this.$bvModal.msgBoxOk(data.message)
+            this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
           } else {
-            this.$bvModal.msgBoxOk(response.data.message)
+            this.$bvModal.msgBoxOk(data.message)
           }
-        }).catch((err) => {
-          console.error(err)
-          this.$bvModal.msgBoxOk(err.data.message)
-        })
+        } catch (error) {
+          this.$bvModal.msgBoxOk(error.message)
+        }
       }
     },
     importNews(content) {
