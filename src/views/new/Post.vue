@@ -357,8 +357,8 @@ export default {
 
         return
       }
-
       this.data = {
+        ...this.data,
         title: this.postTitle,
         tags: this.postTags,
         authors: this.postAuthors,
@@ -366,10 +366,8 @@ export default {
         createdAt: `${this.postDateValue} ${this.postTimeValue}`,
         uid: this.uid,
         token: this.token,
-        isAnonymous: this.isAnonymous,
-        ...this.data
+        isAnonymous: this.isAnonymous
       }
-
       if (this.isNewPost) {
         try {
           console.log(this.data)
