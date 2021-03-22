@@ -46,6 +46,7 @@
 
 <script>
 import moment from 'moment'
+import { Utils } from '@/utils'
 
 export default {
   name: 'NewsCard',
@@ -91,8 +92,7 @@ export default {
   },
   created() {
     // 產生隨機ID，讓元件綁上id
-    this.newsCardId = Math.random().toString(36).substring(7)
-    console.log('Random newsCardId id: ', this.newsCardId)
+    this.newsCardId = Utils.getRandomString()
   },
   methods: {
     importNews() {

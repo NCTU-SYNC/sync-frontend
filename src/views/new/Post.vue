@@ -119,11 +119,8 @@
                   匿名發文
                 </b-form-checkbox>
                 <span class="mx-2 text-secondary">
-                  編輯者：{{ $store.getters.displayName }}
+                  編輯者：{{ isAnonymous ? '匿名' : $store.getters.displayName }}
                 </span>
-                <b-link class="text-secondary">
-                  +其他10位
-                </b-link>
               </div>
             </div>
           </b-card-body>
@@ -134,7 +131,7 @@
             <b-button
               variant="outline-primary"
               class="add-block-btn"
-              @click="handleAddBlock"
+              @click="handleAddBlock(-1)"
             >
               <span>+ 段落</span>
             </b-button>
@@ -142,12 +139,15 @@
           <div class="block-divider" />
         </div>
         <div
-          v-for="block in blocks"
+          v-for="(block, blockIndex) in blocks"
           :key="block.id"
         >
           <b-card
             class="bg-light border-0"
           >
+            <b-button variant="link" class="close-btn" @click="handleDeleteBlock(blockIndex)">
+              <b-icon icon="x" />
+            </b-button>
             <TiptapEditor
               :content.sync="block.content"
               :block-title.sync="block.blockTitle"
@@ -161,7 +161,7 @@
               <b-button
                 variant="outline-primary"
                 class="add-block-btn"
-                @click="handleAddBlock"
+                @click="handleAddBlock(blockIndex)"
               >
                 <span>+ 段落</span>
               </b-button>
@@ -226,6 +226,7 @@ import { mapGetters } from 'vuex'
 import { getArticleById, createArticle, updateArticleById } from '@/api/article'
 import TiptapEditor from '@/components/Post/TiptapEditor'
 import NewsPanel from '@/components/NewsPanel'
+import { Utils } from '@/utils'
 
 export default {
   name: 'Post',
@@ -303,12 +304,39 @@ export default {
     }
   },
   methods: {
-    handleAddBlock() {
+    handleAddBlock(index) {
       const currentBlockCount = this.blocks.length
-      this.blocks.push({
-        id: currentBlockCount + 1,
+      const blockObj = {
+        id: `${Utils.getRandomString()}-${(currentBlockCount + 1).toString()}`,
+        blockTitile: '',
         blockDateTime: new Date().toISOString(),
         content: null
+      }
+      if (index < 0) {
+        this.blocks.unshift(blockObj)
+      } else {
+        const insertPosition = index + 1
+        this.blocks.splice(insertPosition, 0, blockObj)
+      }
+    },
+    handleDeleteBlock(index) {
+      if (this.blocks.length === 1) {
+        this.$bvModal.msgBoxOk('文章必須至少含有一個段落，故無法刪除。')
+        return
+      }
+      const title = this.blocks[index].blockTitile || '無標題'
+      this.$bvModal.msgBoxConfirm(`是否刪除段落：${title}？`, {
+        title: '刪除段落',
+        okVariant: 'danger',
+        okTitle: '刪除',
+        cancelTitle: '取消',
+        cancelVariant: 'outline-primary',
+        footerClass: 'modal-footer-confirm',
+        centered: true
+      }).then(value => {
+        if (value) {
+          this.blocks.splice(index, 1)
+        }
       })
     },
     async handlePublish() {
@@ -582,5 +610,12 @@ export default {
     color: #939393;
     width: 2rem;
   }
+}
+
+.close-btn {
+  position: absolute;
+  padding: 0;
+  right: 0rem;
+  top: 0rem;
 }
 </style>

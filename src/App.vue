@@ -30,8 +30,11 @@ export default {
       const routerName = newRoute.name
       const pagesHideFooter = ['SignUp', 'Login', 'Post', 'EditComparison']
       console.log(newRoute, pagesHideFooter.indexOf(routerName) === -1)
+      if (newRoute.path.includes('post')) {
+        this.$store.commit('SET_FOOTER', false)
+        return
+      }
       this.$store.commit('SET_FOOTER', pagesHideFooter.indexOf(routerName) === -1)
-      console.log('showFooter', this.showFooter)
     }
   },
   mounted() {
