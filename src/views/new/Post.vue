@@ -44,6 +44,7 @@
               />
               <div class="border rounded bg-white date-time-container">
                 <b-dropdown
+                  ref="categoryRef"
                   class="w-100 h-100"
                   :text="categorySelected.length === 0 ? '文章主題分類': categorySelected"
                   toggle-class="text-truncate"
@@ -274,6 +275,7 @@ export default {
   watch: {
     categorySelected(newValue) {
       this.data.category = newValue
+      this.$refs.categoryRef.hide(true)
     }
   },
   created() {
