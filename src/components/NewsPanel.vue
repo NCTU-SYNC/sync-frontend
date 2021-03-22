@@ -12,7 +12,7 @@
         <b-button
           class="mr-1"
           variant="link"
-          :disabled="searchKeyword.length === 0"
+          :disabled="searchKeyword.length === 0 || isLoading"
           @click="getNews"
         >
           <b-icon icon="search" />
@@ -26,7 +26,7 @@
         >
           <b-icon icon="chevron-left" />
         </b-button>
-        <div />
+        <div class="divider" />
         <b-button
           variant="link"
           :disabled="newsList.length === 0"
@@ -112,7 +112,8 @@ export default {
         ['qdr:m', '過去 1 個月'],
         ['qdr:y', '過去 1 年']
       ],
-      mediaSourceQueries: ['不限新聞來源', '中時', '中央社', '華視', '東森', 'ettoday', '台灣事實查核中心', '自由時報', '風傳媒', '聯合']
+      mediaSourceQueries: ['不限新聞來源', '中時', '中央社', '華視', '東森', 'ettoday', '台灣事實查核中心', '自由時報', '風傳媒', '聯合'],
+      isLoading: false
     }
   },
   computed: {
@@ -131,6 +132,7 @@ export default {
       this.newsList = []
       if (this.searchKeyword) {
         try {
+          this.isLoading = true
           const { data } = await getNews(
             {
               q: this.searchKeyword,
@@ -149,6 +151,8 @@ export default {
         } catch (error) {
           console.error(error.message)
           this.$bvModal.msgBoxOk(error.message)
+        } finally {
+          this.isLoading = false
         }
       }
     },
@@ -201,7 +205,7 @@ export default {
     align-items: center;
   }
 
-  div {
+  .divider {
     padding: 0.25rem 0;
     height: 1.5rem;
     width: 1px;

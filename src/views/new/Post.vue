@@ -203,6 +203,7 @@
               variant="outline-primary"
               size="lg"
               class="px-3"
+              :disabled="isLoading"
               @click="handlePublish"
             >
               發布
@@ -262,7 +263,8 @@ export default {
           active: true
         }
       ],
-      addTagText: ''
+      addTagText: '',
+      isLoading: false
     }
   },
   computed: {
@@ -280,6 +282,7 @@ export default {
     const articleId = this.articleId = this.$route.params.ArticleID
     this.isNewPost = !(articleId || false)
     if (articleId) {
+      this.isLoading = true
       getArticleById(articleId).then(response => {
         if (response.data.code === 200) {
           this.data = response.data.data
@@ -295,9 +298,13 @@ export default {
           if (this.blocks.length === 0) {
             this.handleAddBlock()
           }
+          this.isLoading = false
+        } else {
+          throw new Error(response.data.message)
         }
       }).catch(err => {
         console.error(err)
+        this.isLoading = false
       })
     } else {
       this.handleAddBlock()
@@ -340,9 +347,12 @@ export default {
       })
     },
     async handlePublish() {
+      this.isLoading = true
       if (!this.token || !this.isLogin) {
         await this.$bvModal.msgBoxOk('登入逾時或失效，請重新登入')
+        this.isLoading = false
         this.$router.push('/login')
+
         return
       }
 
@@ -362,6 +372,7 @@ export default {
         try {
           console.log(this.data)
           const { data } = await createArticle(this.data)
+          this.isLoading = false
           if (data.code === 200) {
             this.articleId = data.id
             this.$store.commit('post/RESET_POST')
@@ -372,11 +383,13 @@ export default {
           }
         } catch (error) {
           this.$bvModal.msgBoxOk(error.message)
+          this.isLoading = true
         }
       } else {
         this.data.id = this.articleId
         try {
           const { data } = await updateArticleById(this.data)
+          this.isLoading = false
           if (data.code === 200) {
             await this.$bvModal.msgBoxOk(data.message)
             this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
@@ -385,6 +398,7 @@ export default {
           }
         } catch (error) {
           this.$bvModal.msgBoxOk(error.message)
+          this.isLoading = false
         }
       }
     },
