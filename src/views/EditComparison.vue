@@ -26,8 +26,8 @@
       </b-col>
     </b-row>
     <b-row>
-      <b-col cols="6" class="px-0 border-right border-secondary"><comparison-block :version="versions[1]" /></b-col>
-      <b-col cols="6" class="px-0 border-left border-secondary"><comparison-block :version="versions[0]" :is-diff="true" :article-diff="articleDiff" :link-container="linkContainer" /></b-col>
+      <b-col cols="6" class="px-0 border-right border-secondary"><comparison-block :version="versions[0]" /></b-col>
+      <b-col cols="6" class="px-0 border-left border-secondary"><comparison-block :version="versions[1]" :is-diff="true" :article-diff="articleDiff" :link-container="linkContainer" /></b-col>
     </b-row>
   </b-container>
 </template>
@@ -111,6 +111,7 @@ export default {
     },
     async handleGetArticlesComparison() {
       try {
+        this.versions = {}
         const { data } = await getArticlesComparisonByVersionIndexes({
           articleId: this.articleId,
           base: this.base,
@@ -144,17 +145,85 @@ export default {
           }
         }
 
-        this.articleDiff = this.compareContent(this.versions[1].blocks, this.versions[0].blocks)
+        this.articleDiff = this.compareContent(this.versions[0].blocks, this.versions[1].blocks)
+        console.log('articleDiff', this.articleDiff)
       } catch (error) {
         console.log(error)
       }
     },
     compareContent(blocks1, blocks2) {
       const dmp = new DiffMatchPatch()
+      // diff 的陣列
+      const articleDiff = []
+      // 存放 diff base 和 compare 的 dictionary
+      const diffDict = {}
+      // 排列 diff id 順序的陣列
+      const diffOrderArr = []
+      for (const block of blocks1) {
+        // 確認有blockId
+        if (block.blockId) {
+          // 確認字典裡面尚無 blockId
+          if (diffDict[block.blockId] === undefined) {
+            diffOrderArr.push(block.blockId)
+            // 設定 base 的標題與文字
+            diffDict[block.blockId] = {
+              base: {
+                title: block.blockInfo.blockTitle,
+                text: this.getPlainText(block)
+              }
+            }
+          }
+        }
+      }
 
+      let i = 0
+      for (const block of blocks2) {
+        // 確認有blockId
+        if (block.blockId) {
+          // 若比較的版本有插入新段落，則在 order 陣列新增，待會則照順序查看陣列
+          if (!diffOrderArr.includes(block.blockId)) {
+            diffOrderArr.splice(i, 0, block.blockId)
+          }
+          // 確認字典裡面尚無 blockId
+          if (diffDict[block.blockId] === undefined) {
+            diffDict[block.blockId] = {
+              // 設定 compare 的標題與文字
+              compare: {
+                title: block.blockInfo.blockTitle,
+                text: this.getPlainText(block)
+              }
+            }
+          } else {
+            // 設定 compare 的標題與文字
+            diffDict[block.blockId].compare = {
+              title: block.blockInfo.blockTitle,
+              text: this.getPlainText(block)
+            }
+          }
+        }
+        i += 1
+      }
+      console.log(diffDict, diffOrderArr)
+
+      for (const blockId of diffOrderArr) {
+        const empty = {
+          title: '',
+          text: ''
+        }
+        // 設定 base，若無 base 則給予空物件比對
+        const base = diffDict[blockId] ? diffDict[blockId].base ? diffDict[blockId].base : empty : empty
+        // 設定 base，若無 base 則給予空物件比對
+        const compare = diffDict[blockId] ? diffDict[blockId].compare ? diffDict[blockId].compare : empty : empty
+        const titleDiff = dmp.diff_main(base.title, compare.title)
+        const contentDiff = dmp.diff_main(base.text, compare.text)
+        dmp.diff_cleanupSemantic(titleDiff)
+        dmp.diff_cleanupSemantic(contentDiff)
+        articleDiff.push({ titleDiff, contentDiff })
+      }
+      /*
       const plainTextBlocks1 = this.getPlainTextBlocks(blocks1)
       const plainTextBlocks2 = this.getPlainTextBlocks(blocks2)
-
+      console.log(plainTextBlocks1, plainTextBlocks2)
       const longer = plainTextBlocks1.length > plainTextBlocks2.length ? plainTextBlocks1 : plainTextBlocks2
       const shorter = plainTextBlocks1.length <= plainTextBlocks2.length ? plainTextBlocks1 : plainTextBlocks2
 
@@ -168,7 +237,7 @@ export default {
         dmp.diff_cleanupSemantic(contentDiff)
         articleDiff.push({ titleDiff, contentDiff })
       })
-
+*/
       return articleDiff
     },
     getPlainTextBlocks(blocks) {
@@ -189,6 +258,18 @@ export default {
         plainTextBlocks.push({ blockTitle, content })
       })
       return plainTextBlocks
+    },
+    getPlainText(blockContent) {
+      let content = ''
+      blockContent.content.content.forEach(paragraph => {
+        if (paragraph.content) {
+          paragraph.content.forEach(text => {
+            content += text.text
+          })
+        }
+        content += '\n\n'
+      })
+      return content
     },
     onPrevArticleClicked() {
       if (this.base <= 1) {

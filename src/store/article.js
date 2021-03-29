@@ -11,7 +11,9 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const getters = {
-  subscribedList: state => state.subscribedList
+  editedList: state => state.editedList,
+  subscribedList: state => state.subscribedList,
+  viewedList: state => state.viewedList
 }
 
 const mutations = {
@@ -24,7 +26,7 @@ const mutations = {
   SET_PROFILE(state, profile) {
     state.editedList = profile.edited || []
     state.subscribedList = profile.subscribed || []
-    state.viewedList = profile.view || []
+    state.viewedList = profile.viewed || []
   },
   RESET(state) {
     state = getDefaultState()
@@ -39,14 +41,14 @@ const actions = {
     if (!rootGetters.isInitialized) {
       setTimeout(() => {
         dispatch('INITIALIZE')
-      }, 50)
+      }, 100)
       return
     }
     if (rootGetters.isLogin) {
       try {
         const { data } = await getProfile({ token: rootGetters.token })
-        commit('SET_PROFILE', data)
-        return Promise.resolve(data)
+        commit('SET_PROFILE', data.data)
+        return Promise.resolve(data.data)
       } catch (error) {
         console.error(error)
         return Promise.reject(error)

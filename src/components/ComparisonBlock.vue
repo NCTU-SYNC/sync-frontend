@@ -45,7 +45,6 @@
                     :style="getLinkNeighborStyle(diff)"
                   >{{ diff[1].split(linkContainer)[2] }}</div>
                   <div
-                    v-else
                     class="comparision-result"
                     :style="{ backgroundColor: diff[0] === 1 ? 'rgba(26, 225, 91, 0.3)'
                       : diff[0] === -1 ? 'rgba(255, 79, 79, 0.3)' : 'none', textDecoration: diff[0] === -1 ? 'line-through' : 'initial'}"
@@ -153,7 +152,7 @@ export default {
   border-top: 2px solid #E6E6E6;
 }
 .article-container {
-  height: 58vh;
+
 }
 .header {
   z-index: 2;

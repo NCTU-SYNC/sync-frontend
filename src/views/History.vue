@@ -57,7 +57,9 @@
       </b-col>
     </b-row>
     <b-row class="history-header">
-      <b-col sm="2" />
+      <b-col sm="2">
+        版本比較
+      </b-col>
       <b-col sm="3">
         版本日期
       </b-col>
@@ -70,10 +72,7 @@
     </b-row>
     <b-row v-for="(item, itemIndex) in historyItems" :key="itemIndex" class="history-row">
       <b-col sm="2" class="compare-options">
-        <div v-if="item.type === 'header'" class="no-headers">
-          <h5>{{ item.month }}</h5>
-        </div>
-        <div v-else>
+        <div v-if="item.type !== 'header'">
           <b-link
             class="pr-2 link-right"
             :class="{ 'text-primary': item.index !== versionsLength}"
@@ -83,13 +82,18 @@
           <b-link
             class="pl-2"
             :class="{ 'text-primary': item.index !== 1}"
-            :to="`/compare/${articleId}?base=${item.index}&compare=${item.index - 1}`"
+            :to="`/compare/${articleId}?base=${item.index - 1}&compare=${item.index}`"
             :disabled="item.index === 1"
           >前一版</b-link>
         </div>
       </b-col>
       <b-col sm="3">
-        {{ item.updatedAt }}
+        <slot v-if="item.type === 'header'" class="no-headers">
+          <h5>{{ item.month }}</h5>
+        </slot>
+        <slot>
+          {{ item.updatedAt }}
+        </slot>
       </b-col>
       <b-col sm="5">
         {{ item.author }}
@@ -99,7 +103,6 @@
         <span v-if="item.editTextCounts[1]" class="bg-diff-delete px-2 py-1 m-2">{{ item.editTextCounts[1] }}</span>
       </b-col>
     </b-row>
-
   </b-container>
 </template>
 
