@@ -364,6 +364,7 @@ export default {
         authors: this.postAuthors,
         blocks: this.blocks,
         createdAt: `${this.postDateValue} ${this.postTimeValue}`,
+        citations: this.post.citations,
         uid: this.uid,
         token: this.token,
         isAnonymous: this.isAnonymous

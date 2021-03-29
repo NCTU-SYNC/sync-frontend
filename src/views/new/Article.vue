@@ -18,7 +18,7 @@
           </div>
         </div>
       </b-col>
-      <b-col cols="8">
+      <b-col cols="8" class="min-vh-100">
         <b-row>
           <b-col>
             <h2>
@@ -92,6 +92,7 @@
             </b-card>
           </b-col>
         </b-row>
+
       </b-col>
       <b-col cols="2">
         <div class="sync-blank-container" />
@@ -120,6 +121,27 @@
         </div>
       </b-col>
     </b-row>
+    <b-row class="my-5">
+      <b-col cols="2" />
+      <b-col cols="8">
+        <b-card
+          class="bg-light border-0 citations-container"
+        >
+          <p>引用貼文</p>
+          <div v-for="(citation, index) in citations" :key="index">
+            <div class="d-flex justify-content-start align-items-center mt-2">
+              <div class="citation-list-tag">
+                <div class="period" :data-label="index + 1" />
+              </div>
+              <div class="w-100 pl-2 ">
+                <b-link class="text-primary" :href="citation.url" target="_blank">{{ citation.title }}</b-link>
+              </div>
+            </div>
+          </div>
+        </b-card>
+      </b-col>
+      <b-col cols="2" />
+    </b-row>
   </b-container>
 </template>
 
@@ -147,6 +169,7 @@ export default {
       blocks: [],
       authors: [],
       createdAt: '',
+      citations: [],
       lastUpdatedAt: '',
       timeId: null,
       time: moment(),
@@ -155,7 +178,8 @@ export default {
       isEditting: false,
       // 當使用者按下取消復原用
       backupBlock: null,
-      isLogin: false
+      isLogin: false,
+      isSubscribed: false
     }
   },
   computed: {
@@ -168,22 +192,28 @@ export default {
     articleId() {
       return this.$route.params.ArticleID
     },
-    isSubscribed() {
-      const list = this.$store.getters['article/subscribedList']
-      if (list) {
-        return list.includes(this.articleId)
-      }
-      return false
+    subscribedList() {
+      return this.$store.getters['article/subscribedList']
     }
   },
-  created() {
+  watch: {
+    subscribedList(newList) {
+      if (newList) {
+        this.isSubscribed = newList.includes(this.articleId)
+        return
+      }
+      this.isSubscribed = false
+    }
+  },
+  mounted() {
+    this.time = moment()
     this.timeId = setInterval(() => {
       this.time = moment()
     }, 1000)
     if (this.articleId) {
       getArticleById(this.articleId).then(response => {
         if (response.data.code === 200) {
-          const { title, authors, tags, createdAt, blocks, lastUpdatedAt, category, editedCount, editingCount, isPopular } = response.data.data
+          const { title, authors, tags, createdAt, blocks, lastUpdatedAt, category, editedCount, editingCount, citations, isPopular } = response.data.data
           console.log(response.data.data)
           this.title = title
           this.authors = authors
@@ -195,6 +225,10 @@ export default {
           this.editedCount = editedCount
           this.editingCount = editingCount
           this.isPopular = isPopular
+          this.citations = citations
+          this.citations.forEach((citation, index) => {
+            this.$store.commit('post/SET_CITATION', { index, citation })
+          })
           this.blocks.forEach(block => {
             this.editors[block._id] = this.createEditor(block.content)
             this.editableBlocks[block._id] = false
@@ -209,6 +243,7 @@ export default {
     this.isLogin = !!this.$store.getters.token
     if (this.isLogin) {
       this.$store.dispatch('article/VIEW', this.articleId)
+      this.setIsSubscribed()
     }
   },
   beforeDestroy() {
@@ -216,6 +251,14 @@ export default {
     this.time = null
   },
   methods: {
+    setIsSubscribed(subscribedList = this.subscribedList) {
+      console.log('setIsSubscribed')
+      if (subscribedList) {
+        this.isSubscribed = subscribedList.includes(this.articleId)
+        return
+      }
+      this.isSubscribed = false
+    },
     handleEditPostRoute(route) {
       if (this.isLogin) { this.$router.push(route) } else { this.$bvModal.msgBoxOk('Please Login First') }
     },
@@ -265,6 +308,7 @@ export default {
       return editor
     },
     handleClickBookmark() {
+      console.log(!this.isSubscribed)
       if (!this.isSubscribed) {
         this.$store.dispatch('article/SUBSCRIBE', this.articleId)
       } else {
@@ -368,5 +412,23 @@ hr {
   display: inline-block;
   padding: 0.5rem;
   color: gray;
+}
+
+.citation-list-tag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid #939393;
+}
+
+.period {
+  &:before {
+    content: attr(data-label);
+    color: #939393;
+    width: 2rem;
+  }
 }
 </style>

@@ -79,5 +79,8 @@ export default new Router({
       name: 'EditComparison',
       component: () => import('@/views/EditComparison')
     }
-  ]
+  ],
+  scrollBehavior(to, from, savedPosition) {
+    return { x: 0, y: 0 }
+  }
 })

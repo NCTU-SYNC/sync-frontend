@@ -24,13 +24,13 @@
       <b-col>
         <ul role="tablist" class="options-nav">
           <li :aria-selected="currentShowingIndex === 0" role="tab" class="option-name">
-            <a @click="onOptionClicked(0)"><span class="option-text">我編輯過的文章</span></a>
+            <a @click="currentShowingIndex = 0"><span class="option-text">我編輯過的文章</span></a>
           </li>
           <li :aria-selected="currentShowingIndex === 1" role="tab" class="option-name">
-            <a @click="onOptionClicked(1)"><span class="option-text">我瀏覽過的文章</span></a>
+            <a @click="currentShowingIndex = 1"><span class="option-text">我瀏覽過的文章</span></a>
           </li>
           <li :aria-selected="currentShowingIndex === 2" role="tab" class="option-name">
-            <a @click="onOptionClicked(2)"><span class="option-text">我追蹤的文章</span></a>
+            <a @click="currentShowingIndex = 2"><span class="option-text">我追蹤的文章</span></a>
           </li>
           <li aria-selected="false" role="tab" class="option-name">
             <a><span class="option-text">設定</span></a>
@@ -80,34 +80,35 @@ export default {
       if (newValue) {
         this.init()
       }
+    },
+    currentShowingIndex() {
+      this.updateList()
     }
   },
   mounted() {
-    if (this.$store.getters.isLogin) {
+    if (this.isLogin) {
       this.init()
     }
   },
   methods: {
     async init() {
-      console.log('isLogin')
       const { data } = await getArticlesInfo({ token: this.$store.getters.token })
       if (data.code === 200) {
         this.articles = data.data
-        this.onOptionClicked(0)
+        this.updateList()
       }
     },
-    onOptionClicked(index) {
-      this.currentShowingIndex = index
-      switch (index) {
+    updateList() {
+      switch (this.currentShowingIndex) {
         case 2:
-          this.showingArticles = this.articles.subscribed
+          this.showingArticles = [...this.articles.subscribed].reverse()
           break
         case 1:
-          this.showingArticles = this.articles.viewed
+          this.showingArticles = [...this.articles.viewed].reverse()
           break
         case 0:
         default:
-          this.showingArticles = this.articles.edited
+          this.showingArticles = [...this.articles.edited].sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
           break
       }
     }
@@ -116,6 +117,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+a {
+  text-decoration: none !important;
+}
+
 .avatar {
   border-radius: 50%;
   width: 100%;
