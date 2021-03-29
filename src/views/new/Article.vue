@@ -226,6 +226,9 @@ export default {
           this.editingCount = editingCount
           this.isPopular = isPopular
           this.citations = citations
+          this.citations.forEach((citation, index) => {
+            this.$store.commit('post/SET_CITATION', { index, citation })
+          })
           this.blocks.forEach(block => {
             this.editors[block._id] = this.createEditor(block.content)
             this.editableBlocks[block._id] = false
@@ -409,5 +412,23 @@ hr {
   display: inline-block;
   padding: 0.5rem;
   color: gray;
+}
+
+.citation-list-tag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid #939393;
+}
+
+.period {
+  &:before {
+    content: attr(data-label);
+    color: #939393;
+    width: 2rem;
+  }
 }
 </style>
