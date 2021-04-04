@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid="xl">
+  <b-container v-if="isPageReady" fluid="xl">
     <b-row>
       <b-col>
         <b-breadcrumb :items="breadcrumbItems" class="bg-transparent" />
@@ -25,10 +25,33 @@
         </div>
       </b-col>
     </b-row>
-    <b-row>
-      <b-col cols="6" class="px-0 border-right border-secondary"><comparison-block :version="versions[0]" /></b-col>
-      <b-col cols="6" class="px-0 border-left border-secondary"><comparison-block :version="versions[1]" :is-diff="true" :article-diff="articleDiff" :link-container="linkContainer" /></b-col>
+    <b-row v-if="isPageReady" class="version version-header">
+      <b-col cols="6">
+        <span>{{ versions[0].updateAt }}</span>
+        <span>{{ versions[0].author.isAnonymous ? '匿名' : versions[0].author.name }}</span>
+      </b-col>
+      <b-col cols="6">
+        <span>{{ versions[1].updateAt }}</span>
+        <span>{{ versions[1].author.isAnonymous ? '匿名' : versions[1].author.name }}</span>
+      </b-col>
     </b-row>
+    <b-row v-if="isPageReady" class="version version-title">
+      <b-col cols="6">
+        <span>{{ versions[0].title }}</span>
+      </b-col>
+      <b-col cols="6">
+        <span>{{ versions[1].title }}</span>
+      </b-col>
+    </b-row>
+    <slot v-for="(blockId, index) in diffOrderArr">
+      <ComparisonBlock
+        class="version"
+        :base="getBlockInVersionByBlockId(versions[0], index, blockId)"
+        :article-diff="articleDiff[index]"
+        :link-container="linkContainer"
+      />
+    </slot>
+    <b-row class="mt-4" />
   </b-container>
 </template>
 
@@ -67,7 +90,9 @@ export default {
       base: undefined,
       compare: undefined,
       title: '',
-      linkContainer: '龗龗龗龗龗'
+      linkContainer: '{{link}}',
+      diffOrderArr: [],
+      isPageReady: false
     }
   },
   computed: {
@@ -82,10 +107,9 @@ export default {
       this.breadcrumbItems[1].to = `/history/${this.articleId}`
     }
   },
-  created() {
+  mounted() {
     this.base = this.$route.query.base
     this.compare = this.$route.query.compare
-    console.log(this.base, this.compare)
     this.handleGetArticlesComparison()
   },
   methods: {
@@ -111,6 +135,7 @@ export default {
     },
     async handleGetArticlesComparison() {
       try {
+        this.isPageReady = false
         this.versions = {}
         const { data } = await getArticlesComparisonByVersionIndexes({
           articleId: this.articleId,
@@ -146,10 +171,43 @@ export default {
         }
 
         this.articleDiff = this.compareContent(this.versions[0].blocks, this.versions[1].blocks)
-        console.log('articleDiff', this.articleDiff)
+        this.versions[1].articleDiff = this.articleDiff
+        this.isPageReady = true
       } catch (error) {
         console.log(error)
       }
+    },
+    getBlockInVersionByBlockId(versionContent, index, diffArrBlockId) {
+      // 根據 Diff array 找出該 block 傳入 ComparisonBlock，若無則傳入 null，用於顯示版本比對 block
+      // diffArrBlockId: 渲染時根據base和compare比較後產生的聯集陣列 blockId
+      if (versionContent) {
+        const block = versionContent.blocks[index]
+        if (block !== undefined) {
+          if (block.blockId === diffArrBlockId) {
+            return block
+          }
+          const nonOrderedBlock = versionContent.blocks.find(b => b.blockId === diffArrBlockId)
+          return nonOrderedBlock || null
+        }
+      }
+      return null
+    },
+    union(arg) {
+      var arrs = [].slice.call(arg)
+      var out = []
+      for (var i = 0, l = arrs.length; i < l; i++) {
+        for (var j = 0, jl = arrs[i].length; j < jl; j++) {
+          var currEl = arrs[i][j]
+          if (out.indexOf(currEl) === -1) {
+            if (j - 1 !== -1 && out.indexOf(arrs[i][j - 1]) > -1) {
+              out.splice(out.indexOf(arrs[i][j - 1]) + 1, 0, currEl)
+            } else {
+              out.push(currEl)
+            }
+          }
+        }
+      }
+      return out
     },
     compareContent(blocks1, blocks2) {
       const dmp = new DiffMatchPatch()
@@ -157,14 +215,13 @@ export default {
       const articleDiff = []
       // 存放 diff base 和 compare 的 dictionary
       const diffDict = {}
-      // 排列 diff id 順序的陣列
-      const diffOrderArr = []
+      const baseOrderArr = []
       for (const block of blocks1) {
         // 確認有blockId
         if (block.blockId) {
+          baseOrderArr.push(block.blockId)
           // 確認字典裡面尚無 blockId
           if (diffDict[block.blockId] === undefined) {
-            diffOrderArr.push(block.blockId)
             // 設定 base 的標題與文字
             diffDict[block.blockId] = {
               base: {
@@ -176,14 +233,15 @@ export default {
         }
       }
 
-      let i = 0
+      const compareOrderArr = []
       for (const block of blocks2) {
         // 確認有blockId
         if (block.blockId) {
           // 若比較的版本有插入新段落，則在 order 陣列新增，待會則照順序查看陣列
-          if (!diffOrderArr.includes(block.blockId)) {
-            diffOrderArr.splice(i, 0, block.blockId)
-          }
+          // if (!diffOrderArr.includes(block.blockId)) {
+          //  diffOrderArr.splice(i, 0, block.blockId)
+          // }
+          compareOrderArr.push(block.blockId)
           // 確認字典裡面尚無 blockId
           if (diffDict[block.blockId] === undefined) {
             diffDict[block.blockId] = {
@@ -201,9 +259,10 @@ export default {
             }
           }
         }
-        i += 1
       }
-      console.log(diffDict, diffOrderArr)
+
+      // 排列 diff id 順序的陣列
+      const diffOrderArr = [...new Set([...baseOrderArr, ...compareOrderArr])]
 
       for (const blockId of diffOrderArr) {
         const empty = {
@@ -238,6 +297,7 @@ export default {
         articleDiff.push({ titleDiff, contentDiff })
       })
 */
+      this.diffOrderArr = diffOrderArr
       return articleDiff
     },
     getPlainTextBlocks(blocks) {
@@ -264,7 +324,13 @@ export default {
       blockContent.content.content.forEach(paragraph => {
         if (paragraph.content) {
           paragraph.content.forEach(text => {
-            content += text.text
+            if (text.marks && text.marks.some(mark => mark.type === 'link')) {
+              content += this.linkContainer + JSON.stringify({
+                text: text.text, marks: text.marks
+              }) + this.linkContainer
+            } else {
+              content += text.text
+            }
           })
         }
         content += '\n\n'
@@ -286,14 +352,17 @@ export default {
       }
       this.base += 1
       this.compare = this.base + 1
-      console.log(this.base, this.compare)
       this.handleGetArticlesComparison()
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-
+.version {
+  div:first-child {
+    border-right: 1px solid $primary;
+  }
+}
 </style>
 
 <style lang="scss">

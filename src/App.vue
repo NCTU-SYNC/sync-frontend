@@ -1,13 +1,15 @@
 <template>
   <div id="app">
     <Navbar />
-    <transition
-      name="fade"
-      mode="out-in"
-      :duration="500"
-    >
-      <router-view />
-    </transition>
+    <div id="wrapper">
+      <transition
+        name="fade"
+        mode="out-in"
+        :duration="500"
+      >
+        <router-view />
+      </transition>
+    </div>
     <Footer v-if="showFooter" />
   </div>
 </template>

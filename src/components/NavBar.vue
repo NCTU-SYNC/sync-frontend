@@ -1,5 +1,5 @@
 <template>
-  <b-navbar class="header-navbar" toggleable="lg" type="light" variant="faded">
+  <b-navbar fixed="top" class="header-navbar" toggleable="lg" type="light" variant="faded">
     <b-button class="px-0 px-md-2" variant="transparent" to="/post">
       <b-icon icon="pencil-square" scale="1.2" aria-hidden="true" />
     </b-button>
@@ -72,7 +72,9 @@ export default {
 
 <style scoped lang="scss">
 .header-navbar {
-  margin: 1rem
+  height: 4rem;
+  background-color: $white;
+  border: 1px solid $primary;
 }
 
 .centered-block {
