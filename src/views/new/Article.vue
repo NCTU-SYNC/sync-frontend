@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid="xl">
+  <b-container fluid="xl" class="wrapper">
     <b-row>
       <b-col cols="2">
         <div class="sync-blank-container d-flex flex-column pr-3">
@@ -322,6 +322,10 @@ export default {
 
 <style scoped lang="scss">
 @import '@/assets/scss/news.scss';
+
+.wrapper {
+  padding-top: 1rem;
+}
 
 p {
   letter-spacing: 0.25rem;

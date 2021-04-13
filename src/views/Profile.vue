@@ -13,7 +13,7 @@
             </div>
           </b-col>
           <b-col cols="3" class="d-flex flex-column justify-content-center">
-            <p>貢獻值：<span>尚未開始採計</span></p>
+            <p>貢獻值：<span>{{ points }}</span></p>
             <p>帳戶創建日期：</p>
             <p class="text-gray">{{ creationDateTime }}</p>
           </b-col>
@@ -65,7 +65,8 @@ export default {
     return {
       articles: {},
       showingArticles: [],
-      currentShowingIndex: 0
+      currentShowingIndex: 0,
+      points: 0
     }
   },
   computed: {
@@ -94,7 +95,9 @@ export default {
     async init() {
       const { data } = await getArticlesInfo({ token: this.$store.getters.token })
       if (data.code === 200) {
-        this.articles = data.data
+        const payload = data.data
+        this.articles = payload
+        this.points = payload.points
         this.updateList()
       }
     },

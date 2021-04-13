@@ -1,5 +1,5 @@
 <template>
-  <b-container>
+  <b-container class="wrapper">
     <b-row>
       <b-col
         class="py-2 main-editor-area"
@@ -220,6 +220,19 @@
         <NewsPanel @importNews="importNews" />
       </b-col>
     </b-row>
+    <transition
+      name="fade"
+      mode="out-in"
+      :duration="500"
+    >
+      <b-alert v-model="showAddPointsAlert" class="points-alert" dismissible variant="light">
+        <p class="text-center">恭喜您！</p>
+        <p class="d-flex justify-content-center align-content-center">
+          <EditStar class="mr-2" /> + {{ editPoint }}
+        </p>
+        <p class="text-center">撰寫新文章，個人貢獻度 + {{ editPoint }} 分！</p>
+      </b-alert>
+    </transition>
   </b-container>
 </template>
 
@@ -229,12 +242,14 @@ import { getArticleById, createArticle, updateArticleById } from '@/api/article'
 import TiptapEditor from '@/components/Post/TiptapEditor'
 import NewsPanel from '@/components/NewsPanel'
 import { Utils } from '@/utils'
+import EditStar from '@/components/Icons/EditStar'
 
 export default {
   name: 'Post',
   components: {
     TiptapEditor,
-    NewsPanel
+    NewsPanel,
+    EditStar
   },
   data() {
     return {
@@ -265,17 +280,34 @@ export default {
         }
       ],
       addTagText: '',
-      isLoading: false
+      isLoading: false,
+      showAddPointsAlert: false,
+      redirectTimerId: null
     }
   },
   computed: {
     ...mapGetters(['isLogin', 'uid', 'token']),
-    ...mapGetters({ post: 'post' })
+    ...mapGetters({ post: 'post' }),
+    editPoint() {
+      return this.isNewPost ? 5 : 2
+    }
   },
   watch: {
     categorySelected(newValue) {
       this.data.category = newValue
       this.$refs.categoryRef.hide(true)
+    },
+    showAddPointsAlert(newValue) {
+      if (!newValue && this.redirectTimerId) {
+        clearTimeout(this.redirectTimerId)
+        this.redirectTimerId = null
+        this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
+      }
+    }
+  },
+  beforeDestroy() {
+    if (this.redirectTimerId) {
+      clearTimeout(this.redirectTimerId)
     }
   },
   created() {
@@ -377,8 +409,7 @@ export default {
           if (data.code === 200) {
             this.articleId = data.id
             this.$store.commit('post/RESET_POST')
-            await this.$bvModal.msgBoxOk(data.message)
-            this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
+            this.showAddPointsAlertAndRedirect()
           } else {
             this.$bvModal.msgBoxOk(data.message)
           }
@@ -392,8 +423,8 @@ export default {
           const { data } = await updateArticleById(this.data)
           this.isLoading = false
           if (data.code === 200) {
-            await this.$bvModal.msgBoxOk(data.message)
-            this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
+            this.$store.commit('post/RESET_POST')
+            this.showAddPointsAlertAndRedirect()
           } else {
             this.$bvModal.msgBoxOk(data.message)
           }
@@ -465,6 +496,12 @@ export default {
           }
         })
       }
+    },
+    showAddPointsAlertAndRedirect() {
+      this.showAddPointsAlert = true
+      this.redirectTimerId = setTimeout(() => {
+        this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
+      }, 2000)
     }
   }
 }
@@ -472,6 +509,10 @@ export default {
 
 <style scoped lang="scss">
 @import "@/assets/scss/post/main.scss";
+
+.wrapper {
+  padding-top: 1rem;
+}
 
 .block-divider {
   width: 100%;
@@ -632,5 +673,19 @@ export default {
   padding: 0;
   right: 0rem;
   top: 0rem;
+}
+
+.points-alert {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+  border: 1px solid $primary;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.25);
+  padding: 2rem 2.5rem 1rem 2.5rem;
+
+  p {
+    color: $primary;
+  }
 }
 </style>

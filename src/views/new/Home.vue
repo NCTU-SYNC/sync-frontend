@@ -172,7 +172,6 @@ export default {
 @import '@/assets/scss/news.scss';
 
 .sync-category-navbar {
-  border-top: 1px solid $gray-900;
   border-bottom: 1px solid $gray-900;
   a {
     font-weight: bold;

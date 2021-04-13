@@ -74,7 +74,7 @@ export default {
 .header-navbar {
   height: 4rem;
   background-color: $white;
-  border: 1px solid $primary;
+  border-bottom: 1px solid $primary;
 }
 
 .centered-block {
