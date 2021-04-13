@@ -25,33 +25,37 @@
         </div>
       </b-col>
     </b-row>
-    <b-row v-if="isPageReady" class="version version-header">
-      <b-col cols="6">
-        <span>{{ versions[0].updateAt }}</span>
-        <span>{{ versions[0].author.isAnonymous ? '匿名' : versions[0].author.name }}</span>
-      </b-col>
-      <b-col cols="6">
-        <span>{{ versions[1].updateAt }}</span>
-        <span>{{ versions[1].author.isAnonymous ? '匿名' : versions[1].author.name }}</span>
-      </b-col>
-    </b-row>
-    <b-row v-if="isPageReady" class="version version-title">
-      <b-col cols="6">
-        <span>{{ versions[0].title }}</span>
-      </b-col>
-      <b-col cols="6">
-        <span>{{ versions[1].title }}</span>
+    <b-row v-if="isPageReady" class="shadow-sm">
+      <b-col>
+        <b-row class="divider">
+          <b-col class="pt-2" cols="6">
+            <span class="mr-2 pr-2 border-right">{{ versions[0].updatedAt }}</span>
+            <span>{{ versions[0].author.isAnonymous ? '匿名' : versions[0].author.name }}</span>
+          </b-col>
+          <b-col class="pt-2" cols="6">
+            <span class="mr-2 pr-2 border-right">{{ versions[1].updatedAt }}</span>
+            <span>{{ versions[1].author.isAnonymous ? '匿名' : versions[1].author.name }}</span>
+          </b-col>
+        </b-row>
+        <b-row v-if="isPageReady" class="divider">
+          <b-col class="pb-2" cols="6">
+            <span>{{ versions[0].title }}</span>
+          </b-col>
+          <b-col class="pb-2" cols="6">
+            <span>{{ versions[1].title }}</span>
+          </b-col>
+        </b-row>
       </b-col>
     </b-row>
     <slot v-for="(blockId, index) in diffOrderArr">
       <ComparisonBlock
-        class="version"
         :base="getBlockInVersionByBlockId(versions[0], index, blockId)"
         :article-diff="articleDiff[index]"
         :link-container="linkContainer"
       />
     </slot>
-    <b-row class="mt-4" />
+    <ComparisonCitation />
+    <b-row class="mt-3" />
   </b-container>
 </template>
 
@@ -60,11 +64,13 @@ import { Editor } from 'tiptap'
 import DiffMatchPatch from 'diff-match-patch'
 import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Link } from 'tiptap-extensions'
 import ComparisonBlock from '@/components/ComparisonBlock'
+import ComparisonCitation from '@/components/History/ComparisonCitation'
 import { getArticlesComparisonByVersionIndexes } from '@/api/history'
+import moment from 'moment'
 
 export default {
   components: {
-    ComparisonBlock
+    ComparisonBlock, ComparisonCitation
   },
   data() {
     return {
@@ -156,7 +162,7 @@ export default {
           const blocks = articles[i].blocks
           const editors = {}
           const author = articles[i].author
-          const updateAt = articles[i].updateAt
+          const updatedAt = moment(articles[i].updatedAt).format('YYYY/MM/DD HH:mm')
           blocks.forEach(block => {
             if (editors[block.blockId]) {
               editors[block.blockId].setContent(block.content)
@@ -166,7 +172,7 @@ export default {
           })
           this.versions = {
             ...this.versions,
-            [i]: { title, blocks, editors, author, updateAt }
+            [i]: { title, blocks, editors, author, updatedAt }
           }
         }
 
@@ -279,24 +285,7 @@ export default {
         dmp.diff_cleanupSemantic(contentDiff)
         articleDiff.push({ titleDiff, contentDiff })
       }
-      /*
-      const plainTextBlocks1 = this.getPlainTextBlocks(blocks1)
-      const plainTextBlocks2 = this.getPlainTextBlocks(blocks2)
-      console.log(plainTextBlocks1, plainTextBlocks2)
-      const longer = plainTextBlocks1.length > plainTextBlocks2.length ? plainTextBlocks1 : plainTextBlocks2
-      const shorter = plainTextBlocks1.length <= plainTextBlocks2.length ? plainTextBlocks1 : plainTextBlocks2
 
-      const articleDiff = []
-
-      longer.forEach((block, index) => {
-        const comparedBlock = index < shorter.length ? shorter[index] : { blockTitle: '', content: '' }
-        const titleDiff = dmp.diff_main(block.blockTitle, comparedBlock.blockTitle)
-        const contentDiff = dmp.diff_main(block.content, comparedBlock.content)
-        dmp.diff_cleanupSemantic(titleDiff)
-        dmp.diff_cleanupSemantic(contentDiff)
-        articleDiff.push({ titleDiff, contentDiff })
-      })
-*/
       this.diffOrderArr = diffOrderArr
       return articleDiff
     },
@@ -358,9 +347,12 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.version {
+.divider {
   div:first-child {
-    border-right: 1px solid $primary;
+    border-right: 2px solid #E6E6E6;
+  }
+  div:last-child {
+    border-left: 2px solid #E6E6E6;
   }
 }
 </style>

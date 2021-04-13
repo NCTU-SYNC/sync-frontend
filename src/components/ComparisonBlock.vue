@@ -1,6 +1,6 @@
 <template>
-  <b-row>
-    <b-col cols="6" class="block-container border-right">
+  <b-row class="version">
+    <b-col cols="6" class="block-container">
       <div v-if="base === null" :class="{ 'bg-light': base === null}" class="h-100 np-3" />
       <h3>{{ baseBlockTitle }}</h3>
       <slot v-for="(element, elementIndex) in getPlainTextInBlock(base)">
@@ -257,17 +257,29 @@ span {
 
   margin-top: 1rem;
 }
+
 .header {
   z-index: 2;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
   height: 60px;
 }
+
 .comparision-result {
   white-space: pre-wrap;
   display: inline;
   word-break: break-all;
 }
+
 .fake-margin {
   height: 8px;
+}
+
+.version {
+  div:first-child {
+    border-right: 2px solid #E6E6E6;
+  }
+  div:last-child {
+    border-left: 2px solid #E6E6E6;
+  }
 }
 </style>
