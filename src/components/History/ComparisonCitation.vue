@@ -135,7 +135,6 @@ export default {
       }
     },
     isUrlChanged(urlDiff) {
-      console.log(urlDiff)
       return urlDiff.some(u => u[0] !== 0 && u !== undefined)
     }
   }

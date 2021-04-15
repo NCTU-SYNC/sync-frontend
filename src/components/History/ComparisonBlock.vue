@@ -1,5 +1,5 @@
 <template>
-  <b-row class="version">
+  <b-row class="divider">
     <b-col cols="6" class="block-container">
       <div v-if="base === null" :class="{ 'bg-light': base === null}" class="h-100 np-3" />
       <h3>{{ baseBlockTitle }}</h3>
@@ -14,6 +14,16 @@
             </b-link>
           </slot>
         </p>
+        <blockquote v-if="element.type === 'blockquote'" :key="`base-${elementIndex}`">
+          <p v-for="(content, contentIndex) in element.content" :key="contentIndex">
+            <span v-if="content.type === 'text'" :key="`base-${contentIndex}`">
+              {{ content.type === 'text' ? content.text : '' }}
+            </span>
+            <b-link v-if="content.type === 'link'" :key="`base-${contentIndex}`" target="_blank" :href="content.marks[0].attrs.href">
+              {{ content.text }}
+            </b-link>
+          </p>
+        </blockquote>
       </slot>
     </b-col>
     <b-col cols="6" class="block-container">
@@ -29,7 +39,9 @@
       <slot v-for="(diff, diffIndex) in getPlainTextInDiff(articleDiff.contentDiff)">
         <p v-if="diff.content.length > 0" :key="diffIndex">
           <slot v-for="(content, contentIndex) in diff.content">
+
             <slot v-for="(text, textIndex) in decodeText(content)">
+
               <b-link
                 v-if="isLink(text)"
                 :key="`compare-link-${diffIndex}-${contentIndex}-${textIndex}`"
@@ -87,7 +99,11 @@ export default {
     },
     linkContainer: {
       type: String,
-      default: ''
+      default: '{{link}}'
+    },
+    blockquoteContainer: {
+      type: String,
+      default: '{{blockquote}}'
     },
     base: {
       type: Object,
@@ -165,24 +181,50 @@ export default {
       const content = []
       if (blockContent) {
         blockContent.content.content.forEach(paragraph => {
-          if (paragraph.content) {
+          if (paragraph.type === 'paragraph') {
+            if (paragraph.content) {
+              const element = {
+                type: 'paragraph',
+                content: []
+              }
+              paragraph.content.forEach(t => {
+                if (t.marks) {
+                  element.content.push({
+                    type: 'link',
+                    marks: t.marks,
+                    text: t.text
+                  })
+                } else {
+                  element.content.push({
+                    type: 'text',
+                    text: t.text
+                  })
+                }
+              })
+              content.push(element)
+            }
+          } else if (paragraph.type === 'blockquote') {
+            const blockquoteContent = paragraph.content
+            console.log(blockquoteContent)
             const element = {
-              type: 'paragraph',
+              type: 'blockquote',
               content: []
             }
-            paragraph.content.forEach(t => {
-              if (t.marks) {
-                element.content.push({
-                  type: 'link',
-                  marks: t.marks,
-                  text: t.text
-                })
-              } else {
-                element.content.push({
-                  type: 'text',
-                  text: t.text
-                })
-              }
+            blockquoteContent.forEach(c => {
+              c.content.forEach(t => {
+                if (t.marks) {
+                  element.content.push({
+                    type: 'link',
+                    marks: t.marks,
+                    text: t.text
+                  })
+                } else {
+                  element.content.push({
+                    type: 'text',
+                    text: t.text
+                  })
+                }
+              })
             })
             content.push(element)
           }
@@ -274,12 +316,19 @@ span {
   height: 8px;
 }
 
-.version {
-  div:first-child {
+.divider {
+  > div:first-child {
     border-right: 2px solid #E6E6E6;
   }
-  div:last-child {
+  > div:last-child {
     border-left: 2px solid #E6E6E6;
   }
+}
+
+blockquote {
+  border-left: 3px solid rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.8);
+  padding-left: 0.8rem;
+  font-style: italic;
 }
 </style>

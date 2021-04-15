@@ -1,7 +1,6 @@
 <template>
   <div>
     <button
-      v-b-modal.modal-center
       variant="outline-secondary"
       class="menubar__button"
       @click="openAddLinkDialog"
@@ -10,7 +9,7 @@
     </button>
 
     <b-modal
-      id="modal-center"
+      :id="`modal-center-${id}`"
       centered
       title="引用貼文"
       ok-title="引用"
@@ -89,6 +88,10 @@ import { insertHTML } from '@/utils/editorUtil'
 export default {
   name: 'AddLinkCommandButton',
   props: {
+    id: {
+      type: String,
+      default: Date.now().toString()
+    },
     commands: {
       type: Object,
       required: true
@@ -165,6 +168,8 @@ export default {
       if (mark) {
         this.linkAttrs.url = mark.attrs.href
       }
+
+      this.$bvModal.show(`modal-center-${this.id}`)
     },
     onDropdownClicked(citation) {
       if (citation) {

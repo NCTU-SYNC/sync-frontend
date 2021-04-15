@@ -150,7 +150,7 @@
 import moment from 'moment'
 import { getArticleById } from '@/api/article'
 import { Editor, EditorContent } from 'tiptap'
-import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder } from 'tiptap-extensions'
+import { History, Blockquote, Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder, OrderedList } from 'tiptap-extensions'
 import Link from '@/components/Editor/TiptapExtensions/Link'
 
 export default {
@@ -278,14 +278,17 @@ export default {
           // console.log(JSON.stringify(getJSON()))
         },
         extensions: [
+          new History(),
+          new Blockquote(),
           new Heading({ levels: [1, 2, 3] }),
           new Bold(),
           new Italic(),
           new Strike(),
+          new OrderedList(),
           new Underline(),
           new BulletList(),
-          new ListItem(),
           new Link(),
+          new ListItem(),
           new Placeholder({
             emptyEditorClass: 'is-editor-empty',
             emptyNodeClass: 'is-empty',

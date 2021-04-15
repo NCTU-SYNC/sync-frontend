@@ -93,6 +93,7 @@
                 <b-icon icon="chat-quote-fill" />
               </button>
               <AddLinkCommandButton
+                :id="blockId"
                 :commands="commands"
                 :editor="editor"
               />
@@ -227,7 +228,6 @@ export default {
         onUpdate: ({ getJSON }) => {
           // console.log(state, transaction)
           // 將資料回傳給父物件
-          console.log(getJSON())
           this.$emit('update:content', getJSON())
         },
         onFocus: () => {

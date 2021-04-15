@@ -60,11 +60,8 @@
 </template>
 
 <script>
-import { Editor } from 'tiptap'
 import DiffMatchPatch from 'diff-match-patch'
-import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Link } from 'tiptap-extensions'
-import ComparisonBlock from '@/components/ComparisonBlock'
-import ComparisonCitation from '@/components/History/ComparisonCitation'
+import { ComparisonBlock, ComparisonCitation } from '@/components/History'
 import { getArticlesComparisonByVersionIndexes } from '@/api/history'
 import moment from 'moment'
 
@@ -97,6 +94,7 @@ export default {
       compare: undefined,
       title: '',
       linkContainer: '{{link}}',
+      blockquoteContainer: '{{blockquote}}',
       diffOrderArr: [],
       isPageReady: false
     }
@@ -119,26 +117,6 @@ export default {
     this.handleGetArticlesComparison()
   },
   methods: {
-    createEditor(initializedContent) {
-      const editor = new Editor({
-        autoFocus: true,
-        onInit: () => {},
-        onUpdate: () => {},
-        extensions: [
-          new Heading({ levels: [1, 2, 3] }),
-          new Bold(),
-          new Italic(),
-          new Strike(),
-          new Underline(),
-          new BulletList(),
-          new ListItem(),
-          new Link()
-        ],
-        content: initializedContent,
-        editable: false
-      })
-      return editor
-    },
     async handleGetArticlesComparison() {
       try {
         this.isPageReady = false
@@ -160,20 +138,12 @@ export default {
         for (let i = 0; i < 2; i += 1) {
           const title = articles[i].title
           const blocks = articles[i].blocks
-          const editors = {}
           const author = articles[i].author
           const citations = articles[i].citations
           const updatedAt = moment(articles[i].updatedAt).format('YYYY/MM/DD HH:mm')
-          blocks.forEach(block => {
-            if (editors[block.blockId]) {
-              editors[block.blockId].setContent(block.content)
-            } else {
-              editors[block.blockId] = this.createEditor(block.content)
-            }
-          })
           this.versions = {
             ...this.versions,
-            [i]: { title, blocks, editors, author, updatedAt, citations }
+            [i]: { title, blocks, author, updatedAt, citations }
           }
         }
 
@@ -290,38 +260,36 @@ export default {
       this.diffOrderArr = diffOrderArr
       return articleDiff
     },
-    getPlainTextBlocks(blocks) {
-      const plainTextBlocks = []
-      blocks.forEach(block => {
-        const { blockTitle } = block.blockInfo
-        let content = ''
-        block.content.content.forEach(paragraph => {
-          if (paragraph.content) {
-            paragraph.content.forEach(text => {
-              if (text.marks && text.marks.some(mark => mark.type === 'link')) {
-                content += this.linkContainer + text.text + this.linkContainer
-              } else { content += text.text }
-            })
-          }
-          content += '\n\n'
-        })
-        plainTextBlocks.push({ blockTitle, content })
-      })
-      return plainTextBlocks
-    },
     getPlainText(blockContent) {
       let content = ''
       blockContent.content.content.forEach(paragraph => {
         if (paragraph.content) {
-          paragraph.content.forEach(text => {
-            if (text.marks && text.marks.some(mark => mark.type === 'link')) {
-              content += this.linkContainer + JSON.stringify({
-                text: text.text, marks: text.marks
-              }) + this.linkContainer
-            } else {
-              content += text.text
-            }
-          })
+          if (paragraph.type === 'paragraph') {
+            paragraph.content.forEach(text => {
+              if (text.marks && text.marks.some(mark => mark.type === 'link')) {
+                content += this.linkContainer + JSON.stringify({
+                  text: text.text, marks: text.marks
+                }) + this.linkContainer
+              } else {
+                content += text.text
+              }
+            })
+          } else if (paragraph.type === 'blockquote') {
+            content += this.blockquoteContainer
+            const payload = paragraph.content
+            payload.forEach(p => {
+              p.content.forEach(text => {
+                if (text.marks && text.marks.some(mark => mark.type === 'link')) {
+                  content += this.linkContainer + JSON.stringify({
+                    text: text.text, marks: text.marks
+                  }) + this.linkContainer
+                } else {
+                  content += text.text
+                }
+              })
+            })
+            content += this.blockquoteContainer
+          }
         }
         content += '\n\n'
       })
@@ -349,10 +317,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 .divider {
-  div:first-child {
+  > div:first-child {
     border-right: 2px solid #E6E6E6;
   }
-  div:last-child {
+  > div:last-child {
     border-left: 2px solid #E6E6E6;
   }
 }
