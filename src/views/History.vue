@@ -200,7 +200,7 @@ export default {
             author: version.author.name,
             updatedAt,
             index: version.versionIndex,
-            editTextCounts: ['0', '0']
+            editTextCounts: [version.wordsChanged.added, version.wordsChanged.deleted]
           })
         }
         this.historyShowCount = limit
