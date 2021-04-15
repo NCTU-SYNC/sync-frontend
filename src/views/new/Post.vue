@@ -329,6 +329,10 @@ export default {
           this.postTimeValue = this.seperateDateAndTime(dateTime).time
           this.blocks = data.blocks
           this.categorySelected = data.category
+          this.$store.commit('post/RESET_POST')
+          for (const c of data.citations || []) {
+            this.$store.commit('post/PUSH_CITATION', c)
+          }
           if (this.blocks.length === 0) {
             this.handleAddBlock()
           }

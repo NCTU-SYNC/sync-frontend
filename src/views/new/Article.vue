@@ -199,7 +199,7 @@ export default {
   watch: {
     subscribedList(newList) {
       if (newList) {
-        this.isSubscribed = newList.includes(this.articleId)
+        this.isSubscribed = newList.findIndex(s => s.articleId === this.articleId) >= 0
         return
       }
       this.isSubscribed = false
@@ -243,7 +243,7 @@ export default {
     this.isLogin = !!this.$store.getters.token
     if (this.isLogin) {
       this.$store.dispatch('article/VIEW', this.articleId)
-      this.setIsSubscribed()
+      this.isSubscribed = this.subscribedList.findIndex(s => s.articleId === this.articleId) >= 0
     }
   },
   beforeDestroy() {
@@ -251,14 +251,6 @@ export default {
     this.time = null
   },
   methods: {
-    setIsSubscribed(subscribedList = this.subscribedList) {
-      console.log('setIsSubscribed')
-      if (subscribedList) {
-        this.isSubscribed = subscribedList.includes(this.articleId)
-        return
-      }
-      this.isSubscribed = false
-    },
     handleEditPostRoute(route) {
       if (this.isLogin) { this.$router.push(route) } else { this.$bvModal.msgBoxOk('Please Login First') }
     },

@@ -54,7 +54,7 @@
         :link-container="linkContainer"
       />
     </slot>
-    <ComparisonCitation />
+    <ComparisonCitation :citations="[versions[0].citations, versions[1].citations]" />
     <b-row class="mt-3" />
   </b-container>
 </template>
@@ -162,6 +162,7 @@ export default {
           const blocks = articles[i].blocks
           const editors = {}
           const author = articles[i].author
+          const citations = articles[i].citations
           const updatedAt = moment(articles[i].updatedAt).format('YYYY/MM/DD HH:mm')
           blocks.forEach(block => {
             if (editors[block.blockId]) {
@@ -172,7 +173,7 @@ export default {
           })
           this.versions = {
             ...this.versions,
-            [i]: { title, blocks, editors, author, updatedAt }
+            [i]: { title, blocks, editors, author, updatedAt, citations }
           }
         }
 
