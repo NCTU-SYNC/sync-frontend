@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid="lg">
+  <b-container fluid="lg" class="wrapper">
     <b-row>
       <b-col>
         <b-row>

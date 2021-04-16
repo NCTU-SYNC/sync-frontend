@@ -4,7 +4,8 @@ const getDefaultState = () => {
   return {
     editedList: [],
     subscribedList: [],
-    viewedList: []
+    viewedList: [],
+    isProfileReady: false
   }
 }
 
@@ -13,20 +14,25 @@ const state = getDefaultState()
 const getters = {
   editedList: state => state.editedList,
   subscribedList: state => state.subscribedList,
-  viewedList: state => state.viewedList
+  viewedList: state => state.viewedList,
+  isProfileReady: state => state.isProfileReady
 }
 
 const mutations = {
   ADD_SUBSCRIBE(state, articleId) {
-    state.subscribedList = [...state.subscribedList, articleId]
+    state.subscribedList = [...state.subscribedList, { articleId, timeStamp: Date.now() }]
   },
   REMOVE_SUBSCRIBE(state, articleId) {
-    state.subscribedList = state.subscribedList.filter(elementId => elementId !== articleId)
+    state.subscribedList = state.subscribedList.filter(element => element.articleId !== articleId)
+  },
+  SET_SUBSCRIBE(state, subscribedList) {
+    state.subscribedList = subscribedList || []
   },
   SET_PROFILE(state, profile) {
     state.editedList = profile.edited || []
     state.subscribedList = profile.subscribed || []
     state.viewedList = profile.viewed || []
+    state.isProfileReady = true
   },
   RESET(state) {
     state = getDefaultState()
@@ -38,23 +44,21 @@ const mutations = {
 
 const actions = {
   async INITIALIZE({ commit, dispatch, rootGetters }) {
-    if (!rootGetters.isInitialized) {
-      setTimeout(() => {
-        dispatch('INITIALIZE')
-      }, 100)
-      return
-    }
     if (rootGetters.isLogin) {
       try {
         const { data } = await getProfile({ token: rootGetters.token })
-        commit('SET_PROFILE', data.data)
+        commit('SET_PROFILE', data.data.articles)
         return Promise.resolve(data.data)
       } catch (error) {
         console.error(error)
         return Promise.reject(error)
+      } finally {
+        setTimeout(() => {
+          dispatch('INITIALIZE')
+        }, 1000 * 60 * 5)
       }
     } else {
-      return Promise.resolve({})
+      return Promise.resolve({ articles: getDefaultState(), notifications: [] })
     }
   },
   async SUBSCRIBE({ commit, rootGetters }, articleId) {
@@ -64,7 +68,9 @@ const actions = {
     }
     try {
       const { data } = await subscribeArticleById(requestData)
-      commit('ADD_SUBSCRIBE', articleId)
+      const payload = data.data
+      commit('SET_SUBSCRIBE', payload)
+      // commit('ADD_SUBSCRIBE', articleId)
       return Promise.resolve(data)
     } catch (error) {
       console.error(error)
@@ -78,7 +84,10 @@ const actions = {
     }
     try {
       const { data } = await subscribeArticleById(requestData)
-      commit('REMOVE_SUBSCRIBE', articleId)
+      const payload = data.data
+      commit('SET_SUBSCRIBE', payload)
+      // Remove legacy structure
+      // commit('REMOVE_SUBSCRIBE', articleId)
       return Promise.resolve(data)
     } catch (error) {
       console.error(error)
@@ -86,11 +95,11 @@ const actions = {
     }
   },
   async VIEW({ commit, dispatch, rootGetters }, articleId) {
-    if (!rootGetters.isInitialized) {
+    if (!rootGetters.isInitialized || !state.isProfileReady) {
       console.log('VIEW is waiting for initialized')
       setTimeout(() => {
         dispatch('VIEW', articleId)
-      }, 50)
+      }, 100)
       return
     }
     const token = rootGetters.token

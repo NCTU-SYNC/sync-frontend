@@ -1,31 +1,58 @@
 <template>
-  <b-navbar fixed="top" class="header-navbar" toggleable="lg" type="light" variant="faded">
+  <b-navbar ref="navbar" fixed="top" class="header-navbar" type="light" variant="faded">
     <b-button class="px-0 px-md-2" variant="transparent" to="/post">
       <b-icon icon="pencil-square" scale="1.2" aria-hidden="true" />
     </b-button>
     <b-navbar-brand id="brand" to="/" class="centered-block"><Logo /></b-navbar-brand>
-    <b-collapse id="nav-collapse" is-nav>
 
-      <b-navbar-toggle target="nav-collapse" />
-      <!-- Right aligned nav items -->
-      <b-navbar-nav class="ml-auto d-flex align-items-center">
-        <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><img src="@/assets/images/search-icon.svg"></b-nav-item>
-        <b-nav-item v-show="!getLoginStatus" :to="{ name: 'SignUp', query: getRedirectPath }">註冊</b-nav-item>
-        <b-nav-item v-show="!getLoginStatus" :to="{ name: 'Login', query: getRedirectPath}">登入</b-nav-item>
-        <b-nav-item-dropdown v-show="getLoginStatus" no-caret right>
-          <!-- Using 'button-content' slot -->
-          <template v-slot:button-content>
-            <span>
-              <img class="avatar-user" height="48" width="48" :src="getPhotoURL">
-            </span>
-          </template>
-          <b-dropdown-item to="/profile">個人頁面</b-dropdown-item>
-          <b-dropdown-item href="#" @click="handleLogout">登出</b-dropdown-item>
-        </b-nav-item-dropdown>
-      </b-navbar-nav>
-    </b-collapse>
-    <b-navbar-nav class="ml-auto d-block d-lg-none">
-      <b-nav-item v-if="getLoginStatus" to="profile">
+    <!-- Right aligned nav items -->
+    <b-navbar-nav class="ml-auto d-none d-md-flex align-items-center h-100">
+      <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><img src="@/assets/images/search-icon.svg"></b-nav-item>
+
+      <b-nav-item-dropdown
+        size="lg"
+        variant="link"
+        toggle-class="text-decoration-none"
+        no-caret
+        no-flip
+        right
+        menu-class="p-0"
+      >
+        <template v-slot:button-content>
+          <Bell />
+        </template>
+        <div class="notification-container">
+          <h3>通知</h3>
+          <slot v-for="(notification, notificationIndex) in notifications">
+            <b-dropdown-item-button
+              v-if="notification.type = 'update'"
+              button-class="btn-wrap"
+              @click="routeToArticle(notification.articleId)"
+            >{{ notification.title || notification.articleId }} 文章有更新唷！
+              <p class="text-secondary m-0">{{ getDateString(notification.lastUpdatedAt) }}</p></b-dropdown-item-button>
+            <b-dropdown-divider v-if="notificationIndex < notifications.length - 1" />
+          </slot>
+
+        </div>
+
+      </b-nav-item-dropdown>
+      <b-nav-item v-show="!getLoginStatus" :to="{ name: 'SignUp', query: getRedirectPath }">註冊</b-nav-item>
+      <b-nav-item v-show="!getLoginStatus" :to="{ name: 'Login', query: getRedirectPath}">登入</b-nav-item>
+      <b-nav-item-dropdown v-show="getLoginStatus" no-caret right>
+        <!-- Using 'button-content' slot -->
+        <template v-slot:button-content>
+          <span>
+            <img class="avatar-user" height="48" width="48" :src="getPhotoURL">
+          </span>
+        </template>
+        <b-dropdown-item to="/profile">個人頁面</b-dropdown-item>
+        <b-dropdown-item href="#" @click="handleLogout">登出</b-dropdown-item>
+      </b-nav-item-dropdown>
+    </b-navbar-nav>
+    <b-navbar-nav class="ml-auto d-flex d-md-none align-items-center">
+      <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><img src="@/assets/images/search-icon.svg"></b-nav-item>
+      <b-button variant="link"><Bell /></b-button>
+      <b-nav-item v-if="getLoginStatus" to="/profile">
         <img class="avatar-user" :src="getPhotoURL">
       </b-nav-item>
       <b-nav-item
@@ -44,10 +71,12 @@
 <script>
 import firebase from '@/utils/firebase'
 import Logo from '@/components/Logo.vue'
+import Bell from '@/components/Icons/Bell.vue'
+import moment from 'moment'
 
 export default {
   name: 'NavBar',
-  components: { Logo },
+  components: { Logo, Bell },
   computed: {
     getRedirectPath() {
       // 設置重新導向，若在首頁、註冊、登入頁面做切換不需設置redirect，其他頁面則需要重新導向，若已經設置重新導向頁面，則註冊、登入切換時，並不會互相把自己的頁面給放進重新導向內
@@ -59,12 +88,29 @@ export default {
     },
     getLoginStatus() {
       return this.$store.getters.isLogin
+    },
+    notifications() {
+      return this.$store.getters.notifications
     }
   },
   methods: {
+    routeToArticle(articleId) {
+      if (this.$route.params.ArticleID === articleId) {
+        this.$emit('reloadData')
+      } else {
+        this.$router.push(`/article/${articleId}`)
+      }
+    },
     handleLogout() {
       firebase.handleLogout()
       this.$store.commit('article/RESET')
+    },
+    getDateString(timeStamp) {
+      console.log(timeStamp)
+      if (timeStamp._seconds) {
+        return moment(timeStamp._seconds * 1000).format('YYYY/MM/DD HH:mm')
+      }
+      return moment(timeStamp).format('YYYY/MM/DD HH:mm')
     }
   }
 }
@@ -75,6 +121,9 @@ export default {
   height: 4rem;
   background-color: $white;
   border-bottom: 1px solid $primary;
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 
 .centered-block {
@@ -96,5 +145,21 @@ export default {
     height: 36px;
     width: 36px;
     z-index: 0;
+}
+
+.notification-container {
+  padding: 1rem;
+  width: 20rem;
+  max-height: calc(100vh - 4rem);
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+</style>
+
+<style lang="scss">
+.btn-wrap {
+  white-space: normal !important;
+  word-wrap: break-word !important;
 }
 </style>

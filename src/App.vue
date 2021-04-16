@@ -1,13 +1,13 @@
 <template>
   <div id="app">
-    <Navbar />
+    <Navbar @reloadData="reloadData" />
     <div id="wrapper">
       <transition
         name="fade"
         mode="out-in"
         :duration="500"
       >
-        <router-view />
+        <router-view ref="router-view" />
       </transition>
     </div>
     <Footer v-if="showFooter" />
@@ -40,7 +40,27 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('article/INITIALIZE')
+    this.getInitializeInfo()
+  },
+  methods: {
+    async getInitializeInfo() {
+      console.log('getInitializeInfo')
+      if (!this.$store.getters.isInitialized) {
+        setTimeout(() => {
+          this.getInitializeInfo()
+        }, 100)
+        return
+      }
+      const { notifications } = await this.$store.dispatch('article/INITIALIZE')
+      if (notifications) {
+        this.$store.commit('user/SET_NOTIFICATIONS', notifications.reverse())
+      }
+    },
+    reloadData() {
+      if (this.$refs['router-view']) {
+        this.$refs['router-view'].$emit('reloadData')
+      }
+    }
   }
 }
 </script>

@@ -43,6 +43,11 @@ a {
 
 #wrapper {
   padding-top: 4rem;
+  min-height: calc(100vh - 285px);
+}
+
+.wrapper {
+  padding-top: 1rem;
 }
 
 #brand {

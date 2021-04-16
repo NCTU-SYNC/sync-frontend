@@ -12,7 +12,8 @@ const getDefaultState = () => {
     gender: '',
     photoURL: null,
     authenticated: false,
-    createAt: ''
+    createAt: '',
+    notifications: []
   }
 }
 
@@ -37,6 +38,10 @@ const mutations = {
   },
   RESET_USER(state) {
     Object.assign(state, getDefaultState())
+  },
+  SET_NOTIFICATIONS(state, notifications) {
+    console.log('state', notifications)
+    state.notifications = notifications
   }
 }
 

@@ -28,21 +28,23 @@
     <b-row v-if="isPageReady" class="shadow-sm">
       <b-col>
         <b-row class="divider">
-          <b-col class="pt-2" cols="6">
-            <span class="mr-2 pr-2 border-right">{{ versions[0].updatedAt }}</span>
-            <span>{{ versions[0].author.isAnonymous ? '匿名' : versions[0].author.name }}</span>
+          <b-col class="py-2 comparison-header" cols="6">
+            <div>
+              <span class="mr-2 pr-2 border-right">{{ versions[0].updatedAt }}</span>
+              <span>{{ versions[0].author.isAnonymous ? '匿名' : versions[0].author.name }}</span>
+              <p>{{ versions[0].title }}</p>
+            </div>
           </b-col>
-          <b-col class="pt-2" cols="6">
-            <span class="mr-2 pr-2 border-right">{{ versions[1].updatedAt }}</span>
-            <span>{{ versions[1].author.isAnonymous ? '匿名' : versions[1].author.name }}</span>
-          </b-col>
-        </b-row>
-        <b-row v-if="isPageReady" class="divider">
-          <b-col class="pb-2" cols="6">
-            <span>{{ versions[0].title }}</span>
-          </b-col>
-          <b-col class="pb-2" cols="6">
-            <span>{{ versions[1].title }}</span>
+          <b-col class="py-2 comparison-header d-flex" cols="6">
+            <div>
+              <span class="mr-2 pr-2 border-right">{{ versions[1].updatedAt }}</span>
+              <span>{{ versions[1].author.isAnonymous ? '匿名' : versions[1].author.name }}</span>
+              <p>{{ versions[1].title }}</p>
+            </div>
+            <div>
+              <span class="bg-diff-add px-2 py-1 m-2">0</span>
+              <span class="bg-diff-delete px-2 py-1 m-2">0</span>
+            </div>
           </b-col>
         </b-row>
       </b-col>
@@ -275,7 +277,8 @@ export default {
               }
             })
           } else if (paragraph.type === 'blockquote') {
-            content += this.blockquoteContainer
+            // 暫時關閉 blockquote 比對功能
+            // content += this.blockquoteContainer
             const payload = paragraph.content
             payload.forEach(p => {
               p.content.forEach(text => {
@@ -288,7 +291,7 @@ export default {
                 }
               })
             })
-            content += this.blockquoteContainer
+            // content += this.blockquoteContainer
           }
         }
         content += '\n\n'
@@ -323,9 +326,28 @@ export default {
   > div:last-child {
     border-left: 2px solid #E6E6E6;
   }
+  > div > p {
+    margin: 0;
+  }
 }
-</style>
 
-<style lang="scss">
+.comparison-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
 
+  p {
+    margin: 0;
+  }
+}
+
+.bg-diff {
+  &-add {
+    background-color: #1AE158;
+  }
+  &-delete {
+    background-color: #FF4F4F;
+  }
+}
 </style>

@@ -15,13 +15,15 @@
           </slot>
         </p>
         <blockquote v-if="element.type === 'blockquote'" :key="`base-${elementIndex}`">
-          <p v-for="(content, contentIndex) in element.content" :key="contentIndex">
-            <span v-if="content.type === 'text'" :key="`base-${contentIndex}`">
-              {{ content.type === 'text' ? content.text : '' }}
-            </span>
-            <b-link v-if="content.type === 'link'" :key="`base-${contentIndex}`" target="_blank" :href="content.marks[0].attrs.href">
-              {{ content.text }}
-            </b-link>
+          <p>
+            <slot v-for="(content, contentIndex) in element.content">
+              <span v-if="content.type === 'text'" :key="`base-${contentIndex}`">
+                {{ content.type === 'text' ? content.text : '' }}
+              </span>
+              <b-link v-if="content.type === 'link'" :key="`base-${contentIndex}`" target="_blank" :href="content.marks[0].attrs.href">
+                {{ content.text }}
+              </b-link>
+            </slot>
           </p>
         </blockquote>
       </slot>
@@ -39,9 +41,7 @@
       <slot v-for="(diff, diffIndex) in getPlainTextInDiff(articleDiff.contentDiff)">
         <p v-if="diff.content.length > 0" :key="diffIndex">
           <slot v-for="(content, contentIndex) in diff.content">
-
             <slot v-for="(text, textIndex) in decodeText(content)">
-
               <b-link
                 v-if="isLink(text)"
                 :key="`compare-link-${diffIndex}-${contentIndex}-${textIndex}`"
@@ -294,7 +294,7 @@ span {
 
 .block-container {
   p {
-  margin: 0 0 1rem 0;
+    margin: 0 0 1rem 0;
   }
 
   margin-top: 1rem;
