@@ -99,8 +99,10 @@
         {{ item.author }}
       </b-col>
       <b-col v-if="item.editTextCounts" sm="2">
-        <span v-if="item.editTextCounts[0]" class="bg-diff-add px-2 py-1 m-2">{{ item.editTextCounts[0] }}</span>
-        <span v-if="item.editTextCounts[1]" class="bg-diff-delete px-2 py-1 m-2">{{ item.editTextCounts[1] }}</span>
+        <span v-if="item.editTextCounts.added" class="bg-diff-add px-2 py-1 m-2">{{ item.editTextCounts.added }}</span>
+        <span v-else class="bg-diff-add px-2 py-1 m-2">0</span>
+        <span v-if="item.editTextCounts.deleted" class="bg-diff-delete px-2 py-1 m-2">{{ item.editTextCounts.deleted }}</span>
+        <span v-else class="bg-diff-delete px-2 py-1 m-2">0</span>
       </b-col>
     </b-row>
   </b-container>
@@ -200,7 +202,7 @@ export default {
             author: version.author.name,
             updatedAt,
             index: version.versionIndex,
-            editTextCounts: [version.wordsChanged.added, version.wordsChanged.deleted]
+            editTextCounts: { added: version.wordsChanged.added, deleted: version.wordsChanged.deleted }
           })
         }
         this.historyShowCount = limit

@@ -42,8 +42,8 @@
               <p>{{ versions[1].title }}</p>
             </div>
             <div>
-              <span class="bg-diff-add px-2 py-1 m-2">0</span>
-              <span class="bg-diff-delete px-2 py-1 m-2">0</span>
+              <span class="bg-diff-add px-2 py-1 m-2">{{ wordsChanged.added }}</span>
+              <span class="bg-diff-delete px-2 py-1 m-2">{{ wordsChanged.deleted }}</span>
             </div>
           </b-col>
         </b-row>
@@ -128,11 +128,12 @@ export default {
           base: this.base,
           compare: this.compare
         })
-        const { articles, length, base, compare, title } = data.data
+        const { articles, length, base, compare, title, wordsChanged } = data.data
         this.versionsLength = length
         if (this.$route.query.base !== base.toString() || this.$route.query.compare !== compare.toString()) {
           this.$router.replace({ query: { base, compare }})
         }
+        this.wordsChanged = wordsChanged
         this.base = base
         this.compare = compare
         this.title = title
