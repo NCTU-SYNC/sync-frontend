@@ -315,6 +315,7 @@ export default {
     // 從route中獲得此文章的ID
     const articleId = this.articleId = this.$route.params.ArticleID
     this.isNewPost = !(articleId || false)
+    this.$store.commit('post/RESET_POST')
     if (articleId) {
       this.isLoading = true
       getArticleById(articleId).then(response => {
@@ -329,7 +330,6 @@ export default {
           this.postTimeValue = this.seperateDateAndTime(dateTime).time
           this.blocks = data.blocks
           this.categorySelected = data.category
-          this.$store.commit('post/RESET_POST')
           for (const c of data.citations || []) {
             this.$store.commit('post/PUSH_CITATION', c)
           }
