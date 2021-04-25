@@ -3,41 +3,52 @@
     <b-container fluid="xl" class="search-bar-field d-flex flex-column justify-content-center">
       <b-row align-h="center">
         <b-col cols="8" class="d-flex justify-content-between search-bar px-1">
-          <b-form-input v-model="keyword" type="text" placeholder="搜尋..." class="pl-1" @input="handleSearch" />
-          <img src="@/assets/images/search-icon.svg">
+          <b-form-input
+            v-model="keyword"
+            type="text"
+            placeholder="搜尋..."
+            class="pl-1"
+          />
+          <!-- @input="handleSearch" -->
+          <b-button
+            variant="link"
+            :disabled="keyword.length === 0 || isLoading"
+            @click="searchArticles"
+          >
+            <img src="@/assets/images/search-icon.svg">
+          </b-button>
         </b-col>
       </b-row>
       <b-row class="mt-3" align-h="center">
         <b-col cols="8" class="d-flex justify-content-between">
           <div>
-            <b-dropdown id="dropdown-time" variant="outline-primary" text="發布時間" class="mr-3" toggle-class="rounded-pill">
-              <b-dropdown-item>昨天</b-dropdown-item>
-              <b-dropdown-divider />
-              <b-dropdown-item>前一週</b-dropdown-item>
-              <b-dropdown-divider />
-              <b-dropdown-item>前一個月</b-dropdown-item>
-              <b-dropdown-divider />
-              <b-dropdown-item>前半年</b-dropdown-item>
+            <b-dropdown
+              id="dropdown-time"
+              variant="outline-primary"
+              toggle-class="rounded-pill px-4"
+            >
+              <template v-slot:button-content>
+                {{ timeQueryText }}
+              </template>
+              <slot v-for="timeQuery in timeQueries">
+                <b-dropdown-item @click="onTimeDropdownClicked(timeQuery[0])">{{ timeQuery[1] }}</b-dropdown-item>
+              </slot>
             </b-dropdown>
-            <b-dropdown id="dropdown-source" variant="outline-primary" text="新聞來源" class="mr-3" toggle-class="rounded-pill">
-              <b-dropdown-item>蘋果日報</b-dropdown-item>
-              <b-dropdown-divider />
-              <b-dropdown-item>中天新聞</b-dropdown-item>
-              <b-dropdown-divider />
-              <b-dropdown-item>中央社</b-dropdown-item>
-              <b-dropdown-divider />
-              <b-dropdown-item>報導者</b-dropdown-item>
-            </b-dropdown>
-            <b-dropdown id="dropdown-category" variant="outline-primary" text="主題分類" class="mr-3" toggle-class="rounded-pill">
-              <b-dropdown-item>財經</b-dropdown-item>
-              <b-dropdown-divider />
-              <b-dropdown-item>國際</b-dropdown-item>
-              <b-dropdown-divider />
-              <b-dropdown-item>社會</b-dropdown-item>
-              <b-dropdown-divider />
-              <b-dropdown-item>科技</b-dropdown-item>
+            <b-dropdown
+              id="dropdown-category"
+              class="ml-2"
+              variant="outline-primary"
+              toggle-class="rounded-pill px-4"
+            >
+              <template v-slot:button-content>
+                {{ categoryText }}
+              </template>
+              <slot v-for="categoryQuery in categoryQueries">
+                <b-dropdown-item @click="onCategoryDropdownClicked(categoryQuery)">{{ categoryQuery }}</b-dropdown-item>
+              </slot>
             </b-dropdown>
           </div>
+          <!-- edit -->
           <b-dropdown id="dropdown-sort" variant="outline-primary" text="排列方式" class="mr-4" toggle-class="rounded-pill">
             <b-dropdown-item>最相關</b-dropdown-item>
             <b-dropdown-divider />
@@ -69,7 +80,7 @@
               <b-icon
                 icon="eye-fill"
                 class="mr-1"
-              /><span>{{ news.viewCount }} 個人正在閱讀</span>
+              /><span>{{ news.viewsCount }} 次觀看</span>
             </div>
           </div>
         </b-link>
@@ -83,18 +94,16 @@
       hide-goto-end-buttons
       @change="handleChange"
     />
-    <Footer />
+    <!-- <Footer /> -->
   </div>
 </template>
 
 <script>
 import moment from 'moment'
-import Footer from '@/components/Footer'
-import { getArticles } from '@/api/article'
+import { searchArticles } from '@/api/article'
 export default {
   name: 'Search',
   components: {
-    Footer
   },
   data() {
     return {
@@ -102,7 +111,19 @@ export default {
       perPage: 12,
       currentPage: 1,
       newsArr: [],
-      filteredNewsArr: []
+      filteredNewsArr: [],
+      queryTimeSelected: 'qdr:a',
+      categorySelected: '',
+      timeQueries: [
+        ['qdr:a', '發布時間'],
+        ['qdr:h', '過去 1 小時'],
+        ['qdr:d', '過去 24 小時'],
+        ['qdr:w', '過去 1 週'],
+        ['qdr:m', '過去 1 個月'],
+        ['qdr:y', '過去 1 年']
+      ],
+      categoryQueries: ['不限主題', '政經', '社會', '環境', '運動', '國際', '科技', '生活'],
+      isLoading: false
     }
   },
   computed: {
@@ -114,22 +135,13 @@ export default {
     },
     rows() {
       return this.filteredNewsArr.length
+    },
+    timeQueryText() {
+      return this.queryTimeSelected.length > 0 ? this.timeQueries.find(e => e[0] === this.queryTimeSelected)[1] : '時間'
+    },
+    categoryText() {
+      return this.categorySelected.length > 0 ? this.categorySelected : '主題分類'
     }
-  },
-  created() {
-    getArticles().then(response => {
-      const { data } = response
-      if (data.code === 200) {
-        const articles = data.data.sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
-        articles.forEach(article => {
-          const { category, _id, title, lastUpdatedAt } = article
-          this.newsArr.push({
-            _id, category, title, lastUpdatedAt, viewCount: 32
-          })
-        })
-      }
-      this.filteredNewsArr = this.newsArr
-    }).catch(err => console.error(err))
   },
   methods: {
     handleSearch() {
@@ -149,6 +161,51 @@ export default {
       if (page !== this.currentPage) {
         window.scrollTo(0, 0)
       }
+    },
+    async searchArticles() {
+      // Search for news
+      this.newsArr = []
+      if (this.keyword) {
+        try {
+          this.isLoading = true
+          const { data } = await searchArticles(
+            {
+              q: this.keyword,
+              tbs: this.queryTimeSelected,
+              category: this.categorySelected
+            }
+          )
+          const type = data.type
+          // const payload = data.data
+          if (type === 'success') {
+            // need to change
+            const articles = data.data.sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
+            articles.forEach(article => {
+              const { category, _id, title, lastUpdatedAt, viewsCount } = article
+              console.log(category, _id, title, lastUpdatedAt, viewsCount)
+              this.newsArr.push({
+                _id, category, title, lastUpdatedAt, viewsCount
+              })
+            })
+            this.filteredNewsArr = this.newsArr
+          } else {
+            throw new Error(data.message)
+          }
+        } catch (error) {
+          console.error(error.message)
+          this.$bvModal.msgBoxOk(error.message)
+        } finally {
+          this.isLoading = false
+        }
+      }
+    },
+    onTimeDropdownClicked(timeString) {
+      this.queryTimeSelected = timeString
+      this.searchArticles()
+    },
+    onCategoryDropdownClicked(categoryString) {
+      this.categorySelected = categoryString
+      this.searchArticles()
     }
   }
 }

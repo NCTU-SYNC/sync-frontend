@@ -30,3 +30,11 @@ export function updateArticleById(data) {
     data
   })
 }
+
+export function searchArticles(data) {
+  return request({
+    url: config.baseURL + `/search`,
+    method: 'get',
+    params: data
+  })
+}
