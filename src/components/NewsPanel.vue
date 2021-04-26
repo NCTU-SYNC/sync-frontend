@@ -137,7 +137,7 @@ export default {
             {
               q: this.searchKeyword,
               page: this.pageNumber,
-              tbs: this.queryDateRange,
+              tbs: this.queryTimeSelected,
               media: this.mediaSelected
             }
           )
