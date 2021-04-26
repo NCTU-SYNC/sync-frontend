@@ -8,6 +8,7 @@
             type="text"
             placeholder="搜尋..."
             class="pl-1"
+            v-on:keyup.enter="searchArticles"
           />
           <!-- @input="handleSearch" -->
           <b-button
