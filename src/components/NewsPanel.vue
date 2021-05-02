@@ -112,7 +112,7 @@ export default {
         ['qdr:m', '過去 1 個月'],
         ['qdr:y', '過去 1 年']
       ],
-      mediaSourceQueries: ['不限新聞來源', '中時', '中央社', '華視', '東森', 'ettoday', '台灣事實查核中心', '自由時報', '風傳媒', '聯合'],
+      mediaSourceQueries: ['不限新聞來源', '中時', '中央社', '華視', '東森', 'ettoday', '台灣事實查核中心', '自由時報', '風傳媒', '聯合', '三立'],
       isLoading: false
     }
   },
