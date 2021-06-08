@@ -9,6 +9,7 @@
             v-for="(category, index) in categoryList"
             :key="index"
             class="px-2 text-black"
+            @click="handleCategoryRoute(category)"
           >
             {{ category }}
           </b-nav-item>
@@ -107,7 +108,7 @@
 
 <script>
 import moment from 'moment'
-import { getArticles } from '@/api/article'
+import { getArticles, searchArticles } from '@/api/article'
 export default {
   name: 'Home',
   data() {
@@ -115,6 +116,11 @@ export default {
       categoryList: ['即時', '政經', '國際', '社會', '科技', '環境', '生活', '運動'],
       hotTags: ['台海危機', '美國大選', '振興三倍券', '新冠病毒', '美國豬牛', '黃鴻升'],
       newsList: []
+    }
+  },
+  watch: {
+    '$route.query.category'() {
+      this.getCategoryArticles(this.$route.query.category)
     }
   },
   created() {
@@ -162,6 +168,45 @@ export default {
         return category
       } else if (Array.isArray(category)) {
         if (category.length === 0) { return '未分類' } else return category.join(', ')
+      }
+    },
+    handleCategoryRoute(categoryParam) {
+      if (this.$route.query.category !== categoryParam) {
+        this.$router.push({ query: { category: categoryParam }})
+      } else {
+        this.getCategoryArticles(categoryParam)
+      }
+    },
+    async getCategoryArticles(param) {
+      if (param) {
+        try {
+          const categoricNews = []
+          const { data } = await searchArticles(
+            {
+              category: param
+            }
+          )
+          console.log(data)
+          const type = data.type
+          if (type === 'success') {
+            const articles = data.data.sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
+            articles.forEach(article => {
+              const { category, _id, title, lastUpdatedAt, viewsCount } = article
+              categoricNews.push({
+                _id, category, title, lastUpdatedAt, viewsCount
+              })
+            })
+            this.newsList = [{
+              title: param,
+              content: categoricNews
+            }]
+          } else {
+            throw new Error(data.message)
+          }
+        } catch (error) {
+          console.error(error.message)
+          this.$bvModal.msgBoxOk(error.message)
+        }
       }
     }
   }
