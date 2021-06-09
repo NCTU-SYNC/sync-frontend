@@ -60,3 +60,28 @@ a {
   color: $gray-500;
   font-size: 0.9rem;
 }
+
+.article-category{
+    /* SYNC_LIGHTBLUE */
+    padding: 6px 10px;
+    width: max-content;
+    height: 36px;
+    background: $cyan;
+    border-radius: 5px;
+}
+
+.article-tag{
+  background: #E3E3E3;
+  border-radius: 5px;
+  padding: 0.5em 10px 0.5em;
+  margin-right: 16px;
+  width: max-content;
+  display: inline-block;
+  letter-spacing: 2px;
+  font-size: 14px;
+}
+
+.article-footer{
+  font-size: 12px;
+  color: #8a8a8a;
+}

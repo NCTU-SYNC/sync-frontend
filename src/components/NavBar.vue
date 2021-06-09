@@ -1,13 +1,13 @@
 <template>
   <b-navbar ref="navbar" fixed="top" class="header-navbar" type="light" variant="faded">
     <b-button class="px-0 px-md-2" variant="transparent" to="/post">
-      <b-icon icon="pencil-square" scale="1.2" aria-hidden="true" />
+      <img src="@/assets/icons/ic-edit.svg">
     </b-button>
     <b-navbar-brand id="brand" to="/" class="centered-block"><Logo /></b-navbar-brand>
 
     <!-- Right aligned nav items -->
     <b-navbar-nav class="ml-auto d-none d-md-flex align-items-center h-100">
-      <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><img src="@/assets/images/search-icon.svg"></b-nav-item>
+      <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><img src="@/assets/icons/ic-search.svg"></b-nav-item>
 
       <b-nav-item-dropdown
         size="lg"
@@ -50,7 +50,7 @@
       </b-nav-item-dropdown>
     </b-navbar-nav>
     <b-navbar-nav class="ml-auto d-flex d-md-none align-items-center">
-      <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><img src="@/assets/images/search-icon.svg"></b-nav-item>
+      <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><img src="@/assets/icons/ic-search.svg"></b-nav-item>
       <b-button variant="link"><Bell /></b-button>
       <b-nav-item v-if="getLoginStatus" to="/profile">
         <img class="avatar-user" :src="getPhotoURL">
