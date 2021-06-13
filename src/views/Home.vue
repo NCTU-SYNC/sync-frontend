@@ -80,7 +80,7 @@
 <script>
 import ArticleCard from '@/components/ArticleCard.vue'
 import HeadlineCard from '@/components/Headline.vue'
-import { getArticles } from '@/api/article'
+import { getArticles, searchArticles } from '@/api/article'
 export default {
   name: 'Home',
   components: {
@@ -96,6 +96,11 @@ export default {
       headline: {},
       iconPaths: [require('@/assets/icons/ic-latest.svg'), require('@/assets/icons/ic-hot.svg'), require('@/assets/icons/ic-explore.svg')],
       tags: ['COVID-19', '疫苗', '比特幣', '國光', '想畢業', '瘋掉']
+    }
+  },
+  watch: {
+    '$route.query.category'() {
+      this.getCategoryArticles(this.$route.query.category)
     }
   },
   created() {
@@ -142,6 +147,36 @@ export default {
         taken[x] = --len in taken ? taken[len] : len
       }
       return result
+    },
+    async getCategoryArticles(param) {
+      if (param) {
+        try {
+          const categoricNews = []
+          const { data } = await searchArticles(
+            {
+              category: param
+            }
+          )
+          console.log(data)
+          const type = data.type
+          if (type === 'success') {
+            const articles = data.data.sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
+            articles.forEach(article => {
+              const { category, _id, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks, newsId } = article
+              categoricNews.push({
+                category, _id, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks, newsId
+              })
+            })
+            this.allArticles = [{ title: param + '同步', content: categoricNews, iconPath: this.iconPaths[0] }]
+            this.headline = this.getRandomArticles(categoricNews, 1)[0]
+          } else {
+            throw new Error(data.message)
+          }
+        } catch (error) {
+          console.error(error.message)
+          this.$bvModal.msgBoxOk(error.message)
+        }
+      }
     }
   }
 }
