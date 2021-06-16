@@ -4,7 +4,7 @@
     mode="out-in"
     :duration="500"
   >
-    <b-container v-if="isPageReady" fluid="xl" class="wrapper">
+    <b-container v-if="isPageReady" id="all" fluid="xl" class="wrapper">
       <b-row>
         <b-col cols="2">
           <div class="sync-blank-container d-flex flex-column pr-3">
@@ -17,7 +17,7 @@
                   {{ formatDate(block.blockDateTime) }}
                 </div>
                 <div class="sync-timeline-title">
-                  <p>{{ block.blockTitle }}</p>
+                  <p @click="scrollTo(`block-${block._id}`)">{{ block.blockTitle }}</p>
                 </div>
               </div>
             </div>
@@ -74,6 +74,7 @@
           </b-row>
           <b-row
             v-for="(block, index) in blocks"
+            :ref="`block-${block._id}`"
             :key="index"
             class="py-3"
           >
@@ -219,7 +220,7 @@ export default {
       this.getArticleData()
     }
   },
-  mounted() {
+  created() {
     this.$on('reloadData', this.getArticleData)
     this.time = moment()
     this.timeId = setInterval(() => {
@@ -340,6 +341,11 @@ export default {
           centered: true
         })
       }
+    },
+    scrollTo(refName) {
+      var element = this.$refs[refName][0]
+      var top = element.offsetTop
+      window.scrollTo({ left: 0, top: top, behavior: 'smooth' })
     }
   }
 
@@ -381,6 +387,7 @@ p {
     min-width: 100%;
     height: 100%;
     min-height: 3rem;
+    cursor: pointer;
   }
   display: flex;
   flex-direction: column;
@@ -456,5 +463,9 @@ hr {
     color: #939393;
     width: 2rem;
   }
+}
+
+html {
+  scroll-behavior: smooth;
 }
 </style>
