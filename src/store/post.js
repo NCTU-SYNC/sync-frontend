@@ -1,5 +1,6 @@
 const getDefaultState = () => {
   return {
+    blocks: [],
     citations: []
   }
 }
@@ -7,6 +8,15 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const mutations = {
+  PUSH_BLOCK(state, block) {
+    state.blocks.push(block)
+  },
+  UPDATE_BLOCK(state, { id, content }) {
+    const block = state.blocks.find(b => b.id === id)
+    if (block) {
+      block.content = content
+    }
+  },
   SET_CITATION(state, { index, citation }) {
     state.citations[index] = citation
   },

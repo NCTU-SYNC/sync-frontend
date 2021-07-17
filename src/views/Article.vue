@@ -117,9 +117,10 @@
               </div>
             </div>
 
-            <editor-content
+            <TiptapEditor
               class="editor__content"
-              :editor="editors[block._id]"
+              :content="block.content"
+              :editable="false"
             />
 
           </div>
@@ -150,14 +151,12 @@
 // test id:  5f5113349779a26bd0444b26
 import moment from 'moment'
 import { getArticleById } from '@/api/article'
-import { Editor, EditorContent } from 'tiptap'
-import { History, Blockquote, Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder, OrderedList } from 'tiptap-extensions'
-import Link from '@/components/Editor/TiptapExtensions/Link'
+import TiptapEditor from '@/components/Editor/TiptapEditor.vue'
 
 export default {
   name: 'Article',
   components: {
-    EditorContent
+    TiptapEditor
   },
   data() {
     return {
@@ -182,11 +181,6 @@ export default {
       lastUpdatedAt: '',
       timeId: null,
       time: moment(),
-      editors: [],
-      editableBlocks: [],
-      isEditting: false,
-      // 當使用者按下取消復原用
-      backupBlock: null,
       isLogin: false,
       isSubscribed: false,
       isPageReady: false,
@@ -224,6 +218,7 @@ export default {
     },
     isPageReady(newValue) {
       this.$store.commit('SET_FOOTER', newValue)
+      this.setOffsetTopOfSideElements()
     },
     '$route.params.ArticleID': function() {
       this.getArticleData()
@@ -276,12 +271,7 @@ export default {
             this.citations.forEach((citation, index) => {
               this.$store.commit('post/SET_CITATION', { index, citation })
             })
-            this.blocks.forEach(block => {
-              this.editors[block._id] = this.createEditor(block.content)
-              this.editableBlocks[block._id] = false
-            })
             this.isPageReady = true
-            this.setOffsetTopOfSideElements()
           }
         }).catch(err => {
           console.error(err)
@@ -313,42 +303,6 @@ export default {
     },
     formatCategory(category) {
       return category === '' ? '未分類' : category
-    },
-    createEditor(initializedContent) {
-      const editor = new Editor({
-        autoFocus: true,
-        onInit: () => {
-          // editor is initialized
-        },
-        onUpdate: () => {
-          // console.log(state, transaction)
-          // console.log(getHTML(), getJSON())
-          // console.log(JSON.stringify(getJSON()))
-        },
-        extensions: [
-          new History(),
-          new Blockquote(),
-          new Heading({ levels: [1, 2, 3] }),
-          new Bold(),
-          new Italic(),
-          new Strike(),
-          new OrderedList(),
-          new Underline(),
-          new BulletList(),
-          new Link(),
-          new ListItem(),
-          new Placeholder({
-            emptyEditorClass: 'is-editor-empty',
-            emptyNodeClass: 'is-empty',
-            emptyNodeText: '輸入內文...',
-            showOnlyWhenEditable: true,
-            showOnlyCurrent: true
-          })
-        ],
-        content: initializedContent,
-        editable: false
-      })
-      return editor
     },
     async handleClickBookmark() {
       try {

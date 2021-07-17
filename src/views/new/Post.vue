@@ -149,11 +149,8 @@
             <b-button variant="link" class="close-btn" @click="handleDeleteBlock(blockIndex)">
               <b-icon icon="x" />
             </b-button>
-            <TiptapEditor
-              :content.sync="block.content"
-              :block-title.sync="block.blockTitle"
-              :block-date-time.sync="block.blockDateTime"
-              @onEdit="onEditorEdit"
+            <BlockEditor
+              :block="block"
             />
           </b-card>
           <div class="d-flex justify-content-center mt-3">
@@ -239,7 +236,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getArticleById, createArticle, updateArticleById } from '@/api/article'
-import TiptapEditor from '@/components/Post/TiptapEditor'
+import BlockEditor from '@/components/Post/BlockEditor'
 import NewsPanel from '@/components/NewsPanel'
 import { Utils } from '@/utils'
 import EditStar from '@/components/Icons/EditStar'
@@ -247,7 +244,7 @@ import EditStar from '@/components/Icons/EditStar'
 export default {
   name: 'Post',
   components: {
-    TiptapEditor,
+    BlockEditor,
     NewsPanel,
     EditStar
   },
@@ -329,6 +326,7 @@ export default {
           this.postDateValue = this.seperateDateAndTime(dateTime).date
           this.postTimeValue = this.seperateDateAndTime(dateTime).time
           this.blocks = data.blocks
+          console.log(this.blocks)
           this.categorySelected = data.category
           for (const c of data.citations || []) {
             this.$store.commit('post/PUSH_CITATION', c)
@@ -398,7 +396,7 @@ export default {
         title: this.postTitle,
         tags: this.postTags,
         authors: this.postAuthors,
-        blocks: this.blocks,
+        blocks: this.$store.getters.post.blocks,
         createdAt: `${this.postDateValue} ${this.postTimeValue}`,
         citations: this.post.citations,
         uid: this.uid,
@@ -457,9 +455,6 @@ export default {
       this.postDateValue = ''
       this.postTimeValue = ''
       this.postTags = []
-    },
-    onEditorEdit(editor) {
-      this.currentEditingEditor = editor
     },
     seperateDateAndTime(dateTimeString) {
       const dateTime = new Date(dateTimeString)

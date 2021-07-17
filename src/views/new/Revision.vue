@@ -130,17 +130,11 @@
 
 <script>
 import { getBlockRevisionById } from '@/api/history'
-import { Editor, EditorContent } from 'tiptap'
-import { Heading, Bold, Italic, Strike, Underline, BulletList, ListItem } from 'tiptap-extensions'
-import Link from '@/components/Editor/TiptapExtensions/Link'
 import DiffMatchPatch from 'diff-match-patch'
 import moment from 'moment'
 
 export default {
   name: 'Revision',
-  components: {
-    EditorContent
-  },
   data() {
     return {
       articleId: '',
@@ -189,32 +183,6 @@ export default {
     }
   },
   methods: {
-    createEditor(initializedContent) {
-      const editor = new Editor({
-        autoFocus: true,
-        onInit: () => {
-          // editor is initialized
-        },
-        onUpdate: () => {
-          // console.log(state, transaction)
-          // console.log(getHTML(), getJSON())
-          // console.log(JSON.stringify(getJSON()))
-        },
-        extensions: [
-          new Heading({ levels: [1, 2, 3] }),
-          new Bold(),
-          new Italic(),
-          new Strike(),
-          new Underline(),
-          new BulletList(),
-          new ListItem(),
-          new Link()
-        ],
-        content: initializedContent,
-        editable: false
-      })
-      return editor
-    },
     async handleGetBlockRevision(revisionIndex = undefined) {
       try {
         const { data } = await getBlockRevisionById({ blockId: this.blockId, revisionIndex })
