@@ -1,6 +1,5 @@
 <template>
   <div v-if="isPageReady">
-
     <b-row class="category-navbar">
       <b-col>
         <b-nav align="center">
@@ -16,10 +15,9 @@
       </b-col>
     </b-row>
     <div
-      v-if="barReady"
       class="sync-timeline py-4"
-      :class=" scrollPosition > barDistToTop - 124 ? 'position-fixed' : 'position-absolute'"
-      :style=" scrollPosition > barDistToTop - 124 ? 'top: 104px;' : 'top: ' + (barDistToTop-20) +'px;'"
+      :class="isTimelineOutOfScreen ? 'position-fixed' : 'position-absolute'"
+      :style="isTimelineOutOfScreen ? 'top: 104px;' : 'top: ' + (barDistToTop - 20) +'px;'"
     >
       <ul>
         <li class="circle" />
@@ -30,7 +28,6 @@
       </ul>
     </div>
     <div
-      v-if="firstBlockReady"
       class="recommended-news"
       :style="`top: ${firstBlockDistToTop}px;`"
     >
@@ -193,11 +190,9 @@ export default {
       isLogin: false,
       isSubscribed: false,
       isPageReady: false,
-      scrollPosition: null,
+      windowScrollY: null,
       titleBarTop: null,
-      barReady: null,
       barDistToTop: 0,
-      firstBlockReady: null,
       firstBlockDistToTop: 0
     }
   },
@@ -213,6 +208,9 @@ export default {
     },
     subscribedList() {
       return this.$store.getters['article/subscribedList']
+    },
+    isTimelineOutOfScreen() {
+      return this.windowScrollY > this.barDistToTop - 124
     }
   },
   watch: {
@@ -226,12 +224,6 @@ export default {
     },
     isPageReady(newValue) {
       this.$store.commit('SET_FOOTER', newValue)
-      this.$nextTick(() => {
-        this.barReady = true
-        this.barDistToTop = this.$refs['title-gray-bar'].offsetTop
-        this.firstBlockReady = true
-        this.firstBlockDistToTop = this.$refs[`block-${this.blocks[0]._id}`][0].offsetTop
-      })
     },
     '$route.params.ArticleID': function() {
       this.getArticleData()
@@ -289,12 +281,20 @@ export default {
               this.editableBlocks[block._id] = false
             })
             this.isPageReady = true
+            this.setOffsetTopOfSideElements()
           }
         }).catch(err => {
           console.error(err)
           this.isPageReady = true
         })
       }
+    },
+    setOffsetTopOfSideElements() {
+      this.$nextTick(() => {
+        this.barDistToTop = this.$refs['title-gray-bar'].offsetTop
+        console.log(this.$refs[`block-${this.blocks[0]._id}`])
+        this.firstBlockDistToTop = this.$refs[`block-${this.blocks[0]._id}`][0].offsetTop
+      })
     },
     handleEditPostRoute(route) {
       if (this.isLogin) { this.$router.push(route) } else { this.$bvModal.msgBoxOk('Please Login First') }
@@ -373,7 +373,7 @@ export default {
       window.scrollTo({ left: 0, top: top - (64 + 10), behavior: 'smooth' })
     },
     updateScroll() {
-      this.scrollPosition = window.scrollY
+      this.windowScrollY = window.scrollY
     }
   }
 
