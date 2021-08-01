@@ -58,10 +58,6 @@ export default {
       type: String,
       default: '未分類'
     },
-    tags: {
-      type: Array,
-      default: null
-    },
     lastUpdatedAt: {
       type: String,
       default: '2021.04.26'

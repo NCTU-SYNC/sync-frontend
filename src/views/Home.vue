@@ -1,22 +1,6 @@
 <template>
-  <b-container fluid="xl">
-    <b-row class="category-navbar">
-      <b-col>
-        <b-nav
-          align="center"
-        >
-          <b-nav-item
-            v-for="(category, index) in categoryList"
-            :key="index"
-            class="px-3"
-            link-classes="category-item"
-            @click.prevent="handleCategoryRoute(category)"
-          >
-            {{ category }}
-          </b-nav-item>
-        </b-nav>
-      </b-col>
-    </b-row>
+  <b-container fluid>
+    <category-bar />
     <div class="d-flex justify-content-center">
       <div v-if="headline.length > 0" style="width: 1024px" class="flex-md-nowrap">
         <HeadlineCard
@@ -80,11 +64,12 @@
 <script>
 import ArticleCard from '@/components/ArticleCard.vue'
 import HeadlineCard from '@/components/Headline.vue'
+import CategoryBar from '@/components/CategoryBar.vue'
 import { getArticles, searchArticles } from '@/api/article'
 export default {
   name: 'Home',
   components: {
-    ArticleCard, HeadlineCard
+    ArticleCard, HeadlineCard, CategoryBar
   },
   data() {
     return {
@@ -102,25 +87,18 @@ export default {
   },
   watch: {
     '$route.query.category'() {
-      console.log(this.$route.query.category)
       if (this.$route.query.category) this.getCategoryArticles(this.$route.query.category)
       else this.initializeHomepage()
     }
   },
   created() {
-    this.initializeHomepage()
+    if (this.$route.query.category) this.getCategoryArticles(this.$route.query.category)
+    else this.initializeHomepage()
   },
   beforeDestroy() {
     clearInterval(this.headlineTimer)
   },
   methods: {
-    handleCategoryRoute(categoryParam) {
-      if (this.$route.query.category !== categoryParam) {
-        this.$router.push({ query: { category: categoryParam }})
-      } else {
-        this.getCategoryArticles(categoryParam)
-      }
-    },
     async initializeHomepage() {
       await getArticles().then(response => {
         const { data } = response
@@ -204,19 +182,19 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/assets/scss/news.scss';
-.category-navbar{
-  border-bottom: 1px solid $gray-light;
-}
+// .category-navbar{
+//   border-bottom: 1px solid $gray-light;
+// }
 
-.category-item{
-  font-size: 20px;
-  line-height: 30px;
-  letter-spacing: 8px;
-  color: #232323;
-  &:hover{
-    color: $blue !important;
-  }
-}
+// .category-item{
+//   font-size: 20px;
+//   line-height: 30px;
+//   letter-spacing: 8px;
+//   color: #232323;
+//   &:hover{
+//     color: $blue !important;
+//   }
+// }
 
 .home-heading{
   font-style: normal;

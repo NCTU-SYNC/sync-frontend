@@ -1,152 +1,139 @@
 <template>
-  <div v-if="isPageReady">
-
-    <b-row class="category-navbar">
-      <b-col>
-        <b-nav align="center">
-          <b-nav-item
-            v-for="(cat, index) in categoryList"
-            :key="index"
-            class="px-3"
-            link-classes="category-item"
-          >
-            {{ cat }}
-          </b-nav-item>
-        </b-nav>
-      </b-col>
-    </b-row>
-    <div
-      v-if="barReady"
-      class="sync-timeline py-4"
-      :class=" scrollPosition > barDistToTop - 124 ? 'position-fixed' : 'position-absolute'"
-      :style=" scrollPosition > barDistToTop - 124 ? 'top: 104px;' : 'top: ' + (barDistToTop-20) +'px;'"
-    >
-      <ul>
-        <li class="circle" />
-        <li v-for="(block, blockIndex) in blocks" :key="blockIndex" class="circle" @click="scrollTo(`block-${block._id}`)">
-          {{ block.blockTitle }}
-        </li>
-        <li class="circle" />
-      </ul>
-    </div>
-    <div
-      v-if="firstBlockReady"
-      class="recommended-news"
-      :style="`top: ${firstBlockDistToTop}px;`"
-    >
-      <div class="d-flex align-items-center heading">
-        <h2 class="d-inline-block mb-0">推薦新聞 </h2>
-        <hr class="d-inline-block line">
+  <b-container fluid>
+    <CategoryBar />
+    <div v-if="isPageReady">
+      <div
+        v-if="barReady"
+        class="sync-timeline py-4"
+        :class=" scrollPosition > barDistToTop - 124 ? 'position-fixed' : 'position-absolute'"
+        :style=" scrollPosition > barDistToTop - 124 ? 'top: 104px;' : 'top: ' + (barDistToTop-20) +'px;'"
+      >
+        <ul>
+          <li class="circle" />
+          <li v-for="(block, blockIndex) in blocks" :key="blockIndex" class="circle" @click="scrollTo(`block-${block._id}`)">
+            {{ block.blockTitle }}
+          </li>
+          <li class="circle" />
+        </ul>
       </div>
-      <ol>
-        <li v-for="(recNews, recNewsIndex) in recommendedNews" :key="recNewsIndex">
-          <div class="content">
-            <div class="title">{{ recNews.title }}</div>
-            <div class="date">{{ recNews.lastUpdatedAt }}</div>
-          </div>
-        </li>
-      </ol>
-    </div>
-    <transition
-      name="fade"
-      mode="out-in"
-      :duration="500"
-    >
-      <div class="d-flex justify-content-center">
-        <div id="all">
-          <div id="title-block" class="mt-5">
-            <div id="category" class="mb-3">
-              {{ formatCategory(category) }}
+      <div
+        v-if="firstBlockReady"
+        class="recommended-news"
+        :style="`top: ${firstBlockDistToTop}px;`"
+      >
+        <div class="d-flex align-items-center heading">
+          <h2 class="d-inline-block mb-0">推薦新聞 </h2>
+          <hr class="d-inline-block line">
+        </div>
+        <ol>
+          <li v-for="(recNews, recNewsIndex) in recommendedNews" :key="recNewsIndex">
+            <div class="content">
+              <div class="title">{{ recNews.title }}</div>
+              <div class="date">{{ recNews.lastUpdatedAt }}</div>
             </div>
-            <div id="title-container">
-              <h1 id="title-text">
-                {{ title }}
-              </h1>
-            </div>
-
-            <div class="my-3">
-              <span v-for="(tag, tagIndex) in tags" :key="tagIndex" class="article-tags"> #{{ tag }} </span>
-            </div>
-            <div class="article-info d-flex justify-content-between">
-              <div id="seen-edit-info">觀看數：{{ viewCount }}｜編輯數：{{ editedCount }}</div>
-              <div id="lastUpdated">最後更新時間 {{ formatTime(lastUpdatedAt) }}</div>
-            </div>
-            <hr ref="title-gray-bar" class="my-3">
-            <div class="d-flex justify-content-between">
-              <div id="author-info">
-                編輯者：
-                <span v-for="(author, authorIndex) in authors" :key="authorIndex"> {{ formatAuthor(author, authorIndex === authors.length-1 ) }}  </span>
+          </li>
+        </ol>
+      </div>
+      <transition
+        name="fade"
+        mode="out-in"
+        :duration="500"
+      >
+        <div class="d-flex justify-content-center">
+          <div id="all">
+            <div id="title-block" class="mt-5">
+              <div id="category" class="mb-3">
+                {{ formatCategory(category) }}
               </div>
-              <div id="icons">
-                <b-button
-                  class="btn-icon mx-3"
-                  @click="handleEditPostRoute(`${$route.path}/post`)"
-                >
-                  <img src="@/assets/icons/ic-edit.svg" alt="edit icon">
-                </b-button>
-
-                <b-button
-                  class="btn-icon mx-3"
-                  @click="handleHistoryRoute"
-                >
-                  <img src="@/assets/icons/ic-history-version.svg" alt="history-version icon">
-                </b-button>
-
-                <b-button
-                  class="btn-icon ml-3"
-                  :class="isSubscribed ? 'subscribed': ''"
-                  @click="handleClickBookmark"
-                >
-                  <img src="@/assets/icons/ic-save.svg" alt="save icon">
-                </b-button>
+              <div id="title-container">
+                <h1 id="title-text">
+                  {{ title }}
+                </h1>
               </div>
-            </div>
-          </div>
 
-          <div
-            v-for="(block, index) in blocks"
-            :ref="`block-${block._id}`"
-            :key="index"
-            class="block"
-            :class="citations.length===0?'no-citation':''"
-          >
-
-            <div class="block-header">
-              <h2>
-                {{ block.blockTitle }}
-              </h2>
-              <div class="article-info mt-2">
-                {{ formatTime(block.blockDateTime) }}
+              <div class="my-3">
+                <span v-for="(tag, tagIndex) in tags" :key="tagIndex" class="article-tags"> #{{ tag }} </span>
               </div>
-            </div>
-
-            <editor-content
-              class="editor__content"
-              :editor="editors[block._id]"
-            />
-
-          </div>
-
-          <div v-if="citations.length!==0" class="citations">
-            <hr>
-            <h2>新聞來源</h2>
-            <div v-for="(citation, index) in citations" :key="index" class="citation-item">
-              <div class="citation-title d-flex justify-content-start align-items-center">
-                <div class="citation-list-square">
-                  <div class="citation-label" :data-label="index + 1" />
+              <div class="article-info d-flex justify-content-between">
+                <div id="seen-edit-info">觀看數：{{ viewCount }}｜編輯數：{{ editedCount }}</div>
+                <div id="lastUpdated">最後更新時間 {{ formatTime(lastUpdatedAt) }}</div>
+              </div>
+              <hr ref="title-gray-bar" class="my-3">
+              <div class="d-flex justify-content-between">
+                <div id="author-info">
+                  編輯者：
+                  <span v-for="(author, authorIndex) in authors" :key="authorIndex"> {{ formatAuthor(author, authorIndex === authors.length-1 ) }}  </span>
                 </div>
-                <div class="w-100 pl-3">
-                  {{ citation.title }}
+                <div id="icons">
+                  <b-button
+                    class="btn-icon mx-3"
+                    @click="handleEditPostRoute(`${$route.path}/post`)"
+                  >
+                    <img src="@/assets/icons/ic-edit.svg" alt="edit icon">
+                  </b-button>
+
+                  <b-button
+                    class="btn-icon mx-3"
+                    @click="handleHistoryRoute"
+                  >
+                    <img src="@/assets/icons/ic-history-version.svg" alt="history-version icon">
+                  </b-button>
+
+                  <b-button
+                    class="btn-icon ml-3"
+                    :class="isSubscribed ? 'subscribed': ''"
+                    @click="handleClickBookmark"
+                  >
+                    <img src="@/assets/icons/ic-save.svg" alt="save icon">
+                  </b-button>
                 </div>
               </div>
-              <a class="citation-link" :href="citation.url" target="_blank">{{ citation.url }}</a>
+            </div>
+
+            <div
+              v-for="(block, index) in blocks"
+              :ref="`block-${block._id}`"
+              :key="index"
+              class="block"
+              :class="citations.length===0?'no-citation':''"
+            >
+
+              <div class="block-header">
+                <h2>
+                  {{ block.blockTitle }}
+                </h2>
+                <div class="article-info mt-2">
+                  {{ formatTime(block.blockDateTime) }}
+                </div>
+              </div>
+
+              <editor-content
+                class="editor__content"
+                :editor="editors[block._id]"
+              />
+
+            </div>
+
+            <div v-if="citations.length!==0" class="citations">
+              <hr>
+              <h2>新聞來源</h2>
+              <div v-for="(citation, index) in citations" :key="index" class="citation-item">
+                <div class="citation-title d-flex justify-content-start align-items-center">
+                  <div class="citation-list-square">
+                    <div class="citation-label" :data-label="index + 1" />
+                  </div>
+                  <div class="w-100 pl-3">
+                    {{ citation.title }}
+                  </div>
+                </div>
+                <a class="citation-link" :href="citation.url" target="_blank">{{ citation.url }}</a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </transition>
-  </div>
-
+      </transition>
+    </div>
+  </b-container>
 </template>
 
 <script>
@@ -156,11 +143,12 @@ import { getArticleById } from '@/api/article'
 import { Editor, EditorContent } from 'tiptap'
 import { History, Blockquote, Heading, Bold, Italic, Strike, Underline, BulletList, ListItem, Placeholder, OrderedList } from 'tiptap-extensions'
 import Link from '@/components/Editor/TiptapExtensions/Link'
+import CategoryBar from '@/components/CategoryBar.vue'
 
 export default {
   name: 'Article',
   components: {
-    EditorContent
+    EditorContent, CategoryBar
   },
   data() {
     return {
