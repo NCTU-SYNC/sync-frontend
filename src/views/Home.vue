@@ -63,7 +63,7 @@
             :last-updated-at="news.lastUpdatedAt"
             :edited-count="news.editedCount"
             :blocks="news.blocks"
-            :news-id="news._id"
+            :article-id="news._id"
           />
         </b-row>
       </div>
@@ -112,9 +112,9 @@ export default {
           content: []
         }
         articles.forEach(article => {
-          const { category, _id, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks, newsId } = article
+          const { category, _id, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks } = article
           latestArticles.content.push({
-            _id, category, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks, newsId
+            _id, category, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks
           })
         })
         const articlesHot = data.data[0].sort((a, b) => b.viewsCount - a.viewsCount)
@@ -162,9 +162,9 @@ export default {
           if (type === 'success') {
             const articles = data.data.sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
             articles.forEach(article => {
-              const { category, _id, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks, newsId } = article
+              const { category, _id, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks } = article
               categoricNews.push({
-                category, _id, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks, newsId
+                category, _id, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks
               })
             })
             this.allArticles = [{ title: param + '同步', content: categoricNews, iconPath: this.iconPaths[0] }]

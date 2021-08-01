@@ -17,20 +17,17 @@
         <div>
 
           <b-card-title class="heading">
-            <b-link :to="`/article/${newsId}`">
+            <b-link :to="`/article/${articleId}`" exact>
               <h4>{{ getTitle(title) }}</h4>
             </b-link>
           </b-card-title>
 
         </div>
 
-        <!-- <div style="transform: rotate(0);"> -->
-        <!-- <b-link :to="`/article/${newsId}`" class="stretched-link" /> -->
-        <b-card-text class="article-excerpt"> {{ getArticleContent(blocks,100) }} </b-card-text>
-        <!-- </div> -->
+        <b-card-text class="article-excerpt"> {{ getArticleContent(blocks, 140) }} </b-card-text>
         <div class="d-flex justify-content-between article-footer">
           <div>
-            {{ getDateTime }}
+            {{ getDateTime(lastUpdatedAt) }}
           </div>
           <div>
             觀看數：{{ viewsCount }} | 編輯數：{{ editedCount }}
@@ -75,26 +72,18 @@ export default {
       type: Array,
       default: null
     },
-    newsId: {
+    articleId: {
       type: String,
       default: ''
     }
   },
   data() {
     return {
-      hover: false,
       isLogin: false,
       isSubscribed: false
     }
   },
   computed: {
-    getDateTime() {
-      const datetime = moment(this.lastUpdatedAt)
-      if (datetime.isValid()) {
-        return datetime.format('YYYY.MM.DD HH:MM')
-      }
-      return ''
-    },
     subscribedList() {
       return this.$store.getters['article/subscribedList']
     }
@@ -102,7 +91,7 @@ export default {
   watch: {
     subscribedList(newList) {
       if (newList) {
-        this.isSubscribed = newList.findIndex(s => s.articleId === this.newsId) >= 0
+        this.isSubscribed = newList.findIndex(s => s.articleId === this.articleId) >= 0
         return
       }
       this.isSubscribed = false
@@ -127,14 +116,19 @@ export default {
         if (newsCategory.length === 0) { return '未分類' } else return newsCategory
       } else return '未分類'
     },
+    getDateTime(lastUpdatedAt) {
+      const datetime = moment(lastUpdatedAt)
+      if (datetime.isValid()) {
+        return datetime.format('YYYY.MM.DD HH:MM')
+      }
+      return ''
+    },
     async handleClickBookmark() {
-      console.log('clicked:', this.title)
-      console.log('subscribed:', this.isSubscribed)
       try {
         if (!this.isSubscribed) {
-          await this.$store.dispatch('article/SUBSCRIBE', this.newsId)
+          await this.$store.dispatch('article/SUBSCRIBE', this.articleId)
         } else {
-          this.$store.dispatch('article/UNSUBSCRIBE', this.newsId)
+          this.$store.dispatch('article/UNSUBSCRIBE', this.articleId)
         }
       } catch (error) {
         if (!this.isLogin) {
@@ -176,7 +170,7 @@ export default {
 .heading{
     // font-size: 22px;
     line-height: 1.5em;
-    height: 3em;
+    max-height: 3em;
     overflow: hidden;
     h4 {
       margin: 0;
@@ -189,9 +183,12 @@ export default {
 
 .article-excerpt{
   width: 288px;
-  height: 144px;
   line-height: 1.5em;
   overflow: hidden;
+  margin-bottom: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 7;
+  -webkit-box-orient: vertical;
 }
 
 .article-footer{
