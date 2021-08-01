@@ -52,7 +52,7 @@
       <div
         class="d-flex justify-content-center"
       >
-        <b-row cols-sm="1" cols-md="2" cols-lg="3" style="max-width:1024px;">
+        <b-row cols-sm="1" :cols-md="Math.min(2,section.content.length)" :cols-lg="Math.min(3,section.content.length)" style="max-width:1024px;">
           <ArticleCard
             v-for="(news, newsIndex) in section.content"
             :key="newsIndex"
