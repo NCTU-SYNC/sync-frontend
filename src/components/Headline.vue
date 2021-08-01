@@ -1,41 +1,33 @@
 <template>
-  <b-col md="10" cols="12" class="px-5 px-xl-0">
-    <b-row no-gutters><div class="article-category mt-5">{{ getCategory(category) }}</div></b-row>
-    <b-row no-gutters>
+  <div>
+    <div class="article-category">{{ getCategory(category) }}</div>
+    <div class="d-flex flex-column-reverse flex-md-row">
       <!-- left content -->
-      <b-col md="7" cols="12">
-        <div class="py-2 pr-3">
-
-          <h1
-            class="headline-heading mb-3"
-          ><b-link :to="`/article/${newsId}`">{{ title }}</b-link></h1>
-          <div class="d-flex justify-content-between">
-            <div>
-              <div v-for="(tag) in tags" :key="tag" class="article-tag"># {{ tag }}</div>
-            </div>
-            <img src="@/assets/icons/ic-bookmark.svg" alt="bookmark">
-          </div>
-          <div
-            class="headline-text py-3"
-            style="transform: rotate(0);"
-          >
-            <b-link :to="`/article/${newsId}`" class="stretched-link" />
-            {{ getArticleContent(blocks, 80) }}
-          </div>
-          <div class="d-flex justify-content-between article-footer w-100">
-            <div>{{ getDateTime() }}</div>
-            <div>觀看數：{{ viewsCount }}｜編輯數：{{ editedCount }}</div>
+      <div class="left-content d-flex flex-column">
+        <h1
+          class="headline-heading"
+        ><b-link :to="`/article/${newsId}`">{{ title }}</b-link></h1>
+        <div class="d-flex justify-content-between">
+          <div v-if="tags.length > 0" class="headline-tags">
+            <span v-for="(tag, tagIndex) in tags" :key="tagIndex"> #{{ tag }} </span>
           </div>
         </div>
-      </b-col>
+        <div
+          class="headline-text"
+        >
+          {{ getArticleContent(blocks,200) }}
+        </div>
+        <div class="d-flex justify-content-between article-footer w-100">
+          <div>{{ getDateTime() }}</div>
+          <div>觀看數：{{ viewsCount }}｜編輯數：{{ editedCount }}</div>
+        </div>
+      </div>
       <!-- right content -->
-      <b-col class="d-flex justify-content-center align-items-center">
-        <b-img fluid center block :src="require('@/assets/icons/ic-placeholder.svg')" />
-      </b-col>
-    </b-row>
-    <b-row no-gutters><img class="mt-2 mb-5" src="@/assets/icons/ic-headline-page.svg" alt="headline-page"></b-row>
-  </b-col>
-
+      <div>
+        <b-img block center style="height: 300px;" :src="require('@/assets/icons/ic-placeholder.svg')" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -97,6 +89,15 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/assets/scss/news.scss';
+.article-category {
+  margin-top: 32px;
+  margin-bottom: 16px;
+}
+.left-content {
+  height: 300px;
+  margin-right: 2rem;
+  flex-grow: 1;
+}
 .headline-heading{
   font-style: normal;
   font-weight: bold;
@@ -107,10 +108,30 @@ export default {
 }
 
 .headline-text{
-  font-style: normal;
-  font-weight: normal;
-  font-size: 22px;
-  line-height: 32px;
-  letter-spacing: 2px;
+  padding-top: 1.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.headline-tags {
+  margin-top: 8px;
+  font-size: 12px;
+  color: $blue;
+}
+
+.article-footer {
+  margin-top: auto;
+}
+
+@media only screen and (max-width: 768px) {
+  .left-content {
+    margin-right: 0px;
+    height: max-content;
+  }
+  .article-footer {
+    margin-top: 32px;
+  }
 }
 </style>

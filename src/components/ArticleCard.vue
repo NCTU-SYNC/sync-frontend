@@ -17,9 +17,11 @@
         <div>
 
           <b-card-title class="heading">
-            <b-link :to="`/article/${articleId}`" exact>
-              <h4>{{ getTitle(title) }}</h4>
-            </b-link>
+            <h4>
+              <b-link :to="`/article/${articleId}`">
+                {{ getTitle(title) }}
+              </b-link>
+            </h4>
           </b-card-title>
 
         </div>

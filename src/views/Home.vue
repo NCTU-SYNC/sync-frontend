@@ -10,7 +10,7 @@
             :key="index"
             class="px-3"
             link-classes="category-item"
-            @click="handleCategoryRoute(category)"
+            @click.prevent="handleCategoryRoute(category)"
           >
             {{ category }}
           </b-nav-item>
@@ -18,29 +18,29 @@
       </b-col>
     </b-row>
     <div class="d-flex justify-content-center">
-      <b-row v-if="headline.blocks" style="max-width: 1024px" class="flex-md-nowrap">
+      <div v-if="headline.length > 0" style="width: 1024px" class="flex-md-nowrap">
         <HeadlineCard
-          :category="headline.category"
-          :title="headline.title"
-          :views-count="headline.viewsCount"
-          :tags="headline.tags.slice(0,4)"
-          :last-updated-at="headline.lastUpdatedAt"
-          :edited-count="headline.editedCount"
-          :blocks="headline.blocks"
-          :news-id="headline._id"
+          :category="headline[pickedHeadline].category"
+          :title="headline[pickedHeadline].title"
+          :views-count="headline[pickedHeadline].viewsCount"
+          :tags="headline[pickedHeadline].tags.slice(0,4)"
+          :last-updated-at="headline[pickedHeadline].lastUpdatedAt"
+          :edited-count="headline[pickedHeadline].editedCount"
+          :blocks="headline[pickedHeadline].blocks"
+          :news-id="headline[pickedHeadline]._id"
         />
-        <b-col class="headline-border px-5 px-md-4">
-          <b-row no-gutters class="h-100">
-            <b-col class="h-100 pt-5">
-              <div class="hot-tags-title mb-3">熱門標籤</div>
-              <div v-for="(tag,tagIndex) in tags" :key="tagIndex" class="article-tag mb-3">
-                # {{ tag }}
-              </div>
-
-            </b-col>
-          </b-row>
-        </b-col>
-      </b-row>
+        <div class="headline-pages">
+          <input
+            v-for="(article, articleIndex) in headline.length"
+            :key="articleIndex"
+            v-model="pickedHeadline"
+            class="headline-page-button"
+            :value="articleIndex"
+            type="radio"
+            @click="resetTimer()"
+          >
+        </div>
+      </div>
     </div>
     <div v-for="(section,sectionIndex) in allArticles" :key="sectionIndex">
       <b-row class="py-5 heading-bar">
@@ -93,9 +93,10 @@ export default {
       latestList: [],
       exploreList: [],
       hotList: [],
-      headline: {},
+      headline: [],
       iconPaths: [require('@/assets/icons/ic-latest.svg'), require('@/assets/icons/ic-hot.svg'), require('@/assets/icons/ic-explore.svg')],
-      tags: ['COVID-19', '疫苗', '比特幣', '國光', '想畢業', '瘋掉']
+      pickedHeadline: 0,
+      headlineTimer: null
     }
   },
   watch: {
@@ -121,12 +122,19 @@ export default {
         this.latestList = latestArticles.content.slice(0, 6)
         this.hotList = articlesHot.slice(0, 6)
         this.exploreList = this.getRandomArticles(latestArticles.content, 6)
-        this.headline = this.exploreList[0]
+        this.headline = this.exploreList.slice(0, 5)
         this.allArticles = [{ title: '最新同步', content: this.latestList, iconPath: this.iconPaths[0] },
           { title: '熱門同步', content: this.hotList, iconPath: this.iconPaths[1] },
           { title: '探索其他', content: this.exploreList, iconPath: this.iconPaths[2] }]
       }
     }).catch(err => console.error(err))
+    this.headlineTimer = setInterval(() => {
+      this.pickedHeadline += 1
+      this.pickedHeadline %= 5
+    }, 5000)
+  },
+  beforeDestroy() {
+    clearInterval(this.headlineTimer)
   },
   methods: {
     handleCategoryRoute(categoryParam) {
@@ -168,7 +176,7 @@ export default {
               })
             })
             this.allArticles = [{ title: param + '同步', content: categoricNews, iconPath: this.iconPaths[0] }]
-            this.headline = this.getRandomArticles(categoricNews, 1)[0]
+            this.headline = this.getRandomArticles(categoricNews, Math.min(5, categoricNews.length))
           } else {
             throw new Error(data.message)
           }
@@ -177,6 +185,13 @@ export default {
           this.$bvModal.msgBoxOk(error.message)
         }
       }
+    },
+    resetTimer() {
+      clearInterval(this.headlineTimer)
+      this.headlineTimer = setInterval(() => {
+        this.pickedHeadline += 1
+        this.pickedHeadline %= 5
+      }, 5000)
     }
   }
 }
@@ -193,6 +208,9 @@ export default {
   line-height: 30px;
   letter-spacing: 8px;
   color: #232323;
+  &:hover{
+    color: $blue !important;
+  }
 }
 
 .home-heading{
@@ -225,14 +243,29 @@ export default {
 .heading-bar{
   border-top: 1px solid $gray-light;
 }
-.headline-heading{
-  font-family: Noto Sans CJK TC;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 32px;
-  line-height: 47px;
-  letter-spacing: 4px;
-  margin-bottom: 0px;
+
+.headline-pages{
+  text-align: center;
+  margin-top: 38px;
+  margin-bottom: 64px;
+}
+
+.headline-page-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+  background-color: $gray-light;
+  border: none !important;
+  height: 12px;
+  width: 12px;
+  margin: 0 8px;
+  cursor: pointer;
+}
+
+.headline-page-button:checked {
+  background-color: $red;
 }
 
 .hot-tags-title{
