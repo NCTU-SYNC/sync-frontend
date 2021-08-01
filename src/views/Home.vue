@@ -88,7 +88,7 @@ export default {
   },
   data() {
     return {
-      categoryList: ['即時', '政經', '國際', '社會', '科技', '環境', '生活', '運動'],
+      categoryList: ['政經', '國際', '社會', '科技', '環境', '生活', '運動'],
       allArticles: [],
       latestList: [],
       exploreList: [],
@@ -96,42 +96,19 @@ export default {
       headline: [],
       iconPaths: [require('@/assets/icons/ic-latest.svg'), require('@/assets/icons/ic-hot.svg'), require('@/assets/icons/ic-explore.svg')],
       pickedHeadline: 0,
-      headlineTimer: null
+      headlineTimer: null,
+      HEADLINEINTERVAL: 5000
     }
   },
   watch: {
     '$route.query.category'() {
-      this.getCategoryArticles(this.$route.query.category)
+      console.log(this.$route.query.category)
+      if (this.$route.query.category) this.getCategoryArticles(this.$route.query.category)
+      else this.initializeHomepage()
     }
   },
   created() {
-    getArticles().then(response => {
-      const { data } = response
-      if (data.code === 200) {
-        const articles = data.data[0].sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
-        const latestArticles = {
-          content: []
-        }
-        articles.forEach(article => {
-          const { category, _id, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks } = article
-          latestArticles.content.push({
-            _id, category, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks
-          })
-        })
-        const articlesHot = data.data[0].sort((a, b) => b.viewsCount - a.viewsCount)
-        this.latestList = latestArticles.content.slice(0, 6)
-        this.hotList = articlesHot.slice(0, 6)
-        this.exploreList = this.getRandomArticles(latestArticles.content, 6)
-        this.headline = this.exploreList.slice(0, 5)
-        this.allArticles = [{ title: '最新同步', content: this.latestList, iconPath: this.iconPaths[0] },
-          { title: '熱門同步', content: this.hotList, iconPath: this.iconPaths[1] },
-          { title: '探索其他', content: this.exploreList, iconPath: this.iconPaths[2] }]
-      }
-    }).catch(err => console.error(err))
-    this.headlineTimer = setInterval(() => {
-      this.pickedHeadline += 1
-      this.pickedHeadline %= 5
-    }, 5000)
+    this.initializeHomepage()
   },
   beforeDestroy() {
     clearInterval(this.headlineTimer)
@@ -143,6 +120,32 @@ export default {
       } else {
         this.getCategoryArticles(categoryParam)
       }
+    },
+    async initializeHomepage() {
+      await getArticles().then(response => {
+        const { data } = response
+        if (data.code === 200) {
+          const articles = data.data[0].sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
+          const latestArticles = {
+            content: []
+          }
+          articles.forEach(article => {
+            const { category, _id, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks } = article
+            latestArticles.content.push({
+              _id, category, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks
+            })
+          })
+          const articlesHot = data.data[0].sort((a, b) => b.viewsCount - a.viewsCount)
+          this.latestList = latestArticles.content.slice(0, 6)
+          this.hotList = articlesHot.slice(0, 6)
+          this.exploreList = this.getRandomArticles(latestArticles.content, 6)
+          this.headline = this.exploreList.slice(0, 5)
+          this.allArticles = [{ title: '最新同步', content: this.latestList, iconPath: this.iconPaths[0] },
+            { title: '熱門同步', content: this.hotList, iconPath: this.iconPaths[1] },
+            { title: '探索其他', content: this.exploreList, iconPath: this.iconPaths[2] }]
+        }
+      }).catch(err => console.error(err))
+      this.resetTimer()
     },
     getRandomArticles(arr, n) {
       var result = new Array(n)
@@ -165,7 +168,6 @@ export default {
               category: param
             }
           )
-          console.log(data)
           const type = data.type
           if (type === 'success') {
             const articles = data.data.sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
@@ -177,21 +179,24 @@ export default {
             })
             this.allArticles = [{ title: param + '同步', content: categoricNews, iconPath: this.iconPaths[0] }]
             this.headline = this.getRandomArticles(categoricNews, Math.min(5, categoricNews.length))
+            this.resetTimer()
           } else {
             throw new Error(data.message)
           }
         } catch (error) {
           console.error(error.message)
           this.$bvModal.msgBoxOk(error.message)
+          this.$router.push({ path: '/' })
         }
       }
     },
     resetTimer() {
-      clearInterval(this.headlineTimer)
+      if (this.headlineTimer !== null) clearInterval(this.headlineTimer)
       this.headlineTimer = setInterval(() => {
         this.pickedHeadline += 1
-        this.pickedHeadline %= 5
-      }, 5000)
+        this.pickedHeadline %= Math.min(this.headline.length, 5)
+      }, this.HEADLINEINTERVAL)
+      this.pickedHeadline = 0
     }
   }
 }
