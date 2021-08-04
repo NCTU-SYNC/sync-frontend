@@ -1,8 +1,12 @@
 $gray: #828282;
 
 $white:    #fff !default;
-$gray-light: #E3E3E3;
-$nature-3: #A8A8A8;
+$gray-light: #e3e3e3;
+$nature-2: #f6f6f8;
+$nature-3: #a8a8a8;
+$nature-4: #dbdce1;
+$nature-6: #b6b9c4;
+$nature-8: #838691;
 $gray-100: #f8f9fa !default;
 $gray-200: #e9ecef !default;
 $gray-300: #dee2e6 !default;
@@ -31,6 +35,7 @@ $grays: map-merge(
 );
 
 $blue:    #2353ff;
+$blue-60:    #e9eeff;
 $indigo:  #6610f2 !default;
 $purple:  #6f42c1 !default;
 $pink:    #e83e8c !default;
@@ -58,7 +63,7 @@ $colors: map-merge(
     "white":      $white,
     "gray":       $gray-600,
     "gray-dark":  $gray-800,
-    "light":      $gray-light
+    "light":      $nature-2
   ),
   $colors
 );
@@ -69,7 +74,7 @@ $success:       $green !default;
 $info:          $cyan !default;
 $warning:       $yellow !default;
 $danger:        $red !default;
-$light:         $gray-light;
+$light:         $nature-2;
 $dark:          $gray-800 !default;
 
 $theme-colors: () !default;
@@ -81,7 +86,7 @@ $theme-colors: map-merge(
     'info': $info,
     'warning': $warning,
     'danger': $danger,
-    'light': $light,
+    'light': $nature-2,
     'dark': $dark,
     'gray': $gray-600,
     'light-gray': $gray-400,
@@ -125,3 +130,6 @@ $carousel-control-icon-width:        1.5rem;
 
 
 $border-color:                $primary;
+
+$b-custom-checkbox-indicator-border-radius-lg: 0;
+$b-custom-checkbox-indicator-border-radius-sm: 0;

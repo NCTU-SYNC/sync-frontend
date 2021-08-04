@@ -6,7 +6,7 @@
 @import './animations.scss';
 
 * {
-  font-family: 'Noto Sans TC', '微軟正黑體', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI','Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  font-family: 'Noto Sans CJK TC', '微軟正黑體', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI','Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
   &:focus {
     box-shadow: none !important;
@@ -24,6 +24,7 @@ h1, h2 {
 
 a {
   color: $secondary;
+  text-decoration: none !important;
 }
 
 .focus {
@@ -56,7 +57,8 @@ a {
 }
 
 input {
-  border: 1px solid $primary !important;
+  border: none !important;
+  border-color: transparent !important;
 
   &:-webkit-autofill { 
     background-clip: text;
