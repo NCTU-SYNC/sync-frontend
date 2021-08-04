@@ -1,150 +1,117 @@
 <template>
-  <b-container class="wrapper">
+  <b-container fluid class="wrapper">
     <b-row>
+      <b-col v-if="isTimelineShow" cols="2" align-self="stretch" class="timeline-panel">
+        <div class="bg-light timeline-header">
+          <b-button variant="transparent" block class="btn-edit">
+            <b-icon icon="chevron-left" />
+            段落標題
+          </b-button>
+        </div>
+        <div class="timeline-container">
+          <a class="timeline">
+            <div class="rectangle" />
+            會考如長舉行51561454145145
+          </a>
+          <a class="timeline">
+            <div class="rectangle" />
+            會考如長舉行
+          </a>
+        </div>
+      </b-col>
+      <b-col v-else cols="2" align-self="start" class="d-flex justify-content-start">
+        <b-button variant="light" class="btn-edit">
+          <img src="@/assets/icons/ic-edit-timeline.svg">
+          段落標題
+        </b-button>
+      </b-col>
       <b-col
         class="py-2 main-editor-area"
-        lg="7"
+        lg="8"
         md="12"
         sm="12"
         cols="12"
       >
-        <b-row>
-          <b-col class="d-flex justify-content-between align-items-center">
-            <b-breadcrumb
-              :items="items"
-              class="bg-transparent p-0 m-0"
-            />
-            <div v-if="isShowHint" class="editor-hint-step">
-              <span>Help!</span>
-              <span>1. 編輯文章主題區塊</span>
-              <span>2. 撰寫段落標題與內容</span>
-              <span>3. 右側搜尋新聞加入文章</span>
-              <b-button variant="link" @click="onHintClosed">
-                <b-icon icon="x" />
-              </b-button>
-            </div>
-          </b-col>
-        </b-row>
         <b-card
           no-body
-          class="mt-2 bg-light border-0"
+          class="mt-2 edit-card edit-row"
         >
           <b-card-body>
-            <b-form inline class="d-flex justify-content-end align-items-stretch w-100">
-              <label
-                class="sr-only"
-                for="post-title"
-              >標題</label>
-              <b-form-input
-                id="post-title"
-                v-model="postTitle"
-                class="mb-0 mr-sm-2 mb-sm-0 d-flex flex-grow-1"
-                placeholder="輸入標題..."
-                required
-              />
-              <div class="border rounded bg-white date-time-container">
-                <b-dropdown
-                  ref="categoryRef"
-                  class="w-100 h-100"
-                  :text="categorySelected.length === 0 ? '文章主題分類': categorySelected"
-                  toggle-class="text-truncate"
-                  variant="link"
-                >
-                  <b-row class="no-gutters pl-2">
-                    <b-col
-                      v-for="(category, categoryIndex) in categoryList"
-                      :key="categoryIndex"
-                      cols="6"
-                      class="d-flex justify-content-center align-items-center py-1 pr-2"
-                    >
-                      <label
-                        :class="['btn',{ 'btn-outline-primary': categorySelected === category }, 'w-100' ]"
-                      >
-                        <input
-                          v-model="categorySelected"
-                          type="radio"
-                          :value="category"
-                        >
-                        <span>{{ category }}</span>
-                      </label>
-                    </b-col>
-                  </b-row>
-                </b-dropdown>
-              </div>
-            </b-form>
-            <div class="d-flex justify-content-between py-2">
-              <div class="tag-contianer">
-                <b-button
-                  v-for="(tag, tagIndex) in postTags"
-                  :key="tagIndex"
-                  variant="outline-primary"
-                  size="sm"
-                  class="tag tag-pill"
-                >
-                  #{{ tag }}
-                  <b-icon
-                    icon="x"
-                    class="ml-1"
-                    @click="removeTag(tagIndex)"
-                  />
-                </b-button>
-                <div class="tag tag-add-btn">
-                  <span v-if="isAddingTag">#</span>
-                  <b-form-input
-                    v-if="isAddingTag"
-                    v-model="addTagText"
-                    class="pl-0"
-                    size="sm"
-                    autofocus
-                    @keyup.enter="addTag"
-                  />
-                  <b-button
-                    variant="outline-primary"
-                    size="sm"
-                    class="border-0"
-                    @click="addTag"
+            <label
+              class="sr-only"
+              for="post-title"
+            >標題</label>
+            <b-form-input
+              id="post-title"
+              v-model="postTitle"
+              size="lg"
+              class="mb-0 mr-sm-2 mb-sm-0 d-flex flex-grow-1"
+              placeholder="文章標題"
+              required
+            />
+            <div class="title-card-row title-card-row-between">
+              <b-dropdown
+                ref="categoryRef"
+                class="bg-white rounded"
+                :text="categorySelected.length === 0 ? '文章主題分類': categorySelected"
+                toggle-class="text-truncate text-decoration-none title-text "
+                variant="link"
+                no-caret
+              >
+                <template #button-content>
+                  文章分類
+                  <span class="dropdown-line" />
+                  <b-icon icon="chevron-down" class="dropdown-icon" />
+                </template>
+                <b-row class="no-gutters pl-2">
+                  <b-col
+                    v-for="(category, categoryIndex) in categoryList"
+                    :key="categoryIndex"
+                    cols="6"
+                    class="d-flex justify-content-center align-items-center py-1 pr-2"
                   >
-                    <b-icon
-                      icon="plus"
-                      :class="{'tag-cross': isAddingTag && addTagText.length === 0}"
-                    />
-                  </b-button>
-                </div>
+                    <label
+                      :class="['btn',{ 'btn-outline-primary': categorySelected === category }, 'w-100' ]"
+                    >
+                      <input
+                        v-model="categorySelected"
+                        type="radio"
+                        :value="category"
+                      >
+                      <span>{{ category }}</span>
+                    </label>
+                  </b-col>
+                </b-row>
+              </b-dropdown>
+              <b-form-group class="checkbox">
+                <input id="checkbox-title" v-model="isAnonymous" type="checkbox">
+                <label for="checkbox-title"><span />匿名發文</label>
+              </b-form-group>
+            </div>
+            <div class="title-card-row title-card-row-start">
+              <div v-for="(tag, tagIndex) in postTags" :key="tagIndex" class="input-tag">
+                <span class="text-primary">＃</span>
+                {{ tag }}
               </div>
-              <div class="d-flex justify-content-end align-items-center text-nowrap text-sm">
-                <b-form-checkbox
-                  v-model="isAnonymous"
-                  :value="true"
-                  :unchecked-value="false"
-                >
-                  匿名發文
-                </b-form-checkbox>
-                <span class="mx-2 text-secondary">
-                  編輯者：{{ isAnonymous ? '匿名' : $store.getters.displayName }}
-                </span>
+              <div class="input-tag">
+                <span v-if="isAddingTag" class="text-primary">＃</span>
+                <span v-else class="text-secondary">＃</span>
+                <b-form-input v-model="addTagText" placeholder="新增關鍵字" @keyup.enter="addTag" @focus="addTag" @blur="isAddingTag = false" />
               </div>
             </div>
           </b-card-body>
         </b-card>
-        <div class="d-flex justify-content-center mt-3">
-          <div class="block-divider" />
-          <div class="flex-grow-1">
-            <b-button
-              variant="outline-primary"
-              class="add-block-btn"
-              @click="handleAddBlock(-1)"
-            >
-              <span>+ 段落</span>
-            </b-button>
-          </div>
-          <div class="block-divider" />
+        <div class="edit-add-block-row edit-row">
+          <b-button variant="transparent" block class="text-left" @click="handleAddBlock(-1)">
+            + 新增段落
+          </b-button>
         </div>
         <div
           v-for="(block, blockIndex) in blocks"
           :key="block.id"
         >
           <b-card
-            class="bg-light border-0"
+            class="edit-block edit-row"
           >
             <b-button variant="link" class="close-btn" @click="handleDeleteBlock(blockIndex)">
               <b-icon icon="x" />
@@ -153,18 +120,10 @@
               :block="block"
             />
           </b-card>
-          <div class="d-flex justify-content-center mt-3">
-            <div class="block-divider" />
-            <div class="flex-grow-1">
-              <b-button
-                variant="outline-primary"
-                class="add-block-btn"
-                @click="handleAddBlock(blockIndex)"
-              >
-                <span>+ 段落</span>
-              </b-button>
-            </div>
-            <div class="block-divider" />
+          <div class="edit-add-block-row edit-row">
+            <b-button variant="transparent" block class="text-left" @click="handleAddBlock(blockIndex)">
+              + 新增段落
+            </b-button>
           </div>
         </div>
         <div v-if="post.citations.length > 0">
@@ -210,11 +169,18 @@
         </b-row>
       </b-col>
       <b-col
+        v-if="false"
         lg="5"
         cols="12"
         class="py-4 py-lg-2 news-area"
       >
         <NewsPanel @importNews="importNews" />
+      </b-col>
+      <b-col cols="2" class="d-flex justify-content-end" align-self="start">
+        <b-button variant="light">
+          <img src="@/assets/icons/ic-edit-source.svg">
+          搜尋新聞
+        </b-button>
       </b-col>
     </b-row>
     <transition
@@ -255,7 +221,6 @@ export default {
       isNewPost: false,
       isAnonymous: false,
       isAddingTag: false,
-      isShowHint: localStorage.getItem('hint') === null,
       blocks: [],
       data: {},
       postAuthors: [],
@@ -279,7 +244,8 @@ export default {
       addTagText: '',
       isLoading: false,
       showAddPointsAlert: false,
-      redirectTimerId: null
+      redirectTimerId: null,
+      isTimelineShow: true
     }
   },
   computed: {
@@ -475,10 +441,6 @@ export default {
       }
       this.isAddingTag = !this.isAddingTag
     },
-    onHintClosed() {
-      localStorage.setItem('hint', true)
-      this.isShowHint = false
-    },
     onCitationRemoved(index) {
       if (this.post.citations[index]) {
         this.$bvModal.msgBoxConfirm(`是否刪除引用：${this.post.citations[index].title}？`, {
@@ -510,7 +472,7 @@ export default {
 @import "@/assets/scss/post/main.scss";
 
 .wrapper {
-  padding-top: 1rem;
+  padding-top: 0;
 }
 
 .block-divider {
@@ -581,19 +543,6 @@ export default {
   margin-bottom: 1rem;
   width: 5rem;
   height: 2rem;
-}
-
-.editor-hint-step {
-  display: inline-flex;
-  justify-content: flex-end;
-  align-items: center;
-  background-color: $light;
-  border-radius: 3rem;
-  padding: 0 0 0 1rem;
-
-  span {
-    margin: 0rem 0.5rem;
-  }
 }
 
 .main-editor-area {
@@ -685,6 +634,218 @@ export default {
 
   p {
     color: $primary;
+  }
+}
+
+// --------------- NEWS CLASSES ----------------
+.btn-edit {
+  display: flex;
+  align-items: center;
+}
+
+#post-title::placeholder {
+  color: rgba(0, 0, 0, 0.3);
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.timeline-header {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+  height: 3.5rem;
+
+  button {
+    color: $nature-8 !important;
+    padding-left: 2rem;
+    //styleName: Normal Body / 16px - Medium;
+    font-family: Noto Sans CJK TC;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px;
+    letter-spacing: 2px;
+    text-align: left;
+
+    svg {
+      margin-right: 1rem;
+    }
+  }
+}
+
+.timeline-panel {
+  padding: 0;
+  border-right: $nature-4 1px solid;
+}
+
+.timeline-container {
+  margin: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline {
+  display: flex;
+  position: relative;
+  width: 100%;
+  padding: 0 0 0 2rem;
+  margin: 0.5rem 0;
+
+  color: rgba(0, 0, 0, 0.65);
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-decoration: none !important;
+
+  cursor: pointer;
+}
+
+.rectangle {
+  position: absolute;
+  width: 24px;
+  height: 2px;
+  top: calc(0.75rem - 1px);
+  left: 0;
+  background: $nature-6;
+}
+
+.edit-card {
+  background: $light;
+  border: none;
+}
+
+.title-card-row {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+
+  &-between {
+    justify-content: space-between;
+  }
+
+  &-start {
+    justify-content: flex-start;
+  }
+}
+
+.dropdown-line {
+  position: relative;
+  margin: 0 0.5rem;
+  &::before {
+    content: "";
+    position: absolute;
+    width: 1px;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: #c4c4c4;
+  }
+}
+
+.dropdown-icon {
+  color: #c4c4c4;
+}
+
+.checkbox {
+  label {
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  input[type="checkbox"] {
+    display:none;
+  }
+
+  input[type="checkbox"] + label span {
+    display:inline-block;
+    width: 16px;
+    height: 16px;
+    margin: 0 0.5rem 0.25rem 0;
+    vertical-align: middle;
+    background: url('~@/assets/icons/ic-checkmark-unchecked.svg') 0 center no-repeat;
+    cursor: pointer;
+  }
+
+  input[type="checkbox"]:checked + label span {
+    margin: 0 0.5rem 0.25rem 0;
+    background: url('~@/assets/icons/ic-checkmark-checked.svg') 0 center no-repeat;
+  }
+
+  input[type=checkbox]+ label {
+    color: rgba(0, 0, 0, 0.85);
+    user-select: none; /* 防止文字被滑鼠選取反白 */
+  }
+}
+
+.input-tag {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  span {
+    margin-left: 0.25rem;
+  }
+  input {
+    background: transparent;
+    padding: 0;
+    height: 36px;
+    max-width: 5.2rem;
+    &::placeholder {
+      color: rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  margin-right: 0.5rem;
+  padding: 0 1rem 0 0.5rem;
+  height: 36px;
+  background: $white;
+  border-radius: 1.5rem;
+}
+
+.edit-add-block-row {
+  position: relative;
+  margin: 1rem 0;
+  width: 100%;
+  height: 40px;
+  background: $light;
+  color: rgba(0, 0, 0, 0.85);
+  border-radius: 0.25rem;
+  border: none;
+}
+
+.edit-block {
+  position: relative;
+  background: $light;
+  border: none;
+}
+
+.edit-row {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    width: 4px;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+    background: #c4c4c4;
+  }
+
+  &:focus-within {
+    &::before {
+      content: "";
+      position: absolute;
+      width: 4px;
+      left: 0px;
+      top: 0px;
+      bottom: 0px;
+      border-top-left-radius: 0.25rem;
+      border-bottom-left-radius: 0.25rem;
+      background: $blue;
+    }
+    background: $blue-60 !important;
   }
 }
 </style>

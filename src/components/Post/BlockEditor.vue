@@ -5,11 +5,11 @@
         class="sr-only"
         :for="`block-title-${block.id}`"
       >段落標題</label>
-      <b-input
+      <b-form-input
         :id="`block-title-${block.id}`"
         v-model="tempData.blockTitle"
-        class="mb-2 mr-sm-2 mb-sm-0 pl-2"
-        placeholder="新聞段落標題"
+        class="mb-2 mr-sm-2 mb-sm-0 pl-2 block-title"
+        placeholder="段落標題"
         @change="handleChangeTitle()"
       />
 
@@ -135,6 +135,15 @@ export default {
 
 <style scoped lang="scss">
 @import '@/assets/scss/post/main.scss';
+
+.block-title {
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 30px;
+  &::placeholder {
+    color: rgba(0, 0, 0, 0.3);
+  }
+}
 
 .editor {
   &__floating-menu {
