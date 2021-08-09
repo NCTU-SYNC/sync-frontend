@@ -1,13 +1,13 @@
 <template>
   <b-navbar ref="navbar" fixed="top" class="header-navbar" type="light" variant="faded">
     <b-button class="px-0 px-md-2" variant="transparent" to="/post">
-      <img src="@/assets/icons/ic-edit.svg">
+      <icon icon="edit" />
     </b-button>
     <b-navbar-brand id="brand" to="/" class="centered-block"><Logo /></b-navbar-brand>
 
     <!-- Right aligned nav items -->
     <b-navbar-nav class="ml-auto d-none d-md-flex align-items-center h-100">
-      <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><img src="@/assets/icons/ic-search.svg"></b-nav-item>
+      <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><icon icon="search" /></b-nav-item>
 
       <b-nav-item-dropdown
         size="lg"
@@ -19,7 +19,7 @@
         menu-class="p-0"
       >
         <template v-slot:button-content>
-          <Bell />
+          <icon icon="notification" />
         </template>
         <div class="notification-container">
           <h3>通知</h3>
@@ -50,8 +50,8 @@
       </b-nav-item-dropdown>
     </b-navbar-nav>
     <b-navbar-nav class="ml-auto d-flex d-md-none align-items-center">
-      <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><img src="@/assets/icons/ic-search.svg"></b-nav-item>
-      <b-button variant="link"><Bell /></b-button>
+      <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><icon icon="search" /></b-nav-item>
+      <b-button variant="link"><icon icon="notification" /></b-button>
       <b-nav-item v-if="getLoginStatus" to="/profile">
         <img class="avatar-user" :src="getPhotoURL">
       </b-nav-item>
@@ -71,12 +71,11 @@
 <script>
 import firebase from '@/utils/firebase'
 import Logo from '@/components/Logo.vue'
-import Bell from '@/components/Icons/Bell.vue'
 import moment from 'moment'
 
 export default {
   name: 'NavBar',
-  components: { Logo, Bell },
+  components: { Logo },
   computed: {
     getRedirectPath() {
       // 設置重新導向，若在首頁、註冊、登入頁面做切換不需設置redirect，其他頁面則需要重新導向，若已經設置重新導向頁面，則註冊、登入切換時，並不會互相把自己的頁面給放進重新導向內

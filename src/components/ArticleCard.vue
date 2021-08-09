@@ -10,7 +10,7 @@
           <div class="article-category">
             {{ getCategory(category) }}
           </div>
-          <img src="@/assets/icons/ic-bookmark.svg">
+          <icon icon="bookmark" />
         </div>
         <div>
 

@@ -11,10 +11,10 @@
       <!--right -->
       <div class="right mx-4 mx-lg-2 my-3">
         <div class="icons pb-2 d-flex justify-content-center justify-content-md-start">
-          <img src="@/assets/icons/ic-facebook.svg" class="mx-2 mx-md-0 mr-md-3">
-          <img src="@/assets/icons/ic-twitter.svg" class="mx-2 mx-md-0 mr-md-3">
-          <img src="@/assets/icons/ic-instagram.svg" class="mx-2 mx-md-0 mr-md-3">
-          <img src="@/assets/icons/ic-youtube.svg" class="mx-2 mx-md-0 mr-md-3">
+          <img src="@/assets/images/facebook-icon.svg" class="mx-2 mx-md-0 mr-md-3">
+          <img src="@/assets/images/twitter-icon.svg" class="mx-2 mx-md-0 mr-md-3">
+          <img src="@/assets/images/instagram-icon.svg" class="mx-2 mx-md-0 mr-md-3">
+          <img src="@/assets/images/youtube-icon.svg" class="mx-2 mx-md-0 mr-md-3">
         </div>
         <div class="d-flex justify-content-between mt-3">
           <div>

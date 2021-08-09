@@ -16,7 +16,7 @@
             :disabled="keyword.length === 0 || isLoading"
             @click="searchArticles"
           >
-            <img src="@/assets/images/search-icon.svg">
+            <img :src="require('@/assets/images/search-icon.svg').default">
           </b-button>
         </b-col>
       </b-row>

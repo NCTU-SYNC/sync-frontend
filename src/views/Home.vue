@@ -45,7 +45,7 @@
     <div v-for="(section,sectionIndex) in allArticles" :key="sectionIndex">
       <b-row class="py-5 heading-bar">
         <b-col class="d-flex justify-content-center align-items-center">
-          <img :src="section.iconPath" class="mr-3">
+          <icon :icon="section.iconPath" class="mr-3" />
           <h1 class="home-heading">{{ section.title }}</h1>
         </b-col>
       </b-row>
@@ -94,7 +94,7 @@ export default {
       exploreList: [],
       hotList: [],
       headline: {},
-      iconPaths: [require('@/assets/icons/ic-latest.svg'), require('@/assets/icons/ic-hot.svg'), require('@/assets/icons/ic-explore.svg')],
+      iconPaths: ['latest', 'hot', 'explore'],
       tags: ['COVID-19', '疫苗', '比特幣', '國光', '想畢業', '瘋掉']
     }
   },
