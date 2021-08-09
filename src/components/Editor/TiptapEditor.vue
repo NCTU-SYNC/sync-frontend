@@ -1,7 +1,7 @@
 <template>
   <div v-if="editor">
     <bubble-menu
-      v-if="editable"
+      v-if="false"
       class="bubble-menu"
       :tippy-options="{ duration: 100 }"
       :editor="editor"
@@ -18,7 +18,7 @@
     </bubble-menu>
 
     <floating-menu
-      v-if="editable"
+      v-if="false"
       class="floating-menu"
       :tippy-options="{ duration: 100 }"
       :editor="editor"
@@ -35,7 +35,7 @@
     </floating-menu>
 
     <menu-bar v-if="editable" class="editor__header" :editor="editor" />
-    <editor-content :editor="editor" />
+    <editor-content :editor="editor" :class="editable ? 'editor__content__edit': 'editor__content'" />
   </div>
 </template>
 
@@ -45,6 +45,8 @@ import StarterKit from '@tiptap/starter-kit'
 import Highlight from '@tiptap/extension-highlight'
 import Typography from '@tiptap/extension-typography'
 import Image from '@tiptap/extension-image'
+import Underline from '@tiptap/extension-underline'
+import Link from '@tiptap/extension-link'
 import MenuBar from './MenuBar.vue'
 
 export default {
@@ -86,8 +88,10 @@ export default {
       },
       extensions: [
         StarterKit,
+        Underline,
         Highlight,
         Typography,
+        Link,
         Image
       ],
       editable: this.editable,
@@ -114,13 +118,18 @@ export default {
 <style lang="scss">
 
 .editor__header {
-  display: flex;
-  justify-content: flex-start;
+  margin-top: 0.5rem;
+}
 
-  button {
-    background: transparent;
-    color: $black;
-  }
+.editor__content {
+  margin-top: 0.5rem;
+}
+
+.editor__content__edit {
+  margin-top: 0.5rem;
+  background-color: $white;
+  border-radius: 0.25rem;
+  padding: 1rem;
 }
 
 /* Basic editor styles */
@@ -178,5 +187,11 @@ export default {
     border-top: 2px solid rgba(#0D0D0D, 0.1);
     margin: 2rem 0;
   }
+
+  a {
+    color: $blue;
+    text-decoration: underline !important;
+  }
 }
+
 </style>

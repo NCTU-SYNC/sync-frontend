@@ -5,7 +5,7 @@
     :title="title"
     @click="action"
   >
-    <img :src="getIconUrl(icon)">
+    <icon :icon="icon" size="sm" />
   </button>
 </template>
 
@@ -42,19 +42,18 @@ export default {
 
 <style lang="scss" scoped>
 .menu-item {
-  width: 1.75rem;
-  height: 1.75rem;
-  color: #0D0D0D;
+  width: 1.5rem;
+  height: 1.5rem;
   border: none;
   background-color: transparent;
-  border-radius: 0.4rem;
-  padding: 0.25rem;
-  margin-right: 0.25rem;
+  border-radius: 0.25rem;
+  margin-left: 0.5rem;
+  padding: 0;
 
-  svg {
-    width: 100%;
-    height: 100%;
-    fill: currentColor;
+  img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
   }
 
   &.is-active,
