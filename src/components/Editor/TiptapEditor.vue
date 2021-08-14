@@ -34,9 +34,15 @@
       </button>
     </floating-menu>
 
-    <menu-bar v-if="editable" class="editor__header" :editor="editor" @showImageModal="showImageModal" />
+    <menu-bar
+      v-if="editable"
+      class="editor__header"
+      :editor="editor"
+      @showModal="showModal"
+    />
     <editor-content :editor="editor" :class="editable ? 'editor__content__edit': 'editor__content'" />
-    <upload-image-modal ref="uploadImageModal" />
+    <upload-image-modal ref="upload-image-modal" />
+    <citation-modal ref="citation-modal" @addCitation="addCitation" />
   </div>
 </template>
 
@@ -50,6 +56,7 @@ import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
 import MenuBar from './MenuBar.vue'
 import UploadImageModal from './Modals/UploadImageModal.vue'
+import CitationModal from './Modals/CitationModal.vue'
 
 export default {
 
@@ -58,7 +65,8 @@ export default {
     BubbleMenu,
     FloatingMenu,
     MenuBar,
-    UploadImageModal
+    UploadImageModal,
+    CitationModal
   },
   props: {
     id: {
@@ -114,8 +122,13 @@ export default {
         this.editor.chain().focus().setImage({ src: url }).run()
       }
     },
-    showImageModal() {
-      this.$refs.uploadImageModal.show()
+    showModal(modal) {
+      this.$refs[modal].show()
+    },
+    addCitation(data) {
+      const { content, title, url } = data
+      console.log(content, title, url)
+      this.editor.commands.insertContent(content)
     }
   }
 }

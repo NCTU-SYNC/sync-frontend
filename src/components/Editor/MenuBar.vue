@@ -58,6 +58,14 @@ export default {
           type: 'divider'
         },
         {
+          icon: 'annotation',
+          title: 'Annotation',
+          action: () => {
+            this.$emit('showModal', 'citation-modal')
+          },
+          isActive: () => this.editor.isActive('annotation')
+        },
+        {
           icon: 'link',
           title: 'Link',
           action: () => {
@@ -75,7 +83,7 @@ export default {
           icon: 'image',
           title: 'Image',
           action: () => {
-            this.$emit('showImageModal')
+            this.$emit('showModal', 'upload-image-modal')
           },
           isActive: () => this.editor.isActive('image')
         }
