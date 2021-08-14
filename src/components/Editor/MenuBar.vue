@@ -70,6 +70,20 @@ export default {
               .run()
           },
           isActive: () => this.editor.isActive('link')
+        },
+        {
+          icon: 'image',
+          title: 'Image',
+          action: () => {
+            console.log('image')
+            this.$emit('showImageModal')
+            // this.editor
+            //   .chain()
+            //   .focus()
+            //   .toggleLink({ href: url })
+            //   .run()
+          },
+          isActive: () => this.editor.isActive('image')
         }
       ]
     }

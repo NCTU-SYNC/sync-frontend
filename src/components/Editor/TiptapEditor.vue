@@ -34,8 +34,9 @@
       </button>
     </floating-menu>
 
-    <menu-bar v-if="editable" class="editor__header" :editor="editor" />
+    <menu-bar v-if="editable" class="editor__header" :editor="editor" @showImageModal="showImageModal" />
     <editor-content :editor="editor" :class="editable ? 'editor__content__edit': 'editor__content'" />
+    <upload-image-modal ref="uploadImageModal" />
   </div>
 </template>
 
@@ -48,6 +49,7 @@ import Image from '@tiptap/extension-image'
 import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
 import MenuBar from './MenuBar.vue'
+import UploadImageModal from './Modals/UploadImageModal.vue'
 
 export default {
 
@@ -55,7 +57,8 @@ export default {
     EditorContent,
     BubbleMenu,
     FloatingMenu,
-    MenuBar
+    MenuBar,
+    UploadImageModal
   },
   props: {
     id: {
@@ -110,6 +113,9 @@ export default {
       if (url) {
         this.editor.chain().focus().setImage({ src: url }).run()
       }
+    },
+    showImageModal() {
+      this.$refs.uploadImageModal.show()
     }
   }
 }
