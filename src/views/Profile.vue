@@ -1,48 +1,65 @@
 <template>
-  <b-container fluid="lg" class="wrapper">
-    <b-row>
-      <b-col>
-        <b-row>
-          <b-col cols="9" class="d-flex justify-content-center align-items-center">
-            <div class="d-flex justify-content-center align-items-center">
-              <b-img-lazy class="avatar" :src="photoURL" />
-            </div>
-            <div class="d-flex flex-column justify-content-center ml-4">
-              <h3>{{ displayName }}</h3>
-              <p>ID: {{ uid }}</p>
-            </div>
-          </b-col>
-          <b-col cols="3" class="d-flex flex-column justify-content-center">
-            <p>貢獻值：<span>{{ points }}</span></p>
-            <p>帳戶創建日期：</p>
-            <p class="text-gray">{{ creationDateTime }}</p>
-          </b-col>
-        </b-row>
-      </b-col>
-    </b-row>
-    <b-row class="mt-2 no-gutters">
-      <b-col>
-        <ul role="tablist" class="options-nav">
-          <li :aria-selected="currentShowingIndex === 0" role="tab" class="option-name">
-            <a @click="currentShowingIndex = 0"><span class="option-text">我編輯過的文章</span></a>
-          </li>
-          <li :aria-selected="currentShowingIndex === 1" role="tab" class="option-name">
-            <a @click="currentShowingIndex = 1"><span class="option-text">我瀏覽過的文章</span></a>
-          </li>
-          <li :aria-selected="currentShowingIndex === 2" role="tab" class="option-name">
-            <a @click="currentShowingIndex = 2"><span class="option-text">我追蹤的文章</span></a>
-          </li>
-          <li aria-selected="false" role="tab" class="option-name">
-            <a><span class="option-text">設定</span></a>
-          </li>
-        </ul>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col>
-        <h4 class="profile-title">最近一週</h4>
-      </b-col>
-    </b-row>
+  <b-container fluid class="no-gutters pl-0 pr-0">
+    <div class="sidebar">
+      <table class="personal-status">
+        <tr>
+          <td>
+            <b-avatar size="4.125rem" :src="photoURL" />
+          </td>
+          <td>
+            <span class="text-lg text-nowrap font-weight-bold">{{
+              displayName
+            }}</span>
+            <br>
+            <span class="text-sm text-gray">{{ user.email }}</span>
+          </td>
+        </tr>
+        <tr class="blank-row">
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td class="text-sm">加入日期</td>
+          <td class="text-sm text-light-gray">{{ creationDateTime }}</td>
+        </tr>
+        <tr>
+          <td class="text-sm">貢獻值</td>
+          <td class="text-sm">{{ points }}</td>
+        </tr>
+      </table>
+
+      <ul role="tablist" class="options-nav">
+        <li
+          :aria-selected="currentShowingIndex === 0"
+          role="tab"
+          class="option-name"
+        >
+          <a
+            @click="currentShowingIndex = 0"
+          ><span class="option-text edited-article">編輯過的文章</span></a>
+        </li>
+        <li
+          :aria-selected="currentShowingIndex === 1"
+          role="tab"
+          class="option-name"
+        >
+          <a
+            @click="currentShowingIndex = 1"
+          ><span class="option-text history">瀏覽紀錄</span></a>
+        </li>
+        <li
+          :aria-selected="currentShowingIndex === 2"
+          role="tab"
+          class="option-name"
+        >
+          <a
+            @click="currentShowingIndex = 2"
+          ><span class="option-text collection">收藏的文章</span></a>
+        </li>
+        <li aria-selected="false" role="tab" class="option-name">
+          <a><span class="option-text setting">個人設定</span></a>
+        </li>
+      </ul>
+    </div>
     <slot v-for="article in showingArticles">
       <ArticleListItem :article="article" />
     </slot>
@@ -70,10 +87,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['photoURL', 'displayName', 'uid', 'isLogin']),
+    ...mapGetters(['photoURL', 'displayName', 'uid', 'isLogin', 'user']),
     ...mapGetters({ createAt: 'user/createAt' }),
     creationDateTime() {
-      return this.createAt ? moment(parseInt(this.createAt)).format('YYYY年M月D日 HH:mm') : ''
+      return this.createAt
+        ? moment(parseInt(this.createAt)).format('YYYY年M月D日 HH:mm')
+        : ''
     }
   },
   watch: {
@@ -93,7 +112,9 @@ export default {
   },
   methods: {
     async init() {
-      const { data } = await getArticlesInfo({ token: this.$store.getters.token })
+      const { data } = await getArticlesInfo({
+        token: this.$store.getters.token
+      })
       if (data.code === 200) {
         const payload = data.data
         this.articles = payload
@@ -111,7 +132,9 @@ export default {
           break
         case 0:
         default:
-          this.showingArticles = [...this.articles.edited].sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
+          this.showingArticles = [...this.articles.edited].sort(
+            (a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt)
+          )
           break
       }
     }
@@ -124,6 +147,15 @@ a {
   text-decoration: none !important;
 }
 
+.sidebar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 300px;
+  padding-top: 1.5rem;
+  border-right: 1px solid $gray-400;
+}
+
 .avatar {
   border-radius: 50%;
   width: 100%;
@@ -132,10 +164,14 @@ a {
   max-height: 150px;
 }
 
+/*
+  options nav
+*/
 .options-nav {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   padding: 0;
   display: flex;
+  flex-direction: column;
   justify-content: space-around;
   position: relative;
   list-style: none;
@@ -143,32 +179,91 @@ a {
   &::before {
     content: '';
     position: absolute;
-    bottom: 0;
+    top: 0;
     left: 0;
     width: 100%;
     height: 1px;
-    background-color: $black;
+    background-color: $gray-400;
   }
 
-  .option-name[aria-selected='true'] .option-text {
-    color: $primary;
-    border-bottom: 3px solid $primary;
-  }
-
-  .option-name .option-text {
+  a {
     cursor: pointer;
-    display: inline-block;
-    font-size: 1rem;
-    color: #b9b9b9;
-    padding-bottom: 1rem;
-    margin-right: 0;
-    letter-spacing: 0.25rem;
-    text-indent: 0.25rem;
+    display: flex;
+    height: 100%;
+    width: 100%;
   }
+
+  .option-name {
+    display: flex;
+    height: 4rem;
+
+    &[aria-selected='true'] {
+      border-left: 3px solid $blue;
+      background-color: #f6f6f8;
+    }
+
+    .option-text {
+      display: inline-block;
+      font-size: 1.125rem;
+      letter-spacing: 0.25rem;
+      text-indent: 0.25rem;
+      vertical-align: middle;
+      padding-left: 4rem;
+      margin: auto 0;
+    }
+  }
+}
+
+.edited-article {
+  background: left 2rem top 50% url('../assets/images/EditSettingIcon.svg')
+    no-repeat;
+  padding-left: 4.5rem;
+}
+
+.history {
+  background: left 2rem top 50% url('../assets/images/History.svg') no-repeat;
+  padding-left: 4.5rem;
+}
+
+.collection {
+  background: left 2rem top 50% url('../assets/images/Save.svg') no-repeat;
+  padding-left: 4.5rem;
+}
+
+.setting {
+  background: left 2rem top 50% url('../assets/images/Setting.svg') no-repeat;
+  padding-left: 4.5rem;
 }
 
 .profile-title {
   margin: 1rem 0;
-  color: rgb(49, 87, 211)
+  color: rgb(49, 87, 211);
+}
+
+.personal-status {
+  margin-left: 2rem;
+
+  td {
+    padding-right: 1.43rem;
+    padding-top: 0.625rem;
+  }
+
+  tr:first-of-type td {
+    padding-top: 0;
+  }
+}
+
+.blank-row {
+  height: 0.875rem !important;
+}
+
+/*
+  custom typography
+  (can be merged into main.scss)
+*/
+.text {
+  &-lg {
+    font-size: 1.125rem;
+  }
 }
 </style>
