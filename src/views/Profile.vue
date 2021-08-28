@@ -71,6 +71,10 @@
         <h2 class="mb-4">
           {{ contentTitle }}
         </h2>
+        <slot v-if="currentShowingIndex === 3">
+          <Setting />
+        </slot>
+        <slot v-for="article in showingArticles" v-else>
           <ArticleListItem :article="article" />
         </slot>
       </div>
@@ -89,7 +93,8 @@ import { getArticlesInfo } from '@/api/user'
 export default {
   name: 'Profile',
   components: {
-    ArticleListItem
+    ArticleListItem,
+    Setting
   },
   data() {
     return {
