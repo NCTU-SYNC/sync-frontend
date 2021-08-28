@@ -1,74 +1,87 @@
 <template>
   <b-container fluid class="no-gutters pl-0 pr-0">
-    <div class="sidebar">
-      <table class="personal-status">
-        <tr>
-          <td>
-            <b-avatar size="4.125rem" :src="photoURL" />
-          </td>
-          <td>
-            <span class="text-lg text-nowrap font-weight-bold">{{
-              displayName
-            }}</span>
-            <br>
-            <span class="text-sm text-gray">{{ user.email }}</span>
-          </td>
-        </tr>
-        <tr class="blank-row">
-          <td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td class="text-sm">加入日期</td>
-          <td class="text-sm text-light-gray">{{ creationDateTime }}</td>
-        </tr>
-        <tr>
-          <td class="text-sm">貢獻值</td>
-          <td class="text-sm">{{ points }}</td>
-        </tr>
-      </table>
+    <b-row>
+      <div class="sidebar">
+        <table class="personal-status">
+          <tr>
+            <td>
+              <b-avatar size="4.125rem" :src="photoURL" />
+            </td>
+            <td>
+              <span class="text-lg text-nowrap font-weight-bold">{{
+                displayName
+              }}</span>
+              <br>
+              <span class="text-sm text-gray">{{ user.email }}</span>
+            </td>
+          </tr>
+          <tr class="blank-row">
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="text-sm">加入日期</td>
+            <td class="text-sm text-light-gray">{{ creationDateTime }}</td>
+          </tr>
+          <tr>
+            <td class="text-sm">貢獻值</td>
+            <td class="text-sm">{{ points }}</td>
+          </tr>
+        </table>
 
-      <ul role="tablist" class="options-nav">
-        <li
-          :aria-selected="currentShowingIndex === 0"
-          role="tab"
-          class="option-name"
-        >
-          <a
-            @click="currentShowingIndex = 0"
-          ><span class="option-text edited-article">編輯過的文章</span></a>
-        </li>
-        <li
-          :aria-selected="currentShowingIndex === 1"
-          role="tab"
-          class="option-name"
-        >
-          <a
-            @click="currentShowingIndex = 1"
-          ><span class="option-text history">瀏覽紀錄</span></a>
-        </li>
-        <li
-          :aria-selected="currentShowingIndex === 2"
-          role="tab"
-          class="option-name"
-        >
-          <a
-            @click="currentShowingIndex = 2"
-          ><span class="option-text collection">收藏的文章</span></a>
-        </li>
-        <li aria-selected="false" role="tab" class="option-name">
-          <a><span class="option-text setting">個人設定</span></a>
-        </li>
-      </ul>
-    </div>
-    <slot v-for="article in showingArticles">
-      <ArticleListItem :article="article" />
-    </slot>
-    <div class="m-4" />
+        <ul role="tablist" class="options-nav">
+          <li
+            :aria-selected="currentShowingIndex === 0"
+            role="tab"
+            class="option-name"
+          >
+            <a
+              @click="currentShowingIndex = 0"
+            ><span class="option-text edited-article">編輯過的文章</span></a>
+          </li>
+          <li
+            :aria-selected="currentShowingIndex === 1"
+            role="tab"
+            class="option-name"
+          >
+            <a
+              @click="currentShowingIndex = 1"
+            ><span class="option-text history">瀏覽紀錄</span></a>
+          </li>
+          <li
+            :aria-selected="currentShowingIndex === 2"
+            role="tab"
+            class="option-name"
+          >
+            <a
+              @click="currentShowingIndex = 2"
+            ><span class="option-text collection">收藏的文章</span></a>
+          </li>
+          <li
+            :aria-selected="currentShowingIndex === 3"
+            role="tab"
+            class="option-name"
+          >
+            <a
+              @click="currentShowingIndex = 3"
+            ><span class="option-text setting">個人設定</span></a>
+          </li>
+        </ul>
+      </div>
+      <div class="tab-content">
+        <h2 class="mb-4">
+          {{ contentTitle }}
+        </h2>
+          <ArticleListItem :article="article" />
+        </slot>
+      </div>
+      <div class="m-4" />
+    </b-row>
   </b-container>
 </template>
 
 <script>
 import ArticleListItem from '@/components/Profile/ArticleListItem.vue'
+import Setting from '@/components/Profile/Setting.vue'
 import { mapGetters } from 'vuex'
 import moment from 'moment'
 import { getArticlesInfo } from '@/api/user'
@@ -83,6 +96,7 @@ export default {
       articles: {},
       showingArticles: [],
       currentShowingIndex: 0,
+      contentTitle: '',
       points: 0
     }
   },
@@ -124,14 +138,20 @@ export default {
     },
     updateList() {
       switch (this.currentShowingIndex) {
+        case 3:
+          this.contentTitle = '個人設定'
+          break
         case 2:
+          this.contentTitle = '收藏的文章'
           this.showingArticles = [...this.articles.subscribed].reverse()
           break
         case 1:
+          this.contentTitle = '瀏覽紀錄'
           this.showingArticles = [...this.articles.viewed].reverse()
           break
         case 0:
         default:
+          this.contentTitle = '編輯過的文章'
           this.showingArticles = [...this.articles.edited].sort(
             (a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt)
           )
@@ -215,23 +235,24 @@ a {
 }
 
 .edited-article {
-  background: left 2rem top 50% url('../assets/images/EditSettingIcon.svg')
+  background: left 2rem top 50% url('../assets/icons/ic-edit-setting.svg')
     no-repeat;
   padding-left: 4.5rem;
 }
 
 .history {
-  background: left 2rem top 50% url('../assets/images/History.svg') no-repeat;
+  background: left 2rem top 50% url('../assets/icons/ic-history.svg') no-repeat;
   padding-left: 4.5rem;
 }
 
 .collection {
-  background: left 2rem top 50% url('../assets/images/Save.svg') no-repeat;
+  background: left 2rem top 50% url('../assets/icons/ic-bookmarked.svg')
+    no-repeat;
   padding-left: 4.5rem;
 }
 
 .setting {
-  background: left 2rem top 50% url('../assets/images/Setting.svg') no-repeat;
+  background: left 2rem top 50% url('../assets/icons/ic-setting.svg') no-repeat;
   padding-left: 4.5rem;
 }
 
@@ -255,6 +276,15 @@ a {
 
 .blank-row {
   height: 0.875rem !important;
+}
+
+/*
+  tab content
+*/
+.tab-content {
+  padding: 3rem 4rem;
+  width: 32.5rem;
+  box-sizing: content-box;
 }
 
 /*
