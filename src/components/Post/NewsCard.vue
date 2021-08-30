@@ -1,46 +1,49 @@
 <template>
   <b-card
     no-body
-    class="border"
   >
     <b-card-header
       header-tag="header"
-      class="p-1 bg-light"
+      class="news-header"
     >
-      <div class="news-header px-3 py-2">
-        <b>{{ title }}</b>
-        <div class="news-info">
-          <p>{{ source }}</p>
-          <p>{{ getDateTime }}</p>
-        </div>
-      </div>
+      <h4>{{ title }}</h4>
     </b-card-header>
     <b-card-body>
-      <b-card-text>{{ outline }}</b-card-text>
-      <b-row>
-        <b-col class="d-flex justify-content-between align-items-center">
-          <b-link
-            :href="url"
-            target="_blank"
-          >
-            查看全文
-          </b-link>
-          <b-button
-            variant="outline-primary"
-            pill
-            class="px-3"
-            @click="importNews"
-          >
-            引入全文
-          </b-button>
-        </b-col>
-      </b-row>
+      <b-card-text>
+        <transition-group name="fade">
+          <p v-if="!expand" key="outline" class="content-outline">{{ outline }}
+            <b-button variant="link" @click="expandContent(true)">展開</b-button>
+          </p>
+          <p v-for="(paragraph,index) in content" v-else :key="index">
+            {{ paragraph }}
+            <b-button v-if="index===content.length-1" variant="link" @click="expandContent(false)">收合</b-button>
+          </p>
+        </transition-group>
+      </b-card-text>
+    </b-card-body>
+    <b-card-footer class="d-flex justify-content-between align-items-center">
+      <div>
+        <span>{{ source }} {{ getDateTime }}</span>
+        <span> | </span>
+        <b-link
+          :href="url"
+          target="_blank"
+        >
+          原文
+        </b-link>
+      </div>
       <input
         id="copy"
         type="hidden"
         :value="content"
       >
-    </b-card-body>
+      <b-button
+        variant="edit-outline"
+        @click="importNews"
+      >
+        引入全文
+      </b-button>
+    </b-card-footer>
   </b-card>
 </template>
 
@@ -78,14 +81,15 @@ export default {
   },
   data() {
     return {
-      newsCardId: ''
+      newsCardId: '',
+      expand: false
     }
   },
   computed: {
     getDateTime() {
       const datetime = moment(this.datetime)
       if (datetime.isValid()) {
-        return datetime.format('YYYY.MM.DD HH:mm')
+        return datetime.format('YYYY.MM.DD')
       }
       return ''
     }
@@ -99,33 +103,57 @@ export default {
       const { title, url } = this // const title = this.title; const url ...
       this.$store.dispatch('post/SUBMIT_CITATION_FORM', { title, url })
       this.$emit('importNews', this.content)
+    },
+    expandContent(isExpand) {
+      this.expand = isExpand
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-.news-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  b {
-    font-size: 1.1rem;
+@import '@/assets/scss/post/main.scss';
+.card {
+  border: 1px solid #DBDCE1;
+  color: $text-2;
+  padding: 1rem 1.5rem;
+  transition: all 1s;
+  .news-header {
+    background-color: white;
+    border-bottom: none;
+    padding: 0;
+    h4 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: $text-1;
+      line-height: 28px;
+      margin: 0;
+    }
   }
-
-}
-.news-info {
-  display: inline-flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  text-align: right;
-
-  p {
-    white-space: nowrap;
-    margin: 0 0;
-    color: $secondary;
-    font-size: 0.9rem;
+  .card-body {
+    padding: 1rem 0 1.5rem 0;
+    p {
+      font-size: 1rem;
+    }
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .card-footer {
+    // margin-top: 1.5rem;
+    padding: 0;
+    background-color: $white;
+    font-size: 14px;
+    padding-top: 1rem;
   }
 }
+.btn-link {
+  display: inline;
+  color: $blue;
+  padding: 0;
+  padding-bottom: 5px;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
 </style>

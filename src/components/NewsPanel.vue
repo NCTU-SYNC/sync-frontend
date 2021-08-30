@@ -1,49 +1,47 @@
 <template>
-  <b-card class="border-0 pt-3">
-    <div class="w-100 d-flex justify-content-start">
-      <div class="search-news-container mr-2 flex-grow-1">
-        <b-form-input
-          id="search-news"
-          v-model="searchKeyword"
-          class="border-0"
-          placeholder="搜尋新聞"
-        />
-        <div />
-        <b-button
-          class="mr-1"
-          variant="link"
-          :disabled="searchKeyword.length === 0 || isLoading"
-          @click="getNews"
-        >
-          <b-icon icon="search" />
-        </b-button>
-      </div>
-      <div class="search-news-container">
-        <b-button
-          variant="link"
-          :disabled="newsList.length === 0 || pageNumber === 0"
-          @click="onPreviousPageClicked"
-        >
-          <b-icon icon="chevron-left" />
-        </b-button>
-        <div class="divider" />
-        <b-button
-          variant="link"
-          :disabled="newsList.length === 0"
-          @click="onNextPageClicked"
-        >
-          <b-icon icon="chevron-right" />
-        </b-button>
+  <div class="d-flex flex-column h-100">
+    <div class="w-100 d-flex flex-column justify-content-start header">
+      <div class="result-number-container" />
+      <div class="w-100 d-flex justify-content-start">
+        <div class="search-bar mr-1 flex-grow-1">
+          <b-button
+            class="search-btn"
+            variant="link"
+            :disabled="searchKeyword.length === 0 || isLoading"
+            @click="getNews"
+          >
+            <!-- <b-icon icon="search" font-scale="1" /> -->
+            <icon icon="news-panel-search" size="md" />
+          </b-button>
+          <b-form-input
+            id="search-news"
+            v-model="searchKeyword"
+            class="border-0"
+            placeholder="搜尋"
+            @keydown.enter="searchOnEnter"
+          />
+          <div />
+        </div>
+        <div class="d-flex align-items-center">
+          <b-button
+            :disabled="newsList.length === 0 || pageNumber === 0"
+            class="nav-btn"
+            @click="onPreviousPageClicked"
+          >
+            <b-icon icon="chevron-left" />
+          </b-button>
+          <!-- <div class="divider" /> -->
+          <b-button
+            :disabled="newsList.length === 0"
+            class="nav-btn"
+            @click="onNextPageClicked"
+          >
+            <b-icon icon="chevron-right" />
+          </b-button>
+        </div>
       </div>
     </div>
-
-    <label
-      class="text-secondary"
-      for="search-news"
-    >
-      尋找新聞並加到編輯區（建立連結）
-    </label>
-    <b-row>
+    <!-- <b-row>
       <b-col>
         <b-dropdown
           variant="outline-primary"
@@ -69,24 +67,27 @@
           </slot>
         </b-dropdown>
       </b-col>
-    </b-row>
-    <hr>
-    <div
-      v-for="(news, index) in newsList"
-      :key="index"
-      style="margin-top: 0.75rem;"
-    >
-      <NewsCard
-        :title="news.title"
-        :outline="getNewsOutline(news.content)"
-        :content="news.content"
-        :url="news.url"
-        :source="news.media"
-        :datetime="news.modified_date"
-        @importNews="emitToEditPage"
-      />
+    </b-row> -->
+    <!-- <hr> -->
+    <div class="search-results-container">
+      <div v-if="newsList.length===0" class="default-content-container">輸入關鍵字以搜索相關新聞</div>
+      <div
+        v-for="(news, index) in newsList"
+        :key="index"
+        style="margin-top: 0.75rem;"
+      >
+        <NewsCard
+          :title="news.title"
+          :outline="getNewsOutline(news.content)"
+          :content="news.content"
+          :url="news.url"
+          :source="news.media"
+          :datetime="news.modified_date"
+          @importNews="emitToEditPage"
+        />
+      </div>
     </div>
-  </b-card>
+  </div>
 </template>
 
 <script>
@@ -156,6 +157,10 @@ export default {
         }
       }
     },
+    async searchOnEnter(event) {
+      if (event.isComposing) return
+      await this.getNews()
+    },
     getNewsOutline(newsContent) {
       if (newsContent) {
         let str = ''
@@ -164,7 +169,7 @@ export default {
             // if (i === 0) { return }
             str += text + ' '
           })
-        return str.substring(0, 120) + ' ...'
+        return str.substring(0, 90) + ' ...'
       }
     },
     onPreviousPageClicked() {
@@ -189,27 +194,32 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.search-news-container {
+.header {
+  background: $nature-2;
+  padding: 1rem 1.5rem 1rem 1.5rem;
+  border-bottom: 1px solid #DBDCE1;
+}
+.result-number-container {
+  font-size: 12px;
+  height: 1.5rem;
+  color: $text-3;
+}
+.search-bar {
   display: inline-flex;
-  border-radius: 3rem;
-  border: 1px solid $primary;
-  justify-content: flex-end;
+  border-radius: 8px;
+  background: #fff;
   align-items: center;
-
-  input {
-    border-radius: 3rem;
-  }
 
   button {
     display: inline-flex;
     align-items: center;
   }
-
-  .divider {
-    padding: 0.25rem 0;
-    height: 1.5rem;
-    width: 1px;
-    border-left: 1px solid $secondary;
+  .search-btn {
+    border: none;
+    border-right: 1px solid #DBDCE1;
+    border-radius: 0;
+    padding: 0px 10px 0px 0px;
+    margin: 8px 0px 8px 8px;
   }
 }
 
@@ -225,6 +235,58 @@ export default {
     border-radius: 3rem !important;
     margin-right: 1rem;
     border: 1px solid $red;
+  }
+}
+
+.search-results-container {
+  overflow-y: auto;
+  min-height: 0px;
+  flex: 1;
+  padding: 1.5rem;
+  padding-top: 0.25rem;
+  padding-right: 9px;
+  /* width */
+  &::-webkit-scrollbar {
+    width: 15px;
+  }
+  /* Track */
+  &::-webkit-scrollbar-track {
+    // background: #f1f1f1;
+    // padding-right: 8px;
+    background-color: white;
+  }
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: #DBDCE1;
+    border: 6px solid white;
+    height: 200px;
+    border-radius: 100px;
+    background-clip: padding-box;
+  }
+  /* Handle on hover */
+  &::-webkit-scrollbar-thumb:hover {
+    border-radius: 100px;
+    background: #555;
+  }
+  .default-content-container {
+    margin-top: 0.75rem;
+    font-size: 18px;
+    color: $text-3;
+  }
+}
+
+.nav-btn {
+  background: #ededf0;
+  color: #212124;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 5px;
+  height: 40px;
+  &:enabled:hover {
+    background: #DBDCE1;
+    cursor: pointer;
   }
 }
 </style>

@@ -11,10 +11,34 @@ const mutations = {
   PUSH_BLOCK(state, block) {
     state.blocks.push(block)
   },
-  UPDATE_BLOCK(state, { id, content }) {
+  ADD_BLOCK(state, { index, block }) {
+    console.log('add block!')
+    if (index < 0) {
+      state.blocks.unshift(block)
+    } else {
+      const insertPosition = index + 1
+      state.blocks.splice(insertPosition, 0, block)
+    }
+  },
+  DELETE_BLOCK(state, index) {
+    state.blocks.splice(index, 1)
+  },
+  UPDATE_BLOCK_CONTENT(state, { id, content }) {
     const block = state.blocks.find(b => b.id === id)
     if (block) {
       block.content = content
+    }
+  },
+  UPDATE_BLOCK_TITLE(state, { id, title }) {
+    const block = state.blocks.find(b => b.id === id)
+    if (block) {
+      block.blockTitle = title
+    }
+  },
+  UPDATE_BLOCK_DATETIME(state, { id, datetime }) {
+    const block = state.blocks.find(b => b.id === id)
+    if (block) {
+      block.blockDateTime = datetime
     }
   },
   SET_CITATION(state, { index, citation }) {
@@ -25,6 +49,16 @@ const mutations = {
   },
   RESET_POST(state) {
     Object.assign(state, getDefaultState())
+  }
+}
+
+const getters = {
+  GET_BLOCK_DATETIME: (state) => (id) => {
+    const block = state.blocks.find(block => block.id === id)
+    if (block) {
+      return block.blockDateTime
+    }
+    return ''
   }
 }
 
@@ -44,6 +78,7 @@ const actions = {
 export default {
   namespaced: true,
   state,
+  getters,
   mutations,
   actions
 }

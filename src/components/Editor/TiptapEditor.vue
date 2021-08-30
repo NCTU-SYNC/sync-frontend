@@ -81,7 +81,7 @@ export default {
   mounted() {
     this.editor = new Editor({
       onUpdate: ({ editor }) => {
-        this.$store.commit('post/UPDATE_BLOCK', {
+        this.$store.commit('post/UPDATE_BLOCK_CONTENT', {
           id: this.id,
           content: editor.getJSON()
         })

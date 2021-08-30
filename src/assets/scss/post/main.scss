@@ -27,6 +27,60 @@ a {
   }
 }
 
+%edit-no-outline {
+  color: $text-2;
+  background-color: $white;
+  padding: 0.25rem 1rem;
+  &:hover {
+    color: black;
+  }
+}
+%edit-fill {
+  background-color: $blue;
+  color: $white;
+  padding: 0.25rem 1rem;
+  &:hover {
+    background-color: $blue-25;
+  }
+}
+%edit-outline {
+  background-color: $white;
+  color: $blue;
+  padding: 0.25rem 1rem;
+  border: 1px solid $blue;
+  &:hover {
+    background-color: $blue-60;
+  }
+}
+
+
+%lg-btn {
+  padding: 0.5rem 1rem;
+}
+
+.btn-edit-no-outline {
+  @extend %edit-no-outline;
+}
+.btn-edit-fill {
+  @extend %edit-fill;
+}
+.btn-edit-outline {
+  @extend %edit-outline;
+}
+
+.btn-edit-no-outline-lg {
+  @extend %edit-no-outline;
+  @extend %lg-btn;
+}
+.btn-edit-fill-lg {
+  @extend %edit-fill;
+  @extend %lg-btn;
+}
+.btn-edit-outline-lg {
+  @extend %edit-outline;
+  @extend %lg-btn;
+}
+
 @import "./editor.scss";
 @import "./menubar.scss";
 @import "./menububble.scss";

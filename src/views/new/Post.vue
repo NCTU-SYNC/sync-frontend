@@ -3,7 +3,7 @@
     <b-row>
       <b-col v-if="isTimelineShow" cols="2" align-self="stretch" class="timeline-panel">
         <div class="bg-light timeline-header">
-          <b-button variant="transparent" block class="btn-edit">
+          <b-button variant="transparent" block class="btn-edit" @click="handleShowTimeline(false)">
             <b-icon icon="chevron-left" />
             段落標題
           </b-button>
@@ -19,15 +19,15 @@
           </a>
         </div>
       </b-col>
-      <b-col v-else cols="2" align-self="start" class="d-flex justify-content-start">
-        <b-button variant="light" class="btn-edit">
-          <img src="@/assets/icons/ic-edit-timeline.svg">
-          段落標題
+      <b-col v-else :cols="showNewsSource?1:2" align-self="start" class="d-flex justify-content-start">
+        <b-button variant="light" class="btn-edit mt-3" @click="handleShowTimeline(true)">
+          <icon icon="edit-timeline" />
+          <span v-if="!showNewsSource">段落標題</span>
         </b-button>
       </b-col>
       <b-col
         class="py-2 main-editor-area"
-        lg="8"
+        lg="7"
         md="12"
         sm="12"
         cols="12"
@@ -91,7 +91,7 @@
             <div class="title-card-row title-card-row-start">
               <div v-for="(tag, tagIndex) in postTags" :key="tagIndex" class="input-tag">
                 <span class="text-primary">＃</span>
-                {{ tag }}
+                {{ tag }} <b-button variant="link" class="remove-tag" @click="removeTag(tagIndex)"><b-icon icon="x" font-scale="1.5" /></b-button>
               </div>
               <div class="input-tag">
                 <span v-if="isAddingTag" class="text-primary">＃</span>
@@ -169,16 +169,19 @@
         </b-row>
       </b-col>
       <b-col
-        v-if="false"
-        lg="5"
+        v-if="showNewsSource"
+        lg="4"
         cols="12"
-        class="py-4 py-lg-2 news-area"
+        class="news-area px-0"
       >
+        <b-button variant="link" class="close-source" @click="handleShowNewsSource(false)">
+          <b-icon icon="x" font-scale="2" />
+        </b-button>
         <NewsPanel @importNews="importNews" />
       </b-col>
-      <b-col cols="2" class="d-flex justify-content-end" align-self="start">
-        <b-button variant="light">
-          <img src="@/assets/icons/ic-edit-source.svg">
+      <b-col v-else cols="3" class="d-flex justify-content-end" align-self="start">
+        <b-button variant="light" class="mt-2" @click="handleShowNewsSource(true)">
+          <icon icon="edit-source" />
           搜尋新聞
         </b-button>
       </b-col>
@@ -221,7 +224,7 @@ export default {
       isNewPost: false,
       isAnonymous: false,
       isAddingTag: false,
-      blocks: [],
+      // blocks: [],
       data: {},
       postAuthors: [],
       postTitle: '',
@@ -245,7 +248,8 @@ export default {
       isLoading: false,
       showAddPointsAlert: false,
       redirectTimerId: null,
-      isTimelineShow: true
+      isTimelineShow: false,
+      showNewsSource: false
     }
   },
   computed: {
@@ -253,6 +257,9 @@ export default {
     ...mapGetters({ post: 'post' }),
     editPoint() {
       return this.isNewPost ? 5 : 2
+    },
+    blocks() {
+      return this.post.blocks
     }
   },
   watch: {
@@ -291,13 +298,17 @@ export default {
           const dateTime = this.postDateTime = data.createdAt
           this.postDateValue = this.seperateDateAndTime(dateTime).date
           this.postTimeValue = this.seperateDateAndTime(dateTime).time
-          this.blocks = data.blocks
-          console.log(this.blocks)
+          const blocks = data.blocks
+          console.log('received blocks:', blocks)
+          for (const b of blocks || []) {
+            this.$store.commit('post/PUSH_BLOCK', b)
+            console.log('push:', b)
+          }
           this.categorySelected = data.category
           for (const c of data.citations || []) {
             this.$store.commit('post/PUSH_CITATION', c)
           }
-          if (this.blocks.length === 0) {
+          if (this.post.blocks.length === 0) {
             this.handleAddBlock()
           }
           this.isLoading = false
@@ -314,26 +325,25 @@ export default {
   },
   methods: {
     handleAddBlock(index) {
-      const currentBlockCount = this.blocks.length
+      console.log('handle add block')
+      const currentBlockCount = this.post.blocks.length
       const blockObj = {
         id: `${Utils.getRandomString()}-${(currentBlockCount + 1).toString()}`,
-        blockTitile: '',
+        blockTitle: '',
         blockDateTime: new Date().toISOString(),
         content: null
       }
-      if (index < 0) {
-        this.blocks.unshift(blockObj)
-      } else {
-        const insertPosition = index + 1
-        this.blocks.splice(insertPosition, 0, blockObj)
-      }
+      this.$store.commit('post/ADD_BLOCK', {
+        index: index,
+        block: blockObj
+      })
     },
     handleDeleteBlock(index) {
-      if (this.blocks.length === 1) {
+      if (this.post.blocks.length === 1) {
         this.$bvModal.msgBoxOk('文章必須至少含有一個段落，故無法刪除。')
         return
       }
-      const title = this.blocks[index].blockTitile || '無標題'
+      const title = this.post.blocks[index].blockTitle || '無標題'
       this.$bvModal.msgBoxConfirm(`是否刪除段落：${title}？`, {
         title: '刪除段落',
         okVariant: 'danger',
@@ -344,7 +354,7 @@ export default {
         centered: true
       }).then(value => {
         if (value) {
-          this.blocks.splice(index, 1)
+          this.$store.commit('post/DELETE_BLOCK', index)
         }
       })
     },
@@ -362,13 +372,14 @@ export default {
         title: this.postTitle,
         tags: this.postTags,
         authors: this.postAuthors,
-        blocks: this.$store.getters.post.blocks,
+        blocks: this.post.blocks,
         createdAt: `${this.postDateValue} ${this.postTimeValue}`,
         citations: this.post.citations,
         uid: this.uid,
         token: this.token,
         isAnonymous: this.isAnonymous
       }
+      console.log(this.data)
       if (this.isNewPost) {
         try {
           console.log(this.data)
@@ -413,15 +424,6 @@ export default {
       })
       this.currentEditingEditor.setContent(str, true)
     },
-    handleClearPost() {
-      this.blocks = []
-      this.data = {}
-      this.postAuthors = []
-      this.postTitle = ''
-      this.postDateValue = ''
-      this.postTimeValue = ''
-      this.postTags = []
-    },
     seperateDateAndTime(dateTimeString) {
       const dateTime = new Date(dateTimeString)
       return {
@@ -463,6 +465,14 @@ export default {
       this.redirectTimerId = setTimeout(() => {
         this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
       }, 2000)
+    },
+    handleShowTimeline(status) {
+      this.isTimelineShow = status
+      // if (status === true) this.handleShowNewsSource(false)
+    },
+    handleShowNewsSource(status) {
+      this.showNewsSource = status
+      if (status === true) this.handleShowTimeline(false)
     }
   }
 }
@@ -547,16 +557,19 @@ export default {
 
 .main-editor-area {
   display:inline-block;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 64px);
   overflow-x: hidden;
   overflow-y: scroll;
 }
 
 .news-area {
-  display:inline-block;
-  height: calc(100vh - 100px);
+  background: #fff;
+  position: absolute;
+  right: 0;
+  height: calc(100vh - 64px);
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: hidden;
+  box-shadow: -10px 0px 15px rgba(0, 0, 0, 0.05);
 }
 
 .citations-container {
@@ -621,6 +634,14 @@ export default {
   padding: 0;
   right: 0rem;
   top: 0rem;
+}
+
+.close-source {
+  position: absolute;
+  padding: 0;
+  right: 1rem;
+  top: 0.5rem;
+  z-index: 11;
 }
 
 .points-alert {
@@ -793,7 +814,21 @@ export default {
       color: rgba(0, 0, 0, 0.3);
     }
   }
-
+  .remove-tag {
+    display: none;
+  }
+  &:hover {
+    .remove-tag {
+      display: inline-block;
+      padding-left: 0;
+      padding-right: 0;
+      color: $nature-8;
+      &:hover {
+        color: black;
+      }
+    }
+  }
+  transition: width 1s;
   margin-right: 0.5rem;
   padding: 0 1rem 0 0.5rem;
   height: 36px;
