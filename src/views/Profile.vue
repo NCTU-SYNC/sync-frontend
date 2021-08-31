@@ -12,7 +12,7 @@
                 displayName
               }}</span>
               <br>
-              <span class="text-sm text-gray">{{ user.email }}</span>
+              <span class="text-sm text-gray">{{ email }}</span>
             </td>
           </tr>
           <tr class="blank-row">
@@ -107,7 +107,7 @@ export default {
   },
   computed: {
     ...mapGetters(['photoURL', 'displayName', 'uid', 'isLogin', 'user']),
-    ...mapGetters({ createAt: 'user/createAt' }),
+    ...mapGetters({ createAt: 'user/createAt', email: 'user/email' }),
     creationDateTime() {
       return this.createAt
         ? moment(parseInt(this.createAt)).format('YYYY年M月D日 HH:mm')

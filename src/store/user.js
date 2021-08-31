@@ -1,5 +1,11 @@
 import { login } from '@/api/user'
-import { getToken, setToken, setExpiredTime, setUserInfo, getUserInfo } from '@/utils/auth'
+import {
+  getToken,
+  setToken,
+  setExpiredTime,
+  setUserInfo,
+  getUserInfo
+} from '@/utils/auth'
 
 const getDefaultState = () => {
   return {
@@ -20,7 +26,8 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const getters = {
-  createAt: state => state.createAt
+  createAt: state => state.createAt,
+  email: state => state.email
 }
 
 const mutations = {
@@ -48,16 +55,18 @@ const mutations = {
 const actions = {
   sendToken({ commit, dispatch }, userdata) {
     return new Promise((resolve, reject) => {
-      login(userdata).then(response => {
-        const { data } = response
-        console.log(data)
-        commit('SET_TOKEN', userdata.idToken)
-        setToken(userdata.idToken)
-        setExpiredTime(Date.now() + 3 * 24 * 60 * 60 * 1000)
-        resolve(data.message)
-      }).catch(error => {
-        reject(error)
-      })
+      login(userdata)
+        .then(response => {
+          const { data } = response
+          console.log(data)
+          commit('SET_TOKEN', userdata.idToken)
+          setToken(userdata.idToken)
+          setExpiredTime(Date.now() + 3 * 24 * 60 * 60 * 1000)
+          resolve(data.message)
+        })
+        .catch(error => {
+          reject(error)
+        })
     })
   },
   sendUserInfo({ commit }, userInfo) {
