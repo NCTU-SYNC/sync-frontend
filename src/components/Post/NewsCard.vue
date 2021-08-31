@@ -110,7 +110,7 @@ export default {
       this.content.forEach((text) => {
         str += `<p>${text}</p>`
       })
-      currentEditingEditor.commands.setContent(str)
+      currentEditingEditor.commands.setContent(str, true)
     },
     expandContent(isExpand) {
       this.expand = isExpand
