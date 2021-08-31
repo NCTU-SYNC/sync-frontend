@@ -41,34 +41,6 @@
         </div>
       </div>
     </div>
-    <!-- <b-row>
-      <b-col>
-        <b-dropdown
-          variant="outline-primary"
-          toggle-class="badge-pill px-4"
-        >
-          <template v-slot:button-content>
-            {{ timeQueryText }}
-          </template>
-          <slot v-for="timeQuery in timeQueries">
-            <b-dropdown-item @click="onTimeDropdownClicked(timeQuery[0])">{{ timeQuery[1] }}</b-dropdown-item>
-          </slot>
-        </b-dropdown>
-        <b-dropdown
-          class="ml-2"
-          variant="outline-primary"
-          toggle-class="badge-pill px-4"
-        >
-          <template v-slot:button-content>
-            {{ mediaSourceText }}
-          </template>
-          <slot v-for="mediaSource in mediaSourceQueries">
-            <b-dropdown-item @click="onMeidaDropdownClicked(mediaSource)">{{ mediaSource }}</b-dropdown-item>
-          </slot>
-        </b-dropdown>
-      </b-col>
-    </b-row> -->
-    <!-- <hr> -->
     <div class="search-results-container">
       <div v-if="newsList.length===0" class="default-content-container">輸入關鍵字以搜索相關新聞</div>
       <div
@@ -83,7 +55,6 @@
           :url="news.url"
           :source="news.media"
           :datetime="news.modified_date"
-          @importNews="emitToEditPage"
         />
       </div>
     </div>
@@ -126,9 +97,6 @@ export default {
     }
   },
   methods: {
-    emitToEditPage(content) {
-      this.$emit('importNews', content)
-    },
     async getNews() {
       this.newsList = []
       if (this.searchKeyword) {

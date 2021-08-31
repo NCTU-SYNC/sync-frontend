@@ -10,15 +10,13 @@
     </b-card-header>
     <b-card-body>
       <b-card-text>
-        <transition-group name="fade">
-          <p v-if="!expand" key="outline" class="content-outline">{{ outline }}
-            <b-button variant="link" @click="expandContent(true)">展開</b-button>
-          </p>
-          <p v-for="(paragraph,index) in content" v-else :key="index">
-            {{ paragraph }}
-            <b-button v-if="index===content.length-1" variant="link" @click="expandContent(false)">收合</b-button>
-          </p>
-        </transition-group>
+        <p v-if="!expand" key="outline" class="content-outline">{{ outline }}
+          <b-button variant="link" @click="expandContent(true)">展開</b-button>
+        </p>
+        <p v-for="(paragraph,index) in content" v-else :key="index">
+          {{ paragraph }}
+          <b-button v-if="index===content.length-1" variant="link" @click="expandContent(false)">收合</b-button>
+        </p>
       </b-card-text>
     </b-card-body>
     <b-card-footer class="d-flex justify-content-between align-items-center">
@@ -102,7 +100,17 @@ export default {
     importNews() {
       const { title, url } = this // const title = this.title; const url ...
       this.$store.dispatch('post/SUBMIT_CITATION_FORM', { title, url })
-      this.$emit('importNews', this.content)
+      // this.$emit('importNews', this.content)
+      const currentEditingEditor = this.$store.state.post.currentEditingEditor
+      if (currentEditingEditor === null) {
+        this.$bvModal.msgBoxOk('請選擇編輯區塊，或是先新增段落後再引入')
+        return
+      }
+      let str = currentEditingEditor.getHTML()
+      this.content.forEach((text) => {
+        str += `<p>${text}</p>`
+      })
+      currentEditingEditor.commands.setContent(str)
     },
     expandContent(isExpand) {
       this.expand = isExpand

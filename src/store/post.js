@@ -1,7 +1,8 @@
 const getDefaultState = () => {
   return {
     blocks: [],
-    citations: []
+    citations: [],
+    currentEditingEditor: null
   }
 }
 
@@ -49,6 +50,9 @@ const mutations = {
   },
   RESET_POST(state) {
     Object.assign(state, getDefaultState())
+  },
+  FOCUS_EDITOR(state, editor) {
+    state.currentEditingEditor = editor
   }
 }
 

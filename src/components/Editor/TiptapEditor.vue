@@ -86,6 +86,9 @@ export default {
           content: editor.getJSON()
         })
       },
+      onFocus: ({ editor }) => {
+        this.$store.commit('post/FOCUS_EDITOR', editor)
+      },
       extensions: [
         StarterKit,
         Underline,
