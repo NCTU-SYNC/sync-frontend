@@ -7,9 +7,9 @@
         size="lg"
         class="input-box w-100 align-items-center border rounded"
       >
-        <b-form-input class="border-0 h-50" />
+        <b-form-input class="border-0 h-50 m-0" />
         <b-input-group-append class="align-items-center">
-          <span class="input-box-divider m-0 p-0" />
+          <span class="input-box-divider" />
           <b-button
             class="mb-0 font-weight-500 text-decoration-none"
             variant="link"
@@ -17,13 +17,13 @@
         </b-input-group-append>
       </b-input-group>
     </div>
-    <div class="section">
+    <div class="section pb-3">
       <h4>註冊信箱</h4>
       <b-input-group size="lg" class="input-box w-100">
         <b-form-input disabled />
       </b-input-group>
     </div>
-    <div class="section mt-4">
+    <div class="section pt-5">
       <h4>偏好設定</h4>
       <PreferenceItem
         v-for="preference in mockPreference"
@@ -78,11 +78,14 @@ export default {
 <style scoped lang="scss">
 // TODO: positioning
 .section {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+
   & * {
     margin-bottom: 1rem;
   }
 
-  &:last-child {
+  & *:last-child {
     margin-bottom: 0;
   }
 }
@@ -93,8 +96,10 @@ export default {
 
   &-divider {
     height: 1.25rem;
-    border-right: 3.5px solid $gray-400;
+    border-right: 3px solid $gray-400;
     box-sizing: content-box;
+    padding: 0;
+    margin: 0;
   }
 }
 
