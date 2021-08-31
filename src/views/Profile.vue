@@ -240,26 +240,28 @@ a {
 }
 
 .edited-article {
-  background: left 2rem top 50% url('../assets/icons/ic-edit-setting.svg')
-    no-repeat;
+  background: left 2rem top 50% url('../assets/icons/ic-edit.svg') no-repeat;
   padding-left: 4.5rem;
 }
 
 .history {
-  background: left 2rem top 50% url('../assets/icons/ic-history.svg') no-repeat;
-  padding-left: 4.5rem;
-}
-
-.collection {
-  background: left 2rem top 50% url('../assets/icons/ic-bookmarked.svg')
+  background: left 2rem top 50% url('../assets/images/ModifiedTimeIcon.svg')
     no-repeat;
   padding-left: 4.5rem;
 }
 
+.collection {
+  background: left 2rem top 50% url('../assets/icons/ic-bookmark.svg') no-repeat;
+  padding-left: 4.5rem;
+}
+
+// FIXME: Setting Icon
+/*
 .setting {
   background: left 2rem top 50% url('../assets/icons/ic-setting.svg') no-repeat;
   padding-left: 4.5rem;
 }
+*/
 
 .profile-title {
   margin: 1rem 0;
