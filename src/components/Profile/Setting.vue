@@ -3,25 +3,21 @@
     <b-avatar size="9.375rem" class="mb-4" />
     <div class="section">
       <h4>顯示名稱</h4>
-      <b-input-group
-        size="lg"
-        class="input-box w-100 align-items-center border rounded"
-      >
-        <b-form-input class="border-0 h-50 m-0" />
-        <b-input-group-append class="align-items-center">
-          <span class="input-box-divider" />
-          <b-button
-            class="mb-0 font-weight-500 text-decoration-none"
-            variant="link"
-          >更改</b-button>
-        </b-input-group-append>
-      </b-input-group>
+      <div class="text-box">
+        <span class="m-0 flex-grow-1">{{ displayName }}</span>
+        <span class="text-box-divider" />
+        <b-button
+          variant="white"
+          size="lg"
+          class="m-0 font-size-1"
+        >更改</b-button>
+      </div>
     </div>
     <div class="section pb-3">
       <h4>註冊信箱</h4>
-      <b-input-group size="lg" class="input-box w-100">
-        <b-form-input disabled />
-      </b-input-group>
+      <div class="text-box bg-light">
+        <span class="m-0 flex-grow-1">{{ email }}</span>
+      </div>
     </div>
     <div class="section pt-5">
       <h4>偏好設定</h4>
@@ -37,6 +33,7 @@
 
 <script>
 import PreferenceItem from './PreferenceItem.vue'
+import { mapGetters } from 'vuex'
 
 /* TODO: replace with API */
 class Preference {
@@ -52,6 +49,8 @@ export default {
     PreferenceItem
   },
   computed: {
+    ...mapGetters(['displayName']),
+    ...mapGetters({ email: 'user/email' }),
     mockPreference() {
       return [
         new Preference(
@@ -90,6 +89,26 @@ export default {
   }
 }
 
+.text-box {
+  display: flex;
+  border: 1px solid $gray-400;
+  border-radius: 5px;
+  width: 100%;
+  height: 3rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 1rem;
+
+  &-divider {
+    height: 1.25rem;
+    border-right: 1px solid $gray-400;
+    box-sizing: content-box;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+// deprecated
 .input-box {
   height: 3rem;
   box-sizing: content-box;
