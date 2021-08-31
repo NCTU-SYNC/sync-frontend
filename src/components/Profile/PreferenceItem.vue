@@ -6,8 +6,8 @@
       class="switch float-right"
     />
     <div>
-      {{ preference.title }} <br>
-      {{ preference.description }}
+      <div id="title">{{ preference.title }}</div>
+      <div id="description">{{ preference.description }}</div>
     </div>
   </b-container>
 </template>
@@ -64,5 +64,11 @@ $Neture-N-3: #ededf0;
       }
     }
   }
+}
+
+#description {
+  color: rgba(0, 0, 0, 0.45);
+  width: 320px;
+  word-wrap: break-word;
 }
 </style>
