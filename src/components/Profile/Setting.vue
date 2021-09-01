@@ -7,10 +7,48 @@
         <span class="m-0 flex-grow-1">{{ displayName }}</span>
         <span class="text-box-divider" />
         <b-button
+          v-b-modal.rename-modal
           variant="white"
           size="lg"
           class="m-0 font-size-1"
         >更改</b-button>
+        <b-modal
+          id="rename-modal"
+          centered
+          title="更改顯示名稱"
+          title-class="font-weight-bold"
+          header-class="border-0"
+          footer-class="border-0"
+        >
+          <b-container>
+            <b-form>
+              <b-form-group>
+                <template #description>
+                  <p class="mt-3">
+                    顯示名稱在一個月內僅可以更改兩次。<br>
+                    且更改後，將會影響你過去所編輯過文章的名稱。
+                  </p>
+                </template>
+                <b-form-input id="input-username" size="lg" required />
+              </b-form-group>
+            </b-form>
+          </b-container>
+          <template #modal-footer="{ ok, cancel }">
+            <b-button
+              class="rename-modal-btn"
+              variant="white"
+              type="button"
+              @click="cancel()"
+            >取消</b-button>
+            <b-button
+              id="btn-ok"
+              class="rename-modal-btn"
+              variant="white"
+              type="submit"
+              @click="ok()"
+            >儲存</b-button>
+          </template>
+        </b-modal>
       </div>
     </div>
     <div class="section pb-3">
@@ -131,5 +169,30 @@ export default {
   &:last-of-type {
     border-bottom: 0;
   }
+}
+
+/*
+  Rename Modal
+*/
+#input-username {
+  border-color: $light !important;
+  font-size: 1rem;
+  height: 3rem;
+
+  &:focus {
+    border-color: $blue !important;
+  }
+}
+
+.rename-modal-btn {
+  width: 3.75rem;
+  height: 2rem;
+  padding: 0;
+  font-size: 0.875rem;
+}
+
+#btn-ok {
+  background-color: $blue;
+  color: $white;
 }
 </style>
