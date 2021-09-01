@@ -17,6 +17,7 @@
           id="rename-modal"
           centered
           title="更改顯示名稱"
+          title-class="font-weight-bold"
           header-class="rename-modal-header border-0"
           footer-class="border-0"
         >
