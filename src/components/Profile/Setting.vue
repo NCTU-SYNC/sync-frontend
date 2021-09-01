@@ -113,7 +113,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-// TODO: positioning
 .section {
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -149,20 +148,6 @@ export default {
 #rename-btn {
   font-size: 1rem;
   color: $blue;
-}
-
-// deprecated
-.input-box {
-  height: 3rem;
-  box-sizing: content-box;
-
-  &-divider {
-    height: 1.25rem;
-    border-right: 3px solid $gray-400;
-    box-sizing: content-box;
-    padding: 0;
-    margin: 0;
-  }
 }
 
 /*
