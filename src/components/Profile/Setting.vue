@@ -1,6 +1,9 @@
 <template>
   <b-container class="no-gutters pl-0 pr-0" fluid>
-    <b-avatar size="9.375rem" class="mb-4" />
+    <div id="avatar-container">
+      <b-avatar size="9.375rem" :src="photoURL" class="mb-4" />
+      <p id="avatar-upload-text">上傳</p>
+    </div>
     <div class="section">
       <h4>顯示名稱</h4>
       <div class="text-box">
@@ -88,7 +91,7 @@ export default {
     PreferenceItem
   },
   computed: {
-    ...mapGetters(['displayName']),
+    ...mapGetters(['displayName', 'photoURL']),
     ...mapGetters({ email: 'user/email' }),
     mockPreference() {
       return [
@@ -152,6 +155,20 @@ export default {
 }
 
 /*
+  Avatar
+*/
+#avatar-container {
+  position: relative;
+}
+#avatar-upload-text {
+  position: absolute;
+  left: 59px;
+  top: calc(50% - 24px);
+  font-weight: 700;
+  color: white;
+}
+
+/*
   Preferences
 */
 .setting-pref {
@@ -185,8 +202,7 @@ export default {
   padding: 0;
   font-size: 0.875rem;
 }
-
-#btn-ok {
+class #btn-ok {
   background-color: $blue;
   color: $white;
 }
