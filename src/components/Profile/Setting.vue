@@ -7,6 +7,7 @@
         <span class="m-0 flex-grow-1">{{ displayName }}</span>
         <span class="text-box-divider" />
         <b-button
+          id="rename-btn"
           v-b-modal.rename-modal
           variant="white"
           size="lg"
@@ -16,8 +17,7 @@
           id="rename-modal"
           centered
           title="更改顯示名稱"
-          title-class="font-weight-bold"
-          header-class="border-0"
+          header-class="rename-modal-header border-0"
           footer-class="border-0"
         >
           <b-container>
@@ -146,6 +146,11 @@ export default {
   }
 }
 
+#rename-btn {
+  font-size: 1rem;
+  color: $blue;
+}
+
 // deprecated
 .input-box {
   height: 3rem;
@@ -174,6 +179,10 @@ export default {
 /*
   Rename Modal
 */
+.rename-modal-header > h5 {
+  font-weight: 700 !important;
+}
+
 #input-username {
   border-color: $light !important;
   font-size: 1rem;
