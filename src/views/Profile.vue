@@ -4,15 +4,16 @@
       <div class="sidebar">
         <table class="personal-status">
           <tr>
-            <td>
-              <b-avatar size="4.125rem" :src="photoURL" />
+            <td class="personal-status-first-col">
+              <b-avatar size="4rem" :src="photoURL" />
             </td>
             <td>
-              <span class="text-lg text-nowrap font-weight-bold">{{
-                displayName
+              <span
+                class="d-block w-auto text-lg font-weight-bold text-truncate"
+              >{{ displayName }}</span>
+              <span class="d-block w-auto text-sm text-gray text-truncate">{{
+                email
               }}</span>
-              <br>
-              <span class="text-sm text-gray">{{ email }}</span>
             </td>
           </tr>
           <tr class="blank-row">
@@ -265,11 +266,17 @@ a {
 }
 
 .personal-status {
+  table-layout: fixed;
   margin-left: 2rem;
+  width: calc(300px - 2rem);
+
+  &-first-col {
+    box-sizing: content-box;
+    width: 4rem;
+  }
 
   td {
-    padding-right: 1.43rem;
-    padding-top: 0.625rem;
+    padding: 0.625rem 1.5rem 0 0;
   }
 
   tr:first-of-type td {
