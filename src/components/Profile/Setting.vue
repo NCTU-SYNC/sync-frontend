@@ -64,8 +64,8 @@
     <div class="section pt-5">
       <h4>偏好設定</h4>
       <PreferenceItem
-        v-for="preference in mockPreference"
-        :key="preference"
+        v-for="(preference, preferenceIndex) in mockPreference"
+        :key="preferenceIndex"
         class="setting-pref"
         :preference="preference"
       />
