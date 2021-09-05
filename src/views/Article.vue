@@ -84,7 +84,8 @@
                     :class="isSubscribed ? 'subscribed': ''"
                     @click="handleClickBookmark"
                   >
-                    <img src="@/assets/icons/ic-save.svg" alt="save icon">
+                    <img v-if="!isSubscribed" src="@/assets/icons/ic-save.svg" alt="save icon">
+                    <img v-else src="@/assets/icons/ic-saved.svg" alt="save icon">
                   </b-button>
                 </div>
               </div>
@@ -388,9 +389,6 @@ p {
     border: 0px;
     background-color: #ffffff;
     padding: 0;
-  }
-  &.subscribed {
-    background-color: $gray-light;
   }
 }
 
