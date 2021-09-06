@@ -393,6 +393,17 @@ export default {
 
         return
       }
+      let noTitle = false
+      this.blocks.forEach((block) => {
+        if (block.blockTitle === '') {
+          noTitle = true
+        }
+      })
+      if (noTitle) {
+        await this.$bvModal.msgBoxOk('段落標題不得為空白，請輸入標題')
+        this.isLoading = false
+        return
+      }
       this.data = {
         ...this.data,
         title: this.postTitle,
