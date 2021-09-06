@@ -3,7 +3,8 @@
     <b-form-checkbox
       v-model="preference.status"
       switch
-      class="switch float-right"
+      size="lg"
+      class="float-right"
     />
     <div>
       <div id="title">{{ preference.title }}</div>
@@ -29,42 +30,6 @@ export default {
   TODO: merge into custom.scss
 */
 $Neture-N-3: #ededf0;
-
-// FIXME: outline appears when toggling
-.custom-switch {
-  $width: 3rem;
-  $height: calc(#{$width} / 2);
-
-  width: $width;
-  height: $height;
-
-  & > input {
-    & ~ label::before {
-      border-color: $Neture-N-3 !important;
-      background-color: $Neture-N-3 !important;
-      width: $width !important;
-      height: $height !important;
-      border-radius: $width !important;
-    }
-
-    & ~ label::after {
-      background-color: white !important;
-      width: calc(#{$height} - 4px) !important;
-      height: calc(#{$height} - 4px) !important;
-      border-radius: 50% !important;
-    }
-
-    &:checked {
-      & ~ label::before {
-        border-color: $blue !important;
-        background-color: $blue !important;
-      }
-      & ~ label::after {
-        transform: translateX($height) !important;
-      }
-    }
-  }
-}
 
 #description {
   color: rgba(0, 0, 0, 0.45);
