@@ -202,7 +202,8 @@ export default {
   padding: 0;
   font-size: 0.875rem;
 }
-class #btn-ok {
+
+#btn-ok {
   background-color: $blue;
   color: $white;
 }
