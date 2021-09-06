@@ -7,6 +7,7 @@
       >段落標題</label>
       <b-form-input
         :id="`block-title-${block.id}`"
+        ref="title-input-field"
         v-model="tempData.blockTitle"
         class="mb-2 mr-sm-2 mb-sm-0 pl-2 block-title"
         placeholder="段落標題"
@@ -155,6 +156,9 @@ export default {
     },
     closeDropdown() {
       this.$refs['datetime-dropdown'].hide(true)
+    },
+    focusOnTitle() {
+      this.$refs['title-input-field'].focus()
     }
   }
 }

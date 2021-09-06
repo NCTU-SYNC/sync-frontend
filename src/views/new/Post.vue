@@ -9,13 +9,9 @@
           </b-button>
         </div>
         <div class="timeline-container">
-          <a class="timeline">
+          <a v-for="(block, index) in blocks" :key="index" class="timeline" @click="focusOnTitle(block.id)">
             <div class="rectangle" />
-            會考如長舉行51561454145145
-          </a>
-          <a class="timeline">
-            <div class="rectangle" />
-            會考如長舉行
+            {{ block.blockTitle !== '' ? block.blockTitle : '段落尚無標題' }}
           </a>
         </div>
       </b-col>
@@ -117,6 +113,7 @@
               <b-icon icon="x" />
             </b-button>
             <BlockEditor
+              :ref="`block-${block.id}`"
               :block="block"
             />
           </b-card>
@@ -484,6 +481,9 @@ export default {
     handleShowNewsSource(status) {
       this.showNewsSource = status
       if (status === true) this.handleShowTimeline(false)
+    },
+    focusOnTitle(blockId) {
+      this.$refs[`block-${blockId}`][0].focusOnTitle()
     }
   }
 }
@@ -720,7 +720,7 @@ export default {
   display: flex;
   position: relative;
   width: 100%;
-  padding: 0 0 0 2rem;
+  padding: 0 2rem 0 2rem;
   margin: 0.5rem 0;
 
   color: rgba(0, 0, 0, 0.65);
