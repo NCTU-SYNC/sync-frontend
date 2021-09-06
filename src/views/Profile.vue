@@ -4,7 +4,7 @@
       <div class="sidebar">
         <table class="personal-status">
           <tr>
-            <td class="personal-status-first-col">
+            <td>
               <b-avatar size="4rem" :src="photoURL" />
             </td>
             <td>
@@ -270,7 +270,7 @@ a {
   margin-left: 2rem;
   width: calc(300px - 2rem);
 
-  &-first-col {
+  &:first-child > tr td:first-of-type {
     box-sizing: content-box;
     width: 4rem;
   }
