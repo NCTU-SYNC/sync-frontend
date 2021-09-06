@@ -4,7 +4,7 @@
       v-model="preference.status"
       switch
       size="lg"
-      class="float-right"
+      class="switch--color float-right"
     />
     <div>
       <div id="title">{{ preference.title }}</div>
@@ -35,5 +35,24 @@ $Neture-N-3: #ededf0;
   color: rgba(0, 0, 0, 0.45);
   width: 320px;
   word-wrap: break-word;
+}
+
+.switch--color {
+  & > .custom-control-label {
+    &::before {
+      background-color: $Neture-N-3;
+      border: 0;
+    }
+
+    &::after {
+      background-color: #fff;
+    }
+  }
+
+  .custom-control-input:checked ~ .custom-control-label {
+    &::before {
+      background-color: $blue;
+    }
+  }
 }
 </style>
