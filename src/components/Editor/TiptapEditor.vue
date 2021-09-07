@@ -41,7 +41,7 @@
       @showModal="showModal"
     />
     <editor-content :editor="editor" :class="editable ? 'editor__content__edit': 'editor__content'" />
-    <upload-image-modal ref="upload-image-modal" />
+    <upload-image-modal ref="upload-image-modal" @addImage="addImage" />
     <citation-modal ref="citation-modal" @addCitation="addCitation" />
   </div>
 </template>
@@ -54,6 +54,7 @@ import Typography from '@tiptap/extension-typography'
 import Image from '@tiptap/extension-image'
 import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
+import Superscript from '@tiptap/extension-superscript'
 import MenuBar from './MenuBar.vue'
 import UploadImageModal from './Modals/UploadImageModal.vue'
 import CitationModal from './Modals/CitationModal.vue'
@@ -103,7 +104,8 @@ export default {
         Highlight,
         Typography,
         Link,
-        Image
+        Image,
+        Superscript
       ],
       editable: this.editable,
       content: this.content
@@ -115,8 +117,8 @@ export default {
   },
 
   methods: {
-    addImage() {
-      const url = window.prompt('URL')
+    addImage(data) {
+      const { url } = data
 
       if (url) {
         this.editor.chain().focus().setImage({ src: url }).run()
@@ -125,10 +127,12 @@ export default {
     showModal(modal) {
       this.$refs[modal].show()
     },
-    addCitation(data) {
+    async addCitation(data) {
       const { content, title, url } = data
-      console.log(content, title, url)
-      this.editor.commands.insertContent(content)
+      await this.$store.dispatch('post/SUBMIT_CITATION_FORM', { title, url })
+      const { citations } = this.$store.state.post
+      this.editor.commands.insertContent(`${content}<sup>${citations.length}</sup>`)
+      this.editor.chain().focus().toggleSuperscript().run()
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <b-modal id="upload-image-modal" title="BootstrapVue">
+  <b-modal id="upload-image-modal" centered title="上傳圖片" size="xl" @ok="handleConfirm">
     <b-navbar toggleable="sm">
       <b-navbar-nav>
         <b-nav-item href="#" @click="toggleFile">By File</b-nav-item>
@@ -7,7 +7,7 @@
       </b-navbar-nav>
     </b-navbar>
     <div v-if="isFile" class="field" @drop.prevent="dropImage" @dragenter.prevent @dragover.prevent>drag and drop here</div>
-    <div v-else><input v-model="url" type="text" placeholder="enter url"></div>
+    <div v-else><input v-model="url" class="urlInput" type="text" placeholder="enter url"></div>
   </b-modal>
 </template>
 
@@ -38,6 +38,16 @@ export default {
     },
     toggleLink() {
       this.isFile = false
+    },
+    handleConfirm() {
+      if (this.isFile) {
+        console.log('is file')
+      } else {
+        const data = {
+          url: this.url
+        }
+        this.$emit('addImage', data)
+      }
     }
   }
 }
@@ -49,5 +59,8 @@ export default {
   width: 400px;
   background: #F8F8F8;
   border-radius: 4px;
+}
+.urlInput {
+  width: 100%;
 }
 </style>
