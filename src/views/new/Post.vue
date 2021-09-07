@@ -455,6 +455,7 @@ export default {
         }).then(value => {
           if (value) {
             this.post.citations.splice(index, 1)
+            // TODO: remove citation in editor
           }
         })
       }

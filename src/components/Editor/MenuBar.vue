@@ -69,13 +69,7 @@ export default {
           icon: 'link',
           title: 'Link',
           action: () => {
-            const url = window.prompt('URL')
-
-            this.editor
-              .chain()
-              .focus()
-              .toggleLink({ href: url })
-              .run()
+            this.$emit('showModal', 'link-modal')
           },
           isActive: () => this.editor.isActive('link')
         },

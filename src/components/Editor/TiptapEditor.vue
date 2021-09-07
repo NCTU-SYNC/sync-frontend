@@ -43,6 +43,7 @@
     <editor-content :editor="editor" :class="editable ? 'editor__content__edit': 'editor__content'" />
     <upload-image-modal ref="upload-image-modal" @addImage="addImage" />
     <citation-modal ref="citation-modal" @addCitation="addCitation" />
+    <link-modal ref="link-modal" @addLink="addLink" />
   </div>
 </template>
 
@@ -58,6 +59,7 @@ import Superscript from '@tiptap/extension-superscript'
 import MenuBar from './MenuBar.vue'
 import UploadImageModal from './Modals/UploadImageModal.vue'
 import CitationModal from './Modals/CitationModal.vue'
+import LinkModal from './Modals/LinkModal.vue'
 
 export default {
 
@@ -67,7 +69,8 @@ export default {
     FloatingMenu,
     MenuBar,
     UploadImageModal,
-    CitationModal
+    CitationModal,
+    LinkModal
   },
   props: {
     id: {
@@ -125,7 +128,12 @@ export default {
       }
     },
     showModal(modal) {
+      // TODO: prevent modal from showing multiple times when there are multiple blocks
       this.$refs[modal].show()
+    },
+    addLink(data) {
+      const { content, url } = data
+      this.editor.commands.insertContent(`<a href=${url}>${content}</>`)
     },
     async addCitation(data) {
       const { content, title, url } = data
