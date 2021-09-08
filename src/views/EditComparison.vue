@@ -15,11 +15,11 @@
         <div>
           <b-button variant="link" :disabled="base <= 1" @click="onPrevArticleClicked">
             <b-icon icon="chevron-left" />
-            上一版
+            前一版
           </b-button>
           <span> &nbsp; | &nbsp;</span>
           <b-button variant="link" :disabled="base + 1 >= versionsLength" @click="onNextArticleClicked">
-            下一版
+            後一版
             <b-icon icon="chevron-right" />
           </b-button>
         </div>
@@ -29,21 +29,19 @@
       <b-col>
         <b-row class="divider">
           <b-col class="py-2 comparison-header" cols="6">
-            <div>
+            <div :class="{'clicked-row': base > compare}">
               <span class="mr-2 pr-2 border-right">{{ versions[0].updatedAt }}</span>
               <span>{{ versions[0].author.isAnonymous ? '匿名' : versions[0].author.name }}</span>
-              <p>{{ versions[0].title }}</p>
             </div>
           </b-col>
           <b-col class="py-2 comparison-header d-flex" cols="6">
-            <div>
+            <div :class="{'clicked-row': base < compare}">
               <span class="mr-2 pr-2 border-right">{{ versions[1].updatedAt }}</span>
               <span>{{ versions[1].author.isAnonymous ? '匿名' : versions[1].author.name }}</span>
-              <p>{{ versions[1].title }}</p>
             </div>
             <div>
-              <span class="bg-diff-add px-2 py-1 m-2">{{ wordsChanged.added }}</span>
-              <span class="bg-diff-delete px-2 py-1 m-2">{{ wordsChanged.deleted }}</span>
+              <span class="bg-diff-add px-2 py-1 m-2">+{{ wordsChanged.added }}</span>
+              <span class="bg-diff-delete px-2 py-1 m-2">-{{ wordsChanged.deleted }}</span>
             </div>
           </b-col>
         </b-row>
@@ -137,6 +135,11 @@ export default {
         this.base = base
         this.compare = compare
         this.title = title
+
+        // Adjust the time order of the articles
+        if (moment(articles[0].updatedAt).isAfter(articles[1].updatedAt)) {
+          articles.reverse()
+        }
 
         for (let i = 0; i < 2; i += 1) {
           const title = articles[i].title
@@ -350,5 +353,25 @@ export default {
   &-delete {
     background-color: #FF4F4F;
   }
+}
+h4{
+  font-family: Noto Sans CJK TC;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 32px;
+  text-align: center;
+}
+.clicked-row{
+  margin-left: 16px;
+  ::before{
+      content:"";
+      position:absolute;
+      width: 12px;
+      height: 12px;
+      left :10px;
+      top: 15px;
+      background: #2353FF;
+    }
 }
 </style>
