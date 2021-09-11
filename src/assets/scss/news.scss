@@ -7,6 +7,11 @@ h2 {
   letter-spacing: 4px;
 }
 
+h4 {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+}
 a {
   color: $gray-900 !important;
 }
@@ -68,11 +73,13 @@ a {
 
 .article-category{
     /* SYNC_LIGHTBLUE */
-    padding: 6px 10px;
-    width: max-content;
-    height: 36px;
-    background: $cyan;
-    border-radius: 5px;
+    color: $blue;
+    font-size: 18px;
+    height: 30px;
+    line-height: 30px;
+    letter-spacing: 2px;
+    font-weight: 400;
+    
 }
 
 .article-tag{
@@ -88,5 +95,6 @@ a {
 
 .article-footer{
   font-size: 12px;
-  color: #8a8a8a;
+  color: $nature-3;
+  font-weight: 400;
 }

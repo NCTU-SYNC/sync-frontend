@@ -11,11 +11,15 @@
       <!--right -->
       <div class="right mx-4 mx-lg-2 my-3">
         <div class="icons pb-2 d-flex justify-content-center justify-content-md-start">
-          <img src="@/assets/images/facebook-icon.svg" class="mx-2 mx-md-0 mr-md-3">
+          <!-- <img src="@/assets/images/facebook-icon.svg" class="mx-2 mx-md-0 mr-md-3">
           <img src="@/assets/images/twitter-icon.svg" class="mx-2 mx-md-0 mr-md-3">
           <img src="@/assets/images/instagram-icon.svg" class="mx-2 mx-md-0 mr-md-3">
-          <img src="@/assets/images/youtube-icon.svg" class="mx-2 mx-md-0 mr-md-3">
-        </div>
+          <img src="@/assets/images/youtube-icon.svg" class="mx-2 mx-md-0 mr-md-3"> -->
+          <icon icon="facebook" class="mx-2 mx-md-0 mr-md-3" />
+          <icon icon="twitter" class="mx-2 mx-md-0 mr-md-3" />
+          <icon icon="instagram" class="mx-2 mx-md-0 mr-md-3" />
+          <icon icon="youtube" class="mx-2 mx-md-0 mr-md-3">/>
+          </icon></div>
         <div class="d-flex justify-content-between mt-3">
           <div>
             <div v-for="(button) in buttons" :key="button" class="footer-button mb-3">

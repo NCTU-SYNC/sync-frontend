@@ -436,7 +436,8 @@ export default {
       const dateTime = new Date(dateTimeString)
       return {
         date: dateTime.toISOString().slice(0, 10),
-        time: dateTime.toLocaleTimeString('en-US', { hour12: false })
+        // time: dateTime.toLocaleTimeString('en-US', { hour12: false })
+        time: dateTime.toISOString().slice(11, 19)
       }
     },
     removeTag(index) {

@@ -119,7 +119,7 @@ export default {
 .header-navbar {
   height: 4rem;
   background-color: $white;
-  border-bottom: 1px solid $primary;
+  border-bottom: 1px solid $gray-light;
   display: flex;
   align-items: center;
   width: 100%;
