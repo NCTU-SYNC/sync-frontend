@@ -97,8 +97,8 @@
             </div>
           </b-card-body>
         </b-card>
-        <div class="edit-add-block-row edit-row">
-          <b-button variant="transparent" block class="text-left" @click="handleAddBlock(-1)">
+        <div class="edit-add-block-row edit-row d-flex align-items-center">
+          <b-button variant="transparent" block class="text-left add-text" @click="handleAddBlock(-1)">
             + 新增段落
           </b-button>
         </div>
@@ -110,15 +110,15 @@
             class="edit-block edit-row"
           >
             <b-button variant="link" class="close-btn" @click="handleDeleteBlock(blockIndex)">
-              <b-icon icon="x" />
+              <b-icon icon="x" font-scale="1.5" />
             </b-button>
             <BlockEditor
               :ref="`block-${block.id}`"
               :block="block"
             />
           </b-card>
-          <div class="edit-add-block-row edit-row">
-            <b-button variant="transparent" block class="text-left" @click="handleAddBlock(blockIndex)">
+          <div class="edit-add-block-row edit-row d-flex align-items-center">
+            <b-button variant="transparent" block class="text-left add-text" @click="handleAddBlock(blockIndex)">
               + 新增段落
             </b-button>
           </div>
@@ -571,6 +571,28 @@ export default {
   height: calc(100vh - 64px);
   overflow-x: hidden;
   overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    background: transparent;
+  }
+
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: $nature_6;
+    height: 106px;
+  }
+
+  /* Handle on hover */
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 }
 
 .news-area {
@@ -643,8 +665,9 @@ export default {
 .close-btn {
   position: absolute;
   padding: 0;
-  right: 0rem;
-  top: 0rem;
+  right: 5px;
+  top: 5px;
+  color: $nature_8;
 }
 
 .close-source {
@@ -849,19 +872,25 @@ export default {
 
 .edit-add-block-row {
   position: relative;
-  margin: 1rem 0;
+  margin: 1.5rem 0;
   width: 100%;
   height: 40px;
   background: $light;
-  color: rgba(0, 0, 0, 0.85);
+  color: $text-1;
   border-radius: 0.25rem;
   border: none;
+  .add-text {
+    font-size: 14px;
+  }
 }
 
 .edit-block {
   position: relative;
   background: $light;
   border: none;
+  .card-body {
+    padding: 28px 32px 24px 24px;
+  }
 }
 
 .edit-row {
@@ -894,4 +923,5 @@ export default {
     background: $blue-60 !important;
   }
 }
+
 </style>

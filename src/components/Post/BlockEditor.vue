@@ -9,7 +9,7 @@
         :id="`block-title-${block.id}`"
         ref="title-input-field"
         v-model="tempData.blockTitle"
-        class="mb-2 mr-sm-2 mb-sm-0 pl-2 block-title"
+        class="mb-2 mr-2 mb-sm-0 pl-2 block-title"
         placeholder="段落標題"
         @change="handleChangeTitle"
       />
