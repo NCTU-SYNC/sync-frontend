@@ -49,7 +49,6 @@
               <b-dropdown
                 ref="categoryRef"
                 class="bg-white rounded"
-                :text="categorySelected.length === 0 ? '文章主題分類': categorySelected"
                 toggle-class="text-truncate text-decoration-none title-text "
                 variant="link"
                 no-caret
@@ -79,13 +78,9 @@
                   </b-col>
                 </b-row>
               </b-dropdown>
-              <b-form-group class="checkbox">
-                <input id="checkbox-title" v-model="isAnonymous" type="checkbox">
-                <label for="checkbox-title"><span />匿名發文</label>
-              </b-form-group>
             </div>
             <div class="title-card-row title-card-row-start">
-              <div v-for="(tag, tagIndex) in postTags" :key="tagIndex" class="input-tag">
+              <div v-for="(tag, tagIndex) in post.postTags" :key="tagIndex" class="input-tag">
                 <span class="text-primary">＃</span>
                 {{ tag }} <b-button variant="link" class="remove-tag" @click="removeTag(tagIndex)"><b-icon icon="x" font-scale="1.5" /></b-button>
               </div>
@@ -127,7 +122,7 @@
           <b-row>
             <b-col>
               <b-card
-                class="bg-light border-0 citations-container"
+                class="bg-light border-0 citations-container mb-5"
               >
                 <p>引用貼文</p>
                 <div v-for="(citation, index) in post.citations" :key="index">
@@ -148,22 +143,7 @@
               </b-card>
             </b-col>
           </b-row>
-          <div class="block-divider" />
         </div>
-
-        <b-row class="mt-3 mb-5">
-          <b-col class="d-flex justify-content-end">
-            <b-button
-              variant="outline-primary"
-              size="lg"
-              class="px-3"
-              :disabled="isLoading"
-              @click="handlePublish"
-            >
-              發布
-            </b-button>
-          </b-col>
-        </b-row>
       </b-col>
       <b-col
         v-if="showNewsSource"
@@ -201,7 +181,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getArticleById, createArticle, updateArticleById } from '@/api/article'
+import { getArticleById } from '@/api/article'
 import BlockEditor from '@/components/Post/BlockEditor'
 import NewsPanel from '@/components/NewsPanel'
 import { Utils } from '@/utils'
@@ -218,19 +198,8 @@ export default {
     return {
       articleId: undefined,
       currentEditingEditor: null,
-      isNewPost: false,
-      isAnonymous: false,
       isAddingTag: false,
-      // blocks: [],
-      data: {},
-      postAuthors: [],
-      postTitle: '',
-      postDateTime: '',
-      postDateValue: '',
-      postTimeValue: '',
       categoryList: ['政經', '國際', '社會', '科技', '環境', '生活', '運動'],
-      categorySelected: '',
-      postTags: [],
       items: [
         {
           text: '首頁',
@@ -243,8 +212,6 @@ export default {
       ],
       addTagText: '',
       isLoading: false,
-      showAddPointsAlert: false,
-      redirectTimerId: null,
       isTimelineShow: false,
       showNewsSource: false
     }
@@ -253,58 +220,56 @@ export default {
     ...mapGetters(['isLogin', 'uid', 'token']),
     ...mapGetters({ post: 'post' }),
     editPoint() {
-      return this.isNewPost ? 5 : 2
+      return this.post.isNewPost ? 5 : 2
     },
     blocks() {
       return this.post.blocks
-    }
-  },
-  watch: {
-    categorySelected(newValue) {
-      this.data.category = newValue
-      this.$refs.categoryRef.hide(true)
     },
-    showAddPointsAlert(newValue) {
-      if (!newValue && this.redirectTimerId) {
-        clearTimeout(this.redirectTimerId)
-        this.redirectTimerId = null
-        this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
+    postTitle: {
+      get() {
+        return this.post.postTitle
+      },
+      set(newTitle) {
+        this.$store.commit('post/SET_TITLE', newTitle)
+      }
+    },
+    categorySelected: {
+      get() {
+        return this.post.categorySelected
+      },
+      set(newCategory) {
+        this.$store.commit('post/SET_CATEGORY', newCategory)
+      }
+    },
+    showAddPointsAlert: {
+      get() {
+        return this.post.showAddPointsAlert
+      },
+      set(newValue) {
+        this.$store.commit('post/SHOW_ADDPOINTS_ALERT', newValue)
       }
     }
   },
-  beforeDestroy() {
-    if (this.redirectTimerId) {
-      clearTimeout(this.redirectTimerId)
+  watch: {
+    categorySelected() {
+      this.$refs.categoryRef.hide(true)
     }
   },
+  beforeDestroy() {
+  },
   created() {
-    // this.handleClearPost()
     // 從route中獲得此文章的ID
-    const articleId = this.articleId = this.$route.params.ArticleID
-    this.isNewPost = !(articleId || false)
     this.$store.commit('post/RESET_POST')
+    const articleId = this.$route.params.ArticleID
+    const isNewPost = !(articleId || false)
+    this.$store.commit('post/SET_NEW_POST', isNewPost)
+    this.$store.commit('post/SET_ARTICLEID', articleId)
     if (articleId) {
       this.isLoading = true
       getArticleById(articleId).then(response => {
         if (response.data.code === 200) {
-          this.data = response.data.data
-          const data = this.data
-          this.postAuthors = data.authors
-          this.postTitle = data.title
-          this.postTags = data.tags
-          const dateTime = this.postDateTime = data.createdAt
-          this.postDateValue = this.seperateDateAndTime(dateTime).date
-          this.postTimeValue = this.seperateDateAndTime(dateTime).time
-          const blocks = data.blocks
-          console.log('received blocks:', blocks)
-          for (const b of blocks || []) {
-            this.$store.commit('post/PUSH_BLOCK', b)
-            console.log('push:', b)
-          }
-          this.categorySelected = data.category
-          for (const c of data.citations || []) {
-            this.$store.commit('post/PUSH_CITATION', c)
-          }
+          const data = response.data.data
+          this.$store.commit('post/INIT_POST', { data })
           if (this.post.blocks.length === 0) {
             this.handleAddBlock()
           }
@@ -322,7 +287,6 @@ export default {
   },
   methods: {
     handleAddBlock(index) {
-      console.log('handle add block')
       const currentBlockCount = this.post.blocks.length
       const blockObj = {
         id: `${Utils.getRandomString()}-${(currentBlockCount + 1).toString()}`,
@@ -355,72 +319,6 @@ export default {
         }
       })
     },
-    async handlePublish() {
-      this.isLoading = true
-      if (!this.token || !this.isLogin) {
-        await this.$bvModal.msgBoxOk('登入逾時或失效，請重新登入')
-        this.isLoading = false
-        this.$router.push('/login')
-
-        return
-      }
-      let noTitle = false
-      this.blocks.forEach((block) => {
-        if (block.blockTitle === '') {
-          noTitle = true
-        }
-      })
-      if (noTitle) {
-        await this.$bvModal.msgBoxOk('段落標題不得為空白，請輸入段落標題')
-        this.isLoading = false
-        return
-      }
-      this.data = {
-        ...this.data,
-        title: this.postTitle,
-        tags: this.postTags,
-        authors: this.postAuthors,
-        blocks: this.post.blocks,
-        createdAt: `${this.postDateValue} ${this.postTimeValue}`,
-        citations: this.post.citations,
-        uid: this.uid,
-        token: this.token,
-        isAnonymous: this.isAnonymous
-      }
-      console.log(this.data)
-      if (this.isNewPost) {
-        try {
-          console.log(this.data)
-          const { data } = await createArticle(this.data)
-          this.isLoading = false
-          if (data.code === 200) {
-            this.articleId = data.id
-            this.$store.commit('post/RESET_POST')
-            this.showAddPointsAlertAndRedirect()
-          } else {
-            this.$bvModal.msgBoxOk(data.message)
-          }
-        } catch (error) {
-          this.$bvModal.msgBoxOk(error.message)
-          this.isLoading = true
-        }
-      } else {
-        this.data.id = this.articleId
-        try {
-          const { data } = await updateArticleById(this.data)
-          this.isLoading = false
-          if (data.code === 200) {
-            this.$store.commit('post/RESET_POST')
-            this.showAddPointsAlertAndRedirect()
-          } else {
-            this.$bvModal.msgBoxOk(data.message)
-          }
-        } catch (error) {
-          this.$bvModal.msgBoxOk(error.message)
-          this.isLoading = false
-        }
-      }
-    },
     importNews(content) {
       if (this.currentEditingEditor === null) {
         this.$bvModal.msgBoxOk('請選擇編輯區塊，或是先新增段落後再引入')
@@ -432,21 +330,13 @@ export default {
       })
       this.currentEditingEditor.setContent(str, true)
     },
-    seperateDateAndTime(dateTimeString) {
-      const dateTime = new Date(dateTimeString)
-      return {
-        date: dateTime.toISOString().slice(0, 10),
-        // time: dateTime.toLocaleTimeString('en-US', { hour12: false })
-        time: dateTime.toISOString().slice(11, 19)
-      }
-    },
     removeTag(index) {
-      this.postTags.splice(index, 1)
+      this.$store.commit('post/REMOVE_TAG', index)
     },
     addTag() {
       if (this.isAddingTag) {
         if (this.addTagText.length > 0) {
-          this.postTags.push(this.addTagText)
+          this.$store.commit('post/PUSH_TAG', this.addTagText)
           this.addTagText = ''
         }
       }
@@ -469,15 +359,8 @@ export default {
         })
       }
     },
-    showAddPointsAlertAndRedirect() {
-      this.showAddPointsAlert = true
-      this.redirectTimerId = setTimeout(() => {
-        this.$router.push({ name: 'Article', params: { ArticleID: this.articleId }})
-      }, 2000)
-    },
     handleShowTimeline(status) {
       this.isTimelineShow = status
-      // if (status === true) this.handleShowNewsSource(false)
     },
     handleShowNewsSource(status) {
       this.showNewsSource = status
@@ -799,38 +682,6 @@ export default {
 
 .dropdown-icon {
   color: #c4c4c4;
-}
-
-.checkbox {
-  label {
-    padding: 0;
-    margin: 0;
-    cursor: pointer;
-  }
-
-  input[type="checkbox"] {
-    display:none;
-  }
-
-  input[type="checkbox"] + label span {
-    display:inline-block;
-    width: 16px;
-    height: 16px;
-    margin: 0 0.5rem 0.25rem 0;
-    vertical-align: middle;
-    background: url('~@/assets/icons/ic-checkmark-unchecked.svg') 0 center no-repeat;
-    cursor: pointer;
-  }
-
-  input[type="checkbox"]:checked + label span {
-    margin: 0 0.5rem 0.25rem 0;
-    background: url('~@/assets/icons/ic-checkmark-checked.svg') 0 center no-repeat;
-  }
-
-  input[type=checkbox]+ label {
-    color: rgba(0, 0, 0, 0.85);
-    user-select: none; /* 防止文字被滑鼠選取反白 */
-  }
 }
 
 .input-tag {

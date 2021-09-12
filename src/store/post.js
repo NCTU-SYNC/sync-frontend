@@ -1,8 +1,17 @@
 const getDefaultState = () => {
   return {
+    articleId: undefined,
+    isNewPost: false,
+    isAnonymous: false,
+    data: {},
+    postAuthors: [],
+    postTitle: '',
+    postTags: [],
     blocks: [],
     citations: [],
-    currentEditingEditor: null
+    categorySelected: '',
+    currentEditingEditor: null,
+    showAddPointsAlert: false
   }
 }
 
@@ -51,8 +60,42 @@ const mutations = {
   RESET_POST(state) {
     Object.assign(state, getDefaultState())
   },
+  SET_TITLE(state, title) {
+    state.postTitle = title
+  },
+  PUSH_TAG(state, newTag) {
+    state.postTags.push(newTag)
+  },
+  REMOVE_TAG(state, index) {
+    state.postTags.splice(index, 1)
+  },
+  SHOW_ADDPOINTS_ALERT(state, val) {
+    state.showAddPointsAlert = val
+  },
+  SET_ANONYMOUS(state, val) {
+    state.isAnonymous = val
+  },
+  SET_ARTICLEID(state, articleId) {
+    state.articleId = articleId
+  },
+  SET_CATEGORY(state, category) {
+    state.categorySelected = category
+  },
+  SET_NEW_POST(state, status) {
+    state.isNewPost = status
+  },
   FOCUS_EDITOR(state, editor) {
     state.currentEditingEditor = editor
+  },
+  INIT_POST(state, payload) {
+    const data = payload.data
+    state.data = data
+    state.postAuthors = data.authors
+    state.postTitle = data.title
+    state.postTags = data.tags || []
+    state.blocks = data.blocks || []
+    state.categorySelected = data.category || ''
+    state.citations = data.citations || []
   }
 }
 
@@ -63,6 +106,18 @@ const getters = {
       return block.blockDateTime
     }
     return ''
+  },
+  GET_PUBLISH_DATA: (state) => {
+    return {
+      ...state.data,
+      title: state.postTitle,
+      tags: state.postTags,
+      authors: state.postAuthors,
+      blocks: state.blocks,
+      citations: state.citations,
+      isAnonymous: state.isAnonymous,
+      category: state.categorySelected
+    }
   }
 }
 

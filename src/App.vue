@@ -1,6 +1,14 @@
 <template>
   <div id="app">
-    <Navbar @reloadData="reloadData" />
+    <transition
+      name="fade"
+      mode="out-in"
+      :duration="300"
+    >
+      <NavbarPost v-if="isPost" @reloadData="reloadData" />
+      <Navbar v-else @reloadData="reloadData" />
+    </transition>
+
     <div id="wrapper">
       <transition
         name="fade"
@@ -16,16 +24,20 @@
 
 <script>
 import Navbar from '@/components/NavBar.vue'
+import NavbarPost from '@/components/Post/NavBarPost.vue'
 import Footer from '@/components/Footer.vue'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'App',
   components: {
-    Navbar, Footer
+    Navbar, Footer, NavbarPost
   },
   computed: {
-    ...mapGetters({ showFooter: 'showFooter' })
+    ...mapGetters({ showFooter: 'showFooter' }),
+    isPost() {
+      return this.$route.path.includes('post')
+    }
   },
   watch: {
     '$route': function(newRoute) {

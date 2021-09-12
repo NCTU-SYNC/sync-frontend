@@ -37,6 +37,7 @@ li {
   padding: 0.25rem 1rem;
   &:hover {
     background-color: $blue-25;
+    color: $white;
   }
 }
 %edit-outline {
@@ -46,6 +47,7 @@ li {
   border: 1px solid $blue;
   &:hover {
     background-color: $blue-60;
+    color: $blue;
   }
 }
 
