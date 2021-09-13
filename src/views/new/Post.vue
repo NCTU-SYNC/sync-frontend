@@ -48,15 +48,14 @@
             <div class="title-card-row title-card-row-between">
               <b-dropdown
                 ref="categoryRef"
-                class="bg-white rounded"
-                toggle-class="text-truncate text-decoration-none title-text "
+                class="bg-white rounded category-dropdown"
+                toggle-class="text-truncate text-decoration-none category-dropdown-btn"
                 variant="link"
                 no-caret
               >
                 <template #button-content>
-                  文章分類
-                  <span class="dropdown-line" />
-                  <b-icon icon="chevron-down" class="dropdown-icon" />
+                  <div class="btn-text">文章分類</div>
+                  <div class="btn-chevron"><b-icon icon="chevron-down" class="dropdown-icon" /></div>
                 </template>
                 <b-row class="no-gutters pl-2">
                   <b-col
@@ -66,7 +65,7 @@
                     class="d-flex justify-content-center align-items-center py-1 pr-2"
                   >
                     <label
-                      :class="['btn',{ 'btn-outline-primary': categorySelected === category }, 'w-100' ]"
+                      :class="['btn category-btn',{ 'selected-category-btn': categorySelected === category }, 'w-100' ]"
                     >
                       <input
                         v-model="categorySelected"
@@ -677,6 +676,53 @@ export default {
     top: 0;
     bottom: 0;
     background: #c4c4c4;
+  }
+}
+::v-deep .category-dropdown {
+  ul.dropdown-menu.show {
+    width: 272px;
+    height: 277px;
+    padding: 34px;
+  }
+  .category-btn {
+    &:hover {
+      background-color: $blue;
+      color: $white;
+    }
+  }
+  .selected-category-btn {
+    background-color: $blue;
+    color: $white;
+    font-weight: bold;
+    &:hover {
+      background-color: $blue-25;
+    }
+  }
+}
+::v-deep .category-dropdown-btn {
+  width: 130px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 0;
+  padding-right: 0;
+  .btn-text {
+    position: relative;
+    font-size: 14px;
+    flex: 5;
+    &::before {
+      content: "";
+      position: absolute;
+      width: 1px;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background: #c4c4c4;
+    }
+  }
+  .btn-chevron {
+    flex: 2;
   }
 }
 
