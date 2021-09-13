@@ -80,7 +80,7 @@
             :title="article.title"
             :view-count="article.viewCount"
             :category="article.category"
-            :last-update-at="article.lastUpdateAt"
+            :last-updated-at="article.lastUpdatedAt"
             :edited-count="article.editedCount"
             :blocks="article.blocks"
             :article-id="article._id"
