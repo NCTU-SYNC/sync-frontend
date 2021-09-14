@@ -2,6 +2,20 @@
   <b-container fluid class="no-gutters pl-0 pr-0">
     <b-row>
       <div class="sidebar">
+        <div class="personal-status">
+          <b-avatar size="5rem" :src="photoURL" class="float-left" />
+          <span class="text-lg font-weight-bold text-truncate">{{
+            displayName
+          }}</span>
+
+          <span class="text-sm text-gray">貢獻值</span>
+          <span class="text-sm text-blue">{{ points }}</span>
+
+          <span class="text-sm text-gray">加入日期</span>
+          <span class="text-sm text-gray">{{ creationDateTime }}</span>
+        </div>
+
+        <!--
         <table class="personal-status">
           <tr>
             <td>
@@ -28,6 +42,7 @@
             <td class="text-sm">{{ points }}</td>
           </tr>
         </table>
+        -->
 
         <ul role="tablist" class="options-nav">
           <li
@@ -111,7 +126,7 @@ export default {
     ...mapGetters({ createAt: 'user/createAt', email: 'user/email' }),
     creationDateTime() {
       return this.createAt
-        ? moment(parseInt(this.createAt)).format('YYYY年M月D日 HH:mm')
+        ? moment(parseInt(this.createAt)).format('YYYY.MM.DD')
         : ''
     }
   },
@@ -266,21 +281,27 @@ a {
 }
 
 .personal-status {
-  table-layout: fixed;
-  margin-left: 2rem;
-  width: calc(300px - 2rem);
+  display: grid;
+  height: 5rem;
+  margin-left: 1.75rem;
+  grid-template-columns: calc(5rem + 18px) 64px 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
 
-  &:first-child > tr td:first-of-type {
-    box-sizing: content-box;
-    width: 4rem;
+  // align all texts to center
+  & * {
+    display: flex;
+    align-items: center;
   }
 
-  td {
-    padding: 0.625rem 1.5rem 0 0;
+  // avatar
+  :first-child {
+    grid-column: 1 / 2;
+    grid-row: 1/4;
   }
 
-  tr:first-of-type td {
-    padding-top: 0;
+  // Display Name
+  :nth-child(2) {
+    grid-column: 2 / 4;
   }
 }
 
@@ -304,6 +325,14 @@ a {
 .text {
   &-lg {
     font-size: 1.125rem;
+  }
+
+  &-gray {
+    color: rgba(0, 0, 0, 0.45);
+  }
+
+  &-blue {
+    color: $blue;
   }
 }
 </style>
