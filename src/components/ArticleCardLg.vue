@@ -170,7 +170,7 @@ export default {
 @import '@/assets/scss/news.scss';
 
 .card {
-  padding: 16px 16px 20px 16px;
+  padding: 16px;
   width: 800px;
   height: 276px;
   border-radius: 0;
@@ -193,7 +193,7 @@ export default {
 }
 
 .article-excerpt {
-  line-height: 1.5em;
+  // line-height: 1.5em;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 7;
