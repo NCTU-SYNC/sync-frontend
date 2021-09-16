@@ -58,18 +58,28 @@ export default {
           type: 'divider'
         },
         {
+          icon: 'annotation',
+          title: 'Annotation',
+          action: () => {
+            this.$emit('showModal', 'citation-modal')
+          },
+          isActive: () => this.editor.isActive('annotation')
+        },
+        {
           icon: 'link',
           title: 'Link',
           action: () => {
-            const url = window.prompt('URL')
-
-            this.editor
-              .chain()
-              .focus()
-              .toggleLink({ href: url })
-              .run()
+            this.$emit('showModal', 'link-modal')
           },
           isActive: () => this.editor.isActive('link')
+        },
+        {
+          icon: 'image',
+          title: 'Image',
+          action: () => {
+            this.$emit('showModal', 'upload-image-modal')
+          },
+          isActive: () => this.editor.isActive('image')
         }
       ]
     }

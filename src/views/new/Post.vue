@@ -132,14 +132,14 @@
               <b-card
                 class="bg-light border-0 citations-container"
               >
-                <p>引用貼文</p>
+                <p>新聞來源附註</p>
                 <div v-for="(citation, index) in post.citations" :key="index">
                   <div class="d-flex justify-content-start align-items-center mt-2">
                     <div class="citation-list-tag">
                       <div class="period" :data-label="index + 1" />
                     </div>
                     <div class="w-100 pl-2 ">
-                      <b-link class="text-primary" :href="citation.url" target="_blank">{{ citation.title }}</b-link>
+                      <div>{{ citation.title }}</div>
                     </div>
                     <div class="citation-list-remove">
                       <b-button variant="outline-primary" class="citation-list-remove-btn" @click="onCitationRemoved(index)">
@@ -147,6 +147,7 @@
                       </b-button>
                     </div>
                   </div>
+                  <b-link class="text-primary" :href="citation.url" target="_blank">{{ citation.url }}</b-link>
                 </div>
               </b-card>
             </b-col>
@@ -454,6 +455,7 @@ export default {
         }).then(value => {
           if (value) {
             this.post.citations.splice(index, 1)
+            // TODO: remove citation in editor
           }
         })
       }

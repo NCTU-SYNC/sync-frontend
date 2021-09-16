@@ -46,9 +46,9 @@ export default {
     async getInitializeInfo() {
       console.log('getInitializeInfo')
       if (!this.$store.getters.isInitialized) {
-        setTimeout(() => {
-          this.getInitializeInfo()
-        }, 100)
+        // setTimeout(() => {
+        //   this.getInitializeInfo()
+        // }, 100)
         return
       }
       const { notifications } = await this.$store.dispatch('article/INITIALIZE')
