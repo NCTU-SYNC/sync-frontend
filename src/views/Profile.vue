@@ -15,35 +15,6 @@
           <span class="text-sm text-gray">{{ creationDateTime }}</span>
         </div>
 
-        <!--
-        <table class="personal-status">
-          <tr>
-            <td>
-              <b-avatar size="4rem" :src="photoURL" />
-            </td>
-            <td>
-              <span
-                class="d-block w-auto text-lg font-weight-bold text-truncate"
-              >{{ displayName }}</span>
-              <span class="d-block w-auto text-sm text-gray text-truncate">{{
-                email
-              }}</span>
-            </td>
-          </tr>
-          <tr class="blank-row">
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td class="text-sm">加入日期</td>
-            <td class="text-sm text-light-gray">{{ creationDateTime }}</td>
-          </tr>
-          <tr>
-            <td class="text-sm">貢獻值</td>
-            <td class="text-sm">{{ points }}</td>
-          </tr>
-        </table>
-        -->
-
         <ul role="tablist" class="options-nav">
           <li
             :aria-selected="currentShowingIndex === 0"
