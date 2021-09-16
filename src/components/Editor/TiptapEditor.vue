@@ -34,8 +34,16 @@
       </button>
     </floating-menu>
 
-    <menu-bar v-if="editable" class="editor__header" :editor="editor" />
+    <menu-bar
+      v-if="editable"
+      class="editor__header"
+      :editor="editor"
+      @showModal="showModal"
+    />
     <editor-content :editor="editor" :class="editable ? 'editor__content__edit': 'editor__content'" />
+    <upload-image-modal ref="upload-image-modal" @addImage="addImage" />
+    <citation-modal ref="citation-modal" @addCitation="addCitation" />
+    <link-modal ref="link-modal" @addLink="addLink" />
   </div>
 </template>
 
@@ -47,7 +55,11 @@ import Typography from '@tiptap/extension-typography'
 import Image from '@tiptap/extension-image'
 import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
+import Superscript from '@tiptap/extension-superscript'
 import MenuBar from './MenuBar.vue'
+import UploadImageModal from './Modals/UploadImageModal.vue'
+import CitationModal from './Modals/CitationModal.vue'
+import LinkModal from './Modals/LinkModal.vue'
 
 export default {
 
@@ -55,7 +67,10 @@ export default {
     EditorContent,
     BubbleMenu,
     FloatingMenu,
-    MenuBar
+    MenuBar,
+    UploadImageModal,
+    CitationModal,
+    LinkModal
   },
   props: {
     id: {
@@ -95,7 +110,8 @@ export default {
         Highlight,
         Typography,
         Link,
-        Image
+        Image,
+        Superscript
       ],
       editable: this.editable,
       content: this.content
@@ -107,12 +123,27 @@ export default {
   },
 
   methods: {
-    addImage() {
-      const url = window.prompt('URL')
+    addImage(data) {
+      const { url } = data
 
       if (url) {
         this.editor.chain().focus().setImage({ src: url }).run()
       }
+    },
+    showModal(modal) {
+      // TODO: prevent modal from showing multiple times when there are multiple blocks
+      this.$refs[modal].show()
+    },
+    addLink(data) {
+      const { content, url } = data
+      this.editor.commands.insertContent(`<a href=${url}>${content}</>`)
+    },
+    async addCitation(data) {
+      const { content, title, url } = data
+      await this.$store.dispatch('post/SUBMIT_CITATION_FORM', { title, url })
+      const { citations } = this.$store.state.post
+      this.editor.commands.insertContent(`${content}<sup>${citations.length}</sup>`)
+      this.editor.chain().focus().toggleSuperscript().run()
     }
   }
 }
