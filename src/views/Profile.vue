@@ -2,32 +2,24 @@
   <b-container fluid class="no-gutters pl-0 pr-0">
     <b-row>
       <div class="sidebar">
-        <table class="personal-status">
-          <tr>
-            <td>
-              <b-avatar size="4rem" :src="photoURL" />
-            </td>
-            <td>
-              <span
-                class="d-block w-auto text-lg font-weight-bold text-truncate"
-              >{{ displayName }}</span>
-              <span class="d-block w-auto text-sm text-gray text-truncate">{{
-                email
-              }}</span>
-            </td>
-          </tr>
-          <tr class="blank-row">
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td class="text-sm">加入日期</td>
-            <td class="text-sm text-light-gray">{{ creationDateTime }}</td>
-          </tr>
-          <tr>
-            <td class="text-sm">貢獻值</td>
-            <td class="text-sm">{{ points }}</td>
-          </tr>
-        </table>
+        <b-container class="personal-status">
+          <b-avatar size="5rem" :src="photoURL" class="float-left" />
+          <b-row align-v="stretch" class="personal-status-name">
+            <b-col class="text-lg font-weight-bold text-truncate">
+              {{ displayName }}
+            </b-col>
+          </b-row>
+          <b-row align-v="stretch" class="personal-status-text">
+            <b-col cols="6" class="text-sm text-gray pr-0">貢獻值</b-col>
+            <b-col class="text-sm text-blue pl-0 pr-0">{{ points }}</b-col>
+          </b-row>
+          <b-row align-v="stretch" class="personal-status-text">
+            <b-col cols="6" class="text-sm text-gray pr-0">加入日期</b-col>
+            <b-col class="text-sm text-gray pl-0 pr-0">{{
+              creationDateTime
+            }}</b-col>
+          </b-row>
+        </b-container>
 
         <ul role="tablist" class="options-nav">
           <li
@@ -111,7 +103,7 @@ export default {
     ...mapGetters({ createAt: 'user/createAt', email: 'user/email' }),
     creationDateTime() {
       return this.createAt
-        ? moment(parseInt(this.createAt)).format('YYYY年M月D日 HH:mm')
+        ? moment(parseInt(this.createAt)).format('YYYY.MM.DD')
         : ''
     }
   },
@@ -266,21 +258,25 @@ a {
 }
 
 .personal-status {
-  table-layout: fixed;
-  margin-left: 2rem;
-  width: calc(300px - 2rem);
+  height: 5rem;
+  padding-left: 1.75rem;
+  padding-right: 1.75rem;
 
-  &:first-child > tr td:first-of-type {
-    box-sizing: content-box;
-    width: 4rem;
+  &-name {
+    height: 2rem;
   }
 
-  td {
-    padding: 0.625rem 1.5rem 0 0;
+  &-text {
+    height: 1.5rem;
+
+    :first-child {
+      width: 8rem;
+    }
   }
 
-  tr:first-of-type td {
-    padding-top: 0;
+  // align all texts to center
+  & * {
+    margin: auto 0;
   }
 }
 
@@ -304,6 +300,14 @@ a {
 .text {
   &-lg {
     font-size: 1.125rem;
+  }
+
+  &-gray {
+    color: rgba(0, 0, 0, 0.45);
+  }
+
+  &-blue {
+    color: $blue;
   }
 }
 </style>
