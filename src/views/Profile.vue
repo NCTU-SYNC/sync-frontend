@@ -2,18 +2,24 @@
   <b-container fluid class="no-gutters pl-0 pr-0">
     <b-row>
       <div class="sidebar">
-        <div class="personal-status">
+        <b-container class="personal-status">
           <b-avatar size="5rem" :src="photoURL" class="float-left" />
-          <span class="text-lg font-weight-bold text-truncate">{{
-            displayName
-          }}</span>
-
-          <span class="text-sm text-gray">貢獻值</span>
-          <span class="text-sm text-blue">{{ points }}</span>
-
-          <span class="text-sm text-gray">加入日期</span>
-          <span class="text-sm text-gray">{{ creationDateTime }}</span>
-        </div>
+          <b-row align-v="stretch" class="personal-status-name">
+            <b-col class="text-lg font-weight-bold text-truncate">
+              {{ displayName }}
+            </b-col>
+          </b-row>
+          <b-row align-v="stretch" class="personal-status-text">
+            <b-col cols="6" class="text-sm text-gray pr-0">貢獻值</b-col>
+            <b-col class="text-sm text-blue pl-0 pr-0">{{ points }}</b-col>
+          </b-row>
+          <b-row align-v="stretch" class="personal-status-text">
+            <b-col cols="6" class="text-sm text-gray pr-0">加入日期</b-col>
+            <b-col class="text-sm text-gray pl-0 pr-0">{{
+              creationDateTime
+            }}</b-col>
+          </b-row>
+        </b-container>
 
         <ul role="tablist" class="options-nav">
           <li
@@ -252,27 +258,25 @@ a {
 }
 
 .personal-status {
-  display: grid;
   height: 5rem;
-  margin-left: 1.75rem;
-  grid-template-columns: calc(5rem + 18px) 64px 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
+  padding-left: 1.75rem;
+  padding-right: 1.75rem;
+
+  &-name {
+    height: 2rem;
+  }
+
+  &-text {
+    height: 1.5rem;
+
+    :first-child {
+      width: 8rem;
+    }
+  }
 
   // align all texts to center
   & * {
-    display: flex;
-    align-items: center;
-  }
-
-  // avatar
-  :first-child {
-    grid-column: 1 / 2;
-    grid-row: 1/4;
-  }
-
-  // Display Name
-  :nth-child(2) {
-    grid-column: 2 / 4;
+    margin: auto 0;
   }
 }
 
