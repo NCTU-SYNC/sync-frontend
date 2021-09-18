@@ -85,6 +85,7 @@
             :blocks="article.blocks"
             :article-id="article._id"
             full
+            class="p-0"
           />
         </slot>
       </div>
@@ -302,7 +303,6 @@ a {
 */
 .tab-content {
   padding: 3rem 4rem;
-  width: 32.5rem;
   box-sizing: content-box;
 }
 

@@ -1,10 +1,6 @@
 <template>
   <b-col>
-    <b-card
-      no-body
-      :style="size"
-      class="card mx-auto my-3 justify-content-center"
-    >
+    <b-card no-body :style="size" class="card my-3 justify-content-center">
       <button class="subscribe-btn" @click="handleClickBookmark()">
         <img
           v-if="!isSubscribed"
@@ -20,8 +16,8 @@
           srcset=""
         >
       </button>
-      <b-link :to="`/article/${articleId}`">
-        <b-card-body class="d-flex flex-column p-0">
+      <b-card-body class="d-flex flex-column p-0">
+        <b-link :to="`/article/${articleId}`">
           <div class="d-flex justify-content-between">
             <div class="article-category">
               {{ getCategory(category) }}
@@ -44,8 +40,8 @@
             </div>
             <div>觀看數：{{ viewsCount }} | 編輯數：{{ editedCount }}</div>
           </div>
-        </b-card-body>
-      </b-link>
+        </b-link>
+      </b-card-body>
     </b-card>
   </b-col>
 </template>
@@ -99,14 +95,17 @@ export default {
     subscribedList() {
       return this.$store.getters['article/subscribedList']
     },
+    cols() {
+      return this.full ? 12 : 4
+    },
     size() {
       return {
-        width: this.lg ? '800px' : '320px',
-        height: this.lg ? '276px' : '380px'
+        'max-width': this.full ? '800px' : '320px',
+        height: this.full ? '276px' : '380px'
       }
     },
     excerptCount() {
-      return this.lg ? 180 : 140
+      return this.lg ? 190 : 140
     }
   },
   watch: {
@@ -188,8 +187,6 @@ export default {
 
 .card {
   padding: 15.2px;
-  width: 320px;
-  height: 386px;
 }
 .heading {
   // font-size: 22px;
