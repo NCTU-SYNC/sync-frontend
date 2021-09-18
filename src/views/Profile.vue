@@ -76,7 +76,7 @@
           <Setting />
         </slot>
         <slot v-for="article in showingArticles" v-else>
-          <ArticleCardLg
+          <ArticleCard
             :title="article.title"
             :view-count="article.viewCount"
             :category="article.category"
@@ -84,6 +84,7 @@
             :edited-count="article.editedCount"
             :blocks="article.blocks"
             :article-id="article._id"
+            lg
           />
         </slot>
       </div>
@@ -93,7 +94,7 @@
 </template>
 
 <script>
-import ArticleCardLg from '@/components/ArticleCardLg.vue'
+import ArticleCard from '@/components/ArticleCard.vue'
 import Setting from '@/components/Profile/Setting.vue'
 import { mapGetters } from 'vuex'
 import moment from 'moment'
@@ -102,7 +103,7 @@ import { getArticlesInfo } from '@/api/user'
 export default {
   name: 'Profile',
   components: {
-    ArticleCardLg,
+    ArticleCard,
     Setting
   },
   data() {

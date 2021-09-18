@@ -1,24 +1,22 @@
 <template>
   <b-col>
-    <b-card no-body class="card mx-auto my-3 justify-content-center">
-      class="card mx-auto my-3 justify-content-center rounded"
-      <b-card-body class="d-flex flex-column p-0">
-        <div class="d-flex justify-content-between">
-          <div class="article-category">
-            {{ getCategory(category) }}
-          </div>
-          <button class="subscribe-btn" @click="handleClickBookmark()">
-            <img
-              v-if="!isSubscribed"
-              width="32px"
-              src="@/assets/icons/ic-save.svg"
-              alt="save-icon"
-            >
-            <img
-              v-else
-              width="32px"
-              src="@/assets/icons/ic-saved.svg"
-              alt="saved-icon"
+    <b-card
+      no-body
+      :style="size"
+      class="card mx-auto my-3 justify-content-center"
+    >
+      <button class="subscribe-btn" @click="handleClickBookmark()">
+        <img
+          v-if="!isSubscribed"
+          width="32px"
+          src="@/assets/icons/ic-save.svg"
+          alt="save-icon"
+        >
+        <img
+          v-else
+          width="32px"
+          src="@/assets/icons/ic-saved.svg"
+          alt="saved-icon"
           srcset=""
         >
       </button>
@@ -38,12 +36,12 @@
           </div>
 
           <b-card-text class="article-excerpt">
-          {{ getArticleContent(blocks, 140) }}
+            {{ getArticleContent(blocks, excerptCount) }}
           </b-card-text>
           <div class="d-flex justify-content-between article-footer">
             <div>
-            {{ getDateTime(lastUpdatedAt) }}
-          </div>
+              {{ getDateTime(lastUpdatedAt) }}
+            </div>
             <div>觀看數：{{ viewsCount }} | 編輯數：{{ editedCount }}</div>
           </div>
         </b-card-body>
@@ -85,6 +83,10 @@ export default {
     articleId: {
       type: String,
       default: ''
+    },
+    lg: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -96,6 +98,15 @@ export default {
   computed: {
     subscribedList() {
       return this.$store.getters['article/subscribedList']
+    },
+    size() {
+      return {
+        width: this.lg ? '800px' : '320px',
+        height: this.lg ? '276px' : '380px'
+      }
+    },
+    excerptCount() {
+      return this.lg ? 180 : 140
     }
   },
   watch: {
