@@ -1,6 +1,14 @@
 <template>
   <b-col>
-    <b-card no-body :style="size" class="card my-3 justify-content-center">
+    <b-card
+      no-body
+      :style="size"
+      class="card my-3 justify-content-center"
+      footer-tag="footer"
+      footer-bg-variant="white"
+      footer-border-variant="white"
+      footer-class="p-0 article-footer"
+    >
       <button class="subscribe-btn" @click="handleClickBookmark()">
         <img
           v-if="!isSubscribed"
@@ -34,14 +42,16 @@
           <b-card-text class="article-excerpt">
             {{ getArticleContent(blocks, excerptCount) }}
           </b-card-text>
-          <div class="d-flex justify-content-between article-footer">
-            <div>
-              {{ getDateTime(lastUpdatedAt) }}
-            </div>
-            <div>觀看數：{{ viewsCount }} | 編輯數：{{ editedCount }}</div>
-          </div>
         </b-link>
       </b-card-body>
+      <template #footer>
+        <div class="d-flex justify-content-between">
+          <div>
+            {{ getDateTime(lastUpdatedAt) }}
+          </div>
+          <div>觀看數：{{ viewsCount }} | 編輯數：{{ editedCount }}</div>
+        </div>
+      </template>
     </b-card>
   </b-col>
 </template>
@@ -209,10 +219,6 @@ export default {
   display: -webkit-box;
   -webkit-line-clamp: 7;
   -webkit-box-orient: vertical;
-}
-
-.article-footer {
-  margin-top: auto;
 }
 
 .subscribe-btn {
