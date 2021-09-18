@@ -1,21 +1,28 @@
 <template>
   <b-col>
-    <b-card
-      no-body
-      class="card mx-auto my-3 justify-content-center"
-    >
-      <b-card-body class="card-body-style d-flex flex-column">
+    <b-card no-body class="card mx-auto my-3 justify-content-center">
+      <b-card-body class="d-flex flex-column p-0">
         <div class="d-flex justify-content-between">
           <div class="article-category">
             {{ getCategory(category) }}
           </div>
           <button class="subscribe-btn" @click="handleClickBookmark()">
-            <img v-if="!isSubscribed" width="32px" src="@/assets/icons/ic-save.svg" alt="save-icon">
-            <img v-else width="32px" src="@/assets/icons/ic-saved.svg" alt="saved-icon" srcset="">
+            <img
+              v-if="!isSubscribed"
+              width="32px"
+              src="@/assets/icons/ic-save.svg"
+              alt="save-icon"
+            >
+            <img
+              v-else
+              width="32px"
+              src="@/assets/icons/ic-saved.svg"
+              alt="saved-icon"
+              srcset=""
+            >
           </button>
         </div>
         <div>
-
           <b-card-title class="heading">
             <h4>
               <b-link :to="`/article/${articleId}`">
@@ -23,17 +30,16 @@
               </b-link>
             </h4>
           </b-card-title>
-
         </div>
 
-        <b-card-text class="article-excerpt"> {{ getArticleContent(blocks, 140) }} </b-card-text>
+        <b-card-text class="article-excerpt">
+          {{ getArticleContent(blocks, 140) }}
+        </b-card-text>
         <div class="d-flex justify-content-between article-footer">
           <div>
             {{ getDateTime(lastUpdatedAt) }}
           </div>
-          <div>
-            觀看數：{{ viewsCount }} | 編輯數：{{ editedCount }}
-          </div>
+          <div>觀看數：{{ viewsCount }} | 編輯數：{{ editedCount }}</div>
         </div>
       </b-card-body>
     </b-card>
@@ -89,7 +95,8 @@ export default {
   watch: {
     subscribedList(newList) {
       if (newList) {
-        this.isSubscribed = newList.findIndex(s => s.articleId === this.articleId) >= 0
+        this.isSubscribed =
+          newList.findIndex(s => s.articleId === this.articleId) >= 0
         return
       }
       this.isSubscribed = false
@@ -99,7 +106,8 @@ export default {
     // check if user logged in
     this.isLogin = !!this.$store.getters.token
     if (this.isLogin) {
-      this.isSubscribed = this.subscribedList.findIndex(s => s.articleId === this.articleId) >= 0
+      this.isSubscribed =
+        this.subscribedList.findIndex(s => s.articleId === this.articleId) >= 0
     }
   },
   methods: {
@@ -111,7 +119,9 @@ export default {
     },
     getCategory(newsCategory) {
       if (typeof newsCategory === 'string') {
-        if (newsCategory.length === 0) { return '未分類' } else return newsCategory
+        if (newsCategory.length === 0) {
+          return '未分類'
+        } else return newsCategory
       } else return '未分類'
     },
     getDateTime(lastUpdatedAt) {
@@ -138,13 +148,16 @@ export default {
             centered: true
           })
         } else {
-          this.$bvModal.msgBoxOk(`${this.isSubscribed ? '取消' : ''}追蹤文章失敗`, {
-            title: '追蹤文章',
-            okVariant: 'danger',
-            okTitle: '確定',
-            footerClass: 'modal-footer-confirm',
-            centered: true
-          })
+          this.$bvModal.msgBoxOk(
+            `${this.isSubscribed ? '取消' : ''}追蹤文章失敗`,
+            {
+              title: '追蹤文章',
+              okVariant: 'danger',
+              okTitle: '確定',
+              footerClass: 'modal-footer-confirm',
+              centered: true
+            }
+          )
         }
       }
     },
@@ -162,24 +175,21 @@ export default {
   height: 386px;
   border-radius: 0;
 }
-.card-body-style::v-deep {
-  padding: 0px;
-}
-.heading{
-    // font-size: 22px;
-    line-height: 1.5em;
-    max-height: 3em;
-    overflow: hidden;
-    h4 {
-      margin: 0;
-    }
-    box-sizing: border-box;
-    text-align: justify;
-    margin-top: 26px;
-    margin-bottom: 29px;
+.heading {
+  // font-size: 22px;
+  line-height: 1.5em;
+  max-height: 3em;
+  overflow: hidden;
+  h4 {
+    margin: 0;
+  }
+  box-sizing: border-box;
+  text-align: justify;
+  margin-top: 26px;
+  margin-bottom: 29px;
 }
 
-.article-excerpt{
+.article-excerpt {
   width: 288px;
   line-height: 1.5em;
   overflow: hidden;
@@ -189,7 +199,7 @@ export default {
   -webkit-box-orient: vertical;
 }
 
-.article-footer{
+.article-footer {
   margin-top: auto;
 }
 
@@ -199,5 +209,4 @@ export default {
   padding: 0;
   margin: 0;
 }
-
 </style>
