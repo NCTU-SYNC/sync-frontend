@@ -84,7 +84,7 @@
             :edited-count="article.editedCount"
             :blocks="article.blocks"
             :article-id="article._id"
-            lg
+            full
           />
         </slot>
       </div>

@@ -84,7 +84,7 @@ export default {
       type: String,
       default: ''
     },
-    lg: {
+    full: {
       type: Boolean,
       default: false
     }
