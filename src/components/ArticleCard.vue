@@ -171,10 +171,9 @@ export default {
 @import '@/assets/scss/news.scss';
 
 .card {
-  padding: 16px 16px 20px 16px;
+  padding: 15.2px;
   width: 320px;
   height: 386px;
-  border-radius: 0;
 }
 .heading {
   // font-size: 22px;
@@ -191,7 +190,6 @@ export default {
 }
 
 .article-excerpt {
-  width: 288px;
   line-height: 1.5em;
   overflow: hidden;
   margin-bottom: 20px;
