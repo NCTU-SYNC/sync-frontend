@@ -1,6 +1,7 @@
 <template>
   <b-col>
     <b-card no-body class="card mx-auto my-3 justify-content-center">
+      class="card mx-auto my-3 justify-content-center rounded"
       <b-card-body class="d-flex flex-column p-0">
         <div class="d-flex justify-content-between">
           <div class="article-category">
