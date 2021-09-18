@@ -19,30 +19,35 @@
               width="32px"
               src="@/assets/icons/ic-saved.svg"
               alt="saved-icon"
-              srcset=""
-            >
-          </button>
-        </div>
-        <div>
-          <b-card-title class="heading">
-            <h4>
-              <b-link :to="`/article/${articleId}`">
-                {{ getTitle(title) }}
-              </b-link>
-            </h4>
-          </b-card-title>
-        </div>
-
-        <b-card-text class="article-excerpt">
-          {{ getArticleContent(blocks, 140) }}
-        </b-card-text>
-        <div class="d-flex justify-content-between article-footer">
+          srcset=""
+        >
+      </button>
+      <b-link :to="`/article/${articleId}`">
+        <b-card-body class="d-flex flex-column p-0">
+          <div class="d-flex justify-content-between">
+            <div class="article-category">
+              {{ getCategory(category) }}
+            </div>
+          </div>
           <div>
+            <b-card-title class="heading">
+              <h4>
+                {{ getTitle(title) }}
+              </h4>
+            </b-card-title>
+          </div>
+
+          <b-card-text class="article-excerpt">
+          {{ getArticleContent(blocks, 140) }}
+          </b-card-text>
+          <div class="d-flex justify-content-between article-footer">
+            <div>
             {{ getDateTime(lastUpdatedAt) }}
           </div>
-          <div>觀看數：{{ viewsCount }} | 編輯數：{{ editedCount }}</div>
-        </div>
-      </b-card-body>
+            <div>觀看數：{{ viewsCount }} | 編輯數：{{ editedCount }}</div>
+          </div>
+        </b-card-body>
+      </b-link>
     </b-card>
   </b-col>
 </template>
@@ -203,6 +208,9 @@ export default {
 }
 
 .subscribe-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
   background: transparent;
   border: 0;
   padding: 0;
