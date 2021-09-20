@@ -7,6 +7,7 @@
           v-model="searchKeyword"
           class="border-0"
           placeholder="搜尋新聞"
+          @keyup.enter="getNews"
         />
         <div />
         <b-button
