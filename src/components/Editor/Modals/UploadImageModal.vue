@@ -1,5 +1,5 @@
 <template>
-  <b-modal id="upload-image-modal" centered title="上傳圖片" size="xl" @ok="handleConfirm">
+  <b-modal id="upload-image-modal" v-model="isShown" centered title="上傳圖片" size="xl" @ok="handleConfirm">
     <b-navbar toggleable="sm">
       <b-navbar-nav>
         <b-nav-item href="#" @click="toggleFile">By File</b-nav-item>
@@ -18,7 +18,8 @@ export default {
   data() {
     return {
       isFile: true,
-      url: ''
+      url: '',
+      isShown: false
     }
   },
   methods: {

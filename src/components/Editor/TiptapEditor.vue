@@ -131,8 +131,8 @@ export default {
       }
     },
     showModal(modal) {
-      // TODO: prevent modal from showing multiple times when there are multiple blocks
-      this.$refs[modal].show()
+      // prevent duplicated modals when there are multiple blocks
+      if (!this.$refs[modal].isShown) { this.$refs[modal].isShown = true }
     },
     addLink(data) {
       const { content, url } = data

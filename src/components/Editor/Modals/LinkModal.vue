@@ -1,5 +1,5 @@
 <template>
-  <b-modal id="link-modal" centered title="插入連結" size="xl" @ok="handleConfirm">
+  <b-modal id="link-modal" v-model="isShown" centered title="插入連結" size="xl" @ok="handleConfirm">
     <div class="edit-add-block-row edit-row">
       <b-row>
         <b-col cols="2" class="ml-3">顯示文字：</b-col>
@@ -20,7 +20,8 @@ export default {
   data() {
     return {
       content: '',
-      url: ''
+      url: '',
+      isShown: false
     }
   },
   methods: {

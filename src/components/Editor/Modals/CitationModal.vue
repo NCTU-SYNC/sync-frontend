@@ -1,5 +1,5 @@
 <template>
-  <b-modal id="citation-modal" centered title="編輯附註" size="xl" @ok="handleConfirm">
+  <b-modal id="citation-modal" v-model="isShown" centered title="編輯附註" size="xl" @ok="handleConfirm">
     <div class="edit-add-block-row edit-row">
       <b-row>
         <b-col cols="2" class="ml-3">附註內容：</b-col>
@@ -27,7 +27,8 @@ export default {
     return {
       content: '',
       title: '',
-      url: ''
+      url: '',
+      isShown: false
     }
   },
   methods: {
@@ -35,6 +36,7 @@ export default {
       this.content = ''
       this.title = ''
       this.url = ''
+      this.isShown = false
     },
     show() {
       this.$bvModal.show('citation-modal')
