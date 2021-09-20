@@ -44,10 +44,10 @@
           版本日期
         </div>
       </b-col>
-      <b-col sm="5">
+      <b-col sm="6">
         編輯者
       </b-col>
-      <b-col sm="3">
+      <b-col sm="2" class="compared-container">
         版本比較
       </b-col>
     </b-row>
@@ -68,10 +68,10 @@
           </slot>
         </div>
       </b-col>
-      <b-col sm="5">
+      <b-col sm="6">
         {{ item.author }}
       </b-col>
-      <b-col sm="3" class="compare-options">
+      <b-col sm="2" class="compared-container">
         <div v-if="item.type !== 'header'">
           <b-link
             class="pr-2 link-right"
@@ -322,6 +322,9 @@ h5 {
 }
 .date-container{
   margin-left: 16px;
+}
+.compared-container{
+  margin-left: -40px;
 }
 </style>
 

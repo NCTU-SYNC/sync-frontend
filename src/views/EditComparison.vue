@@ -29,13 +29,13 @@
       <b-col>
         <b-row class="divider">
           <b-col class="py-2 comparison-header" cols="6">
-            <div :class="{'clicked-row': base > compare}">
+            <div :class="{'clicked-row': isClickedRow && base > compare}">
               <span class="mr-2 pr-2 border-right">{{ versions[0].updatedAt }}</span>
               <span>{{ versions[0].author.isAnonymous ? '匿名' : versions[0].author.name }}</span>
             </div>
           </b-col>
           <b-col class="py-2 comparison-header d-flex" cols="6">
-            <div :class="{'clicked-row': base < compare}">
+            <div :class="{'clicked-row': isClickedRow && base < compare}">
               <span class="mr-2 pr-2 border-right">{{ versions[1].updatedAt }}</span>
               <span>{{ versions[1].author.isAnonymous ? '匿名' : versions[1].author.name }}</span>
             </div>
@@ -96,7 +96,8 @@ export default {
       linkContainer: '{{link}}',
       blockquoteContainer: '{{blockquote}}',
       diffOrderArr: [],
-      isPageReady: false
+      isPageReady: false,
+      isClickedRow: true
     }
   },
   computed: {
@@ -151,6 +152,10 @@ export default {
             ...this.versions,
             [i]: { title, blocks, author, updatedAt, citations }
           }
+        }
+
+        if (this.compare === this.versionsLength || this.base === this.versionsLength) {
+          this.versions[1].updatedAt += '（最新版）'
         }
 
         this.articleDiff = this.compareContent(this.versions[0].blocks, this.versions[1].blocks)
@@ -306,6 +311,7 @@ export default {
       if (this.base <= 1) {
         return
       }
+      this.isClickedRow = false
       this.base -= 1
       this.compare = this.base + 1
       console.log(this.base, this.compare)
@@ -315,6 +321,7 @@ export default {
       if (this.base >= this.versionsLength - 1) {
         return
       }
+      this.isClickedRow = false
       this.base += 1
       this.compare = this.base + 1
       this.handleGetArticlesComparison()
