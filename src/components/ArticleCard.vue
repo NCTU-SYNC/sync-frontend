@@ -2,40 +2,56 @@
   <b-col>
     <b-card
       no-body
-      class="card mx-auto my-3 justify-content-center"
+      :style="size"
+      class="card my-3 justify-content-center"
+      footer-tag="footer"
+      footer-bg-variant="white"
+      footer-border-variant="white"
+      footer-class="p-0 article-footer"
     >
-      <b-card-body class="card-body-style d-flex flex-column">
-        <div class="d-flex justify-content-between">
-          <div class="article-category">
-            {{ getCategory(category) }}
+      <button class="subscribe-btn" @click="handleClickBookmark()">
+        <img
+          v-if="!isSubscribed"
+          width="32px"
+          src="@/assets/icons/ic-save.svg"
+          alt="save-icon"
+        >
+        <img
+          v-else
+          width="32px"
+          src="@/assets/icons/ic-saved.svg"
+          alt="saved-icon"
+          srcset=""
+        >
+      </button>
+      <b-card-body class="d-flex flex-column p-0">
+        <b-link :to="`/article/${articleId}`">
+          <div class="d-flex justify-content-between">
+            <div class="article-category">
+              {{ getCategory(category) }}
+            </div>
           </div>
-          <button class="subscribe-btn" @click="handleClickBookmark()">
-            <img v-if="!isSubscribed" width="32px" src="@/assets/icons/ic-save.svg" alt="save-icon">
-            <img v-else width="32px" src="@/assets/icons/ic-saved.svg" alt="saved-icon" srcset="">
-          </button>
-        </div>
-        <div>
-
-          <b-card-title class="heading">
-            <h4>
-              <b-link :to="`/article/${articleId}`">
+          <div>
+            <b-card-title class="heading">
+              <h4>
                 {{ getTitle(title) }}
-              </b-link>
-            </h4>
-          </b-card-title>
+              </h4>
+            </b-card-title>
+          </div>
 
-        </div>
-
-        <b-card-text class="article-excerpt"> {{ getArticleContent(blocks, 140) }} </b-card-text>
-        <div class="d-flex justify-content-between article-footer">
+          <b-card-text class="article-excerpt">
+            {{ getArticleContent(blocks, excerptCount) }}
+          </b-card-text>
+        </b-link>
+      </b-card-body>
+      <template #footer>
+        <div class="d-flex justify-content-between">
           <div>
             {{ getDateTime(lastUpdatedAt) }}
           </div>
-          <div>
-            觀看數：{{ viewsCount }} | 編輯數：{{ editedCount }}
-          </div>
+          <div>觀看數：{{ viewsCount }} | 編輯數：{{ editedCount }}</div>
         </div>
-      </b-card-body>
+      </template>
     </b-card>
   </b-col>
 </template>
@@ -73,6 +89,10 @@ export default {
     articleId: {
       type: String,
       default: ''
+    },
+    full: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -84,12 +104,25 @@ export default {
   computed: {
     subscribedList() {
       return this.$store.getters['article/subscribedList']
+    },
+    cols() {
+      return this.full ? 12 : 4
+    },
+    size() {
+      return {
+        'max-width': this.full ? '800px' : '320px',
+        height: this.full ? '276px' : '380px'
+      }
+    },
+    excerptCount() {
+      return this.lg ? 190 : 140
     }
   },
   watch: {
     subscribedList(newList) {
       if (newList) {
-        this.isSubscribed = newList.findIndex(s => s.articleId === this.articleId) >= 0
+        this.isSubscribed =
+          newList.findIndex(s => s.articleId === this.articleId) >= 0
         return
       }
       this.isSubscribed = false
@@ -99,7 +132,8 @@ export default {
     // check if user logged in
     this.isLogin = !!this.$store.getters.token
     if (this.isLogin) {
-      this.isSubscribed = this.subscribedList.findIndex(s => s.articleId === this.articleId) >= 0
+      this.isSubscribed =
+        this.subscribedList.findIndex(s => s.articleId === this.articleId) >= 0
     }
   },
   methods: {
@@ -111,7 +145,9 @@ export default {
     },
     getCategory(newsCategory) {
       if (typeof newsCategory === 'string') {
-        if (newsCategory.length === 0) { return '未分類' } else return newsCategory
+        if (newsCategory.length === 0) {
+          return '未分類'
+        } else return newsCategory
       } else return '未分類'
     },
     getDateTime(lastUpdatedAt) {
@@ -138,13 +174,16 @@ export default {
             centered: true
           })
         } else {
-          this.$bvModal.msgBoxOk(`${this.isSubscribed ? '取消' : ''}追蹤文章失敗`, {
-            title: '追蹤文章',
-            okVariant: 'danger',
-            okTitle: '確定',
-            footerClass: 'modal-footer-confirm',
-            centered: true
-          })
+          this.$bvModal.msgBoxOk(
+            `${this.isSubscribed ? '取消' : ''}追蹤文章失敗`,
+            {
+              title: '追蹤文章',
+              okVariant: 'danger',
+              okTitle: '確定',
+              footerClass: 'modal-footer-confirm',
+              centered: true
+            }
+          )
         }
       }
     },
@@ -157,30 +196,23 @@ export default {
 @import '@/assets/scss/news.scss';
 
 .card {
-  padding: 16px 16px 20px 16px;
-  width: 320px;
-  height: 386px;
-  border-radius: 0;
+  padding: 15.2px;
 }
-.card-body-style::v-deep {
-  padding: 0px;
-}
-.heading{
-    // font-size: 22px;
-    line-height: 1.5em;
-    max-height: 3em;
-    overflow: hidden;
-    h4 {
-      margin: 0;
-    }
-    box-sizing: border-box;
-    text-align: justify;
-    margin-top: 26px;
-    margin-bottom: 29px;
+.heading {
+  // font-size: 22px;
+  line-height: 1.5em;
+  max-height: 3em;
+  overflow: hidden;
+  h4 {
+    margin: 0;
+  }
+  box-sizing: border-box;
+  text-align: justify;
+  margin-top: 26px;
+  margin-bottom: 29px;
 }
 
-.article-excerpt{
-  width: 288px;
+.article-excerpt {
   line-height: 1.5em;
   overflow: hidden;
   margin-bottom: 20px;
@@ -189,15 +221,13 @@ export default {
   -webkit-box-orient: vertical;
 }
 
-.article-footer{
-  margin-top: auto;
-}
-
 .subscribe-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
   background: transparent;
   border: 0;
   padding: 0;
   margin: 0;
 }
-
 </style>
