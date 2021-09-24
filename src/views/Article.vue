@@ -3,7 +3,7 @@
     <CategoryBar />
     <div v-if="isPageReady">
       <div
-        class="sync-timeline py-4 hide-below-xl"
+        class="sync-timeline py-4"
         :class=" isTimelineOutOfScreen ? 'position-fixed' : 'position-absolute'"
         :style=" isTimelineOutOfScreen ? 'top: 104px;' : 'top: ' + (barDistToTop-20) +'px;'"
       >
@@ -16,7 +16,7 @@
         </ul>
       </div>
       <div
-        class="recommended-news hide-below-xl"
+        class="recommended-news"
         :style="`top: ${firstBlockDistToTop}px;`"
       >
         <div class="d-flex align-items-center heading">
@@ -430,6 +430,9 @@ p {
   right: calc(50vw + 360px + 64px);
   padding-left: 16px;
   padding-right: 0px;
+  @media only screen and (max-width: 1200px) {
+    display: none;
+  }
 }
 
 .recommended-news{
@@ -474,6 +477,9 @@ p {
       font-size: 20px;
       margin-top: -3px;
     }
+  }
+  @media only screen and (max-width: 1200px) {
+    display: none;
   }
 }
 
@@ -534,9 +540,4 @@ html {
   scroll-behavior: smooth;
 }
 
-.hide-below-xl {
-  @media only screen and (max-width: 1200px) {
-    display: none;
-  }
-}
 </style>
