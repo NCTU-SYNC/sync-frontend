@@ -138,3 +138,9 @@ $border-color:                $primary;
 
 /* switch */
 $b-custom-control-indicator-size-lg: 1.5rem;
+
+@mixin hide-below-desktop {
+  @media only screen and (max-width: map-get($grid-breakpoints, xl)) {
+    display: none;
+  }
+}

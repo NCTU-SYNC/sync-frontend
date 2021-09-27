@@ -426,24 +426,21 @@ p {
 }
 
 .timeline-container {
+  @include hide-below-desktop;
   width: 240px;
   right: calc(50vw + 360px + 64px);
   padding-left: 16px;
   padding-right: 0px;
-  @media only screen and (max-width: 1200px) {
-    display: none;
-  }
 }
 
 .recommendedNews-container{
+  @include hide-below-desktop;
   position: absolute;
   width: 264px;
   left: calc(50vw + 360px + 64px);
-  // top: 700+24px;
   .heading {
     margin-bottom: 16px;
   }
-
   hr.line {
     width: 129px;
     border-top: 1px solid #232323;
@@ -477,9 +474,6 @@ p {
       font-size: 20px;
       margin-top: -3px;
     }
-  }
-  @media only screen and (max-width: 1200px) {
-    display: none;
   }
 }
 
