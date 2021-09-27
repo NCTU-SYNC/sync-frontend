@@ -59,7 +59,7 @@
               <hr ref="title-gray-bar" class="my-3">
               <div class="d-flex justify-content-between">
                 <div id="author-info">
-                  編輯者： {{ getAuthorsString() }}
+                  編輯者： {{ authorsString }}
                 </div>
                 <div id="icons">
                   <b-button
@@ -194,6 +194,23 @@ export default {
     },
     isTimelineOutOfScreen() {
       return this.windowScrollY > this.barDistToTop - 124
+    },
+    authorsString() {
+      let authorsString = ''
+      const authors = this.authors
+      if (authors.length <= 3) {
+        for (let i = 0; i < authors.length; i++) {
+          authorsString += authors[i].name
+          if (i !== authors.length - 1) authorsString += ', '
+        }
+      } else {
+        for (let i = 0; i < 3; i++) {
+          authorsString += authors[i].name
+          if (i !== 2) authorsString += ', '
+        }
+        authorsString += ` + ${authors.length - 3} 人`
+      }
+      return authorsString
     }
   },
   watch: {
@@ -286,23 +303,6 @@ export default {
     },
     formatTime(timeString) {
       return moment(timeString).format('YYYY/MM/DD HH:mm')
-    },
-    getAuthorsString() {
-      let authorsString = ''
-      const authors = this.authors
-      if (authors.length <= 3) {
-        for (let i = 0; i < authors.length; i++) {
-          authorsString += authors[i].name
-          if (i !== authors.length - 1) authorsString += ', '
-        }
-      } else {
-        for (let i = 0; i < 3; i++) {
-          authorsString += authors[i].name
-          if (i !== 2) authorsString += ', '
-        }
-        authorsString += ` + ${authors.length - 3} 人`
-      }
-      return authorsString
     },
     formatCategory(category) {
       return category === '' ? '未分類' : category
