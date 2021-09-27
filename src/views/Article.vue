@@ -199,7 +199,7 @@ export default {
       let authorsString = ''
       const authors = this.authors
       authorsString = authors.slice(0, 3).map(user => user.name).join(', ')
-      if (authors.length >= 3) { authorsString += ` + ${authors.length - 3} 人` }
+      if (authors.length > 3) { authorsString += ` + ${authors.length - 3} 人` }
       return authorsString
     }
   },
@@ -373,6 +373,11 @@ p {
 
 #author-info {
   font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+#icons {
+  flex-shrink: 0;
 }
 
 .category-navbar{
