@@ -9,7 +9,7 @@
           <div class="article-category">
             {{ getCategory(category) }}
           </div>
-          <button class="subscribe-btn" @click="handleClickBookmark()">
+          <button v-b-tooltip.hover.bottom="bookmarkTooltip" class="subscribe-btn" @click="handleClickBookmark()">
             <icon v-if="!isSubscribed" icon="save" />
             <icon v-else icon="saved" />
           </button>
@@ -84,6 +84,9 @@ export default {
   computed: {
     subscribedList() {
       return this.$store.getters['article/subscribedList']
+    },
+    bookmarkTooltip() {
+      return this.isSubscribed ? '取消收藏文章' : '收藏文章'
     }
   },
   watch: {

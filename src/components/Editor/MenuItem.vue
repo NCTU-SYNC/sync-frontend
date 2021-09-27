@@ -1,5 +1,6 @@
 <template>
   <button
+    v-b-tooltip.hover.bottom="tooltip"
     class="menu-item"
     :class="{ 'is-active': isActive ? isActive(): null }"
     :title="title"
@@ -29,6 +30,11 @@ export default {
 
     isActive: {
       type: Function,
+      default: null
+    },
+
+    tooltip: {
+      type: String,
       default: null
     }
   },
