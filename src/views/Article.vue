@@ -198,18 +198,8 @@ export default {
     authorsString() {
       let authorsString = ''
       const authors = this.authors
-      if (authors.length <= 3) {
-        for (let i = 0; i < authors.length; i++) {
-          authorsString += authors[i].name
-          if (i !== authors.length - 1) authorsString += ', '
-        }
-      } else {
-        for (let i = 0; i < 3; i++) {
-          authorsString += authors[i].name
-          if (i !== 2) authorsString += ', '
-        }
-        authorsString += ` + ${authors.length - 3} 人`
-      }
+      authorsString = authors.slice(0, 3).map(user => user.name).join(', ')
+      if (authors.length >= 3) { authorsString += ` + ${authors.length - 3} 人` }
       return authorsString
     }
   },
