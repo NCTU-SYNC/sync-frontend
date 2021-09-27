@@ -59,8 +59,7 @@
               <hr ref="title-gray-bar" class="my-3">
               <div class="d-flex justify-content-between">
                 <div id="author-info">
-                  編輯者：
-                  <span v-for="(author, authorIndex) in authors" :key="authorIndex"> {{ formatAuthor(author, authorIndex === authors.length-1 ) }}  </span>
+                  編輯者： {{ getAuthorsString() }}
                 </div>
                 <div id="icons">
                   <b-button
@@ -288,8 +287,22 @@ export default {
     formatTime(timeString) {
       return moment(timeString).format('YYYY/MM/DD HH:mm')
     },
-    formatAuthor(author, isTheLastAuthor) {
-      return isTheLastAuthor ? author.name : author.name + ', '
+    getAuthorsString() {
+      let authorsString = ''
+      const authors = this.authors
+      if (authors.length <= 3) {
+        for (let i = 0; i < authors.length; i++) {
+          authorsString += authors[i].name
+          if (i !== authors.length - 1) authorsString += ', '
+        }
+      } else {
+        for (let i = 0; i < 3; i++) {
+          authorsString += authors[i].name
+          if (i !== 2) authorsString += ', '
+        }
+        authorsString += ` + ${authors.length - 3} 人`
+      }
+      return authorsString
     },
     formatCategory(category) {
       return category === '' ? '未分類' : category
