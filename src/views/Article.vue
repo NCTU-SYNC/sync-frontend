@@ -64,6 +64,7 @@
                 </div>
                 <div id="icons">
                   <b-button
+                    v-b-tooltip.hover.bottom="'編輯文章'"
                     class="btn-icon mx-3"
                     @click="handleEditPostRoute(`${$route.path}/post`)"
                   >
@@ -71,6 +72,7 @@
                   </b-button>
 
                   <b-button
+                    v-b-tooltip.hover.bottom="'編輯紀錄'"
                     class="btn-icon mx-3"
                     @click="handleHistoryRoute"
                   >
@@ -78,6 +80,7 @@
                   </b-button>
 
                   <b-button
+                    v-b-tooltip.hover.bottom="bookmarkTooltip"
                     class="btn-icon ml-3"
                     :class="isSubscribed ? 'subscribed': ''"
                     @click="handleClickBookmark"
@@ -195,6 +198,9 @@ export default {
     },
     isTimelineOutOfScreen() {
       return this.windowScrollY > this.barDistToTop - 124
+    },
+    bookmarkTooltip() {
+      return this.isSubscribed ? '取消收藏文章' : '收藏文章'
     }
   },
   watch: {
