@@ -30,18 +30,21 @@ export default {
         {
           icon: 'bold',
           title: 'Bold',
+          tooltip: '粗體',
           action: () => this.editor.chain().focus().toggleBold().run(),
           isActive: () => this.editor.isActive('bold')
         },
         {
           icon: 'underline',
           title: 'Underline',
+          tooltip: '底線',
           action: () => this.editor.chain().focus().toggleUnderline().run(),
           isActive: () => this.editor.isActive('underline')
         },
         {
           icon: 'list',
           title: 'Bullet List',
+          tooltip: '項目符號清單',
           action: () => this.editor.chain().focus().toggleBulletList().run(),
           isActive: () => this.editor.isActive('bulletList')
         },
@@ -51,6 +54,7 @@ export default {
         {
           icon: 'quote',
           title: 'Blockquote',
+          tooltip: '引用',
           action: () => this.editor.chain().focus().toggleBlockquote().run(),
           isActive: () => this.editor.isActive('blockquote')
         },
@@ -60,6 +64,7 @@ export default {
         {
           icon: 'annotation',
           title: 'Annotation',
+          tooltip: '編輯附註',
           action: () => {
             this.$emit('showModal', 'citation-modal')
           },
@@ -68,6 +73,7 @@ export default {
         {
           icon: 'link',
           title: 'Link',
+          tooltip: '超連結',
           action: () => {
             this.$emit('showModal', 'link-modal')
           },
@@ -76,6 +82,7 @@ export default {
         {
           icon: 'image',
           title: 'Image',
+          tooltip: '圖片',
           action: () => {
             this.$emit('showModal', 'upload-image-modal')
           },
