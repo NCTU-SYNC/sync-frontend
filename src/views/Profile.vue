@@ -27,36 +27,64 @@
             role="tab"
             class="option-name"
           >
-            <a
-              @click="currentShowingIndex = 0"
-            ><span class="option-text edited-article">編輯過的文章</span></a>
+            <a @click="currentShowingIndex = 0">
+              <span aria-hidden focusable="false" class="option-icon">
+                <img
+                  role="icon"
+                  alt="icon"
+                  src="@/assets/icons/ic-edited.svg"
+                >
+              </span>
+              <span class="option-text">編輯過的文章</span>
+            </a>
           </li>
           <li
             :aria-selected="currentShowingIndex === 1"
             role="tab"
             class="option-name"
           >
-            <a
-              @click="currentShowingIndex = 1"
-            ><span class="option-text history">瀏覽紀錄</span></a>
+            <a @click="currentShowingIndex = 1">
+              <span aria-hidden focusable="false" class="option-icon">
+                <img
+                  role="icon"
+                  alt="icon"
+                  src="@/assets/icons/ic-history.svg"
+                >
+              </span>
+              <span class="option-text">瀏覽紀錄</span>
+            </a>
           </li>
           <li
             :aria-selected="currentShowingIndex === 2"
             role="tab"
             class="option-name"
           >
-            <a
-              @click="currentShowingIndex = 2"
-            ><span class="option-text collection">收藏的文章</span></a>
+            <a @click="currentShowingIndex = 2">
+              <span aria-hidden focusable="false" class="option-icon">
+                <img
+                  role="icon"
+                  alt="icon"
+                  src="@/assets/icons/ic-bookmark.svg"
+                >
+              </span>
+              <span class="option-text">收藏的文章</span>
+            </a>
           </li>
           <li
             :aria-selected="currentShowingIndex === 3"
             role="tab"
             class="option-name"
           >
-            <a
-              @click="currentShowingIndex = 3"
-            ><span class="option-text setting">個人設定</span></a>
+            <a @click="currentShowingIndex = 3">
+              <span aria-hidden focusable="false" class="option-icon">
+                <img
+                  role="icon"
+                  alt="icon"
+                  src="@/assets/icons/ic-settings.svg"
+                >
+              </span>
+              <span class="option-text">個人設定</span>
+            </a>
           </li>
         </ul>
       </div>
@@ -231,35 +259,22 @@ a {
     }
 
     .option-text {
-      display: inline-block;
       font-size: 1.125rem;
       letter-spacing: 0.25rem;
       text-indent: 0.25rem;
-      vertical-align: middle;
-      padding-left: 4rem;
+      padding-left: 1rem;
       margin: auto 0;
     }
+
+    .option-icon {
+      display: flex;
+      height: 36px;
+      width: 36px;
+      margin: auto 0 auto 2rem; /* vertical align icon center */
+      align-items: center; /* align item in container */
+      justify-content: center; /* align item in container */
+    }
   }
-}
-
-.edited-article {
-  background: left 2rem top 50% url('../assets/icons/ic-edited.svg') no-repeat;
-  padding-left: 4.5rem;
-}
-
-.history {
-  background: left 2rem top 50% url('../assets/icons/ic-history.svg') no-repeat;
-  padding-left: 4.5rem;
-}
-
-.collection {
-  background: left 2rem top 50% url('../assets/icons/ic-bookmark.svg') no-repeat;
-  padding-left: 4.5rem;
-}
-
-.setting {
-  background: left 2rem top 50% url('../assets/icons/ic-settings.svg') no-repeat;
-  padding-left: 4.5rem;
 }
 
 .profile-title {
