@@ -59,8 +59,7 @@
               <hr ref="title-gray-bar" class="my-3">
               <div class="d-flex justify-content-between">
                 <div id="author-info">
-                  編輯者：
-                  <span v-for="(author, authorIndex) in authors" :key="authorIndex"> {{ formatAuthor(author, authorIndex === authors.length-1 ) }}  </span>
+                  編輯者： {{ authorsString }}
                 </div>
                 <div id="icons">
                   <b-button
@@ -199,6 +198,13 @@ export default {
     isTimelineOutOfScreen() {
       return this.windowScrollY > this.barDistToTop - 124
     },
+    authorsString() {
+      let authorsString = ''
+      const authors = this.authors
+      authorsString = authors.slice(0, 3).map(user => user.name).join(', ')
+      if (authors.length > 3) { authorsString += ` + ${authors.length - 3} 人` }
+      return authorsString
+    },
     bookmarkTooltip() {
       return this.isSubscribed ? '取消收藏文章' : '收藏文章'
     }
@@ -294,9 +300,6 @@ export default {
     formatTime(timeString) {
       return moment(timeString).format('YYYY/MM/DD HH:mm')
     },
-    formatAuthor(author, isTheLastAuthor) {
-      return isTheLastAuthor ? author.name : author.name + ', '
-    },
     formatCategory(category) {
       return category === '' ? '未分類' : category
     },
@@ -376,6 +379,11 @@ p {
 
 #author-info {
   font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+#icons {
+  flex-shrink: 0;
 }
 
 .category-navbar{
