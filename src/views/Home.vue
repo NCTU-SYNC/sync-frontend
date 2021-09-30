@@ -116,7 +116,7 @@ export default {
           const articlesHot = data.data[0].sort((a, b) => b.viewsCount - a.viewsCount)
           this.latestList = latestArticles.content.slice(0, 6)
           this.hotList = articlesHot.slice(0, 6)
-          this.exploreList = this.getRandomArticles(latestArticles.content, 6)
+          this.exploreList = this.getRandomArticles(latestArticles.content, Math.min(6, latestArticles.content.length))
           this.headline = this.exploreList.slice(0, 5)
           this.allArticles = [{ title: '最新同步', content: this.latestList, iconPath: this.iconPaths[0] },
             { title: '熱門同步', content: this.hotList, iconPath: this.iconPaths[1] },
