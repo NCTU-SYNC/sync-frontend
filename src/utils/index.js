@@ -4,7 +4,7 @@ function getRandomString() {
 
 // returns text from article with a given limit, returns all if no limit given
 function getArticleContent(blocks, limit) {
-  var res = { content: [], count: 0 }
+  const res = { content: [], count: 0 }
   getArticleText(blocks, res, limit)
   const text = res.content.join(' ')
   const ellipse = (text.length > limit) ? ' ...' : ''
@@ -13,6 +13,7 @@ function getArticleContent(blocks, limit) {
 
 // helper function of getArticleContent
 function getArticleText(object, result, limit) {
+  if (object == null) return
   if (Object.prototype.hasOwnProperty.call(object, 'type') && object.type === 'text') {
     result.content.push(object.text)
     result.count += object.text.length
