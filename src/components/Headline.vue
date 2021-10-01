@@ -24,7 +24,7 @@
       </div>
       <!-- right content -->
       <div>
-        <icon icon="placeholder" style="height: 300px;" />
+        <b-img block center style="height: 300px;" :src="require('@/assets/images/thumbnail-placeholder.svg')" />
       </div>
     </div>
   </div>

@@ -9,20 +9,9 @@
       footer-border-variant="white"
       footer-class="p-0 article-footer"
     >
-      <button class="subscribe-btn" @click="handleClickBookmark()">
-        <img
-          v-if="!isSubscribed"
-          width="32px"
-          src="@/assets/icons/ic-save.svg"
-          alt="save-icon"
-        >
-        <img
-          v-else
-          width="32px"
-          src="@/assets/icons/ic-saved.svg"
-          alt="saved-icon"
-          srcset=""
-        >
+      <button v-b-tooltip.hover.bottom="bookmarkTooltip" class="subscribe-btn" @click="handleClickBookmark()">
+        <icon v-if="!isSubscribed" icon="save" />
+        <icon v-else icon="saved" />
       </button>
       <b-card-body class="d-flex flex-column p-0">
         <b-link :to="`/article/${articleId}`">
@@ -105,6 +94,9 @@ export default {
     subscribedList() {
       return this.$store.getters['article/subscribedList']
     },
+    bookmarkTooltip() {
+      return this.isSubscribed ? '取消收藏文章' : '收藏文章'
+    },
     cols() {
       return this.full ? 12 : 4
     },
@@ -138,7 +130,7 @@ export default {
   },
   methods: {
     getTitle(title) {
-      if (title.length > 30) {
+      if (title && title.length > 30) {
         return title.slice(0, 30) + ' ..'
       }
       return title
@@ -148,7 +140,7 @@ export default {
         if (newsCategory.length === 0) {
           return '未分類'
         } else return newsCategory
-      } else return '未分類'
+      } else { return '未分類' }
     },
     getDateTime(lastUpdatedAt) {
       const datetime = moment(lastUpdatedAt)

@@ -523,7 +523,7 @@ li.circle{
   &:first-child::after{
       content: '';
       position: absolute;
-      background-image: url('~@/assets/icons/ic-timeline-square.svg');
+      background-image: url('~@/assets/materials/ma-timeline-square.svg');
       background-repeat: no-repeat;
       background-size: contain;
       left: -4.51px;
@@ -534,7 +534,7 @@ li.circle{
   &::after{
     content: '';
     position: absolute;
-    background-image: url('~@/assets/icons/ic-timeline-circle.svg');
+    background-image: url('~@/assets/materials/ma-timeline-circle.svg');
     background-repeat: no-repeat;
     background-size: contain;
     left: -3.51px;
