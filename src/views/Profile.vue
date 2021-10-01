@@ -2,32 +2,24 @@
   <b-container fluid class="no-gutters pl-0 pr-0">
     <b-row>
       <div class="sidebar">
-        <table class="personal-status">
-          <tr>
-            <td>
-              <b-avatar size="4rem" :src="photoURL" />
-            </td>
-            <td>
-              <span
-                class="d-block w-auto text-lg font-weight-bold text-truncate"
-              >{{ displayName }}</span>
-              <span class="d-block w-auto text-sm text-gray text-truncate">{{
-                email
-              }}</span>
-            </td>
-          </tr>
-          <tr class="blank-row">
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td class="text-sm">加入日期</td>
-            <td class="text-sm text-light-gray">{{ creationDateTime }}</td>
-          </tr>
-          <tr>
-            <td class="text-sm">貢獻值</td>
-            <td class="text-sm">{{ points }}</td>
-          </tr>
-        </table>
+        <b-container class="personal-status">
+          <b-avatar size="5rem" :src="photoURL" class="float-left" />
+          <b-row align-v="stretch" class="personal-status-name">
+            <b-col class="text-lg font-weight-bold text-truncate">
+              {{ displayName }}
+            </b-col>
+          </b-row>
+          <b-row align-v="stretch" class="personal-status-text">
+            <b-col cols="6" class="text-sm text-gray pr-0">貢獻值</b-col>
+            <b-col class="text-sm text-blue pl-0 pr-0">{{ points }}</b-col>
+          </b-row>
+          <b-row align-v="stretch" class="personal-status-text">
+            <b-col cols="6" class="text-sm text-gray pr-0">加入日期</b-col>
+            <b-col class="text-sm text-gray pl-0 pr-0">{{
+              creationDateTime
+            }}</b-col>
+          </b-row>
+        </b-container>
 
         <ul role="tablist" class="options-nav">
           <li
@@ -35,36 +27,64 @@
             role="tab"
             class="option-name"
           >
-            <a
-              @click="currentShowingIndex = 0"
-            ><span class="option-text edited-article">編輯過的文章</span></a>
+            <a @click="currentShowingIndex = 0">
+              <span aria-hidden focusable="false" class="option-icon">
+                <img
+                  role="icon"
+                  alt="icon"
+                  src="@/assets/icons/ic-edited.svg"
+                >
+              </span>
+              <span class="option-text">編輯過的文章</span>
+            </a>
           </li>
           <li
             :aria-selected="currentShowingIndex === 1"
             role="tab"
             class="option-name"
           >
-            <a
-              @click="currentShowingIndex = 1"
-            ><span class="option-text history">瀏覽紀錄</span></a>
+            <a @click="currentShowingIndex = 1">
+              <span aria-hidden focusable="false" class="option-icon">
+                <img
+                  role="icon"
+                  alt="icon"
+                  src="@/assets/icons/ic-history.svg"
+                >
+              </span>
+              <span class="option-text">瀏覽紀錄</span>
+            </a>
           </li>
           <li
             :aria-selected="currentShowingIndex === 2"
             role="tab"
             class="option-name"
           >
-            <a
-              @click="currentShowingIndex = 2"
-            ><span class="option-text collection">收藏的文章</span></a>
+            <a @click="currentShowingIndex = 2">
+              <span aria-hidden focusable="false" class="option-icon">
+                <img
+                  role="icon"
+                  alt="icon"
+                  src="@/assets/icons/ic-bookmark.svg"
+                >
+              </span>
+              <span class="option-text">收藏的文章</span>
+            </a>
           </li>
           <li
             :aria-selected="currentShowingIndex === 3"
             role="tab"
             class="option-name"
           >
-            <a
-              @click="currentShowingIndex = 3"
-            ><span class="option-text setting">個人設定</span></a>
+            <a @click="currentShowingIndex = 3">
+              <span aria-hidden focusable="false" class="option-icon">
+                <img
+                  role="icon"
+                  alt="icon"
+                  src="@/assets/icons/ic-settings.svg"
+                >
+              </span>
+              <span class="option-text">個人設定</span>
+            </a>
           </li>
         </ul>
       </div>
@@ -76,7 +96,17 @@
           <Setting />
         </slot>
         <slot v-for="article in showingArticles" v-else>
-          <ArticleListItem :article="article" />
+          <ArticleCard
+            :title="article.title"
+            :view-count="article.viewCount"
+            :category="article.category"
+            :last-updated-at="article.lastUpdatedAt"
+            :edited-count="article.editedCount"
+            :blocks="article.blocks"
+            :article-id="article._id"
+            full
+            class="p-0"
+          />
         </slot>
       </div>
       <div class="m-4" />
@@ -85,7 +115,7 @@
 </template>
 
 <script>
-import ArticleListItem from '@/components/Profile/ArticleListItem.vue'
+import ArticleCard from '@/components/ArticleCard.vue'
 import Setting from '@/components/Profile/Setting.vue'
 import { mapGetters } from 'vuex'
 import moment from 'moment'
@@ -94,7 +124,7 @@ import { getArticlesInfo } from '@/api/user'
 export default {
   name: 'Profile',
   components: {
-    ArticleListItem,
+    ArticleCard,
     Setting
   },
   data() {
@@ -111,7 +141,7 @@ export default {
     ...mapGetters({ createAt: 'user/createAt', email: 'user/email' }),
     creationDateTime() {
       return this.createAt
-        ? moment(parseInt(this.createAt)).format('YYYY年M月D日 HH:mm')
+        ? moment(parseInt(this.createAt)).format('YYYY.MM.DD')
         : ''
     }
   },
@@ -229,35 +259,22 @@ a {
     }
 
     .option-text {
-      display: inline-block;
       font-size: 1.125rem;
       letter-spacing: 0.25rem;
       text-indent: 0.25rem;
-      vertical-align: middle;
-      padding-left: 4rem;
+      padding-left: 1rem;
       margin: auto 0;
     }
+
+    .option-icon {
+      display: flex;
+      height: 36px;
+      width: 36px;
+      margin: auto 0 auto 2rem; /* vertical align icon center */
+      align-items: center; /* align item in container */
+      justify-content: center; /* align item in container */
+    }
   }
-}
-
-.edited-article {
-  background: left 2rem top 50% url('../assets/icons/ic-edited.svg') no-repeat;
-  padding-left: 4.5rem;
-}
-
-.history {
-  background: left 2rem top 50% url('../assets/icons/ic-history.svg') no-repeat;
-  padding-left: 4.5rem;
-}
-
-.collection {
-  background: left 2rem top 50% url('../assets/icons/ic-bookmark.svg') no-repeat;
-  padding-left: 4.5rem;
-}
-
-.setting {
-  background: left 2rem top 50% url('../assets/icons/ic-settings.svg') no-repeat;
-  padding-left: 4.5rem;
 }
 
 .profile-title {
@@ -266,21 +283,25 @@ a {
 }
 
 .personal-status {
-  table-layout: fixed;
-  margin-left: 2rem;
-  width: calc(300px - 2rem);
+  height: 5rem;
+  padding-left: 1.75rem;
+  padding-right: 1.75rem;
 
-  &:first-child > tr td:first-of-type {
-    box-sizing: content-box;
-    width: 4rem;
+  &-name {
+    height: 2rem;
   }
 
-  td {
-    padding: 0.625rem 1.5rem 0 0;
+  &-text {
+    height: 1.5rem;
+
+    :first-child {
+      width: 8rem;
+    }
   }
 
-  tr:first-of-type td {
-    padding-top: 0;
+  // align all texts to center
+  & * {
+    margin: auto 0;
   }
 }
 
@@ -293,7 +314,6 @@ a {
 */
 .tab-content {
   padding: 3rem 4rem;
-  width: 32.5rem;
   box-sizing: content-box;
 }
 
@@ -304,6 +324,14 @@ a {
 .text {
   &-lg {
     font-size: 1.125rem;
+  }
+
+  &-gray {
+    color: rgba(0, 0, 0, 0.45);
+  }
+
+  &-blue {
+    color: $blue;
   }
 }
 </style>
