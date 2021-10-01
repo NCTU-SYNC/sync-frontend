@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid>
+  <b-container fluid class="article-container">
     <CategoryBar />
     <div v-if="isPageReady">
       <div
@@ -436,6 +436,12 @@ p {
     margin-top: 7px;
     text-decoration: none !important;
     color: $nature-3 !important;
+  }
+}
+
+.article-container {
+  @media only screen and (min-width: map-get($grid-breakpoints, xl)){
+    min-height: 1080px;
   }
 }
 
