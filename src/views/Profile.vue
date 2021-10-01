@@ -29,11 +29,7 @@
           >
             <a @click="currentShowingIndex = 0">
               <span aria-hidden focusable="false" class="option-icon">
-                <img
-                  role="icon"
-                  alt="icon"
-                  src="@/assets/icons/ic-edited.svg"
-                >
+                <icon icon="edited" />
               </span>
               <span class="option-text">編輯過的文章</span>
             </a>
@@ -45,11 +41,7 @@
           >
             <a @click="currentShowingIndex = 1">
               <span aria-hidden focusable="false" class="option-icon">
-                <img
-                  role="icon"
-                  alt="icon"
-                  src="@/assets/icons/ic-history.svg"
-                >
+                <icon icon="history" />
               </span>
               <span class="option-text">瀏覽紀錄</span>
             </a>
@@ -61,11 +53,7 @@
           >
             <a @click="currentShowingIndex = 2">
               <span aria-hidden focusable="false" class="option-icon">
-                <img
-                  role="icon"
-                  alt="icon"
-                  src="@/assets/icons/ic-bookmark.svg"
-                >
+                <icon icon="bookmark" />
               </span>
               <span class="option-text">收藏的文章</span>
             </a>
@@ -77,11 +65,7 @@
           >
             <a @click="currentShowingIndex = 3">
               <span aria-hidden focusable="false" class="option-icon">
-                <img
-                  role="icon"
-                  alt="icon"
-                  src="@/assets/icons/ic-settings.svg"
-                >
+                <icon icon="settings" />
               </span>
               <span class="option-text">個人設定</span>
             </a>
