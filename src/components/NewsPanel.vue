@@ -126,7 +126,7 @@ export default {
       }
     },
     async searchOnEnter(event) {
-      if (event.isComposing) return
+      if (event.isComposing || this.isLoading) return
       await this.getNews()
     },
     getNewsOutline(newsContent) {
