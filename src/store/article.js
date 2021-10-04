@@ -53,7 +53,7 @@ const actions = {
     } else if (rootGetters.isLogin) {
       try {
         const { data } = await getProfile({ token: rootGetters.token })
-        commit('SET_PROFILE', data.data.articles)
+        commit('SET_PROFILE', data.data.articles || {})
         return Promise.resolve(data.data)
       } catch (error) {
         console.error(error)
