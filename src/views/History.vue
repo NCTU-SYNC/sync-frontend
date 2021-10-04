@@ -52,7 +52,7 @@
       </b-col>
     </b-row>
     <b-row
-      v-for="(item, itemIndex) in historyItems"
+      v-for="(item, itemIndex) in historyItemsWithoutMonths"
       :key="itemIndex"
       class="history-row"
       :class="{ 'hovered-row' : item.index != null,
@@ -74,7 +74,7 @@
       <b-col sm="2" class="compared-container">
         <div v-if="item.type !== 'header'">
           <b-link
-            class="pr-2 link-right"
+            class="pr-2 link-right nowrap"
             :class="{ 'text-primary': item.index !== 1,
                       'hovered-link': item.index !== 1}"
             :to="`/compare/${articleId}?base=${item.index - 1}&compare=${item.index}`"
@@ -84,7 +84,7 @@
           >與前一版比較</b-link>
 
           <b-link
-            class="pl-2"
+            class="pl-2 nowrap"
             :class="{ 'text-primary': item.index !== versionsLength,
                       'hovered-link': item.index !== versionsLength}"
             :to="`/compare/${articleId}?base=${versionsLength}&compare=${item.index}`"
@@ -118,6 +118,7 @@ export default {
         }
       ],
       historyItems: [],
+      historyItemsWithoutMonths: [],
       currentVersion: null,
       historyShowCount: 20,
       currentViewPage: 1,
@@ -199,6 +200,7 @@ export default {
             editTextCounts: { added: version.wordsChanged.added, deleted: version.wordsChanged.deleted }
           })
         }
+        this.historyItemsWithoutMonths = this.historyItems.filter(item => item.type !== 'header')
         this.historyShowCount = limit
         this.currentViewPage = page
       } catch (error) {
@@ -325,6 +327,9 @@ h5 {
 }
 .compared-container{
   margin-left: -40px;
+}
+.nowrap {
+  white-space: nowrap;
 }
 </style>
 
