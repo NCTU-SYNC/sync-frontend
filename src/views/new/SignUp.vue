@@ -357,7 +357,6 @@ export default {
           break
         }
       }
-      console.log(!validationResult)
       this.isInFirstPage = !validationResult
     },
     async handleSignup() {

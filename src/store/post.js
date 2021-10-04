@@ -22,7 +22,6 @@ const mutations = {
     state.blocks.push(block)
   },
   ADD_BLOCK(state, { index, block }) {
-    console.log('add block!')
     if (index < 0) {
       state.blocks.unshift(block)
     } else {

@@ -47,7 +47,6 @@ const actions = {
     // if token is not set yet
     if (!rootGetters.token) {
       setTimeout(() => {
-        // console.log('Waiting for token to be established...')
         dispatch('INITIALIZE')
       }, 1000)
     } else if (rootGetters.isLogin) {
@@ -102,7 +101,6 @@ const actions = {
   },
   async VIEW({ commit, dispatch, rootGetters }, articleId) {
     if (!rootGetters.isInitialized || !state.isProfileReady) {
-      console.log('VIEW is waiting for initialized')
       setTimeout(() => {
         dispatch('VIEW', articleId)
       }, 100)

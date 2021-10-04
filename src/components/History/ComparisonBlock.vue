@@ -205,7 +205,6 @@ export default {
             }
           } else if (paragraph.type === 'blockquote') {
             const blockquoteContent = paragraph.content
-            console.log(blockquoteContent)
             const element = {
               type: 'blockquote',
               content: []

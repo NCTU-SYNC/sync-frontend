@@ -183,7 +183,6 @@ export default {
             const articles = data.data.sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
             articles.forEach(article => {
               const { category, _id, title, lastUpdatedAt, viewsCount } = article
-              console.log(category, _id, title, lastUpdatedAt, viewsCount)
               this.newsArr.push({
                 _id, category, title, lastUpdatedAt, viewsCount
               })

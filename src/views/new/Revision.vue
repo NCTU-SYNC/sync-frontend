@@ -199,7 +199,7 @@ export default {
         })
         this.from = from
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     },
     getUpdateDate(date) {

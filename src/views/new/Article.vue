@@ -206,7 +206,6 @@ export default {
   },
   watch: {
     subscribedList(newList) {
-      console.log('subscribedList', newList)
       if (newList) {
         this.isSubscribed = newList.findIndex(s => s.articleId === this.articleId) >= 0
         return
@@ -247,7 +246,6 @@ export default {
         getArticleById(this.articleId).then(response => {
           if (response.data.code === 200) {
             const { title, authors, tags, createdAt, blocks, lastUpdatedAt, category, editedCount, editingCount, citations, isPopular } = response.data.data
-            console.log(response.data.data)
             this.title = title
             this.authors = authors
             this.tags = tags
@@ -296,9 +294,6 @@ export default {
           // editor is initialized
         },
         onUpdate: () => {
-          // console.log(state, transaction)
-          // console.log(getHTML(), getJSON())
-          // console.log(JSON.stringify(getJSON()))
         },
         extensions: [
           new History(),

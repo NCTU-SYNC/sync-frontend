@@ -204,7 +204,7 @@ export default {
         this.historyShowCount = limit
         this.currentViewPage = page
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     },
     onLimitDropdownClicked(value) {

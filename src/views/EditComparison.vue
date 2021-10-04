@@ -162,7 +162,7 @@ export default {
         this.versions[1].articleDiff = this.articleDiff
         this.isPageReady = true
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     },
     getBlockInVersionByBlockId(versionContent, index, diffArrBlockId) {
@@ -314,7 +314,6 @@ export default {
       this.isClickedRow = false
       this.base -= 1
       this.compare = this.base + 1
-      console.log(this.base, this.compare)
       this.handleGetArticlesComparison()
     },
     onNextArticleClicked() {
