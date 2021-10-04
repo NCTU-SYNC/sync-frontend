@@ -47,7 +47,6 @@ const mutations = {
     Object.assign(state, getDefaultState())
   },
   SET_NOTIFICATIONS(state, notifications) {
-    console.log('state', notifications)
     state.notifications = notifications
   }
 }
@@ -58,7 +57,6 @@ const actions = {
       login(userdata)
         .then(response => {
           const { data } = response
-          console.log(data)
           commit('SET_TOKEN', userdata.idToken)
           setToken(userdata.idToken)
           setExpiredTime(Date.now() + 3 * 24 * 60 * 60 * 1000)

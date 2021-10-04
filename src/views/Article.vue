@@ -211,7 +211,6 @@ export default {
   },
   watch: {
     subscribedList(newList) {
-      console.log('subscribedList', newList)
       if (newList) {
         this.isSubscribed = newList.findIndex(s => s.articleId === this.articleId) >= 0
         return
@@ -257,7 +256,6 @@ export default {
         getArticleById(this.articleId).then(response => {
           if (response.data.code === 200) {
             const { title, authors, tags, createdAt, blocks, lastUpdatedAt, category, editedCount, editingCount, citations, isPopular, viewsCount } = response.data.data
-            console.log(response.data.data)
             this.title = title
             this.authors = authors
             this.tags = tags
@@ -284,7 +282,6 @@ export default {
     setOffsetTopOfSideElements() {
       this.$nextTick(() => {
         this.barDistToTop = this.$refs['title-gray-bar'].offsetTop
-        console.log(this.$refs[`block-${this.blocks[0]._id}`])
         this.firstBlockDistToTop = this.$refs[`block-${this.blocks[0]._id}`][0].offsetTop
       })
     },

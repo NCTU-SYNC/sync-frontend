@@ -105,7 +105,6 @@ export default {
       this.$store.commit('article/RESET')
     },
     getDateString(timeStamp) {
-      console.log(timeStamp)
       if (timeStamp._seconds) {
         return moment(timeStamp._seconds * 1000).format('YYYY/MM/DD HH:mm')
       }

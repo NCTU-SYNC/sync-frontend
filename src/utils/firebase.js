@@ -18,7 +18,6 @@ class FirebaseAuth {
   }
 
   async setupFirebase() {
-    console.log('setupFirebase')
     try {
       this.instance = firebase.auth()
       const handler = async(user) => {
@@ -36,10 +35,8 @@ class FirebaseAuth {
           }
           store.dispatch('user/sendToken', data)
           store.dispatch('user/sendUserInfo', user)
-          console.log('signed in')
           this.isLogin = true
         } else {
-          console.log('no user logged in')
           this.isLogin = false
         }
       }
@@ -65,7 +62,6 @@ class FirebaseAuth {
       store.dispatch('user/sendUserInfo', user)
       return Promise.resolve(user)
     } catch (error) {
-      console.log(error)
       return Promise.reject(error)
     }
   }
@@ -78,7 +74,6 @@ class FirebaseAuth {
       setToken(user.idToken)
       return Promise.resolve(user)
     } catch (error) {
-      console.log(error)
       return Promise.reject(error)
     }
   }
@@ -92,7 +87,6 @@ class FirebaseAuth {
           removeToken()
           removeUserInfo()
           store.dispatch('user/removeUser')
-          console.log('logout successfully')
         }
       })
   }
@@ -106,12 +100,10 @@ class FirebaseAuth {
       const result = await this.auth.signInWithPopup(provider)
       const idToken = result.credential.idToken
       const user = result.user
-      console.log(result)
       store.dispatch('user/sendUserInfo', user)
       setToken(idToken)
       return Promise.resolve(user)
     } catch (error) {
-      console.log(error)
       return Promise.reject(error)
     }
   }

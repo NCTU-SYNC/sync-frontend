@@ -72,9 +72,7 @@ export default {
       }
     },
     handleConfirm() {
-      if (this.tabIndex === 1) {
-        console.log('is file')
-      } else {
+      if (this.tabIndex !== 1) {
         const data = {
           url: this.url
         }

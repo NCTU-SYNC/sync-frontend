@@ -51,7 +51,6 @@ export default {
       getNews({ q: this.searchKeyword }).then(
         response => {
           this.newsList = response.data.data
-          console.log(response.data)
         }
       )
     },

@@ -43,7 +43,6 @@ export default {
     '$route': function(newRoute) {
       const routerName = newRoute.name
       const pagesHideFooter = ['SignUp', 'Login', 'Post', 'EditComparison']
-      console.log(newRoute, pagesHideFooter.indexOf(routerName) === -1)
       if (newRoute.path.includes('post')) {
         this.$store.commit('SET_FOOTER', false)
         return
@@ -56,7 +55,6 @@ export default {
   },
   methods: {
     async getInitializeInfo() {
-      console.log('getInitializeInfo')
       if (!this.$store.getters.isInitialized) {
         setTimeout(() => {
           this.getInitializeInfo()

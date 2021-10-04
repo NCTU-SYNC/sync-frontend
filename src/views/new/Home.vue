@@ -186,7 +186,6 @@ export default {
               category: param
             }
           )
-          console.log(data)
           const type = data.type
           if (type === 'success') {
             const articles = data.data.sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))

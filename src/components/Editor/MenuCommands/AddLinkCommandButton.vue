@@ -136,8 +136,10 @@ export default {
       const title = this.linkAttrs.title
       const url = this.linkAttrs.url
 
-      const action = await this.$store.dispatch('post/SUBMIT_CITATION_FORM', { title, url })
-      console.log(action)
+      const action = await this.$store.dispatch('post/SUBMIT_CITATION_FORM', {
+        title,
+        url
+      })
       if (action === 'replace') {
         this.$bvModal.msgBoxOk(`在已引用的來源中找到相同網址：${title}，更新其標題為：${url}`, {
           centered: true,

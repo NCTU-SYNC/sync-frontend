@@ -24,7 +24,6 @@ service.interceptors.request.use(
   },
   error => {
     // do something with request error
-    console.log(error) // for debug
     return Promise.reject(error)
   }
 )
@@ -43,7 +42,6 @@ service.interceptors.response.use(
    */
   response => {
     const res = response
-    console.log(res)
 
     // download file
     if (!response.headers['content-type'].includes('application/json')) {
@@ -65,7 +63,6 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log(error) // for debug
     return Promise.reject(error)
   }
 )

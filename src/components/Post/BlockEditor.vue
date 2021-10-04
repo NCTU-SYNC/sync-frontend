@@ -100,7 +100,6 @@ export default {
     }
   },
   created() {
-    console.log(this.block)
     this.tempData.blockTitle = this.block.blockTitle
     this.tempData.blockDateValue = moment(this.block.blockDateTime).format('YYYY-MM-DD')
     this.tempData.blockTimeValue = moment(this.block.blockDateTime).format('HH:mm:ss')
@@ -109,21 +108,18 @@ export default {
   methods: {
     handleChangeTitle() {
       // this.$emit('update:blockTitle', this.tempData.blockTitle)
-      console.log('handleChangeTitle:', this.tempData.blockTitle)
       this.$store.commit('post/UPDATE_BLOCK_TITLE', {
         id: this.block.id,
         title: this.tempData.blockTitle
       })
     },
     handleChangeDate() {
-      console.log('handleChangeDate', this.tempData.blockDateValue)
       this.$store.commit('post/UPDATE_BLOCK_DATETIME', {
         id: this.block.id,
         datetime: `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`
       })
     },
     handleChangeTime() {
-      console.log('handleChangeTime', this.tempData.blockTimeValue)
       this.$store.commit('post/UPDATE_BLOCK_DATETIME', {
         id: this.block.id,
         datetime: `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`
@@ -138,7 +134,6 @@ export default {
     },
     saveDateTimeChanges() {
       const datetime = `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`
-      console.log('saveDateTimeChanges:', datetime)
       const ISOformatDatetime = moment(datetime).toISOString()
       this.$store.commit('post/UPDATE_BLOCK_DATETIME', {
         id: this.block.id,
@@ -148,11 +143,8 @@ export default {
     },
     resetDateTime() {
       const currentDatetime = this.$store.getters['post/GET_BLOCK_DATETIME'](this.block.id)
-      console.log('reset:', currentDatetime)
       this.tempData.blockDateValue = moment(currentDatetime).format('YYYY-MM-DD')
       this.tempData.blockTimeValue = moment(currentDatetime).format('HH:mm:ss')
-      console.log(this.tempData.blockDateValue)
-      console.log(this.tempData.blockTimeValue)
     },
     closeDropdown() {
       this.$refs['datetime-dropdown'].hide(true)
