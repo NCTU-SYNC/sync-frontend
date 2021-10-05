@@ -1,6 +1,6 @@
 <template>
   <button
-    v-b-tooltip.hover.bottom="tooltip"
+    v-b-tooltip.hover.bottom.v-secondary="tooltip"
     class="menu-item"
     :class="{ 'is-active': isActive ? isActive(): null }"
     :title="title"
