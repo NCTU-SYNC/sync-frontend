@@ -683,7 +683,7 @@ export default {
     font-size: 14px;
     margin-top: 8px;
     border: 0;
-    box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15) !important;
   }
   li .dropdown-item {
     padding-left: 18px;
