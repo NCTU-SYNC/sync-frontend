@@ -9,7 +9,7 @@
       footer-border-variant="white"
       footer-class="p-0 article-footer"
     >
-      <button v-b-tooltip.hover.bottom="bookmarkTooltip" class="subscribe-btn" @click="handleClickBookmark()">
+      <button v-b-tooltip.hover.bottom.v-secondary="bookmarkTooltip" class="subscribe-btn" @click="handleClickBookmark()">
         <icon v-if="!isSubscribed" icon="save" />
         <icon v-else icon="saved" />
       </button>

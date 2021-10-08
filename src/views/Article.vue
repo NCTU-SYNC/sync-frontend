@@ -63,7 +63,7 @@
                 </div>
                 <div id="icons">
                   <b-button
-                    v-b-tooltip.hover.bottom="'編輯文章'"
+                    v-b-tooltip.hover.bottom.v-secondary="'編輯內容'"
                     class="btn-icon mx-3"
                     @click="handleEditPostRoute(`${$route.path}/post`)"
                   >
@@ -71,7 +71,7 @@
                   </b-button>
 
                   <b-button
-                    v-b-tooltip.hover.bottom="'編輯紀錄'"
+                    v-b-tooltip.hover.bottom.v-secondary="'查看編輯歷史'"
                     class="btn-icon mx-3"
                     @click="handleHistoryRoute"
                   >
@@ -79,7 +79,7 @@
                   </b-button>
 
                   <b-button
-                    v-b-tooltip.hover.bottom="bookmarkTooltip"
+                    v-b-tooltip.hover.bottom.v-secondary="bookmarkTooltip"
                     class="btn-icon ml-3"
                     :class="isSubscribed ? 'subscribed': ''"
                     @click="handleClickBookmark"
