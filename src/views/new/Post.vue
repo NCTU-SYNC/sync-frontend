@@ -678,12 +678,11 @@ export default {
   }
 }
 ::v-deep .category-dropdown {
-  ul.dropdown-menu, ul.dropdown.show {
+  ul.dropdown-menu {
     min-width: 130px;
     font-size: 14px;
     margin-top: 8px;
     border: 0;
-    box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
     box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
   }
   li .dropdown-item {
