@@ -81,16 +81,6 @@
             <div class="title-card-row title-card-row-start">
               <Tag v-for="(tag, tagIndex) in post.postTags" :key="tagIndex" :tag-index="tagIndex" />
               <Tag :new-tag="true" />
-              <!-- <div v-for="(tag, tagIndex) in tags" :key="tagIndex" class="input-tag">
-                <span class="text-primary">＃</span>
-                <b-form-input :ref="`tag-${tagIndex}`" v-model="tags[tagIndex]" placeholder="新增關鍵字" @updated="adjustTagWidth(tagIndex)" @input="adjustTagWidth(tagIndex)" @keyup.enter="blurTag($event,tagIndex)" @blur="editTag(tagIndex)" />
-                <b-button variant="link" class="remove-tag" @click="removeTag(tagIndex)"><b-icon icon="x" font-scale="1.5" /></b-button>
-              </div>
-              <div class="input-tag">
-                <span v-if="isAddingTag" class="text-primary">＃</span>
-                <span v-else class="text-secondary">＃</span>
-                <b-form-input v-model="addTagText" placeholder="新增關鍵字" @keyup.enter="submitTag()" @blur="submitTag()" />
-              </div> -->
             </div>
           </b-card-body>
         </b-card>
