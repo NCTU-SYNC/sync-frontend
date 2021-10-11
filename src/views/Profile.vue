@@ -145,7 +145,11 @@ export default {
   },
   mounted() {
     if (this.isLogin) {
-      this.init()
+      try {
+        this.init()
+      } catch (e) {
+        console.error('Profile Initialization Error:', e)
+      }
     }
   },
   methods: {
