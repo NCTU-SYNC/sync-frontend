@@ -158,6 +158,11 @@ export default {
         this.articles = payload
         this.points = payload.points
         this.updateList()
+      } else if (data.code === 500) {
+        // refetch data if 500
+        setTimeout(() => {
+          this.init()
+        }, 100)
       }
     },
     updateList() {
