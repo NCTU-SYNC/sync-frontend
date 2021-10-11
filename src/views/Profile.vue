@@ -113,7 +113,11 @@ export default {
   },
   data() {
     return {
-      articles: {},
+      articles: {
+        edited: [],
+        viewed: [],
+        subscribed: []
+      },
       showingArticles: [],
       currentShowingIndex: 0,
       contentTitle: '',
