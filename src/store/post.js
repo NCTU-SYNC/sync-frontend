@@ -65,6 +65,9 @@ const mutations = {
   PUSH_TAG(state, newTag) {
     state.postTags.push(newTag)
   },
+  EDIT_TAG(state, { index, newTag }) {
+    state.postTags[index] = newTag
+  },
   REMOVE_TAG(state, index) {
     state.postTags.splice(index, 1)
   },

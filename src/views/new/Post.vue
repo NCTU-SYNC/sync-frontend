@@ -75,15 +75,8 @@
               </b-dropdown>
             </div>
             <div class="title-card-row title-card-row-start">
-              <div v-for="(tag, tagIndex) in post.postTags" :key="tagIndex" class="input-tag">
-                <span class="text-primary">＃</span>
-                {{ tag }} <b-button variant="link" class="remove-tag" @click="removeTag(tagIndex)"><b-icon icon="x" font-scale="1.5" /></b-button>
-              </div>
-              <div class="input-tag">
-                <span v-if="isAddingTag" class="text-primary">＃</span>
-                <span v-else class="text-secondary">＃</span>
-                <b-form-input v-model="addTagText" placeholder="新增關鍵字" @keyup.enter="addTag" @focus="addTag" @blur="isAddingTag = false" />
-              </div>
+              <Tag v-for="(tag, tagIndex) in post.postTags" :key="tagIndex" :tag-index="tagIndex" />
+              <Tag v-if="post.postTags.length<5" :new-tag="true" />
             </div>
           </b-card-body>
         </b-card>
@@ -182,13 +175,15 @@ import BlockEditor from '@/components/Post/BlockEditor'
 import NewsPanel from '@/components/NewsPanel'
 import { Utils } from '@/utils'
 import EditStar from '@/components/Icons/EditStar'
+import Tag from '@/components/Editor/Tag'
 
 export default {
   name: 'Post',
   components: {
     BlockEditor,
     NewsPanel,
-    EditStar
+    EditStar,
+    Tag
   },
   data() {
     return {
@@ -266,6 +261,7 @@ export default {
       getArticleById(articleId).then(response => {
         if (response.data.code === 200) {
           const data = response.data.data
+          console.log(data.tags)
           this.$store.commit('post/INIT_POST', { data })
           if (this.post.blocks.length === 0) {
             this.handleAddBlock()
@@ -327,18 +323,6 @@ export default {
       })
       this.currentEditingEditor.setContent(str, true)
     },
-    removeTag(index) {
-      this.$store.commit('post/REMOVE_TAG', index)
-    },
-    addTag() {
-      if (this.isAddingTag) {
-        if (this.addTagText.length > 0) {
-          this.$store.commit('post/PUSH_TAG', this.addTagText)
-          this.addTagText = ''
-        }
-      }
-      this.isAddingTag = !this.isAddingTag
-    },
     onCitationRemoved(index) {
       if (this.post.citations[index]) {
         this.$bvModal.msgBoxConfirm(`是否刪除引用：${this.post.citations[index].title}？`, {
@@ -366,6 +350,18 @@ export default {
     },
     focusOnTitle(blockId) {
       this.$refs[`block-${blockId}`][0].focusOnTitle()
+    },
+    adjustTagWidth(tagIndex) {
+      const el = this.$refs[`tag-${tagIndex}`][0]
+      console.log(el)
+      let len = 0
+      for (const c in this.tags[tagIndex]) {
+        if (this.tags[tagIndex][c].charCodeAt(0) < 128) len += 1
+        else len += 2
+      }
+      el.$el.style.maxWidth = `${len}ch`
+      el.$el.style.width = `${len}ch`
+      console.log(el.$el.style.maxWidth)
     }
   }
 }
@@ -382,60 +378,6 @@ export default {
   width: 100%;
   height: 1rem;
   border-bottom: 1px solid $primary;
-}
-
-.tag {
-  display: inline-block;
-  align-items: center;
-  justify-content: center;
-  border-radius: 3rem;
-  border: 1px solid $primary;
-  margin: 0.25rem !important;
-  white-space:nowrap;
-
-  &-contianer {
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-  }
-
-  &-pill {
-    height: 2rem !important;
-    text-decoration: none;
-    padding: 0.25rem 0.5rem 0.25rem 0.75rem !important;
-  }
-
-  &-add-btn {
-    height: 2rem !important;
-    display: flex;
-    justify-content: flex-end;
-
-    span {
-      padding: 0.25rem 0 0.25rem 0.75rem !important;
-      font-size: 0.875rem
-    }
-
-    button {
-      width: 2rem;
-      height: 2rem !important;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 3rem;
-      margin: 0 !important;
-    }
-
-    input {
-      width: 6rem;
-      border: none !important;
-      background-color: transparent !important;
-      padding: 0;
-    }
-  }
-
-  &-cross {
-    transform: rotate(45deg);
-  }
 }
 
 .add-block-btn {
@@ -654,7 +596,7 @@ export default {
   margin-top: 1rem;
   display: flex;
   align-items: center;
-
+  flex-wrap: wrap;
   &-between {
     justify-content: space-between;
   }
@@ -739,44 +681,6 @@ export default {
 
 .dropdown-icon {
   color: #c4c4c4;
-}
-
-.input-tag {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  span {
-    margin-left: 0.25rem;
-  }
-  input {
-    background: transparent;
-    padding: 0;
-    height: 36px;
-    max-width: 5.2rem;
-    &::placeholder {
-      color: rgba(0, 0, 0, 0.3);
-    }
-  }
-  .remove-tag {
-    display: none;
-  }
-  &:hover {
-    .remove-tag {
-      display: inline-block;
-      padding-left: 0;
-      padding-right: 0;
-      color: $nature-8;
-      &:hover {
-        color: black;
-      }
-    }
-  }
-  transition: width 1s;
-  margin-right: 0.5rem;
-  padding: 0 1rem 0 0.5rem;
-  height: 36px;
-  background: $white;
-  border-radius: 1.5rem;
 }
 
 .edit-add-block-row {
