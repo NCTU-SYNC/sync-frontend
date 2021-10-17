@@ -1,19 +1,21 @@
 <template>
   <b-container fluid class="article-container">
     <CategoryBar />
-    <div v-if="isPageReady">
+    <div v-if="isPageReady" :class="{'position-relative': windowScrollY > FooterOffsetTop }">
       <div
         class="timeline-container py-4"
-        :class=" isTimelineOutOfScreen ? 'position-fixed' : 'position-absolute'"
-        :style=" isTimelineOutOfScreen ? 'top: 104px;' : 'top: ' + (barDistToTop-20) +'px;'"
+        :class="windowScrollY > FooterOffsetTop ? 'position-absolute' : isTimelineOutOfScreen ? 'position-fixed' : 'position-absolute'"
+        :style="windowScrollY > FooterOffsetTop ? 'bottom: 32px; right: calc(50vw + 360px + 64px - 15px);' : isTimelineOutOfScreen ? 'top: 104px;' : 'top: ' + (barDistToTop-20) +'px;'"
       >
-        <ul>
-          <li class="circle" />
-          <li v-for="(block, blockIndex) in blocks" :key="blockIndex" class="circle" @click="scrollTo(`block-${block._id}`)">
-            {{ block.blockTitle }}
-          </li>
-          <li class="circle" />
-        </ul>
+        <div class="timeline">
+          <ul>
+            <li class="circle" />
+            <li v-for="(block, blockIndex) in blocks" :key="blockIndex" class="circle" @click="scrollTo(`block-${block._id}`)">
+              {{ block.blockTitle }}
+            </li>
+            <li class="circle" />
+          </ul>
+        </div>
       </div>
       <div
         class="recommendedNews-container"
@@ -179,6 +181,7 @@ export default {
       windowScrollY: null,
       titleBarTop: null,
       barDistToTop: 0,
+      FooterOffsetTop: 0,
       firstBlockDistToTop: 0
     }
   },
@@ -283,6 +286,10 @@ export default {
       this.$nextTick(() => {
         this.barDistToTop = this.$refs['title-gray-bar'].offsetTop
         this.firstBlockDistToTop = this.$refs[`block-${this.blocks[0]._id}`][0].offsetTop
+        setTimeout(() => {
+          const footer = document.querySelector('.footer')
+          this.FooterOffsetTop = footer.offsetTop - footer.offsetHeight - 518 // citation
+        }, 50)
       })
     },
     handleEditPostRoute(route) {
@@ -445,9 +452,16 @@ p {
 .timeline-container {
   @include hide-below-desktop;
   width: 240px;
+  max-height: calc(100vh - 110px);
+  overflow-y: scroll;
   right: calc(50vw + 360px + 64px);
   padding-left: 16px;
   padding-right: 0px;
+}
+
+::-webkit-scrollbar {
+  width: 0;  /* Remove scrollbar space */
+  background: transparent;  /* Optional: just make scrollbar invisible */
 }
 
 .recommendedNews-container{
