@@ -52,30 +52,26 @@
                 toggle-class="text-truncate text-decoration-none category-dropdown-btn"
                 variant="link"
                 no-caret
+                @hide="dropdownOpen=false"
+                @show="dropdownOpen=true"
               >
                 <template #button-content>
-                  <div class="btn-text">文章分類</div>
-                  <div class="btn-chevron"><b-icon icon="chevron-down" class="dropdown-icon" /></div>
+                  <div class="btn-text" :class="{ 'btn-text-left' :(categorySelected!=='')}">{{ categorySelected===''?'文章分類':categorySelected }}</div>
+                  <div class="btn-chevron">
+                    <b-icon v-if="!dropdownOpen" icon="chevron-down" class="dropdown-icon" />
+                    <b-icon v-else icon="chevron-up" class="dropdown-icon" />
+                  </div>
                 </template>
-                <b-row class="no-gutters pl-2">
-                  <b-col
-                    v-for="(category, categoryIndex) in categoryList"
-                    :key="categoryIndex"
-                    cols="6"
-                    class="d-flex justify-content-center align-items-center py-1 pr-2"
-                  >
-                    <label
-                      :class="['btn category-btn',{ 'selected-category-btn': categorySelected === category }, 'w-100' ]"
-                    >
-                      <input
-                        v-model="categorySelected"
-                        type="radio"
-                        :value="category"
-                      >
-                      <span>{{ category }}</span>
-                    </label>
-                  </b-col>
-                </b-row>
+                <b-dropdown-item-button
+                  v-for="(category, categoryIndex) in categoryList"
+                  :key="categoryIndex"
+                  :active="categorySelected===category"
+                  active-class="active-btn"
+                  button-class="dropdown-btn"
+                  @click="categorySelected=category"
+                >
+                  {{ category }}
+                </b-dropdown-item-button>
               </b-dropdown>
             </div>
             <div class="title-card-row title-card-row-start">
@@ -213,7 +209,8 @@ export default {
       addTagText: '',
       isLoading: false,
       isTimelineShow: false,
-      showNewsSource: false
+      showNewsSource: false,
+      dropdownOpen: false
     }
   },
   computed: {
@@ -681,23 +678,30 @@ export default {
   }
 }
 ::v-deep .category-dropdown {
-  ul.dropdown-menu.show {
-    width: 272px;
-    height: 277px;
-    padding: 34px;
+  ul.dropdown-menu {
+    min-width: 130px;
+    font-size: 14px;
+    margin-top: 8px;
+    border: 0;
+    box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15) !important;
   }
-  .category-btn {
-    &:hover {
-      background-color: $blue;
-      color: $white;
+  li .dropdown-item {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .dropdown-btn {
+    color: $text-1;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    &:hover, &:active {
+      background-color: $nature-2;
     }
   }
-  .selected-category-btn {
-    background-color: $blue;
-    color: $white;
-    font-weight: bold;
+  .active-btn {
+    color: $blue;
+    background-color: $blue-1;
     &:hover {
-      background-color: $blue-25;
+      background-color: $blue-1;
     }
   }
 }
@@ -710,6 +714,7 @@ export default {
   padding-left: 0;
   padding-right: 0;
   .btn-text {
+    box-sizing: border-box;
     position: relative;
     font-size: 14px;
     flex: 5;
@@ -721,6 +726,10 @@ export default {
       top: 0;
       bottom: 0;
       background: #c4c4c4;
+    }
+    &.btn-text-left {
+      padding-left: 16px;
+      text-align: left;
     }
   }
   .btn-chevron {

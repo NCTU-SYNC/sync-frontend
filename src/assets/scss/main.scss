@@ -27,10 +27,6 @@ a {
   text-decoration: none !important;
 }
 
-.focus {
-  box-shadow: none !important;
-}
-
 #app {
   width: 100%;
   overflow-x: hidden;
@@ -60,7 +56,7 @@ input {
   border: none !important;
   border-color: transparent !important;
 
-  &:-webkit-autofill { 
+  &:-webkit-autofill {
     background-clip: text;
     -webkit-background-clip: text;
   }
