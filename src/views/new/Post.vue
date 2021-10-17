@@ -80,7 +80,7 @@
             </div>
             <div class="title-card-row title-card-row-start">
               <Tag v-for="(tag, tagIndex) in post.postTags" :key="tagIndex" :tag-index="tagIndex" />
-              <Tag :new-tag="true" />
+              <Tag v-if="post.postTags.length<5" :new-tag="true" />
             </div>
           </b-card-body>
         </b-card>
