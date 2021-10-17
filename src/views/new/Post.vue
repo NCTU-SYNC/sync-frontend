@@ -195,7 +195,7 @@ export default {
       articleId: undefined,
       currentEditingEditor: null,
       isAddingTag: false,
-      categoryList: ['政經', '國際', '社會', '科技', '環境', '生活', '運動'],
+      categoryList: ['政經', '國際', '社會', '科技', '環境', '生活', '運動', '未分類'],
       items: [
         {
           text: '首頁',
