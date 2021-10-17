@@ -93,7 +93,7 @@ const mutations = {
     state.postTitle = data.title
     state.postTags = data.tags || []
     state.blocks = data.blocks || []
-    state.categorySelected = data.category || ''
+    state.categorySelected = (data.category) ? data.category : '未分類'
     state.citations = data.citations || []
   }
 }
@@ -115,7 +115,7 @@ const getters = {
       blocks: state.blocks,
       citations: state.citations,
       isAnonymous: state.isAnonymous,
-      category: state.categorySelected
+      category: state.categorySelected ? state.categorySelected : '未分類'
     }
   }
 }
