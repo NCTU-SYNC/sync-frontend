@@ -113,7 +113,11 @@ export default {
   },
   data() {
     return {
-      articles: {},
+      articles: {
+        edited: [],
+        viewed: [],
+        subscribed: []
+      },
       showingArticles: [],
       currentShowingIndex: 0,
       contentTitle: '',
@@ -141,7 +145,11 @@ export default {
   },
   mounted() {
     if (this.isLogin) {
-      this.init()
+      try {
+        this.init()
+      } catch (e) {
+        console.error('Profile Initialization Error:', e)
+      }
     }
   },
   methods: {
@@ -154,6 +162,11 @@ export default {
         this.articles = payload
         this.points = payload.points
         this.updateList()
+      } else if (data.code === 500) {
+        // refetch data if 500
+        setTimeout(() => {
+          this.init()
+        }, 100)
       }
     },
     updateList() {
