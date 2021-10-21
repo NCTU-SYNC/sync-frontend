@@ -284,7 +284,7 @@ export default {
       const blockObj = {
         id: `${Utils.getRandomString()}-${(currentBlockCount + 1).toString()}`,
         blockTitle: '',
-        blockDateTime: new Date().toISOString(),
+        blockDateTime: '',
         content: null
       }
       this.$store.commit('post/ADD_BLOCK', {

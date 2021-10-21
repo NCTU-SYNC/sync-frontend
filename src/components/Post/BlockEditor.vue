@@ -23,7 +23,9 @@
           @toggle="resetDateTime"
         >
           <template #button-content>
-            <span class="d-inline-block pl-1 pr-5 btn-text">新增事件時間</span>
+            <span class="d-inline-block pl-1 pr-5 btn-text" :class="{'date-color': tempData.blockDateValue && tempData.blockTimeValue}">
+              {{ (tempData.blockDateValue && tempData.blockTimeValue) ? dropdownBtnDateTime : '新增段落事件時間' }}
+            </span>
             <span class="d-inline-block pl-2"><b-icon icon="chevron-down" class="caret" /></span>
           </template>
           <b-dropdown-form>
@@ -97,12 +99,15 @@ export default {
   computed: {
     displayDateTime() {
       return `${moment(this.tempData.blockDateValue).format('YYYY年M月DD日')} ${moment(`${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`).format('H點mm分')}`
+    },
+    dropdownBtnDateTime() {
+      return `${moment(this.tempData.blockDateValue).format('YYYY/MM/DD')} ${moment(`${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`).format('HH:mm')}`
     }
   },
   created() {
     this.tempData.blockTitle = this.block.blockTitle
-    this.tempData.blockDateValue = moment(this.block.blockDateTime).format('YYYY-MM-DD')
-    this.tempData.blockTimeValue = moment(this.block.blockDateTime).format('HH:mm:ss')
+    if (this.block.blockDateTime) { this.tempData.blockDateValue = moment(this.block.blockDateTime).format('YYYY-MM-DD') }
+    if (this.block.blockDateTime) { this.tempData.blockTimeValue = moment(this.block.blockDateTime).format('HH:mm:ss') }
     this.initialized = true
   },
   methods: {
@@ -142,7 +147,10 @@ export default {
       this.closeDropdown()
     },
     resetDateTime() {
-      const currentDatetime = this.$store.getters['post/GET_BLOCK_DATETIME'](this.block.id)
+      let currentDatetime = this.$store.getters['post/GET_BLOCK_DATETIME'](this.block.id)
+      if (currentDatetime === '') {
+        currentDatetime = new Date().toISOString()
+      }
       this.tempData.blockDateValue = moment(currentDatetime).format('YYYY-MM-DD')
       this.tempData.blockTimeValue = moment(currentDatetime).format('HH:mm:ss')
     },
@@ -190,6 +198,9 @@ export default {
     color: rgba(0,0,0, 0.8);
     border-right: 1px solid $nature-4;
     font-size: 14px;
+  }
+  .date-color {
+    color: $blue;
   }
 }
 ::v-deep .b-calendar {
