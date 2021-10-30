@@ -1,7 +1,17 @@
 import request from '@/utils/request'
 import config from './config'
+import store from '@/store'
 
 export function getArticles() {
+  if (store.getters.mode === 'DEBUG') {
+    return request({
+      url: config.baseURL + `/article`,
+      method: 'get',
+      params: {
+        mode: 'DEBUG'
+      }
+    })
+  }
   return request({
     url: config.baseURL + `/article`,
     method: 'get'
@@ -32,6 +42,9 @@ export function updateArticleById(data) {
 }
 
 export function searchArticles(data) {
+  if (store.getters.mode === 'DEBUG') {
+    data.mode = 'DEBUG'
+  }
   return request({
     url: config.baseURL + `/search`,
     method: 'get',

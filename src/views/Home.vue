@@ -92,6 +92,7 @@ export default {
     }
   },
   created() {
+    if (this.$route.query.mode === 'DEBUG') this.$store.commit('SET_MODE', 'DEBUG')
     if (this.$route.query.category) this.getCategoryArticles(this.$route.query.category)
     else this.initializeHomepage()
   },

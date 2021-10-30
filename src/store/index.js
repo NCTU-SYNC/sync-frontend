@@ -7,7 +7,8 @@ Vue.use(Vuex)
 
 const getDefaultState = () => {
   return {
-    showFooter: true
+    showFooter: true,
+    mode: 'PRODUCTION'
   }
 }
 
@@ -28,11 +29,15 @@ const store = new Vuex.Store({
     post: state => state.post,
     user: state => state.user,
     showFooter: state => state.showFooter,
+    mode: state => state.mode,
     notifications: state => state.user.notifications
   },
   mutations: {
     SET_FOOTER(state, show) {
       state.showFooter = show
+    },
+    SET_MODE(state, mode) {
+      state.mode = mode
     }
   }
 })
