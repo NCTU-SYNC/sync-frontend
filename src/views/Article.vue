@@ -572,10 +572,19 @@ h1.title-text {
       .title {
         margin-bottom: 8px;
         letter-spacing: 2px;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 24px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
       .date {
         font-size: 12px;
         color: $nature-3;
+        font-weight: 400;
+        line-height: 20px;
       }
     }
     li::before {
