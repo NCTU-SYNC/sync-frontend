@@ -120,11 +120,11 @@
               <hr>
               <h2>新聞來源</h2>
               <div v-for="(citation, index) in citations" :key="index" class="citation-item">
-                <div class="citation-title d-flex justify-content-start align-items-center">
-                  <div class="citation-list-square">
-                    <div class="citation-label" :data-label="index + 1" />
+                <div class="citation-title d-flex justify-content-start align-items-start">
+                  <div class="citation-title-square">
+                    <div class="citation-title-label" :data-label="index + 1" />
                   </div>
-                  <div class="w-100 pl-3">
+                  <div class="citation-title-text">
                     {{ citation.title }}
                   </div>
                 </div>
@@ -424,34 +424,43 @@ h1.title-text {
 }
 
 .citations {
-  margin-bottom: 218px;
-  .citation-title {
-    margin-bottom: 7px;
+  margin-bottom: 120px;
+  .citation-item {
+    margin-top: 20px;
+    .citation-title {
+      margin-bottom: 8px;
+      line-height: 24px;
+      .citation-title-square {
+        margin-top: 4px;
+        margin-right: 16px;
+        line-height: 16px;
+        display: flex;
+        justify-content: center;
+        width: 1rem;
+        height: 1rem;
+        background-color: $gray-light;
+      }
+      .citation-title-label {
+        &:before {
+          content: attr(data-label);
+          width: 2rem;
+        }
+        font-size: 11px;
+      }
+    }
+    .citation-link {
+        font-size: 12px;
+        text-decoration: none !important;
+        color: #a8a8a8 !important;
+        font-weight: 400;
+      }
+
   }
   hr {
     margin-bottom: 40px;
   }
   h2 {
     margin-bottom: 18px;
-  }
-  .citation-list-square {
-    display: flex;
-    justify-content: center;
-    width: 1rem;
-    height: 1rem;
-    background-color: $gray-light;
-  }
-  .citation-label {
-    &:before {
-      content: attr(data-label);
-      width: 2rem;
-    }
-    font-size: 11px;
-  }
-  .citation-link {
-    margin-top: 7px;
-    text-decoration: none !important;
-    color: $nature-3 !important;
   }
 }
 
