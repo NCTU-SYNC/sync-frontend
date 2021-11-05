@@ -42,7 +42,7 @@
         <div class="d-flex justify-content-center">
           <div class="main-content-container">
             <div class="title-block mt-5">
-              <div class="category mb-3">
+              <div class="category">
                 {{ formatCategory(category) }}
               </div>
               <div class="title-container">
@@ -52,7 +52,7 @@
               </div>
 
               <div class="hashtag-container">
-                <span v-for="(tag, tagIndex) in tags" :key="tagIndex" class="article-tags"> #{{ tag }} </span>
+                <span v-for="(tag, tagIndex) in tags" :key="tagIndex" class="hashtag"> #{{ tag }} </span>
               </div>
               <div class="article-info d-flex justify-content-between">
                 <div class="seen-edit-info">觀看數：{{ viewCount }}｜編輯數：{{ editedCount }}</div>
@@ -363,12 +363,14 @@ p {
 .category {
   color: $blue;
   font-size: 18px;
+  margin-bottom: 16px;
 }
 
-.title-text {
+h1.title-text {
   font-size: 36px;
   font-weight: bold;
   line-height: 56px;
+  margin-bottom: 10px;
 }
 
 .article-info {
@@ -376,9 +378,13 @@ p {
   font-size: 12px;
 }
 
-.article-tags {
-  font-size: 12px;
-  color: $blue;
+.hashtag-container {
+  margin-bottom: 24px;
+  .hashtag {
+    font-size: 12px;
+    color: $blue;
+    margin-right: 12px;
+  }
 }
 
 .author-info {
