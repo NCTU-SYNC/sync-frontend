@@ -26,8 +26,8 @@
         <ol>
           <li v-for="(recNews, recNewsIndex) in recommendedNews" :key="recNewsIndex">
             <div class="content">
-              <div class="title">{{ recNews.title }}</div>
-              <div class="date">{{ recNews.lastUpdatedAt }}</div>
+              <div class="title"><b-link :to="`/article/${recNews._id}`">{{ recNews.title }}</b-link></div>
+              <div class="date">{{ formatDate(recNews.lastUpdatedAt) }}</div>
             </div>
           </li>
         </ol>
@@ -141,7 +141,7 @@
 <script>
 // test id:  5f5113349779a26bd0444b26
 import moment from 'moment'
-import { getArticleById } from '@/api/article'
+import { getArticleById, getRecommendedArticles } from '@/api/article'
 import TiptapEditor from '@/components/Editor/TiptapEditor.vue'
 import CategoryBar from '@/components/CategoryBar.vue'
 
@@ -153,13 +153,7 @@ export default {
   data() {
     return {
       categoryList: ['即時', '政經', '國際', '社會', '科技', '環境', '生活', '運動'],
-      recommendedNews: [
-        { title: '華航疫情案再增2機師確診1名回溯採檢、1名居家', lastUpdatedAt: '2021.04.26' },
-        { title: '華航疫情案再增2機師確診1名回溯採檢、1名居家', lastUpdatedAt: '2021.04.26' },
-        { title: '華航疫情案再增2機師確診1名回溯採檢、1名居家', lastUpdatedAt: '2021.04.26' },
-        { title: '華航疫情案再增2機師確診1名回溯採檢、1名居家', lastUpdatedAt: '2021.04.26' },
-        { title: '華航疫情案再增2機師確診1名回溯採檢、1名居家', lastUpdatedAt: '2021.04.26' }
-      ],
+      recommendedNews: [],
       order: 'time',
       category: [],
       title: '',
@@ -180,7 +174,9 @@ export default {
       titleBarTop: null,
       barDistToTop: 0,
       FooterOffsetTop: 0,
-      firstBlockDistToTop: 0
+      firstBlockDistToTop: 0,
+      isRecommendedReady: false,
+      changePageTransition: false
     }
   },
   computed: {
@@ -234,7 +230,6 @@ export default {
     }, 1000)
 
     this.getArticleData()
-
     // check if user logged in
     this.isLogin = !!this.$store.getters.token
     if (this.isLogin) {
@@ -279,8 +274,26 @@ export default {
           this.isPageReady = true
         })
       }
+      this.isRecommendedReady = false
+      getRecommendedArticles({ limit: 5 }).then(response => {
+        const data = response.data
+        if (data.code === 200) {
+          const receivedNews = []
+          const articles = data.data[0]
+          for (const index in articles) {
+            const { title, lastUpdatedAt, _id } = articles[index]
+            receivedNews.push({ title, lastUpdatedAt, _id })
+          }
+          this.recommendedNews = receivedNews
+          this.isRecommendedReady = true
+        }
+      }).catch(err => {
+        console.error(err)
+        this.isRecommendedReady = true
+      })
     },
     setOffsetTopOfSideElements() {
+      if (!this.isPageReady) return
       this.$nextTick(() => {
         this.barDistToTop = this.$refs['title-gray-bar'].offsetTop
         this.firstBlockDistToTop = this.$refs[`block-${this.blocks[0]._id}`][0].offsetTop

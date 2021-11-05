@@ -38,3 +38,12 @@ export function searchArticles(data) {
     params: data
   })
 }
+
+// temporary
+export function getRecommendedArticles(data) {
+  return request({
+    url: config.baseURL + `/article`,
+    method: 'get',
+    params: data
+  })
+}
