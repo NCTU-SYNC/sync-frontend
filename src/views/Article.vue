@@ -103,8 +103,8 @@
                 <h2>
                   {{ block.blockTitle }}
                 </h2>
-                <div class="article-info mt-2">
-                  {{ formatTime(block.blockDateTime) }}
+                <div class="article-info">
+                  事件時間：{{ formatTime(block.blockDateTime) }}
                 </div>
               </div>
 
@@ -374,6 +374,7 @@ h1.title-text {
 .article-info {
   color: $nature-3;
   font-size: 12px;
+  line-height: 20px;
 }
 
 .hashtag-container {
@@ -408,6 +409,13 @@ h1.title-text {
 .block{
   margin-bottom: 56px;
   .block-header{
+    h2 {
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 38px;
+      letter-spacing: 4px;
+      color: #0E0E0E;
+    }
     margin-bottom: 18px;
   }
   &:last-child.no-citation{
