@@ -40,30 +40,30 @@
         :duration="500"
       >
         <div class="d-flex justify-content-center">
-          <div id="all">
-            <div id="title-block" class="mt-5">
-              <div id="category" class="mb-3">
+          <div class="main-content-container">
+            <div class="title-block mt-5">
+              <div class="category mb-3">
                 {{ formatCategory(category) }}
               </div>
-              <div id="title-container">
-                <h1 id="title-text">
+              <div class="title-container">
+                <h1 class="title-text">
                   {{ title }}
                 </h1>
               </div>
 
-              <div class="my-3">
+              <div class="hashtag-container">
                 <span v-for="(tag, tagIndex) in tags" :key="tagIndex" class="article-tags"> #{{ tag }} </span>
               </div>
               <div class="article-info d-flex justify-content-between">
-                <div id="seen-edit-info">觀看數：{{ viewCount }}｜編輯數：{{ editedCount }}</div>
-                <div id="lastUpdated">最後更新時間 {{ formatTime(lastUpdatedAt) }}</div>
+                <div class="seen-edit-info">觀看數：{{ viewCount }}｜編輯數：{{ editedCount }}</div>
+                <div class="lastUpdated">最後更新時間 {{ formatTime(lastUpdatedAt) }}</div>
               </div>
-              <hr ref="title-gray-bar" class="my-3">
+              <hr ref="title-gray-bar">
               <div class="d-flex justify-content-between">
-                <div id="author-info">
+                <div class="author-info">
                   編輯者： {{ authorsString }}
                 </div>
-                <div id="icons">
+                <div class="icons">
                   <b-button
                     v-b-tooltip.hover.bottom.v-secondary="'編輯內容'"
                     class="btn-icon mx-3"
@@ -344,11 +344,11 @@ p {
   letter-spacing: 0.25rem;
 }
 
-#all {
+.main-content-container {
   width: 720px;
 }
 
-#title-block {
+.title-block {
   margin-bottom: 50px;
 }
 
@@ -360,12 +360,12 @@ p {
   }
 }
 
-#category {
+.category {
   color: $blue;
   font-size: 18px;
 }
 
-#title-text {
+.title-text {
   font-size: 36px;
   font-weight: bold;
   line-height: 56px;
@@ -381,12 +381,12 @@ p {
   color: $blue;
 }
 
-#author-info {
+.author-info {
   font-size: 12px;
   overflow-wrap: anywhere;
 }
 
-#icons {
+.icons {
   flex-shrink: 0;
 }
 
