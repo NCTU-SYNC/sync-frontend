@@ -9,11 +9,9 @@
       >
         <div class="timeline">
           <ul>
-            <li class="circle" />
-            <li v-for="(block, blockIndex) in blocks" :key="blockIndex" class="circle" @click="scrollTo(`block-${block._id}`)">
+            <li v-for="(block, blockIndex) in blocks" :key="blockIndex" @click="scrollTo(`block-${block._id}`)">
               {{ block.blockTitle }}
             </li>
-            <li class="circle" />
           </ul>
         </div>
       </div>
@@ -457,12 +455,70 @@ h1.title-text {
 
 .timeline-container {
   @include hide-below-desktop;
-  width: 240px;
   max-height: calc(100vh - 110px);
   overflow-y: scroll;
   right: calc(50vw + 360px + 64px);
   padding-left: 16px;
   padding-right: 0px;
+  .timeline {
+    position: relative;
+  }
+  ul {
+    padding: 0;
+    border-left: 1px solid $gray-light;
+    padding-left: 16px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    margin: 0;
+    li {
+      width: 240px;
+      margin-bottom: 24px;
+      list-style: none;
+      cursor: pointer;
+      line-height: 24px;
+      position: relative;
+      &::before {
+        content: ' ';
+        position: absolute;
+        background: $blue;
+        height: 8px;
+        width: 8px;
+        top: 8px;
+        left: -20.5px;
+        border-radius: 50%;
+      }
+    }
+    &::before {
+      content: ' ';
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 10px;
+      height: 10px;
+      border: 1px solid $gray-light;
+      background-color: white;
+      transform: translate(-4.5px, -5px);
+    }
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 6px;
+      height: 6px;
+      border-bottom: 1px solid $gray-light;
+      border-right: 1px solid $gray-light;
+      transform-origin: top;
+      -moz-transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+      -o-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      transform-origin: center;
+      transform: translate(-2.5px) rotate(45deg);
+    }
+  }
+
 }
 
 ::-webkit-scrollbar {
@@ -511,59 +567,6 @@ h1.title-text {
       font-size: 20px;
       margin-top: -3px;
     }
-  }
-}
-
-li.circle{
-  position: relative;
-  margin: 0;
-  padding-bottom: 1em;
-  padding-left: 20px;
-  list-style: none;
-
-  &:hover{
-    cursor: pointer;
-  }
-
-  &:last-child::after {
-    content: '↓';
-    color: $gray-light;
-    font-weight: bold;
-    position: absolute;
-    left: -5.4px;
-    top: 8px;
-    background-image: none;
-  }
-  &::before{
-    background-color: $gray-light;
-    width: 2px;
-    content: '';
-    position: absolute;
-    top: 0px;
-    bottom: 0px;
-    left: 0px;
-  }
-  &:first-child::after{
-      content: '';
-      position: absolute;
-      background-image: url('~@/assets/materials/ma-timeline-square.svg');
-      background-repeat: no-repeat;
-      background-size: contain;
-      left: -4.51px;
-      top: -10px;
-      width: 10px;
-      height: 10px;
-  }
-  &::after{
-    content: '';
-    position: absolute;
-    background-image: url('~@/assets/materials/ma-timeline-circle.svg');
-    background-repeat: no-repeat;
-    background-size: contain;
-    left: -3.51px;
-    top: 8px;
-    width: 8px;
-    height: 8px;
   }
 }
 
