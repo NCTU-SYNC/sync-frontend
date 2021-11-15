@@ -261,12 +261,14 @@ export default {
       getArticleById(articleId).then(response => {
         if (response.data.code === 200) {
           const data = response.data.data
-          console.log(data.tags)
           this.$store.commit('post/INIT_POST', { data })
           if (this.post.blocks.length === 0) {
-            this.handleAddBlock()
+            this.handleAddBlock(-1)
           }
           this.isLoading = false
+          this.$nextTick(() => {
+            this.post.currentEditingEditor = null
+          })
         } else {
           throw new Error(response.data.message)
         }
@@ -275,7 +277,7 @@ export default {
         this.isLoading = false
       })
     } else {
-      this.handleAddBlock()
+      this.handleAddBlock(-1)
     }
   },
   methods: {
@@ -290,6 +292,10 @@ export default {
       this.$store.commit('post/ADD_BLOCK', {
         index: index,
         block: blockObj
+      })
+      this.$nextTick(() => {
+        const editor = this.$store.getters['post/GET_EDITOR_BY_ID'](blockObj.id)
+        this.$store.commit('post/FOCUS_EDITOR', editor)
       })
     },
     handleDeleteBlock(index) {
@@ -350,18 +356,6 @@ export default {
     },
     focusOnTitle(blockId) {
       this.$refs[`block-${blockId}`][0].focusOnTitle()
-    },
-    adjustTagWidth(tagIndex) {
-      const el = this.$refs[`tag-${tagIndex}`][0]
-      console.log(el)
-      let len = 0
-      for (const c in this.tags[tagIndex]) {
-        if (this.tags[tagIndex][c].charCodeAt(0) < 128) len += 1
-        else len += 2
-      }
-      el.$el.style.maxWidth = `${len}ch`
-      el.$el.style.width = `${len}ch`
-      console.log(el.$el.style.maxWidth)
     }
   }
 }
