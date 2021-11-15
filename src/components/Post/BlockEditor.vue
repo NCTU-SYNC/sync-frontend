@@ -9,7 +9,7 @@
         :id="`block-title-${block.id}`"
         ref="title-input-field"
         v-model="tempData.blockTitle"
-        class="mb-2 mr-2 mb-sm-0 pl-2 block-title"
+        class="mb-2 mr-3 mb-sm-0 block-title"
         placeholder="段落標題"
         @change="handleChangeTitle"
       />
@@ -23,8 +23,17 @@
           @toggle="resetDateTime"
         >
           <template #button-content>
-            <span class="d-inline-block pl-1 pr-5 btn-text" :class="{'date-color': tempData.blockDateValue && tempData.blockTimeValue}">
-              {{ (tempData.blockDateValue && tempData.blockTimeValue) ? dropdownBtnDateTime : '新增段落事件時間' }}
+            <span
+              class="d-inline-block pl-1 btn-text"
+              :class="{
+                'date-color': tempData.blockDateValue && tempData.blockTimeValue
+              }"
+            >
+              {{
+                tempData.blockDateValue && tempData.blockTimeValue
+                  ? dropdownBtnDateTime
+                  : '新增段落事件時間'
+              }}
             </span>
             <span class="d-inline-block pl-2"><b-icon icon="chevron-down" class="caret" /></span>
           </template>
@@ -169,10 +178,10 @@ export default {
 
 .block-title {
   font-weight: bold;
-  font-size: 18px;
-  line-height: 30px;
+  line-height: 1.5rem;
+  padding: 0.5rem 0.625rem;
   &::placeholder {
-    color: rgba(0, 0, 0, 0.3);
+    color: rgba(0, 0, 0, 0.2);
   }
 }
 
@@ -197,6 +206,7 @@ export default {
   .btn-text {
     color: rgba(0,0,0, 0.8);
     border-right: 1px solid $nature-4;
+    padding-right: 0.75rem;
     font-size: 14px;
   }
   .date-color {
