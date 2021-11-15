@@ -377,11 +377,12 @@ p {
   margin-bottom: 16px;
 }
 
-h1.title-text {
+.title-text {
   font-size: 36px;
   font-weight: bold;
   line-height: 56px;
   margin-bottom: 10px;
+  color: #0E0E0E;
 }
 
 .article-info {

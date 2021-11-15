@@ -160,6 +160,7 @@ export default {
   p {
     font-size: 18px;
     line-height: 30px;
+    color: $black;
   }
   sup {
     background-color: $gray-light;
