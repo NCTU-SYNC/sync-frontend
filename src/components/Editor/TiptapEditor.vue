@@ -157,6 +157,30 @@ export default {
 
 .editor__content {
   margin-top: 0.5rem;
+  p {
+    font-size: 18px;
+    line-height: 30px;
+    color: $black;
+  }
+  sup {
+    background-color: $gray-light;
+    padding: 0px 3px;
+    font-size: 9px;
+    line-height: 13px;
+    vertical-align: text-top;
+  }
+  .ProseMirror {
+    ul, ol {
+      padding-left: 2rem;
+    }
+    blockquote {
+      margin-left: 1rem;
+      padding-left: 1rem;
+      border-left: 4px solid rgba(35, 35, 35, 1);
+      margin-top: 18px;
+      margin-bottom: 18px;
+    }
+  }
 }
 
 .editor__content__edit {

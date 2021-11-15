@@ -9,11 +9,9 @@
       >
         <div class="timeline">
           <ul>
-            <li class="circle" />
-            <li v-for="(block, blockIndex) in blocks" :key="blockIndex" class="circle" @click="scrollTo(`block-${block._id}`)">
+            <li v-for="(block, blockIndex) in blocks" :key="blockIndex" @click="scrollTo(`block-${block._id}`)">
               {{ block.blockTitle }}
             </li>
-            <li class="circle" />
           </ul>
         </div>
       </div>
@@ -28,8 +26,8 @@
         <ol>
           <li v-for="(recNews, recNewsIndex) in recommendedNews" :key="recNewsIndex">
             <div class="content">
-              <div class="title">{{ recNews.title }}</div>
-              <div class="date">{{ recNews.lastUpdatedAt }}</div>
+              <div class="title"><b-link :to="`/article/${recNews._id}`">{{ recNews.title }}</b-link></div>
+              <div class="date">{{ formatDate(recNews.lastUpdatedAt) }}</div>
             </div>
           </li>
         </ol>
@@ -40,30 +38,30 @@
         :duration="500"
       >
         <div class="d-flex justify-content-center">
-          <div id="all">
-            <div id="title-block" class="mt-5">
-              <div id="category" class="mb-3">
+          <div class="main-content-container">
+            <div class="title-block mt-5">
+              <div class="category">
                 {{ formatCategory(category) }}
               </div>
-              <div id="title-container">
-                <h1 id="title-text">
+              <div class="title-container">
+                <h1 class="title-text">
                   {{ title }}
                 </h1>
               </div>
 
-              <div class="my-3">
-                <span v-for="(tag, tagIndex) in tags" :key="tagIndex" class="article-tags"> #{{ tag }} </span>
+              <div class="hashtag-container">
+                <span v-for="(tag, tagIndex) in tags" :key="tagIndex" class="hashtag"> #{{ tag }} </span>
               </div>
               <div class="article-info d-flex justify-content-between">
-                <div id="seen-edit-info">觀看數：{{ viewCount }}｜編輯數：{{ editedCount }}</div>
-                <div id="lastUpdated">最後更新時間 {{ formatTime(lastUpdatedAt) }}</div>
+                <div class="seen-edit-info">觀看數：{{ viewCount }}｜編輯數：{{ editedCount }}</div>
+                <div class="lastUpdated">最後更新時間 {{ formatTime(lastUpdatedAt) }}</div>
               </div>
-              <hr ref="title-gray-bar" class="my-3">
+              <hr ref="title-gray-bar">
               <div class="d-flex justify-content-between">
-                <div id="author-info">
+                <div class="author-info">
                   編輯者： {{ authorsString }}
                 </div>
-                <div id="icons">
+                <div class="icons">
                   <b-button
                     v-b-tooltip.hover.bottom.v-secondary="'編輯內容'"
                     class="btn-icon mx-3"
@@ -105,8 +103,8 @@
                 <h2>
                   {{ block.blockTitle }}
                 </h2>
-                <div class="article-info mt-2">
-                  {{ formatTime(block.blockDateTime) }}
+                <div class="article-info">
+                  事件時間：{{ formatTime(block.blockDateTime) }}
                 </div>
               </div>
 
@@ -122,11 +120,11 @@
               <hr>
               <h2>新聞來源</h2>
               <div v-for="(citation, index) in citations" :key="index" class="citation-item">
-                <div class="citation-title d-flex justify-content-start align-items-center">
-                  <div class="citation-list-square">
-                    <div class="citation-label" :data-label="index + 1" />
+                <div class="citation-title d-flex justify-content-start align-items-start">
+                  <div class="citation-title-square">
+                    <div class="citation-title-label" :data-label="index + 1" />
                   </div>
-                  <div class="w-100 pl-3">
+                  <div class="citation-title-text">
                     {{ citation.title }}
                   </div>
                 </div>
@@ -143,7 +141,7 @@
 <script>
 // test id:  5f5113349779a26bd0444b26
 import moment from 'moment'
-import { getArticleById } from '@/api/article'
+import { getArticleById, getRecommendedArticles } from '@/api/article'
 import TiptapEditor from '@/components/Editor/TiptapEditor.vue'
 import CategoryBar from '@/components/CategoryBar.vue'
 
@@ -155,13 +153,7 @@ export default {
   data() {
     return {
       categoryList: ['即時', '政經', '國際', '社會', '科技', '環境', '生活', '運動'],
-      recommendedNews: [
-        { title: '華航疫情案再增2機師確診1名回溯採檢、1名居家', lastUpdatedAt: '2021.04.26' },
-        { title: '華航疫情案再增2機師確診1名回溯採檢、1名居家', lastUpdatedAt: '2021.04.26' },
-        { title: '華航疫情案再增2機師確診1名回溯採檢、1名居家', lastUpdatedAt: '2021.04.26' },
-        { title: '華航疫情案再增2機師確診1名回溯採檢、1名居家', lastUpdatedAt: '2021.04.26' },
-        { title: '華航疫情案再增2機師確診1名回溯採檢、1名居家', lastUpdatedAt: '2021.04.26' }
-      ],
+      recommendedNews: [],
       order: 'time',
       category: [],
       title: '',
@@ -182,7 +174,9 @@ export default {
       titleBarTop: null,
       barDistToTop: 0,
       FooterOffsetTop: 0,
-      firstBlockDistToTop: 0
+      firstBlockDistToTop: 0,
+      isRecommendedReady: false,
+      changePageTransition: false
     }
   },
   computed: {
@@ -236,7 +230,6 @@ export default {
     }, 1000)
 
     this.getArticleData()
-
     // check if user logged in
     this.isLogin = !!this.$store.getters.token
     if (this.isLogin) {
@@ -281,8 +274,26 @@ export default {
           this.isPageReady = true
         })
       }
+      this.isRecommendedReady = false
+      getRecommendedArticles({ limit: 5 }).then(response => {
+        const data = response.data
+        if (data.code === 200) {
+          const receivedNews = []
+          const articles = data.data[0]
+          for (const index in articles) {
+            const { title, lastUpdatedAt, _id } = articles[index]
+            receivedNews.push({ title, lastUpdatedAt, _id })
+          }
+          this.recommendedNews = receivedNews
+          this.isRecommendedReady = true
+        }
+      }).catch(err => {
+        console.error(err)
+        this.isRecommendedReady = true
+      })
     },
     setOffsetTopOfSideElements() {
+      if (!this.isPageReady) return
       this.$nextTick(() => {
         this.barDistToTop = this.$refs['title-gray-bar'].offsetTop
         this.firstBlockDistToTop = this.$refs[`block-${this.blocks[0]._id}`][0].offsetTop
@@ -344,11 +355,11 @@ p {
   letter-spacing: 0.25rem;
 }
 
-#all {
+.main-content-container {
   width: 720px;
 }
 
-#title-block {
+.title-block {
   margin-bottom: 50px;
 }
 
@@ -360,33 +371,41 @@ p {
   }
 }
 
-#category {
+.category {
   color: $blue;
   font-size: 18px;
+  margin-bottom: 16px;
 }
 
-#title-text {
+.title-text {
   font-size: 36px;
   font-weight: bold;
   line-height: 56px;
+  margin-bottom: 10px;
+  color: #0E0E0E;
 }
 
 .article-info {
   color: $nature-3;
   font-size: 12px;
+  line-height: 20px;
 }
 
-.article-tags {
-  font-size: 12px;
-  color: $blue;
+.hashtag-container {
+  margin-bottom: 24px;
+  .hashtag {
+    font-size: 12px;
+    color: $blue;
+    margin-right: 12px;
+  }
 }
 
-#author-info {
+.author-info {
   font-size: 12px;
   overflow-wrap: anywhere;
 }
 
-#icons {
+.icons {
   flex-shrink: 0;
 }
 
@@ -404,6 +423,13 @@ p {
 .block{
   margin-bottom: 56px;
   .block-header{
+    h2 {
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 38px;
+      letter-spacing: 4px;
+      color: #0E0E0E;
+    }
     margin-bottom: 18px;
   }
   &:last-child.no-citation{
@@ -412,34 +438,43 @@ p {
 }
 
 .citations {
-  margin-bottom: 218px;
-  .citation-title {
-    margin-bottom: 7px;
+  margin-bottom: 120px;
+  .citation-item {
+    margin-top: 20px;
+    .citation-title {
+      margin-bottom: 8px;
+      line-height: 24px;
+      .citation-title-square {
+        margin-top: 4px;
+        margin-right: 16px;
+        line-height: 16px;
+        display: flex;
+        justify-content: center;
+        width: 1rem;
+        height: 1rem;
+        background-color: $gray-light;
+      }
+      .citation-title-label {
+        &:before {
+          content: attr(data-label);
+          width: 2rem;
+        }
+        font-size: 11px;
+      }
+    }
+    .citation-link {
+        font-size: 12px;
+        text-decoration: none !important;
+        color: #a8a8a8 !important;
+        font-weight: 400;
+      }
+
   }
   hr {
     margin-bottom: 40px;
   }
   h2 {
     margin-bottom: 18px;
-  }
-  .citation-list-square {
-    display: flex;
-    justify-content: center;
-    width: 1rem;
-    height: 1rem;
-    background-color: $gray-light;
-  }
-  .citation-label {
-    &:before {
-      content: attr(data-label);
-      width: 2rem;
-    }
-    font-size: 11px;
-  }
-  .citation-link {
-    margin-top: 7px;
-    text-decoration: none !important;
-    color: $nature-3 !important;
   }
 }
 
@@ -451,12 +486,70 @@ p {
 
 .timeline-container {
   @include hide-below-desktop;
-  width: 240px;
   max-height: calc(100vh - 110px);
   overflow-y: scroll;
   right: calc(50vw + 360px + 64px);
   padding-left: 16px;
   padding-right: 0px;
+  .timeline {
+    position: relative;
+  }
+  ul {
+    padding: 0;
+    border-left: 1px solid $gray-light;
+    padding-left: 16px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    margin: 0;
+    li {
+      width: 240px;
+      margin-bottom: 24px;
+      list-style: none;
+      cursor: pointer;
+      line-height: 24px;
+      position: relative;
+      &::before {
+        content: ' ';
+        position: absolute;
+        background: $blue;
+        height: 8px;
+        width: 8px;
+        top: 8px;
+        left: -20.5px;
+        border-radius: 50%;
+      }
+    }
+    &::before {
+      content: ' ';
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 10px;
+      height: 10px;
+      border: 1px solid $gray-light;
+      background-color: white;
+      transform: translate(-4.5px, -5px);
+    }
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 6px;
+      height: 6px;
+      border-bottom: 1px solid $gray-light;
+      border-right: 1px solid $gray-light;
+      transform-origin: top;
+      -moz-transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+      -o-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      transform-origin: center;
+      transform: translate(-2.5px) rotate(45deg);
+    }
+  }
+
 }
 
 ::-webkit-scrollbar {
@@ -493,10 +586,19 @@ p {
       .title {
         margin-bottom: 8px;
         letter-spacing: 2px;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 24px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
       .date {
         font-size: 12px;
         color: $nature-3;
+        font-weight: 400;
+        line-height: 20px;
       }
     }
     li::before {
@@ -505,59 +607,6 @@ p {
       font-size: 20px;
       margin-top: -3px;
     }
-  }
-}
-
-li.circle{
-  position: relative;
-  margin: 0;
-  padding-bottom: 1em;
-  padding-left: 20px;
-  list-style: none;
-
-  &:hover{
-    cursor: pointer;
-  }
-
-  &:last-child::after {
-    content: '↓';
-    color: $gray-light;
-    font-weight: bold;
-    position: absolute;
-    left: -5.4px;
-    top: 8px;
-    background-image: none;
-  }
-  &::before{
-    background-color: $gray-light;
-    width: 2px;
-    content: '';
-    position: absolute;
-    top: 0px;
-    bottom: 0px;
-    left: 0px;
-  }
-  &:first-child::after{
-      content: '';
-      position: absolute;
-      background-image: url('~@/assets/materials/ma-timeline-square.svg');
-      background-repeat: no-repeat;
-      background-size: contain;
-      left: -4.51px;
-      top: -10px;
-      width: 10px;
-      height: 10px;
-  }
-  &::after{
-    content: '';
-    position: absolute;
-    background-image: url('~@/assets/materials/ma-timeline-circle.svg');
-    background-repeat: no-repeat;
-    background-size: contain;
-    left: -3.51px;
-    top: 8px;
-    width: 8px;
-    height: 8px;
   }
 }
 

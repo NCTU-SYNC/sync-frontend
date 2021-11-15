@@ -1,13 +1,10 @@
 <template>
   <b-row class="category-navbar">
     <b-col>
-      <b-nav
-        align="center"
-      >
+      <b-nav class="item-container">
         <b-nav-item
           v-for="(category, index) in categoryList"
           :key="index"
-          class="px-3"
           link-classes="category-item"
           :to="{path:'/', query: { category: category }}"
         >
@@ -33,13 +30,30 @@ export default {
 @import '@/assets/scss/news.scss';
 .category-navbar{
   border-bottom: 1px solid $gray-light;
-}
-
-.category-item{
-  font-size: 20px;
+  align-items: center;
   line-height: 30px;
-  letter-spacing: 8px;
-  color: #232323;
+  height: 48px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #212124;
+}
+.item-container{
+  max-width: 1024px;
+  justify-content: space-between;
+  margin: 0 auto;
+  li:first-child {
+    a {
+      margin-left: -1rem;
+    }
+  }
+  li:last-child {
+    a {
+      margin-right: -1rem;
+    }
+  }
+
+}
+.category-item{
   &:hover{
     color: $blue !important;
   }
