@@ -1,107 +1,140 @@
 <template>
   <b-container fluid class="wrapper">
     <b-row>
-      <b-col v-if="isTimelineShow" cols="2" align-self="stretch" class="timeline-panel">
+      <b-col
+        v-if="isTimelineShow"
+        cols="2"
+        align-self="stretch"
+        class="timeline-panel"
+      >
         <div class="bg-light timeline-header">
-          <b-button variant="transparent" block class="btn-edit" @click="handleShowTimeline(false)">
+          <b-button
+            variant="transparent"
+            block
+            class="btn-edit"
+            @click="handleShowTimeline(false)"
+          >
             <b-icon icon="chevron-left" />
             段落標題
           </b-button>
         </div>
         <div class="timeline-container">
-          <a v-for="(block, index) in blocks" :key="index" class="timeline" @click="focusOnTitle(block.id)">
+          <a
+            v-for="(block, index) in blocks"
+            :key="index"
+            class="timeline"
+            @click="focusOnTitle(block.id)"
+          >
             <div class="rectangle" />
             {{ block.blockTitle !== '' ? block.blockTitle : '段落尚無標題' }}
           </a>
         </div>
       </b-col>
-      <b-col v-else :cols="showNewsSource?1:2" align-self="start" class="d-flex justify-content-start">
-        <b-button variant="light" class="btn-edit mt-3" @click="handleShowTimeline(true)">
+      <b-col
+        v-else
+        :cols="showNewsSource ? 1 : 2"
+        align-self="start"
+        class="d-flex justify-content-start"
+      >
+        <b-button
+          variant="light"
+          class="btn-edit mt-3"
+          @click="handleShowTimeline(true)"
+        >
           <icon icon="edit-timeline" />
           <span v-if="!showNewsSource">段落標題</span>
         </b-button>
       </b-col>
-      <b-col
-        class="py-2 main-editor-area"
-        lg="7"
-        md="12"
-        sm="12"
-        cols="12"
-      >
-        <b-card
-          no-body
-          class="mt-2 edit-card edit-row"
-        >
-          <b-card-body>
-            <label
-              class="sr-only"
-              for="post-title"
-            >標題</label>
-            <b-form-input
-              id="post-title"
-              v-model="postTitle"
-              size="lg"
-              class="mb-0 mr-sm-2 mb-sm-0 d-flex flex-grow-1"
-              placeholder="文章標題"
-              required
-            />
-            <div class="title-card-row title-card-row-between">
+      <b-col class="py-2 main-editor-area" lg="7" md="12" sm="12" cols="12">
+        <b-card no-body class="mt-2 edit-card edit-row">
+          <b-card-body body-class="edit-card-body">
+            <label class="sr-only" for="post-title">標題</label>
+            <div class="d-flex justify-content-start w-100">
+              <b-form-input
+                id="post-title"
+                v-model="postTitle"
+                size="lg"
+                class="mb-0 mr-sm-3 mb-sm-0 post-title"
+                placeholder="文章標題"
+                required
+              />
               <b-dropdown
                 ref="categoryRef"
                 class="bg-white rounded category-dropdown"
                 toggle-class="text-truncate text-decoration-none category-dropdown-btn"
                 variant="link"
                 no-caret
-                @hide="dropdownOpen=false"
-                @show="dropdownOpen=true"
+                @hide="dropdownOpen = false"
+                @show="dropdownOpen = true"
               >
                 <template #button-content>
-                  <div class="btn-text" :class="{ 'btn-text-left' :(categorySelected!=='')}">{{ categorySelected===''?'文章分類':categorySelected }}</div>
+                  <div
+                    class="btn-text"
+                    :class="{ 'btn-text-left': categorySelected !== '' }"
+                  >
+                    {{
+                      categorySelected === '' ? '文章分類' : categorySelected
+                    }}
+                  </div>
                   <div class="btn-chevron">
-                    <b-icon v-if="!dropdownOpen" icon="chevron-down" class="dropdown-icon" />
+                    <b-icon
+                      v-if="!dropdownOpen"
+                      icon="chevron-down"
+                      class="dropdown-icon"
+                    />
                     <b-icon v-else icon="chevron-up" class="dropdown-icon" />
                   </div>
                 </template>
                 <b-dropdown-item-button
                   v-for="(category, categoryIndex) in categoryList"
                   :key="categoryIndex"
-                  :active="categorySelected===category"
+                  :active="categorySelected === category"
                   active-class="active-btn"
                   button-class="dropdown-btn"
-                  @click="categorySelected=category"
+                  @click="categorySelected = category"
                 >
                   {{ category }}
                 </b-dropdown-item-button>
               </b-dropdown>
             </div>
             <div class="title-card-row title-card-row-start">
-              <Tag v-for="(tag, tagIndex) in post.postTags" :key="tagIndex" :tag-index="tagIndex" />
-              <Tag v-if="post.postTags.length<5" :new-tag="true" />
+              <Tag
+                v-for="(tag, tagIndex) in post.postTags"
+                :key="tagIndex"
+                :tag-index="tagIndex"
+              />
+              <Tag v-if="post.postTags.length < 5" :new-tag="true" />
             </div>
           </b-card-body>
         </b-card>
         <div class="edit-add-block-row edit-row d-flex align-items-center">
-          <b-button variant="transparent" block class="text-left add-text" @click="handleAddBlock(-1)">
+          <b-button
+            variant="transparent"
+            block
+            class="text-left add-text"
+            @click="handleAddBlock(-1)"
+          >
             + 新增段落
           </b-button>
         </div>
-        <div
-          v-for="(block, blockIndex) in blocks"
-          :key="block.id"
-        >
-          <b-card
-            class="edit-block edit-row"
-          >
-            <b-button variant="link" class="close-btn" @click="handleDeleteBlock(blockIndex)">
+        <div v-for="(block, blockIndex) in blocks" :key="block.id">
+          <b-card class="edit-block edit-row">
+            <b-button
+              variant="link"
+              class="close-btn"
+              @click="handleDeleteBlock(blockIndex)"
+            >
               <b-icon icon="x" font-scale="1.5" />
             </b-button>
-            <BlockEditor
-              :ref="`block-${block.id}`"
-              :block="block"
-            />
+            <BlockEditor :ref="`block-${block.id}`" :block="block" />
           </b-card>
           <div class="edit-add-block-row edit-row d-flex align-items-center">
-            <b-button variant="transparent" block class="text-left add-text" @click="handleAddBlock(blockIndex)">
+            <b-button
+              variant="transparent"
+              block
+              class="text-left add-text"
+              @click="handleAddBlock(blockIndex)"
+            >
               + 新增段落
             </b-button>
           </div>
@@ -380,6 +413,18 @@ export default {
   border-bottom: 1px solid $primary;
 }
 
+.post-title {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1.5rem;
+  padding: 0.5rem 0.625rem;
+  // used to be calculated by bootstrap, now fixed
+  height: 40px !important;
+  &::placeholder {
+    color: rbga(0, 0, 0, 0.2);
+  }
+}
+
 .add-block-btn {
   border-radius: 3rem;
   display: flex;
@@ -590,11 +635,16 @@ export default {
 .edit-card {
   background: $light;
   border: none;
+
+  &-body {
+    padding: 1.5rem;
+  }
 }
 
 .title-card-row {
-  margin-top: 1rem;
   display: flex;
+  margin-top: 1.5rem;
+  margin-bottom: -0.5rem;
   align-items: center;
   flex-wrap: wrap;
   &-between {
@@ -680,7 +730,7 @@ export default {
 }
 
 .dropdown-icon {
-  color: #c4c4c4;
+  color: $nature-8;
 }
 
 .edit-add-block-row {
