@@ -98,14 +98,13 @@ export default {
   },
   methods: {
     importNews() {
-      const { title, url } = this // const title = this.title; const url ...
-      this.$store.dispatch('post/SUBMIT_CITATION_FORM', { title, url })
-      // this.$emit('importNews', this.content)
       const currentEditingEditor = this.$store.state.post.currentEditingEditor
       if (currentEditingEditor === null) {
-        this.$bvModal.msgBoxOk('請選擇編輯區塊，或是先新增段落後再引入')
+        this.$bvModal.msgBoxOk('請先點擊畫面左方欲引入新聞的內文輸入框，之後再從右方新聞欄中引入新聞。')
         return
       }
+      const { title, url } = this // const title = this.title; const url ...
+      this.$store.dispatch('post/SUBMIT_CITATION_FORM', { title, url })
       let str = currentEditingEditor.getHTML()
       this.content.forEach((text) => {
         str += `<p>${text}</p>`
