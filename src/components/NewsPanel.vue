@@ -1,27 +1,35 @@
 <template>
   <div class="d-flex flex-column h-100">
     <div class="w-100 d-flex flex-column justify-content-start header">
-      <div class="result-number-container" />
-      <div class="w-100 d-flex justify-content-start">
-        <div class="search-bar mr-1 flex-grow-1">
-          <b-button
-            class="search-btn"
-            variant="link"
-            :disabled="searchKeyword.length === 0 || isLoading"
-            @click="getNews"
+      <!-- TODO: page number -->
+      <div class="w-100 d-flex justify-content-start align-items-start">
+        <div class="d-flex flex-grow-1 mr-2 flex-column">
+          <div class="search-bar flex-grow-1">
+            <b-button
+              class="search-btn"
+              variant="link"
+              :disabled="searchKeyword.length === 0 || isLoading"
+              @click="getNews"
+            >
+              <!-- <b-icon icon="search" font-scale="1" /> -->
+              <icon icon="news-panel-search" size="md" />
+            </b-button>
+            <b-form-input
+              id="search-news"
+              v-model="searchKeyword"
+              class="border-0"
+              placeholder="搜尋"
+              :readonly="isLoading"
+              @keydown.enter="searchOnEnter"
+            />
+            <div />
+          </div>
+          <div
+            class="result-number-container d-flex pt-2 justify-content-between"
           >
-            <!-- <b-icon icon="search" font-scale="1" /> -->
-            <icon icon="news-panel-search" size="md" />
-          </b-button>
-          <b-form-input
-            id="search-news"
-            v-model="searchKeyword"
-            class="border-0"
-            placeholder="搜尋"
-            :readonly="isLoading"
-            @keydown.enter="searchOnEnter"
-          />
-          <div />
+            <span>{{ newsNumber }} 項搜尋結果</span>
+            <span>第 {{ pageNumber }}/{{ totalPage }} 頁</span>
+          </div>
         </div>
         <div class="d-flex align-items-center">
           <b-button
@@ -43,7 +51,9 @@
       </div>
     </div>
     <div class="search-results-container">
-      <div v-if="newsList.length===0" class="default-content-container">輸入關鍵字以搜索相關新聞</div>
+      <div v-if="newsList.length === 0" class="default-content-container">
+        輸入關鍵字以搜索相關新聞
+      </div>
       <div
         v-for="(news, index) in newsList"
         :key="index"
@@ -75,6 +85,10 @@ export default {
       searchKeyword: '',
       newsList: [],
       pageNumber: 0,
+      // TODO: total page
+      totalPage: 0,
+      // TODO: number of total news
+      newsNumber: 0,
       queryTimeSelected: 'qdr:a',
       mediaSelected: '',
       timeQueries: [
@@ -85,13 +99,27 @@ export default {
         ['qdr:m', '過去 1 個月'],
         ['qdr:y', '過去 1 年']
       ],
-      mediaSourceQueries: ['不限新聞來源', '中時', '中央社', '華視', '東森', 'ettoday', '台灣事實查核中心', '自由時報', '風傳媒', '聯合', '三立'],
+      mediaSourceQueries: [
+        '不限新聞來源',
+        '中時',
+        '中央社',
+        '華視',
+        '東森',
+        'ettoday',
+        '台灣事實查核中心',
+        '自由時報',
+        '風傳媒',
+        '聯合',
+        '三立'
+      ],
       isLoading: false
     }
   },
   computed: {
     timeQueryText() {
-      return this.queryTimeSelected.length > 0 ? this.timeQueries.find(e => e[0] === this.queryTimeSelected)[1] : '時間'
+      return this.queryTimeSelected.length > 0
+        ? this.timeQueries.find(e => e[0] === this.queryTimeSelected)[1]
+        : '時間'
     },
     mediaSourceText() {
       return this.mediaSelected.length > 0 ? this.mediaSelected : '不限新聞來源'
@@ -103,14 +131,12 @@ export default {
       if (this.searchKeyword) {
         try {
           this.isLoading = true
-          const { data } = await getNews(
-            {
-              q: this.searchKeyword,
-              page: this.pageNumber,
-              tbs: this.queryTimeSelected,
-              media: this.mediaSelected
-            }
-          )
+          const { data } = await getNews({
+            q: this.searchKeyword,
+            page: this.pageNumber,
+            tbs: this.queryTimeSelected,
+            media: this.mediaSelected
+          })
           const type = data.type
           const payload = data.data
           if (type === 'success') {
@@ -133,11 +159,10 @@ export default {
     getNewsOutline(newsContent) {
       if (newsContent) {
         let str = ''
-        newsContent.forEach(
-          (text, i) => {
-            // if (i === 0) { return }
-            str += text + ' '
-          })
+        newsContent.forEach((text, i) => {
+          // if (i === 0) { return }
+          str += text + ' '
+        })
         return str.substring(0, 90) + ' ...'
       }
     },
@@ -165,12 +190,12 @@ export default {
 <style scoped lang="scss">
 .header {
   background: $nature-2;
-  padding: 1rem 1.5rem 1rem 1.5rem;
-  border-bottom: 1px solid #DBDCE1;
+  padding: 3rem 0.75rem 1rem 1rem;
+  border-bottom: 1px solid #dbdce1;
 }
 .result-number-container {
-  font-size: 12px;
-  height: 1.5rem;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
   color: $text-3;
 }
 .search-bar {
@@ -185,7 +210,7 @@ export default {
   }
   .search-btn {
     border: none;
-    border-right: 1px solid #DBDCE1;
+    border-right: 1px solid #dbdce1;
     border-radius: 0;
     padding: 0px 10px 0px 0px;
     margin: 8px 0px 8px 8px;
@@ -212,7 +237,7 @@ export default {
   min-height: 0px;
   flex: 1;
   padding: 1.5rem;
-  padding-top: 0.25rem;
+  padding-top: 0.75rem;
   padding-right: 9px;
   /* width */
   &::-webkit-scrollbar {
@@ -226,7 +251,7 @@ export default {
   }
   /* Handle */
   &::-webkit-scrollbar-thumb {
-    background: #DBDCE1;
+    background: #dbdce1;
     border: 6px solid white;
     height: 200px;
     border-radius: 100px;
@@ -245,16 +270,18 @@ export default {
 }
 
 .nav-btn {
-  background: #ededf0;
+  background: $white;
   color: #212124;
   border: none;
+  border-radius: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 5px;
+  margin: 0 4px;
+  padding: 10px;
   height: 40px;
   &:enabled:hover {
-    background: #DBDCE1;
+    background: #dbdce1;
     cursor: pointer;
   }
 }

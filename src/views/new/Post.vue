@@ -142,12 +142,12 @@
         <div v-if="post.citations.length > 0">
           <b-row>
             <b-col>
-              <b-card
-                class="bg-light border-0 citations-container mb-5"
-              >
+              <b-card class="bg-light border-0 citations-container mb-5">
                 <p>新聞來源附註</p>
                 <div v-for="(citation, index) in post.citations" :key="index">
-                  <div class="d-flex justify-content-start align-items-center mt-2">
+                  <div
+                    class="d-flex justify-content-start align-items-center mt-2"
+                  >
                     <div class="citation-list-tag">
                       <div class="period" :data-label="index + 1" />
                     </div>
@@ -155,42 +155,59 @@
                       <div>{{ citation.title }}</div>
                     </div>
                     <div class="citation-list-remove">
-                      <b-button variant="outline-primary" class="citation-list-remove-btn" @click="onCitationRemoved(index)">
+                      <b-button
+                        variant="outline-primary"
+                        class="citation-list-remove-btn"
+                        @click="onCitationRemoved(index)"
+                      >
                         <b-icon icon="x" />
                       </b-button>
                     </div>
                   </div>
-                  <b-link class="text-primary" :href="citation.url" target="_blank">{{ citation.url }}</b-link>
+                  <b-link
+                    class="text-primary"
+                    :href="citation.url"
+                    target="_blank"
+                  >{{ citation.url }}</b-link>
                 </div>
               </b-card>
             </b-col>
           </b-row>
         </div>
       </b-col>
-      <b-col
-        v-if="showNewsSource"
-        lg="4"
-        cols="12"
-        class="news-area px-0"
-      >
-        <b-button variant="link" class="close-source" @click="handleShowNewsSource(false)">
-          <b-icon icon="x" font-scale="2" />
+      <b-col v-if="showNewsSource" lg="4" cols="12" class="news-area px-0">
+        <b-button
+          variant="link"
+          class="close-source"
+          @click="handleShowNewsSource(false)"
+        >
+          <b-icon icon="x" scale="1.66" variant="secondary" />
         </b-button>
         <NewsPanel @importNews="importNews" />
       </b-col>
-      <b-col v-else cols="3" class="d-flex justify-content-end" align-self="start">
-        <b-button variant="light" class="mt-2" @click="handleShowNewsSource(true)">
+      <b-col
+        v-else
+        cols="3"
+        class="d-flex justify-content-end"
+        align-self="start"
+      >
+        <b-button
+          variant="light"
+          class="mt-2"
+          @click="handleShowNewsSource(true)"
+        >
           <icon icon="edit-source" />
           搜尋新聞
         </b-button>
       </b-col>
     </b-row>
-    <transition
-      name="fade"
-      mode="out-in"
-      :duration="500"
-    >
-      <b-alert v-model="showAddPointsAlert" class="points-alert" dismissible variant="light">
+    <transition name="fade" mode="out-in" :duration="500">
+      <b-alert
+        v-model="showAddPointsAlert"
+        class="points-alert"
+        dismissible
+        variant="light"
+      >
         <p class="text-center">恭喜您！</p>
         <p class="d-flex justify-content-center align-content-center">
           <EditStar class="mr-2" /> + {{ editPoint }}
@@ -223,7 +240,16 @@ export default {
       articleId: undefined,
       currentEditingEditor: null,
       isAddingTag: false,
-      categoryList: ['政經', '國際', '社會', '科技', '環境', '生活', '運動', '未分類'],
+      categoryList: [
+        '政經',
+        '國際',
+        '社會',
+        '科技',
+        '環境',
+        '生活',
+        '運動',
+        '未分類'
+      ],
       items: [
         {
           text: '首頁',
@@ -280,8 +306,7 @@ export default {
       this.$refs.categoryRef.hide(true)
     }
   },
-  beforeDestroy() {
-  },
+  beforeDestroy() {},
   created() {
     // 從route中獲得此文章的ID
     this.$store.commit('post/RESET_POST')
@@ -291,22 +316,24 @@ export default {
     this.$store.commit('post/SET_ARTICLEID', articleId)
     if (articleId) {
       this.isLoading = true
-      getArticleById(articleId).then(response => {
-        if (response.data.code === 200) {
-          const data = response.data.data
-          console.log(data.tags)
-          this.$store.commit('post/INIT_POST', { data })
-          if (this.post.blocks.length === 0) {
-            this.handleAddBlock()
+      getArticleById(articleId)
+        .then(response => {
+          if (response.data.code === 200) {
+            const data = response.data.data
+            console.log(data.tags)
+            this.$store.commit('post/INIT_POST', { data })
+            if (this.post.blocks.length === 0) {
+              this.handleAddBlock()
+            }
+            this.isLoading = false
+          } else {
+            throw new Error(response.data.message)
           }
+        })
+        .catch(err => {
+          console.error(err)
           this.isLoading = false
-        } else {
-          throw new Error(response.data.message)
-        }
-      }).catch(err => {
-        console.error(err)
-        this.isLoading = false
-      })
+        })
     } else {
       this.handleAddBlock()
     }
@@ -331,19 +358,21 @@ export default {
         return
       }
       const title = this.post.blocks[index].blockTitle || '無標題'
-      this.$bvModal.msgBoxConfirm(`是否刪除段落：${title}？`, {
-        title: '刪除段落',
-        okVariant: 'danger',
-        okTitle: '刪除',
-        cancelTitle: '取消',
-        cancelVariant: 'outline-primary',
-        footerClass: 'modal-footer-confirm',
-        centered: true
-      }).then(value => {
-        if (value) {
-          this.$store.commit('post/DELETE_BLOCK', index)
-        }
-      })
+      this.$bvModal
+        .msgBoxConfirm(`是否刪除段落：${title}？`, {
+          title: '刪除段落',
+          okVariant: 'danger',
+          okTitle: '刪除',
+          cancelTitle: '取消',
+          cancelVariant: 'outline-primary',
+          footerClass: 'modal-footer-confirm',
+          centered: true
+        })
+        .then(value => {
+          if (value) {
+            this.$store.commit('post/DELETE_BLOCK', index)
+          }
+        })
     },
     importNews(content) {
       if (this.currentEditingEditor === null) {
@@ -351,27 +380,32 @@ export default {
         return
       }
       let str = this.currentEditingEditor.getHTML()
-      content.forEach((text) => {
+      content.forEach(text => {
         str += `<p>${text}</p>`
       })
       this.currentEditingEditor.setContent(str, true)
     },
     onCitationRemoved(index) {
       if (this.post.citations[index]) {
-        this.$bvModal.msgBoxConfirm(`是否刪除引用：${this.post.citations[index].title}？`, {
-          title: '刪除引用',
-          okVariant: 'danger',
-          okTitle: '刪除',
-          cancelTitle: '取消',
-          cancelVariant: 'outline-primary',
-          footerClass: 'modal-footer-confirm',
-          centered: true
-        }).then(value => {
-          if (value) {
-            this.post.citations.splice(index, 1)
-            // TODO: remove citation in editor
-          }
-        })
+        this.$bvModal
+          .msgBoxConfirm(
+            `是否刪除引用：${this.post.citations[index].title}？`,
+            {
+              title: '刪除引用',
+              okVariant: 'danger',
+              okTitle: '刪除',
+              cancelTitle: '取消',
+              cancelVariant: 'outline-primary',
+              footerClass: 'modal-footer-confirm',
+              centered: true
+            }
+          )
+          .then(value => {
+            if (value) {
+              this.post.citations.splice(index, 1)
+              // TODO: remove citation in editor
+            }
+          })
       }
     },
     handleShowTimeline(status) {
@@ -401,7 +435,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/scss/post/main.scss";
+@import '@/assets/scss/post/main.scss';
 
 .wrapper {
   padding-top: 0;
@@ -436,7 +470,7 @@ export default {
 }
 
 .main-editor-area {
-  display:inline-block;
+  display: inline-block;
   height: calc(100vh - 64px);
   overflow-x: hidden;
   overflow-y: scroll;
@@ -481,7 +515,7 @@ export default {
 }
 
 /* HIDE RADIO */
-[type=radio] {
+[type='radio'] {
   position: absolute;
   opacity: 0;
   width: 0;
@@ -489,7 +523,7 @@ export default {
 }
 
 /* IMAGE STYLES */
-[type=radio] {
+[type='radio'] {
   cursor: pointer;
 }
 
@@ -542,8 +576,10 @@ export default {
 .close-source {
   position: absolute;
   padding: 0;
-  right: 1rem;
-  top: 0.5rem;
+  right: 0.75rem;
+  top: 0.75rem;
+  height: 1.5rem;
+  width: 1.5rem;
   z-index: 11;
 }
 
@@ -660,7 +696,7 @@ export default {
   position: relative;
   margin: 0 0.5rem;
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     width: 1px;
     left: 0;
@@ -685,7 +721,8 @@ export default {
     color: $text-1;
     padding-top: 6px;
     padding-bottom: 6px;
-    &:hover, &:active {
+    &:hover,
+    &:active {
       background-color: $nature-2;
     }
   }
@@ -711,7 +748,7 @@ export default {
     font-size: 14px;
     flex: 5;
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       width: 1px;
       right: 0;
@@ -760,7 +797,7 @@ export default {
   position: relative;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     width: 4px;
     left: 0px;
@@ -773,7 +810,7 @@ export default {
 
   &:focus-within {
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       width: 4px;
       left: 0px;
@@ -786,5 +823,4 @@ export default {
     background: $blue-60 !important;
   }
 }
-
 </style>
