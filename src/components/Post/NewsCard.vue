@@ -21,25 +21,18 @@
     </b-card-body>
     <b-card-footer class="d-flex justify-content-between align-items-center">
       <div>
-        <span>{{ source }} {{ getDateTime }}</span>
-        <span> | </span>
-        <b-link
-          :href="url"
-          target="_blank"
-        >
-          原文
-        </b-link>
+        <span>{{ source }}</span>
+        <span class="ml-2">{{ getDateTime }}</span>
+        <span class="ml-2"> | </span>
+        <span class="ml-2">
+          <b-link :href="url" target="_blank">
+            原文
+          </b-link>
+        </span>
       </div>
-      <input
-        id="copy"
-        type="hidden"
-        :value="content"
-      >
-      <b-button
-        variant="edit-outline"
-        @click="importNews"
-      >
-        引入全文
+      <input id="copy" type="hidden" :value="content">
+      <b-button variant="edit-outline" @click="importNews">
+        <span>引用全文</span>
       </b-button>
     </b-card-footer>
   </b-card>
@@ -124,7 +117,7 @@ export default {
 .card {
   border: 1px solid #DBDCE1;
   color: $text-2;
-  padding: 1rem 1.5rem;
+  padding: 1rem;
   transition: all 1s;
   .news-header {
     background-color: white;
@@ -134,14 +127,15 @@ export default {
       font-size: 1.25rem;
       font-weight: 700;
       color: $text-1;
-      line-height: 28px;
+      line-height: 1.875rem;
       margin: 0;
     }
   }
   .card-body {
-    padding: 1rem 0 1.5rem 0;
+    padding: 0.75rem 0 0.75rem 0;
     p {
-      font-size: 1rem;
+      font-size: 1.125rem;
+      line-height: 1.875rem;
     }
     p:last-child {
       margin-bottom: 0;
@@ -151,17 +145,27 @@ export default {
     // margin-top: 1.5rem;
     padding: 0;
     background-color: $white;
-    font-size: 14px;
     padding-top: 1rem;
+
+    span {
+      font-size: 14px;
+      line-height: 1.5rem;
+    }
+
+    a {
+      text-decoration: underline !important;
+    }
   }
 }
+
 .btn-link {
   display: inline;
   color: $blue;
   padding: 0;
   padding-bottom: 5px;
+  font-size: 1.125rem;
   font-weight: bold;
+  line-height: 1.875rem;
   text-decoration: underline;
 }
-
 </style>
