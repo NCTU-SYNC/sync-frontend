@@ -193,6 +193,10 @@ export default {
   background-color: $white;
   border-radius: 0.25rem;
   padding: 1rem;
+
+  color: #000;
+  font-size: 1.125rem;
+  line-height: 1.875rem;
 }
 
 /* Basic editor styles */
@@ -262,6 +266,8 @@ export default {
     color: rgba(0, 0, 0, 0.2);
     pointer-events: none;
     height: 0;
+    font-size: 1rem;
+    line-height: 1.5rem;
   }
 }
 </style>
