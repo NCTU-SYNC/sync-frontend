@@ -31,7 +31,7 @@
         </span>
       </div>
       <input id="copy" type="hidden" :value="content">
-      <b-button variant="edit-outline" @click="importNews">
+      <b-button variant="secondary" @click="importNews">
         <span>引用全文</span>
       </b-button>
     </b-card-footer>

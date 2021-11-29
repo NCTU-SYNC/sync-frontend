@@ -8,8 +8,8 @@
         <input id="checkbox-title" v-model="isAnonymous" type="checkbox">
         <label for="checkbox-title"><span />匿名發文</label>
       </b-form-group>
-      <b-button variant="edit-outline" class="mr-3" @click="cancelPost">取消</b-button>
-      <b-button variant="edit-fill" class="mr-4" :disabled="isLoading" @click="publishArticle">儲存</b-button>
+      <b-button variant="secondary" class="mr-3" @click="cancelPost">取消</b-button>
+      <b-button variant="primary" class="mr-4" :disabled="isLoading" @click="publishArticle">儲存</b-button>
       <b-nav-item-dropdown
         size="lg"
         variant="link"

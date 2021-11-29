@@ -39,7 +39,7 @@
           <div class="text-center my-1">
             或
           </div>
-          <b-button variant="edit-fill my-1">
+          <b-button variant="primary my-1">
             選擇要上傳的檔案
           </b-button>
         </div>
@@ -142,13 +142,13 @@ export default {
     }
   }
   .btn-ok {
-    @extend %edit-fill;
+    @extend %primary;
     font-size: 14px;
     margin-top: 0;
     margin-bottom: 0;
   }
   .btn-cancel {
-    @extend %edit-no-outline;
+    @extend %tertiary;
     font-size: 14px;
     margin-top: 0;
     margin-bottom: 0;

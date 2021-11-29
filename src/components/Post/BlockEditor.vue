@@ -59,8 +59,8 @@
               事件時間：{{ displayDateTime }}
             </div>
             <div class="btn-container">
-              <b-button variant="edit-no-outline-lg" @click="closeDropdown">取消</b-button>
-              <b-button variant="edit-fill-lg" @click="saveDateTimeChanges">確認</b-button>
+              <b-button variant="tertiary-lg" @click="closeDropdown">取消</b-button>
+              <b-button variant="primary-lg" @click="saveDateTimeChanges">確認</b-button>
             </div>
           </b-dropdown-form>
         </b-dropdown>
