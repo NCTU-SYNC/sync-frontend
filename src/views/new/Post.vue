@@ -61,7 +61,7 @@
               <b-dropdown
                 ref="categoryRef"
                 class="bg-white rounded category-dropdown"
-                toggle-class="text-truncate text-decoration-none category-dropdown-btn"
+                toggle-class="p-0 text-truncate text-decoration-none category-dropdown-btn"
                 variant="link"
                 no-caret
                 @hide="dropdownOpen = false"
@@ -69,7 +69,7 @@
               >
                 <template #button-content>
                   <div
-                    class="btn-text"
+                    class="dropdownbtn-text"
                     :class="{ 'btn-text-left': categorySelected !== '' }"
                   >
                     {{
@@ -77,12 +77,7 @@
                     }}
                   </div>
                   <div class="btn-chevron">
-                    <b-icon
-                      v-if="!dropdownOpen"
-                      icon="chevron-down"
-                      class="dropdown-icon"
-                    />
-                    <b-icon v-else icon="chevron-up" class="dropdown-icon" />
+                    <icon :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'" size="md" />
                   </div>
                 </template>
                 <b-dropdown-item-button
@@ -787,31 +782,37 @@ export default {
   width: 130px;
   height: 40px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   padding-left: 0;
   padding-right: 0;
-  .btn-text {
-    box-sizing: border-box;
-    position: relative;
+  .dropdownbtn-text {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
     font-size: 14px;
-    flex: 5;
-    &::before {
-      content: '';
-      position: absolute;
-      width: 1px;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      background: #c4c4c4;
-    }
+    width: 90px;
     &.btn-text-left {
+      justify-content: flex-start;
       padding-left: 16px;
       text-align: left;
     }
   }
   .btn-chevron {
-    flex: 2;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    position: relative;
+    &::before {
+      position: absolute;
+      content: '';
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 24px;
+      border-left: 1px solid $gray-4;
+    }
   }
 }
 
