@@ -142,34 +142,49 @@
         <div v-if="post.citations.length > 0">
           <b-row>
             <b-col>
-              <b-card class="bg-light border-0 citations-container mb-5">
-                <p>新聞來源附註</p>
-                <div v-for="(citation, index) in post.citations" :key="index">
-                  <div
-                    class="d-flex justify-content-start align-items-center mt-2"
-                  >
-                    <div class="citation-list-tag">
-                      <div class="period" :data-label="index + 1" />
+              <b-card
+                class="bg-light border-0 edit-row citations-container mb-5"
+                body-class="p-4"
+              >
+                <p class="citations-container--title">新聞來源</p>
+                <b-card
+                  v-for="(citation, index) in post.citations"
+                  :key="index"
+                  class="citations-container--card border-0"
+                  body-class="p-3"
+                >
+                  <div class="d-flex justify-content-between">
+                    <div class="d-flex flex-column ">
+                      <div class="d-flex mb-2">
+                        <div class="citation-list-tag">
+                          <div class="period" :data-label="index + 1" />
+                        </div>
+                        <div class="w-100 pl-2 ">
+                          <div>{{ citation.title }}</div>
+                        </div>
+                      </div>
+                      <b-link
+                        class="citation-list-link"
+                        :href="citation.url"
+                        target="_blank"
+                      >{{ citation.url }}
+                      </b-link>
                     </div>
-                    <div class="w-100 pl-2 ">
-                      <div>{{ citation.title }}</div>
-                    </div>
-                    <div class="citation-list-remove">
+                    <div class="citation-list-btn">
+                      <!-- TODO: edit citation
+                      <b-button variant="link">
+                        編輯
+                      </b-button>
+                      -->
                       <b-button
-                        variant="outline-primary"
-                        class="citation-list-remove-btn"
+                        variant="link"
                         @click="onCitationRemoved(index)"
                       >
-                        <b-icon icon="x" />
+                        刪除
                       </b-button>
                     </div>
                   </div>
-                  <b-link
-                    class="text-primary"
-                    :href="citation.url"
-                    target="_blank"
-                  >{{ citation.url }}</b-link>
-                </div>
+                </b-card>
               </b-card>
             </b-col>
           </b-row>
@@ -386,6 +401,7 @@ export default {
       this.currentEditingEditor.setContent(str, true)
     },
     onCitationRemoved(index) {
+      console.log(this.post.citations)
       if (this.post.citations[index]) {
         this.$bvModal
           .msgBoxConfirm(
@@ -512,6 +528,24 @@ export default {
   a {
     text-decoration: underline;
   }
+
+  &--title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.875rem;
+    letter-spacing: 2px;
+
+    padding: 4px;
+    color: $text-2;
+  }
+
+  &--card {
+    margin-bottom: 0.75rem;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
 }
 
 /* HIDE RADIO */
@@ -527,41 +561,56 @@ export default {
   cursor: pointer;
 }
 
-.citation-list-tag {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
-  width: 2rem;
-  height: 2rem;
-  border: 1px solid #939393;
-}
+.citation-list {
+  &-tag {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
 
-.citation-list-remove {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
+    & + div {
+      font-size: 0.875rem;
+    }
+  }
 
-  width: 1.5rem;
-  height: 1.5rem;
-}
+  &-link {
+    font-size: 0.625rem;
+    line-height: 1.25rem;
+    color: $text-3;
+    text-decoration: underline !important;
+  }
 
-.citation-list-remove-btn {
-  border: none;
-  width: 1.5rem !important;
-  height: 1.5rem !important;
-  border-radius: 50%;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
+  &-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+
+    button {
+      padding: 0 0.5rem;
+      color: $blue;
+      border-right: 1px solid $gray-200;
+
+      &:last-of-type {
+        border: 0;
+      }
+
+      &:hover,
+      &:active {
+        text-decoration: none;
+      }
+    }
+  }
 }
 
 .period {
   &:before {
     content: attr(data-label);
-    color: #939393;
-    width: 2rem;
+    color: $blue;
+    font-size: 0.875rem;
+    font-weight: 700;
   }
 }
 
