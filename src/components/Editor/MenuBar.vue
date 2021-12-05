@@ -1,10 +1,12 @@
 <template>
   <div>
     <div class="menu-bar">
-      <template v-for="(item, index) in items">
-        <div v-if="item.type === 'divider'" :key="index" class="divider" />
-        <menu-item v-else :key="index" v-bind="item" />
-      </template>
+      <div class="left-section">
+        <menu-item v-for="(item, index) in items.slice(0,4)" :key="index" v-bind="item" />
+      </div>
+      <div class="right-section">
+        <menu-item v-for="(item, index) in items.slice(4,7)" :key="index" v-bind="item" />
+      </div>
     </div>
   </div>
 </template>
@@ -42,16 +44,6 @@ export default {
           isActive: () => this.editor.isActive('underline')
         },
         {
-          icon: 'list',
-          title: 'Bullet List',
-          tooltip: '項目符號清單',
-          action: () => this.editor.chain().focus().toggleBulletList().run(),
-          isActive: () => this.editor.isActive('bulletList')
-        },
-        {
-          type: 'divider'
-        },
-        {
           icon: 'quote',
           title: 'Blockquote',
           tooltip: '引用',
@@ -59,7 +51,11 @@ export default {
           isActive: () => this.editor.isActive('blockquote')
         },
         {
-          type: 'divider'
+          icon: 'list',
+          title: 'Bullet List',
+          tooltip: '項目符號清單',
+          action: () => this.editor.chain().focus().toggleBulletList().run(),
+          isActive: () => this.editor.isActive('bulletList')
         },
         {
           icon: 'annotation',
@@ -97,20 +93,33 @@ export default {
 <style lang="scss" scoped>
 .menu-bar {
   display: flex;
-  justify-content: flex-start;
   align-items: center;
-
-  height: 2.25rem;
-
+  max-width: 289px;
+  height: 36px;
   background-color: $white;
   border-radius: 0.25rem;
+
+  .left-section {
+    position: relative;
+    flex-grow: 4;
+    display: flex;
+    justify-content: space-evenly;
+    &::after {
+      content: '';
+      position: absolute;
+      height: 24px;
+      border-right: 1px solid $gray-4;
+      top: 50%;
+      transform: translateY(-50%);
+      right: 0;
+    }
+  }
+
+  .right-section {
+    flex-grow: 3;
+    display: flex;
+    justify-content: space-evenly;
+  }
 }
 
-.divider {
-  width: 2px;
-  height: 1.25rem;
-  background-color: rgba($black, 0.1);
-  margin-left: 0.5rem;
-  margin-right: 0rem;
-}
 </style>

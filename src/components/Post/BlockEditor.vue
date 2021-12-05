@@ -19,15 +19,12 @@
           ref="datetime-dropdown"
           variant="white"
           no-caret
-          toggle-class="datetime-dropdown d-flex align-items-center"
+          toggle-class="datetime-dropdown"
           @toggle="resetDateTime"
         >
           <template #button-content>
             <span
               class="d-inline-block pl-1 btn-text"
-              :class="{
-                'date-color': tempData.blockDateValue && tempData.blockTimeValue
-              }"
             >
               {{
                 tempData.blockDateValue && tempData.blockTimeValue
@@ -180,8 +177,10 @@ export default {
   font-weight: bold;
   line-height: 1.5rem;
   padding: 0.5rem 0.625rem;
+  color: $text-1;
+  height: 40px;
   &::placeholder {
-    color: rgba(0, 0, 0, 0.2);
+    color: $text-4;
   }
 }
 
@@ -204,13 +203,10 @@ export default {
     color: $nature-8;
   }
   .btn-text {
-    color: rgba(0,0,0, 0.8);
+    color: $text-1;
     border-right: 1px solid $nature-4;
     padding-right: 0.75rem;
     font-size: 14px;
-  }
-  .date-color {
-    color: $blue;
   }
 }
 ::v-deep .b-calendar {
@@ -222,6 +218,7 @@ export default {
   }
 }
 .datetime-container {
+  height: 40px;
   ::v-deep ul.dropdown-menu {
     min-height: 450px;
   }
