@@ -9,7 +9,7 @@
         :id="`block-title-${block.id}`"
         ref="title-input-field"
         v-model="tempData.blockTitle"
-        class="mb-2 mr-3 mb-sm-0 block-title"
+        class="block-title"
         placeholder="段落標題"
         @change="handleChangeTitle"
       />
@@ -180,6 +180,8 @@ export default {
   font-weight: bold;
   line-height: 1.5rem;
   padding: 0.5rem 0.625rem;
+  margin-right: 16px;
+  margin-bottom: 24px;
   color: $text-1;
   height: 40px;
   &::placeholder {

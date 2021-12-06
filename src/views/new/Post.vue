@@ -51,10 +51,9 @@
             <label class="sr-only" for="post-title">標題</label>
             <div class="d-flex justify-content-start w-100">
               <b-form-input
-                id="post-title"
                 v-model="postTitle"
                 size="lg"
-                class="mb-0 mr-sm-3 mb-sm-0 post-title"
+                class="post-title"
                 placeholder="文章標題"
                 required
               />
@@ -462,11 +461,15 @@ export default {
   font-size: 16px;
   font-weight: bold;
   line-height: 1.5rem;
-  padding: 0.5rem 0.625rem;
+  padding: 8px 10px;
+  margin-right: 16px;
   // used to be calculated by bootstrap, now fixed
-  height: 40px !important;
+  height: 40px;
   &::placeholder {
-    color: rbga(0, 0, 0, 0.2);
+    color: $text-4;
+    line-height: 1.5rem;
+    font-weight: 700;
+    font-size: 16px;
   }
 }
 
@@ -647,12 +650,6 @@ export default {
   align-items: center;
 }
 
-#post-title::placeholder {
-  color: rgba(0, 0, 0, 0.3);
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
 .timeline-header {
   display: flex;
   align-items: center;
@@ -717,7 +714,7 @@ export default {
   border: none;
 
   &-body {
-    padding: 1.5rem;
+    padding: 24px 32px 24px 24px;
   }
 }
 
@@ -787,7 +784,7 @@ export default {
   padding-left: 0;
   padding-right: 0;
   .dropdownbtn-text {
-    display: inline-flex;
+    display: inline-flex;margin-right: 16px;
     justify-content: center;
     align-items: center;
     font-size: 14px;
@@ -831,6 +828,7 @@ export default {
   border: none;
   .add-text {
     font-size: 14px;
+    padding-left: 16px;
   }
 }
 

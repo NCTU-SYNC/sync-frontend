@@ -156,9 +156,9 @@ export default {
 
 <style lang="scss">
 
-.editor__header {
-  margin-top: 0.5rem;
-}
+// .editor__header {
+//   margin-top: 0.5rem;
+// }
 
 .editor__content {
   margin-top: 0.5rem;
@@ -197,6 +197,7 @@ export default {
   color: #000;
   font-size: 1.125rem;
   line-height: 1.875rem;
+  min-height: 148px;
 }
 
 /* Basic editor styles */
