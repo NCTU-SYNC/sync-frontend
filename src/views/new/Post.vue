@@ -1,9 +1,8 @@
 <template>
-  <b-container fluid class="wrapper">
-    <b-row>
-      <b-col
+  <b-container class="wrapper">
+    <b-row style="position: relative;" :class="{'justify-content-center': !showNewsSource}">
+      <div
         v-if="isTimelineShow"
-        cols="2"
         align-self="stretch"
         class="timeline-panel"
       >
@@ -29,24 +28,23 @@
             {{ block.blockTitle !== '' ? block.blockTitle : '段落尚無標題' }}
           </a>
         </div>
-      </b-col>
-      <b-col
+      </div>
+      <div
         v-else
-        :cols="showNewsSource ? 1 : 2"
-        align-self="start"
-        class="d-flex justify-content-start"
+        class="timeline-panel-btn-only"
+        :class="{ 'timeline-shrink' : showNewsSource }"
       >
         <b-button
           variant="light"
-          class="btn-edit mt-3"
+          class="btn-edit"
           @click="handleShowTimeline(true)"
         >
           <icon icon="edit-timeline" />
           <span v-if="!showNewsSource">段落標題</span>
         </b-button>
-      </b-col>
-      <b-col class="py-2 main-editor-area" lg="7" md="12" sm="12" cols="12">
-        <b-card no-body class="mt-2 edit-card edit-row">
+      </div>
+      <div class="main-editor-area">
+        <b-card no-body class="edit-card edit-row">
           <b-card-body body-class="edit-card-body">
             <label class="sr-only" for="post-title">標題</label>
             <div class="d-flex justify-content-start w-100">
@@ -183,8 +181,8 @@
             </b-col>
           </b-row>
         </div>
-      </b-col>
-      <b-col v-if="showNewsSource" lg="4" cols="12" class="news-area px-0">
+      </div>
+      <div v-if="showNewsSource" class="news-area">
         <b-button
           variant="link"
           class="close-source"
@@ -193,22 +191,19 @@
           <b-icon icon="x" scale="1.66" variant="secondary" />
         </b-button>
         <NewsPanel @importNews="importNews" />
-      </b-col>
-      <b-col
+      </div>
+      <div
         v-else
-        cols="3"
-        class="d-flex justify-content-end"
-        align-self="start"
+        class="news-area-btn-only"
       >
         <b-button
           variant="light"
-          class="mt-2"
           @click="handleShowNewsSource(true)"
         >
           <icon icon="edit-source" />
           搜尋新聞
         </b-button>
-      </b-col>
+      </div>
     </b-row>
     <transition name="fade" mode="out-in" :duration="500">
       <b-alert
@@ -485,6 +480,8 @@ export default {
 
 .main-editor-area {
   display: inline-block;
+  width: 816px;
+  padding: 16px;
   height: calc(100vh - 64px);
   overflow-x: hidden;
   overflow-y: scroll;
@@ -520,6 +517,14 @@ export default {
   overflow-x: hidden;
   overflow-y: hidden;
   box-shadow: -10px 0px 15px rgba(0, 0, 0, 0.05);
+  width: 504px;
+}
+
+.news-area-btn-only {
+  width: 312px;
+  text-align: right;
+  padding: 24px 32px;
+  @extend %panel-width-lg;
 }
 
 .citations-container {
@@ -645,6 +650,15 @@ export default {
 }
 
 // --------------- NEWS CLASSES ----------------
+
+%panel-width-lg {
+  @media only screen and (max-width: 1439px) {
+    width: 132px;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+}
+
 .btn-edit {
   display: flex;
   align-items: center;
@@ -676,7 +690,50 @@ export default {
 
 .timeline-panel {
   padding: 0;
+  width: 312px;
   border-right: $nature-4 1px solid;
+
+  height: calc(100vh - 64px);
+  overflow-x: hidden;
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    background: transparent;
+  }
+
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: $nature_6;
+    height: 106px;
+  }
+
+  /* Handle on hover */
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+}
+
+.timeline-panel-btn-only {
+  width: 312px;
+  padding: 24px 32px;
+
+  @media only screen and (max-width: 1439px) {
+  width: 132px;
+  padding-left: 0px;
+  padding-right: 0px;
+  }
+
+}
+
+.timeline-shrink {
+  width: 100px;
 }
 
 .timeline-container {
