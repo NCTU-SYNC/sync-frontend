@@ -1,19 +1,19 @@
 <template>
   <b-navbar ref="navbar" fixed="top" class="header-navbar" type="light" variant="faded">
-    <b-navbar-brand id="brand" to="/" class="ml-3"><Logo /></b-navbar-brand>
+    <b-navbar-brand id="brand" to="/"><Logo /></b-navbar-brand>
 
     <!-- Right aligned nav items -->
     <b-navbar-nav class="ml-auto d-flex align-items-center h-100">
-      <b-form-group class="checkbox mr-4">
+      <b-form-group class="checkbox">
         <input id="checkbox-title" v-model="isAnonymous" type="checkbox">
         <label for="checkbox-title"><span />匿名發文</label>
       </b-form-group>
-      <b-button variant="secondary" class="mr-3" @click="cancelPost">取消</b-button>
-      <b-button variant="primary" class="mr-4" :disabled="isLoading" @click="publishArticle">儲存</b-button>
+      <b-button variant="secondary" class="cancel-btn" @click="cancelPost">取消</b-button>
+      <b-button variant="primary" class="publish-btn" :disabled="isLoading" @click="publishArticle">儲存</b-button>
       <b-nav-item-dropdown
         size="lg"
         variant="link"
-        toggle-class="text-decoration-none"
+        toggle-class="notification-btn"
         no-caret
         no-flip
         right
@@ -37,7 +37,7 @@
         </div>
 
       </b-nav-item-dropdown>
-      <b-nav-item-dropdown v-show="getLoginStatus" no-caret right>
+      <b-nav-item-dropdown v-show="getLoginStatus" no-caret right toggle-class="p-0">
         <!-- Using 'button-content' slot -->
         <template v-slot:button-content>
           <span>
@@ -204,6 +204,7 @@ export default {
   display: flex;
   align-items: center;
   width: 100%;
+  padding: 8px 32px;
 }
 
 .centered-block {
@@ -222,8 +223,8 @@ export default {
     display: block;
     margin: 0;
     position: relative;
-    height: 36px;
-    width: 36px;
+    height: 32px;
+    width: 32px;
     z-index: 0;
 }
 
@@ -235,8 +236,22 @@ export default {
   overflow-y: scroll;
 }
 
+.cancel-btn {
+  margin-right: 16px;
+}
+
+.publish-btn {
+  margin-right: 32px;
+}
+
+::v-deep .notification-btn.nav-link.dropdown-toggle {
+  padding: 0;
+  margin-right: 24px;
+}
+
 .checkbox {
   margin-bottom: 0;
+  margin-right: 24px;
   label {
     padding: 0;
     margin: 0;
