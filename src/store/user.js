@@ -3,6 +3,7 @@ import {
   getToken,
   setToken,
   setExpiredTime,
+  getExpiredTime,
   setUserInfo,
   getUserInfo
 } from '@/utils/auth'
@@ -11,6 +12,7 @@ const getDefaultState = () => {
   return {
     isInitialized: false,
     token: getToken(),
+    expirationTime: getExpiredTime(),
     name: '',
     displayName: getUserInfo() ? getUserInfo().displayName : '',
     email: getUserInfo() ? getUserInfo().email : '',
