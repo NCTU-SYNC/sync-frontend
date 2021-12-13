@@ -114,16 +114,6 @@ export default {
       return this.lg ? 190 : 140
     }
   },
-  watch: {
-    subscribedList(newList) {
-      if (newList) {
-        this.isSubscribed =
-          newList.findIndex(s => s.articleId === this.articleId) >= 0
-        return
-      }
-      this.isSubscribed = false
-    }
-  },
   created() {
     // check if user logged in
     this.isLogin = !!this.$store.getters.token
