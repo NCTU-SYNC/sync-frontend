@@ -7,10 +7,10 @@
     size="lg"
     ok-title="插入"
     cancel-title="取消"
-    content-class="image-modal"
-    body-class="image-modal-body"
-    header-class="image-modal-header"
-    footer-class="image-modal-footer"
+    content-class="custom-modal custom-modal-tall"
+    body-class="custom-modal-body p-0"
+    header-class="custom-modal-header header-border-hide"
+    footer-class="custom-modal-footer"
     ok-variant="ok"
     cancel-variant="cancel"
     @ok="handleConfirm"
@@ -95,22 +95,7 @@ export default {
 }
 ::v-deep {
   .nav-tabs {
-    border-bottom: 2px solid $gray-100;
-  }
-  .image-modal {
-    border-radius: 4px;
-    border: none;
-    height: 448px;
-  }
-  .image-modal-body {
-    padding: 0;
-  }
-  .image-modal-header {
-    border-bottom: none;
-    padding: 20px;
-  }
-  .image-modal-footer {
-    border-top: none;
+    border-bottom: 1px solid $gray-4;
   }
   .nav-wrapper {
     border-bottom: 2px solid #f8f8f8;
@@ -121,11 +106,14 @@ export default {
     margin-left: 11px;
     margin-right: 11px;
     color: $text-1;
-    font-size: 14px;
+    // font-size: 14px;
     &:hover {
       border-color: transparent;
       margin: default;
     }
+  }
+  .header-border-hide {
+    border-bottom: transparent;
   }
   .active-nav-item-class {
     border: 0px;
@@ -134,24 +122,6 @@ export default {
   }
   .tab-pane {
     flex-grow: 1;
-  }
-  .input-form {
-    border: 1px solid $gray-100 !important;
-    &:active, &:focus {
-      border: 1px solid $blue !important;
-    }
-  }
-  .btn-ok {
-    @extend %primary;
-    font-size: 14px;
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-  .btn-cancel {
-    @extend %tertiary;
-    font-size: 14px;
-    margin-top: 0;
-    margin-bottom: 0;
   }
 }
 </style>
