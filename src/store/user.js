@@ -57,14 +57,14 @@ const actions = {
   sendToken({ commit, dispatch }, userdata) {
     return new Promise((resolve, reject) => {
       login(userdata)
-        .then(response => {
+        .then((response) => {
           const { data } = response
           commit('SET_TOKEN', userdata.idToken)
           setToken(userdata.idToken)
-          setExpiredTime(Date.now() + 3 * 24 * 60 * 60 * 1000)
+          setExpiredTime(Date.now() + 30 * 60 * 1000)
           resolve(data.message)
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error)
         })
     })
