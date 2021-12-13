@@ -44,12 +44,9 @@ const mutations = {
 
 const actions = {
   async INITIALIZE({ commit, dispatch, rootGetters }) {
-    // if token is not set yet
-    if (!rootGetters.token) {
-      setTimeout(() => {
-        dispatch('INITIALIZE')
-      }, 1000)
-    } else if (rootGetters.isLogin) {
+    // set token
+    await dispatch('user/refreshToken', null, { root: true })
+    if (rootGetters.isLogin) {
       try {
         const { data } = await getProfile({ token: rootGetters.token })
         commit('SET_PROFILE', data.data.articles || {})

@@ -101,7 +101,7 @@
 <script>
 import ArticleCard from '@/components/ArticleCard.vue'
 import Setting from '@/components/Profile/Setting.vue'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import { getArticlesInfo } from '@/api/user'
 
@@ -125,7 +125,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['photoURL', 'displayName', 'uid', 'isLogin', 'user']),
+    ...mapGetters([
+      'photoURL',
+      'displayName',
+      'uid',
+      'isLogin',
+      'user',
+      'token'
+    ]),
     ...mapGetters({ createAt: 'user/createAt', email: 'user/email' }),
     creationDateTime() {
       return this.createAt
@@ -153,9 +160,12 @@ export default {
     }
   },
   methods: {
+    ...mapActions({ refreshToken: 'user/refreshToken' }),
     async init() {
+      // ! refresh token before get articles
+      await this.refreshToken()
       const { data } = await getArticlesInfo({
-        token: this.$store.getters.token
+        token: this.token
       })
       if (data.code === 200) {
         const payload = data.data

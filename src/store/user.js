@@ -1,17 +1,17 @@
 import { login } from '@/api/user'
 import {
-  getToken,
   setToken,
   setExpiredTime,
   getExpiredTime,
   setUserInfo,
   getUserInfo
 } from '@/utils/auth'
+import FirebaseAuth from '@/utils/firebase.js'
 
 const getDefaultState = () => {
   return {
     isInitialized: false,
-    token: getToken(),
+    token: '',
     expirationTime: getExpiredTime(),
     name: '',
     displayName: getUserInfo() ? getUserInfo().displayName : '',
@@ -28,8 +28,9 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const getters = {
-  createAt: state => state.createAt,
-  email: state => state.email
+  createAt: (state) => state.createAt,
+  email: (state) => state.email,
+  expirationTime: (state) => state.expirationTime
 }
 
 const mutations = {
@@ -68,6 +69,13 @@ const actions = {
           reject(error)
         })
     })
+  },
+  async refreshToken({ commit }) {
+    const token = await FirebaseAuth.instance.currentUser
+      .getIdToken()
+      .catch((error) => console.error(error))
+
+    commit('SET_TOKEN', token)
   },
   sendUserInfo({ commit }, userInfo) {
     commit('SET_USER', userInfo)
