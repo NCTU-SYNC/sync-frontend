@@ -86,11 +86,15 @@ export default {
   },
   data() {
     return {
-      isLogin: false,
-      isSubscribed: false
+      isLogin: false
     }
   },
   computed: {
+    isSubscribed() {
+      if (!this.isLogin) return false
+
+      return this.subscribedList.some((s) => s.articleId === this.articleId)
+    },
     subscribedList() {
       return this.$store.getters['article/subscribedList']
     },
@@ -123,10 +127,6 @@ export default {
   created() {
     // check if user logged in
     this.isLogin = !!this.$store.getters.token
-    if (this.isLogin) {
-      this.isSubscribed =
-        this.subscribedList.findIndex(s => s.articleId === this.articleId) >= 0
-    }
   },
   methods: {
     getTitle(title) {
