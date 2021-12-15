@@ -1,107 +1,132 @@
 <template>
-  <b-container fluid class="wrapper">
-    <b-row>
-      <b-col v-if="isTimelineShow" cols="2" align-self="stretch" class="timeline-panel">
+  <b-container class="wrapper">
+    <b-row style="position: relative;" :class="{'justify-content-center': !showNewsSource}">
+      <div
+        v-if="isTimelineShow"
+        align-self="stretch"
+        class="timeline-panel"
+      >
         <div class="bg-light timeline-header">
-          <b-button variant="transparent" block class="btn-edit" @click="handleShowTimeline(false)">
+          <b-button
+            variant="transparent"
+            block
+            class="btn-edit"
+            @click="handleShowTimeline(false)"
+          >
             <b-icon icon="chevron-left" />
             段落標題
           </b-button>
         </div>
         <div class="timeline-container">
-          <a v-for="(block, index) in blocks" :key="index" class="timeline" @click="focusOnTitle(block.id)">
+          <a
+            v-for="(block, index) in blocks"
+            :key="index"
+            class="timeline"
+            @click="focusOnTitle(block.id)"
+          >
             <div class="rectangle" />
             {{ block.blockTitle !== '' ? block.blockTitle : '段落尚無標題' }}
           </a>
         </div>
-      </b-col>
-      <b-col v-else :cols="showNewsSource?1:2" align-self="start" class="d-flex justify-content-start">
-        <b-button variant="light" class="btn-edit mt-3" @click="handleShowTimeline(true)">
+      </div>
+      <div
+        v-else
+        class="timeline-panel-btn-only"
+        :class="{ 'timeline-shrink' : showNewsSource }"
+      >
+        <b-button
+          variant="light"
+          class="btn-edit"
+          @click="handleShowTimeline(true)"
+        >
           <icon icon="edit-timeline" />
           <span v-if="!showNewsSource">段落標題</span>
         </b-button>
-      </b-col>
-      <b-col
-        class="py-2 main-editor-area"
-        lg="7"
-        md="12"
-        sm="12"
-        cols="12"
-      >
-        <b-card
-          no-body
-          class="mt-2 edit-card edit-row"
-        >
-          <b-card-body>
-            <label
-              class="sr-only"
-              for="post-title"
-            >標題</label>
-            <b-form-input
-              id="post-title"
-              v-model="postTitle"
-              size="lg"
-              class="mb-0 mr-sm-2 mb-sm-0 d-flex flex-grow-1"
-              placeholder="文章標題"
-              required
-            />
-            <div class="title-card-row title-card-row-between">
+      </div>
+      <div class="main-editor-area">
+        <b-card no-body class="edit-card edit-row">
+          <b-card-body body-class="edit-card-body">
+            <label class="sr-only" for="post-title">標題</label>
+            <div class="d-flex justify-content-start w-100">
+              <b-form-input
+                v-model="postTitle"
+                size="lg"
+                class="post-title"
+                placeholder="文章標題"
+                required
+              />
               <b-dropdown
                 ref="categoryRef"
                 class="bg-white rounded category-dropdown"
-                toggle-class="text-truncate text-decoration-none category-dropdown-btn"
+                toggle-class="p-0 text-truncate text-decoration-none category-dropdown-btn"
                 variant="link"
                 no-caret
-                @hide="dropdownOpen=false"
-                @show="dropdownOpen=true"
+                @hide="dropdownOpen = false"
+                @show="dropdownOpen = true"
               >
                 <template #button-content>
-                  <div class="btn-text" :class="{ 'btn-text-left' :(categorySelected!=='')}">{{ categorySelected===''?'文章分類':categorySelected }}</div>
+                  <div
+                    class="dropdownbtn-text"
+                    :class="{ 'btn-text-left': categorySelected !== '' }"
+                  >
+                    {{
+                      categorySelected === '' ? '文章分類' : categorySelected
+                    }}
+                  </div>
                   <div class="btn-chevron">
-                    <b-icon v-if="!dropdownOpen" icon="chevron-down" class="dropdown-icon" />
-                    <b-icon v-else icon="chevron-up" class="dropdown-icon" />
+                    <icon :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'" size="md" />
                   </div>
                 </template>
                 <b-dropdown-item-button
                   v-for="(category, categoryIndex) in categoryList"
                   :key="categoryIndex"
-                  :active="categorySelected===category"
+                  :active="categorySelected === category"
                   active-class="active-btn"
                   button-class="dropdown-btn"
-                  @click="categorySelected=category"
+                  @click="categorySelected = category"
                 >
                   {{ category }}
                 </b-dropdown-item-button>
               </b-dropdown>
             </div>
             <div class="title-card-row title-card-row-start">
-              <Tag v-for="(tag, tagIndex) in post.postTags" :key="tagIndex" :tag-index="tagIndex" />
-              <Tag v-if="post.postTags.length<5" :new-tag="true" />
+              <Tag
+                v-for="(tag, tagIndex) in post.postTags"
+                :key="tagIndex"
+                :tag-index="tagIndex"
+              />
+              <Tag v-if="post.postTags.length < 5" :new-tag="true" />
             </div>
           </b-card-body>
         </b-card>
         <div class="edit-add-block-row edit-row d-flex align-items-center">
-          <b-button variant="transparent" block class="text-left add-text" @click="handleAddBlock(-1)">
+          <b-button
+            variant="transparent"
+            block
+            class="text-left add-text"
+            @click="handleAddBlock(-1)"
+          >
             + 新增段落
           </b-button>
         </div>
-        <div
-          v-for="(block, blockIndex) in blocks"
-          :key="block.id"
-        >
-          <b-card
-            class="edit-block edit-row"
-          >
-            <b-button variant="link" class="close-btn" @click="handleDeleteBlock(blockIndex)">
+        <div v-for="(block, blockIndex) in blocks" :key="block.id">
+          <b-card class="edit-block edit-row">
+            <b-button
+              variant="link"
+              class="close-btn"
+              @click="handleDeleteBlock(blockIndex)"
+            >
               <b-icon icon="x" font-scale="1.5" />
             </b-button>
-            <BlockEditor
-              :ref="`block-${block.id}`"
-              :block="block"
-            />
+            <BlockEditor :ref="`block-${block.id}`" :block="block" />
           </b-card>
           <div class="edit-add-block-row edit-row d-flex align-items-center">
-            <b-button variant="transparent" block class="text-left add-text" @click="handleAddBlock(blockIndex)">
+            <b-button
+              variant="transparent"
+              block
+              class="text-left add-text"
+              @click="handleAddBlock(blockIndex)"
+            >
               + 新增段落
             </b-button>
           </div>
@@ -110,54 +135,83 @@
           <b-row>
             <b-col>
               <b-card
-                class="bg-light border-0 citations-container mb-5"
+                class="bg-light border-0 edit-row citations-container mb-5"
+                body-class="p-4"
               >
-                <p>新聞來源附註</p>
-                <div v-for="(citation, index) in post.citations" :key="index">
-                  <div class="d-flex justify-content-start align-items-center mt-2">
-                    <div class="citation-list-tag">
-                      <div class="period" :data-label="index + 1" />
+                <p class="citations-container--title">新聞來源</p>
+                <b-card
+                  v-for="(citation, index) in post.citations"
+                  :key="index"
+                  class="citations-container--card border-0"
+                  body-class="p-3"
+                >
+                  <div class="d-flex justify-content-between">
+                    <div class="d-flex flex-column ">
+                      <div class="d-flex mb-2">
+                        <div class="citation-list-tag">
+                          <div class="period" :data-label="index + 1" />
+                        </div>
+                        <div class="w-100 pl-2 ">
+                          <div>{{ citation.title }}</div>
+                        </div>
+                      </div>
+                      <b-link
+                        class="citation-list-link"
+                        :href="citation.url"
+                        target="_blank"
+                      >{{ citation.url }}
+                      </b-link>
                     </div>
-                    <div class="w-100 pl-2 ">
-                      <div>{{ citation.title }}</div>
-                    </div>
-                    <div class="citation-list-remove">
-                      <b-button variant="outline-primary" class="citation-list-remove-btn" @click="onCitationRemoved(index)">
-                        <b-icon icon="x" />
+                    <div class="citation-list-btn">
+                      <!-- TODO: edit citation
+                      <b-button variant="link">
+                        編輯
+                      </b-button>
+                      -->
+                      <b-button
+                        variant="link"
+                        @click="onCitationRemoved(index)"
+                      >
+                        刪除
                       </b-button>
                     </div>
                   </div>
-                  <b-link class="text-primary" :href="citation.url" target="_blank">{{ citation.url }}</b-link>
-                </div>
+                </b-card>
               </b-card>
             </b-col>
           </b-row>
         </div>
-      </b-col>
-      <b-col
-        v-if="showNewsSource"
-        lg="4"
-        cols="12"
-        class="news-area px-0"
-      >
-        <b-button variant="link" class="close-source" @click="handleShowNewsSource(false)">
-          <b-icon icon="x" font-scale="2" />
+      </div>
+      <div v-if="showNewsSource" class="news-area">
+        <b-button
+          variant="link"
+          class="close-source"
+          @click="handleShowNewsSource(false)"
+        >
+          <b-icon icon="x" scale="1.66" variant="secondary" />
         </b-button>
         <NewsPanel @importNews="importNews" />
-      </b-col>
-      <b-col v-else cols="3" class="d-flex justify-content-end" align-self="start">
-        <b-button variant="light" class="mt-2" @click="handleShowNewsSource(true)">
+      </div>
+      <div
+        v-else
+        class="news-area-btn-only"
+      >
+        <b-button
+          variant="light"
+          @click="handleShowNewsSource(true)"
+        >
           <icon icon="edit-source" />
           搜尋新聞
         </b-button>
-      </b-col>
+      </div>
     </b-row>
-    <transition
-      name="fade"
-      mode="out-in"
-      :duration="500"
-    >
-      <b-alert v-model="showAddPointsAlert" class="points-alert" dismissible variant="light">
+    <transition name="fade" mode="out-in" :duration="500">
+      <b-alert
+        v-model="showAddPointsAlert"
+        class="points-alert"
+        dismissible
+        variant="light"
+      >
         <p class="text-center">恭喜您！</p>
         <p class="d-flex justify-content-center align-content-center">
           <EditStar class="mr-2" /> + {{ editPoint }}
@@ -190,7 +244,16 @@ export default {
       articleId: undefined,
       currentEditingEditor: null,
       isAddingTag: false,
-      categoryList: ['政經', '國際', '社會', '科技', '環境', '生活', '運動', '未分類'],
+      categoryList: [
+        '政經',
+        '國際',
+        '社會',
+        '科技',
+        '環境',
+        '生活',
+        '運動',
+        '未分類'
+      ],
       items: [
         {
           text: '首頁',
@@ -247,8 +310,7 @@ export default {
       this.$refs.categoryRef.hide(true)
     }
   },
-  beforeDestroy() {
-  },
+  beforeDestroy() {},
   created() {
     // 從route中獲得此文章的ID
     this.$store.commit('post/RESET_POST')
@@ -258,24 +320,20 @@ export default {
     this.$store.commit('post/SET_ARTICLEID', articleId)
     if (articleId) {
       this.isLoading = true
-      getArticleById(articleId).then(response => {
-        if (response.data.code === 200) {
-          const data = response.data.data
-          this.$store.commit('post/INIT_POST', { data })
-          if (this.post.blocks.length === 0) {
-            this.handleAddBlock(-1)
+      getArticleById(articleId)
+        .then(response => {
+          if (response.data.code === 200) {
+            const data = response.data.data
+            this.$store.commit('post/INIT_POST', { data })
+            this.isLoading = false
+            this.$nextTick(() => {
+              this.post.currentEditingEditor = null
+            })
+          } else {
+            throw new Error(response.data.message)
           }
-          this.isLoading = false
-          this.$nextTick(() => {
-            this.post.currentEditingEditor = null
-          })
-        } else {
-          throw new Error(response.data.message)
-        }
-      }).catch(err => {
-        console.error(err)
-        this.isLoading = false
-      })
+        })
+      this.isLoading = false
     } else {
       this.handleAddBlock(-1)
     }
@@ -304,19 +362,21 @@ export default {
         return
       }
       const title = this.post.blocks[index].blockTitle || '無標題'
-      this.$bvModal.msgBoxConfirm(`是否刪除段落：${title}？`, {
-        title: '刪除段落',
-        okVariant: 'danger',
-        okTitle: '刪除',
-        cancelTitle: '取消',
-        cancelVariant: 'outline-primary',
-        footerClass: 'modal-footer-confirm',
-        centered: true
-      }).then(value => {
-        if (value) {
-          this.$store.commit('post/DELETE_BLOCK', index)
-        }
-      })
+      this.$bvModal
+        .msgBoxConfirm(`是否刪除段落：${title}？`, {
+          title: '刪除段落',
+          okVariant: 'danger',
+          okTitle: '刪除',
+          cancelTitle: '取消',
+          cancelVariant: 'outline-primary',
+          footerClass: 'modal-footer-confirm',
+          centered: true
+        })
+        .then(value => {
+          if (value) {
+            this.$store.commit('post/DELETE_BLOCK', index)
+          }
+        })
     },
     importNews(content) {
       if (this.currentEditingEditor === null) {
@@ -324,27 +384,33 @@ export default {
         return
       }
       let str = this.currentEditingEditor.getHTML()
-      content.forEach((text) => {
+      content.forEach(text => {
         str += `<p>${text}</p>`
       })
       this.currentEditingEditor.setContent(str, true)
     },
     onCitationRemoved(index) {
+      console.log(this.post.citations)
       if (this.post.citations[index]) {
-        this.$bvModal.msgBoxConfirm(`是否刪除引用：${this.post.citations[index].title}？`, {
-          title: '刪除引用',
-          okVariant: 'danger',
-          okTitle: '刪除',
-          cancelTitle: '取消',
-          cancelVariant: 'outline-primary',
-          footerClass: 'modal-footer-confirm',
-          centered: true
-        }).then(value => {
-          if (value) {
-            this.post.citations.splice(index, 1)
-            // TODO: remove citation in editor
-          }
-        })
+        this.$bvModal
+          .msgBoxConfirm(
+            `是否刪除引用：${this.post.citations[index].title}？`,
+            {
+              title: '刪除引用',
+              okVariant: 'danger',
+              okTitle: '刪除',
+              cancelTitle: '取消',
+              cancelVariant: 'outline-primary',
+              footerClass: 'modal-footer-confirm',
+              centered: true
+            }
+          )
+          .then(value => {
+            if (value) {
+              this.post.citations.splice(index, 1)
+              // TODO: remove citation in editor
+            }
+          })
       }
     },
     handleShowTimeline(status) {
@@ -362,7 +428,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/scss/post/main.scss";
+@import '@/assets/scss/post/main.scss';
 
 .wrapper {
   padding-top: 0;
@@ -372,6 +438,22 @@ export default {
   width: 100%;
   height: 1rem;
   border-bottom: 1px solid $primary;
+}
+
+.post-title {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1.5rem;
+  padding: 8px 10px;
+  margin-right: 16px;
+  // used to be calculated by bootstrap, now fixed
+  height: 40px;
+  &::placeholder {
+    color: $text-4;
+    line-height: 1.5rem;
+    font-weight: 700;
+    font-size: 16px;
+  }
 }
 
 .add-block-btn {
@@ -385,7 +467,9 @@ export default {
 }
 
 .main-editor-area {
-  display:inline-block;
+  display: inline-block;
+  width: 816px;
+  padding: 16px;
   height: calc(100vh - 64px);
   overflow-x: hidden;
   overflow-y: scroll;
@@ -421,16 +505,42 @@ export default {
   overflow-x: hidden;
   overflow-y: hidden;
   box-shadow: -10px 0px 15px rgba(0, 0, 0, 0.05);
+  width: 504px;
+}
+
+.news-area-btn-only {
+  width: 312px;
+  text-align: right;
+  padding: 24px 32px;
+  @extend %panel-width-lg;
 }
 
 .citations-container {
   a {
     text-decoration: underline;
   }
+
+  &--title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.875rem;
+    letter-spacing: 2px;
+
+    padding: 4px;
+    color: $text-2;
+  }
+
+  &--card {
+    margin-bottom: 0.75rem;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
 }
 
 /* HIDE RADIO */
-[type=radio] {
+[type='radio'] {
   position: absolute;
   opacity: 0;
   width: 0;
@@ -438,45 +548,60 @@ export default {
 }
 
 /* IMAGE STYLES */
-[type=radio] {
+[type='radio'] {
   cursor: pointer;
 }
 
-.citation-list-tag {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
-  width: 2rem;
-  height: 2rem;
-  border: 1px solid #939393;
-}
+.citation-list {
+  &-tag {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
 
-.citation-list-remove {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
+    & + div {
+      font-size: 0.875rem;
+    }
+  }
 
-  width: 1.5rem;
-  height: 1.5rem;
-}
+  &-link {
+    font-size: 0.625rem;
+    line-height: 1.25rem;
+    color: $text-3;
+    text-decoration: underline !important;
+  }
 
-.citation-list-remove-btn {
-  border: none;
-  width: 1.5rem !important;
-  height: 1.5rem !important;
-  border-radius: 50%;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
+  &-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+
+    button {
+      padding: 0 0.5rem;
+      color: $blue;
+      border-right: 1px solid $gray-200;
+
+      &:last-of-type {
+        border: 0;
+      }
+
+      &:hover,
+      &:active {
+        text-decoration: none;
+      }
+    }
+  }
 }
 
 .period {
   &:before {
     content: attr(data-label);
-    color: #939393;
-    width: 2rem;
+    color: $blue;
+    font-size: 0.875rem;
+    font-weight: 700;
   }
 }
 
@@ -491,8 +616,10 @@ export default {
 .close-source {
   position: absolute;
   padding: 0;
-  right: 1rem;
-  top: 0.5rem;
+  right: 0.75rem;
+  top: 0.75rem;
+  height: 1.5rem;
+  width: 1.5rem;
   z-index: 11;
 }
 
@@ -511,15 +638,18 @@ export default {
 }
 
 // --------------- NEWS CLASSES ----------------
+
+%panel-width-lg {
+  @media only screen and (max-width: 1439px) {
+    width: 132px;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+}
+
 .btn-edit {
   display: flex;
   align-items: center;
-}
-
-#post-title::placeholder {
-  color: rgba(0, 0, 0, 0.3);
-  font-size: 1.5rem;
-  font-weight: bold;
 }
 
 .timeline-header {
@@ -548,7 +678,50 @@ export default {
 
 .timeline-panel {
   padding: 0;
+  width: 312px;
   border-right: $nature-4 1px solid;
+
+  height: calc(100vh - 64px);
+  overflow-x: hidden;
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    background: transparent;
+  }
+
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: $nature_6;
+    height: 106px;
+  }
+
+  /* Handle on hover */
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+}
+
+.timeline-panel-btn-only {
+  width: 312px;
+  padding: 24px 32px;
+
+  @media only screen and (max-width: 1439px) {
+  width: 132px;
+  padding-left: 0px;
+  padding-right: 0px;
+  }
+
+}
+
+.timeline-shrink {
+  width: 100px;
 }
 
 .timeline-container {
@@ -584,11 +757,16 @@ export default {
 .edit-card {
   background: $light;
   border: none;
+
+  &-body {
+    padding: 24px 32px 24px 24px;
+  }
 }
 
 .title-card-row {
-  margin-top: 1rem;
   display: flex;
+  margin-top: 1.5rem;
+  margin-bottom: -0.5rem;
   align-items: center;
   flex-wrap: wrap;
   &-between {
@@ -604,7 +782,7 @@ export default {
   position: relative;
   margin: 0 0.5rem;
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     width: 1px;
     left: 0;
@@ -629,7 +807,8 @@ export default {
     color: $text-1;
     padding-top: 6px;
     padding-bottom: 6px;
-    &:hover, &:active {
+    &:hover,
+    &:active {
       background-color: $nature-2;
     }
   }
@@ -645,36 +824,42 @@ export default {
   width: 130px;
   height: 40px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   padding-left: 0;
   padding-right: 0;
-  .btn-text {
-    box-sizing: border-box;
-    position: relative;
+  .dropdownbtn-text {
+    display: inline-flex;margin-right: 16px;
+    justify-content: center;
+    align-items: center;
     font-size: 14px;
-    flex: 5;
-    &::before {
-      content: "";
-      position: absolute;
-      width: 1px;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      background: #c4c4c4;
-    }
+    width: 90px;
     &.btn-text-left {
+      justify-content: flex-start;
       padding-left: 16px;
       text-align: left;
     }
   }
   .btn-chevron {
-    flex: 2;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    position: relative;
+    &::before {
+      position: absolute;
+      content: '';
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 24px;
+      border-left: 1px solid $gray-4;
+    }
   }
 }
 
 .dropdown-icon {
-  color: #c4c4c4;
+  color: $nature-8;
 }
 
 .edit-add-block-row {
@@ -688,6 +873,7 @@ export default {
   border: none;
   .add-text {
     font-size: 14px;
+    padding-left: 16px;
   }
 }
 
@@ -704,7 +890,7 @@ export default {
   position: relative;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     width: 4px;
     left: 0px;
@@ -717,7 +903,7 @@ export default {
 
   &:focus-within {
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       width: 4px;
       left: 0px;
@@ -730,5 +916,4 @@ export default {
     background: $blue-60 !important;
   }
 }
-
 </style>

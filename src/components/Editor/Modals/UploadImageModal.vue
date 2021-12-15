@@ -7,10 +7,10 @@
     size="lg"
     ok-title="插入"
     cancel-title="取消"
-    content-class="image-modal"
-    body-class="image-modal-body"
-    header-class="image-modal-header"
-    footer-class="image-modal-footer"
+    content-class="custom-modal custom-modal-tall"
+    body-class="custom-modal-body p-0"
+    header-class="custom-modal-header header-border-hide"
+    footer-class="custom-modal-footer"
     ok-variant="ok"
     cancel-variant="cancel"
     @ok="handleConfirm"
@@ -30,19 +30,6 @@
         >
           <b-form-input id="url-input" v-model="url" class="input-form" placeholder="請貼上圖片網址" />
         </b-form-group>
-      </b-tab>
-      <b-tab title="上傳圖片" title-link-class="nav-item-class" disabled>
-        <div class="field h-100 d-flex flex-column justify-content-center align-items-center" @drop.prevent="dropImage" @dragenter.prevent @dragover.prevent>
-          <div class="text-center my-1">
-            將圖片檔案拖曳到這裡
-          </div>
-          <div class="text-center my-1">
-            或
-          </div>
-          <b-button variant="edit-fill my-1">
-            選擇要上傳的檔案
-          </b-button>
-        </div>
       </b-tab>
     </b-tabs>
   </b-modal>
@@ -95,22 +82,7 @@ export default {
 }
 ::v-deep {
   .nav-tabs {
-    border-bottom: 2px solid $gray-100;
-  }
-  .image-modal {
-    border-radius: 4px;
-    border: none;
-    height: 448px;
-  }
-  .image-modal-body {
-    padding: 0;
-  }
-  .image-modal-header {
-    border-bottom: none;
-    padding: 20px;
-  }
-  .image-modal-footer {
-    border-top: none;
+    border-bottom: 1px solid $gray-4;
   }
   .nav-wrapper {
     border-bottom: 2px solid #f8f8f8;
@@ -121,11 +93,14 @@ export default {
     margin-left: 11px;
     margin-right: 11px;
     color: $text-1;
-    font-size: 14px;
+    // font-size: 14px;
     &:hover {
       border-color: transparent;
       margin: default;
     }
+  }
+  .header-border-hide {
+    border-bottom: transparent;
   }
   .active-nav-item-class {
     border: 0px;
@@ -134,24 +109,6 @@ export default {
   }
   .tab-pane {
     flex-grow: 1;
-  }
-  .input-form {
-    border: 1px solid $gray-100 !important;
-    &:active, &:focus {
-      border: 1px solid $blue !important;
-    }
-  }
-  .btn-ok {
-    @extend %edit-fill;
-    font-size: 14px;
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-  .btn-cancel {
-    @extend %edit-no-outline;
-    font-size: 14px;
-    margin-top: 0;
-    margin-bottom: 0;
   }
 }
 </style>

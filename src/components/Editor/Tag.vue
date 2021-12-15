@@ -116,7 +116,7 @@ export default {
     margin-left: -10px;
   }
   &-new {
-    color: rgba(0,0,0, 0.3);
+    color: $text-4;
     &:focus-within, &:active {
       color: $text-1;
     }
@@ -127,7 +127,7 @@ export default {
       max-width: 5.2rem;
       height: 32px;
       &::placeholder {
-        color: rgba(0, 0, 0, 0.3);
+        color: $text-4;
       }
     }
   }

@@ -23,62 +23,134 @@ li {
   }
 }
 
-%edit-no-outline {
-  color: $text-2;
-  background-color: $white;
-  padding: 0.25rem 1rem;
-  &:hover {
-    color: black;
-  }
+%normal-btn {
+  font-size: 14px;
+  line-height: 24px;
+  padding: 3px 15px;
+  border: 1px solid transparent;
 }
-%edit-fill {
-  background-color: $blue;
+
+%large-btn {
+  font-size: 16px;
+  line-height: 24px;
+  padding: 7px 15px;
+  border: 1px solid transparent;
+}
+
+%primary {
+  @extend %normal-btn;
+  background-color: $blue-4;
+  border-color: $blue-4;
   color: $white;
-  padding: 0.25rem 1rem;
   &:hover {
-    background-color: $blue-25;
+    background-color: $blue-3;
+    border-color: $blue-3;
+    color: $white;
+  }
+  &:active, &:focus {
+    background-color: $blue-5 !important;
+    border-color: $blue-5 !important;
+    color: $white;
+  }
+  &:disabled {
+    background-color: $blue-2;
+    border-color: $blue-2;
     color: $white;
   }
 }
-%edit-outline {
+
+%secondary {
+  @extend %normal-btn;
   background-color: $white;
-  color: $blue;
-  padding: 0.25rem 1rem;
-  border: 1px solid $blue;
+  border-color: $blue-4;
+  color: $blue-4;
   &:hover {
-    background-color: $blue-60;
-    color: $blue;
+    background-color: $blue-1;
+    border-color: $blue-3;
+    color: $blue-3;
+  }
+  &:active, &:focus {
+    background-color: $white !important;
+    border-color: $blue-5 !important;
+    color: $blue-5 !important;
+  }
+  &:disabled {
+    background-color: $white;
+    border-color: $blue-2;
+    color: $white;
   }
 }
 
-
-%lg-btn {
-  padding: 0.5rem 1rem;
+%tertiary {
+  @extend %normal-btn;
+  background-color: $white;
+  color: $text-2;
+  &:hover {
+    border-color: $gray-2;
+    background-color: $gray-2;
+  }
+  &:active, &:focus {
+    background-color: $white;
+    border-color: $white;
+    color: $text-1;
+  }
+  &:disabled {
+    color: $text-4;
+  }
 }
 
-.btn-edit-no-outline {
-  @extend %edit-no-outline;
-}
-.btn-edit-fill {
-  @extend %edit-fill;
-}
-.btn-edit-outline {
-  @extend %edit-outline;
+%text {
+  @extend %normal-btn;
+  background-color: $white;
+  color: $blue-4;
+  &:hover {
+    color: $blue-3;
+  }
+  &:active, &:focus {
+    color: $blue-5;
+  }
+  &:disabled {
+    color: $blue-2;
+  }
 }
 
-.btn-edit-no-outline-lg {
-  @extend %edit-no-outline;
-  @extend %lg-btn;
+.btn-primary {
+  @extend %primary;
 }
-.btn-edit-fill-lg {
-  @extend %edit-fill;
-  @extend %lg-btn;
+
+.btn-secondary {
+  @extend %secondary;
 }
-.btn-edit-outline-lg {
-  @extend %edit-outline;
-  @extend %lg-btn;
+
+.btn-tertiary {
+  @extend %tertiary;
+}
+
+.btn-text {
+  @extend %text;
+}
+
+.btn-primary-lg {
+  @extend %primary;
+  @extend %large-btn;
+}
+
+.btn-secondary-lg {
+  @extend %secondary;
+  @extend %large-btn;
+}
+
+.btn-tertiary-lg {
+  @extend %tertiary;
+  @extend %large-btn;
+}
+
+.btn-text-lg {
+  @extend %text;
+  @extend %large-btn;
 }
 
 @import "./editor.scss";
 @import "./menubar.scss";
 @import "./menububble.scss";
+@import "./modal.scss"

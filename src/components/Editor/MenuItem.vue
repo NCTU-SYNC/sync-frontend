@@ -6,7 +6,7 @@
     :title="title"
     @click="action"
   >
-    <icon :icon="icon" size="sm" />
+    <icon :icon="icon" size="md" />
   </button>
 </template>
 
@@ -48,24 +48,24 @@ export default {
 
 <style lang="scss" scoped>
 .menu-item {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 28px;
+  height: 28px;
   border: none;
   background-color: transparent;
   border-radius: 0.25rem;
-  margin-left: 0.5rem;
   padding: 0;
-
-  img {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   &.is-active,
   &:hover {
     color: #FFF;
     background-color: $blue;
   }
+}
+
+.tooltip {
+  top: 0;
 }
 </style>

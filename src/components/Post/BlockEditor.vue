@@ -9,24 +9,32 @@
         :id="`block-title-${block.id}`"
         ref="title-input-field"
         v-model="tempData.blockTitle"
-        class="mb-2 mr-2 mb-sm-0 pl-2 block-title"
+        class="block-title"
         placeholder="段落標題"
         @change="handleChangeTitle"
       />
 
-      <div class="d-flex justify-content-center align-items-center rounded bg-white datetime-container">
+      <div class="rounded bg-white datetime-container">
         <b-dropdown
           ref="datetime-dropdown"
           variant="white"
           no-caret
-          toggle-class="datetime-dropdown d-flex align-items-center"
+          toggle-class="datetime-dropdown"
           @toggle="resetDateTime"
+          @hide="dropdownOpen = false"
+          @show="dropdownOpen = true"
         >
           <template #button-content>
-            <span class="d-inline-block pl-1 pr-5 btn-text" :class="{'date-color': tempData.blockDateValue && tempData.blockTimeValue}">
-              {{ (tempData.blockDateValue && tempData.blockTimeValue) ? dropdownBtnDateTime : '新增段落事件時間' }}
-            </span>
-            <span class="d-inline-block pl-2"><b-icon icon="chevron-down" class="caret" /></span>
+            <div
+              class="dropdownbtn-text"
+            >
+              {{
+                tempData.blockDateValue && tempData.blockTimeValue
+                  ? dropdownBtnDateTime
+                  : '新增段落事件時間'
+              }}
+            </div>
+            <div class="btn-caret"><icon :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'" size="md" /></div>
           </template>
           <b-dropdown-form>
             <b-calendar
@@ -50,8 +58,8 @@
               事件時間：{{ displayDateTime }}
             </div>
             <div class="btn-container">
-              <b-button variant="edit-no-outline-lg" @click="closeDropdown">取消</b-button>
-              <b-button variant="edit-fill-lg" @click="saveDateTimeChanges">確認</b-button>
+              <b-button variant="tertiary-lg" @click="closeDropdown">取消</b-button>
+              <b-button variant="primary-lg" @click="saveDateTimeChanges">確認</b-button>
             </div>
           </b-dropdown-form>
         </b-dropdown>
@@ -93,7 +101,8 @@ export default {
       },
       linkUrl: null,
       linkMenuIsActive: false,
-      initialized: false
+      initialized: false,
+      dropdownOpen: false
     }
   },
   computed: {
@@ -169,10 +178,14 @@ export default {
 
 .block-title {
   font-weight: bold;
-  font-size: 18px;
-  line-height: 30px;
+  line-height: 1.5rem;
+  padding: 0.5rem 0.625rem;
+  margin-right: 16px;
+  margin-bottom: 24px;
+  color: $text-1;
+  height: 40px;
   &::placeholder {
-    color: rgba(0, 0, 0, 0.3);
+    color: $text-4;
   }
 }
 
@@ -190,19 +203,41 @@ export default {
     }
   }
 }
-.datetime-dropdown {
-  .caret {
-    color: $nature-8;
-  }
-  .btn-text {
-    color: rgba(0,0,0, 0.8);
-    border-right: 1px solid $nature-4;
+
+::v-deep .datetime-dropdown {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  .dropdownbtn-text {
+    display: inline-flex;
+    color: $text-1;
     font-size: 14px;
+    line-height: 24px;
+    width: 140px;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
   }
-  .date-color {
-    color: $blue;
+  .btn-caret {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    color: $gray-8;
+    width: 40px;
+    height: 100%;
+    &::before{
+      position: absolute;
+      content: '';
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 24px;
+      border-left: 1px solid $gray-4;
+    }
   }
 }
+
 ::v-deep .b-calendar {
   button[title="Previous year"] {
     display: none;
@@ -211,7 +246,12 @@ export default {
     display: none;
   }
 }
+
 .datetime-container {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   ::v-deep ul.dropdown-menu {
     min-height: 450px;
   }

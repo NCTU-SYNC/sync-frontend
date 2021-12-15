@@ -22,6 +22,10 @@ $text-2: rgba(0, 0, 0, 0.65);
 $text-3: rgba(0, 0, 0, 0.45);
 $text-4: rgba(0, 0, 0, 0.20);
 
+$gray-2: #F6F6F8;
+$gray-4: rgba(219, 220, 225, 1);
+$gray-8: #838691;
+
 $grays: () !default;
 $grays: map-merge(
   (
@@ -39,7 +43,6 @@ $grays: map-merge(
 );
 
 $blue:    #2353ff;
-$blue-1:  #ebefff;
 $blue-25: #1a3ebf;
 $blue-60: #e9eeff;
 $indigo:  #6610f2 !default;
@@ -52,6 +55,13 @@ $green:   #28a745 !default;
 $teal:    #20c997 !default;
 $cyan:    #1fc8fe;
 $light-blue: $cyan;
+
+$blue-1: #D1DBFF;
+$blue-2: #9EB3FF;
+$blue-3: #91A9FF;
+$blue-4: #2353FF;
+$blue-5: #1C42CC;
+$blue-6: #153299;
 
 $colors: () !default;
 $colors: map-merge(

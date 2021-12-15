@@ -3,13 +3,43 @@
     id="citation-modal"
     v-model="visible"
     centered
-    title="編輯附註"
-    size="xl"
-    ok-title="儲存"
+    title="新增新聞來源"
+    size="lg"
+    ok-title="新增"
     cancel-title="取消"
+    content-class="custom-modal"
+    body-class="custom-modal-body"
+    header-class="custom-modal-header"
+    footer-class="custom-modal-footer"
+    ok-variant="ok"
+    cancel-variant="cancel"
     @ok="handleConfirm"
   >
-    <div class="edit-add-block-row edit-row">
+    <b-form-group
+      label-cols="auto"
+      label="附註內容："
+      label-for="citation-superscript"
+    >
+      <b-form-input id="citation-superscript" v-model="content" class="input-form" placeholder="請輸入或選取附註的內容文字" />
+    </b-form-group>
+
+    <b-form-group
+      label-cols="auto"
+      label="附註標題："
+      label-for="citation-title"
+    >
+      <b-form-input id="citation-title" v-model="title" class="input-form" placeholder="請輸入新聞來源的附註標題" />
+    </b-form-group>
+
+    <b-form-group
+      label-cols="auto"
+      label="來源網址："
+      label-for="citation-url"
+    >
+      <b-form-input id="citation-url" v-model="url" class="input-form" placeholder="請輸入新聞來源的網址" />
+    </b-form-group>
+
+    <!-- <div class="edit-add-block-row edit-row">
       <b-row>
         <b-col cols="2" class="ml-3">附註內容：</b-col>
         <b-col><input v-model="content" class="input" type="text" placeholder="請輸入或選取附註的內容文字"></b-col>
@@ -24,7 +54,8 @@
         <b-col cols="2" class="ml-3">來源網址：</b-col>
         <b-col><input v-model="url" class="input" type="text" placeholder="請輸入來源網址 URL"></b-col>
       </b-row>
-    </div>
+    </div> -->
+
   </b-modal>
 </template>
 
@@ -64,6 +95,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/assets/scss/post/main.scss';
 // TODO: duplicated with the style in Post.vue, should be moved to component
 .edit-add-block-row {
   position: relative;

@@ -51,6 +51,7 @@
 import { Editor, EditorContent, BubbleMenu, FloatingMenu } from '@tiptap/vue-2'
 import StarterKit from '@tiptap/starter-kit'
 import Highlight from '@tiptap/extension-highlight'
+import Placeholder from '@tiptap/extension-placeholder'
 import Typography from '@tiptap/extension-typography'
 import Image from '@tiptap/extension-image'
 import Underline from '@tiptap/extension-underline'
@@ -108,6 +109,10 @@ export default {
         StarterKit,
         Underline,
         Highlight,
+        Placeholder.configure({
+          emptyEditorClass: 'is-editor-empty',
+          placeholder: '段落內文'
+        }),
         Typography,
         Link,
         Image,
@@ -152,9 +157,9 @@ export default {
 
 <style lang="scss">
 
-.editor__header {
-  margin-top: 0.5rem;
-}
+// .editor__header {
+//   margin-top: 0.5rem;
+// }
 
 .editor__content {
   margin-top: 0.5rem;
@@ -189,6 +194,11 @@ export default {
   background-color: $white;
   border-radius: 0.25rem;
   padding: 1rem;
+
+  color: #000;
+  font-size: 1.125rem;
+  line-height: 1.875rem;
+  min-height: 148px;
 }
 
 /* Basic editor styles */
@@ -251,6 +261,15 @@ export default {
     color: $blue;
     text-decoration: underline !important;
   }
-}
 
+  p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+    height: 0;
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+}
 </style>
