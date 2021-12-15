@@ -1,7 +1,6 @@
 <template>
   <div class="d-flex flex-column h-100">
     <div class="w-100 d-flex flex-column justify-content-start header">
-      <!-- TODO: page number -->
       <div class="w-100 d-flex justify-content-start align-items-start">
         <div class="d-flex flex-grow-1 mr-2 flex-column">
           <div class="search-bar flex-grow-1">
@@ -11,7 +10,6 @@
               :disabled="searchKeyword.length === 0 || isLoading"
               @click="getNews"
             >
-              <!-- <b-icon icon="search" font-scale="1" /> -->
               <icon icon="news-panel-search" size="md" />
             </b-button>
             <b-form-input
@@ -160,7 +158,6 @@ export default {
       if (newsContent) {
         let str = ''
         newsContent.forEach((text, i) => {
-          // if (i === 0) { return }
           str += text + ' '
         })
         return str.substring(0, 90) + ' ...'

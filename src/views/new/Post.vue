@@ -182,7 +182,7 @@
           </b-row>
         </div>
       </div>
-      <div v-if="showNewsSource" class="news-area">
+      <div v-show="showNewsSource" class="news-area">
         <b-button
           variant="link"
           class="close-source"
@@ -193,7 +193,7 @@
         <NewsPanel @importNews="importNews" />
       </div>
       <div
-        v-else
+        v-show="!showNewsSource"
         class="news-area-btn-only"
       >
         <b-button
