@@ -64,4 +64,8 @@ export default {
     background-color: $blue;
   }
 }
+
+.tooltip {
+  top: 0;
+}
 </style>
