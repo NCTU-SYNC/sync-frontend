@@ -121,6 +121,7 @@ export default {
       editable: this.editable,
       content: this.content
     })
+    this.$store.commit('post/REGISTER_EDITOR', { id: this.id, editor: this.editor })
   },
 
   beforeDestroy() {

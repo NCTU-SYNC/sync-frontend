@@ -11,7 +11,8 @@ const getDefaultState = () => {
     citations: [],
     categorySelected: '',
     currentEditingEditor: null,
-    showAddPointsAlert: false
+    showAddPointsAlert: false,
+    currentEditors: {}
   }
 }
 
@@ -31,6 +32,7 @@ const mutations = {
   },
   DELETE_BLOCK(state, index) {
     state.blocks.splice(index, 1)
+    state.currentEditingEditor = null
   },
   UPDATE_BLOCK_CONTENT(state, { id, content }) {
     const block = state.blocks.find(b => b.id === id)
@@ -89,6 +91,9 @@ const mutations = {
   FOCUS_EDITOR(state, editor) {
     state.currentEditingEditor = editor
   },
+  REGISTER_EDITOR(state, { id, editor }) {
+    state.currentEditors[id] = editor
+  },
   INIT_POST(state, payload) {
     const data = payload.data
     state.data = data
@@ -108,6 +113,11 @@ const getters = {
       return block.blockDateTime
     }
     return ''
+  },
+  GET_EDITOR_BY_ID: (state) => (id) => {
+    let editor = null
+    if (id in state.currentEditors) editor = state.currentEditors[id]
+    return editor
   },
   GET_PUBLISH_DATA: (state) => {
     return {
