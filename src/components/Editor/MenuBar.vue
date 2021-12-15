@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="menu-bar">
-      <div class="left-section">
+      <div class="text-options">
         <menu-item v-for="(item, index) in items.slice(0,4)" :key="index" v-bind="item" />
       </div>
-      <div class="right-section">
+      <div class="modal-options">
         <menu-item v-for="(item, index) in items.slice(4,7)" :key="index" v-bind="item" />
       </div>
     </div>
@@ -99,7 +99,7 @@ export default {
   background-color: $white;
   border-radius: 0.25rem;
 
-  .left-section {
+  .text-options {
     position: relative;
     flex-grow: 4;
     display: flex;
@@ -115,7 +115,7 @@ export default {
     }
   }
 
-  .right-section {
+  .modal-options {
     flex-grow: 3;
     display: flex;
     justify-content: space-evenly;
