@@ -324,29 +324,16 @@ export default {
         .then(response => {
           if (response.data.code === 200) {
             const data = response.data.data
-            console.log(data.tags)
             this.$store.commit('post/INIT_POST', { data })
-            if (this.post.blocks.length === 0) {
-              this.handleAddBlock(-1)
-            }
             this.isLoading = false
+            this.$nextTick(() => {
+              this.post.currentEditingEditor = null
+            })
           } else {
             throw new Error(response.data.message)
           }
         })
-        .catch(err => {
-          console.error(err)
-          this.isLoading = false
-          this.$nextTick(() => {
-            this.post.currentEditingEditor = null
-          })
-        } else {
-          throw new Error(response.data.message)
-        }
-      }).catch(err => {
-        console.error(err)
-        this.isLoading = false
-      })
+      this.isLoading = false
     } else {
       this.handleAddBlock(-1)
     }
