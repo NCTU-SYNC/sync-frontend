@@ -1,11 +1,9 @@
 <template>
   <div>
     <div class="menu-bar">
-      <div class="text-options">
-        <div v-for="item, index in items" :key="index" v-bind="item">
-          <div v-if="item.icon==='divider'" class="divider" />
-          <menu-item v-else v-bind="item" />
-        </div>
+      <div v-for="item, index in items" :key="index" v-bind="item">
+        <div v-if="item.icon==='divider'" class="divider" />
+        <menu-item v-else v-bind="item" />
       </div>
     </div>
   </div>
@@ -96,24 +94,19 @@ export default {
 <style lang="scss" scoped>
 .menu-bar {
   display: flex;
+  justify-content: space-evenly;
   align-items: center;
   max-width: 289px;
   height: 36px;
   background-color: $white;
   border-radius: 0.25rem;
-
-  .text-options {
-    flex-grow: 4;
-    display: flex;
-    justify-content: space-evenly;
-    .divider::after {
-      content: '';
-      display: inline-block;
-      vertical-align: middle;
-      line-height: normal;
-      height: 24px;
-      border-right: 1px solid $gray-4;
-    }
+  .divider::after {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
+    height: 24px;
+    border-right: 1px solid $gray-4;
   }
 }
 
