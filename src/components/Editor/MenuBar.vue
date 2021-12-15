@@ -2,10 +2,10 @@
   <div>
     <div class="menu-bar">
       <div class="text-options">
-        <menu-item v-for="(item, index) in items.slice(0,4)" :key="index" v-bind="item" />
-      </div>
-      <div class="modal-options">
-        <menu-item v-for="(item, index) in items.slice(4,7)" :key="index" v-bind="item" />
+        <div v-for="item, index in items" :key="index" v-bind="item">
+          <div v-if="item.icon==='divider'" class="divider" />
+          <menu-item v-else v-bind="item" />
+        </div>
       </div>
     </div>
   </div>
@@ -58,6 +58,9 @@ export default {
           isActive: () => this.editor.isActive('bulletList')
         },
         {
+          icon: 'divider'
+        },
+        {
           icon: 'annotation',
           title: 'Annotation',
           tooltip: '編輯附註',
@@ -100,25 +103,17 @@ export default {
   border-radius: 0.25rem;
 
   .text-options {
-    position: relative;
     flex-grow: 4;
     display: flex;
     justify-content: space-evenly;
-    &::after {
+    .divider::after {
       content: '';
-      position: absolute;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: normal;
       height: 24px;
       border-right: 1px solid $gray-4;
-      top: 50%;
-      transform: translateY(-50%);
-      right: 0;
     }
-  }
-
-  .modal-options {
-    flex-grow: 3;
-    display: flex;
-    justify-content: space-evenly;
   }
 }
 
