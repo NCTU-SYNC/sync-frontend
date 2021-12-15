@@ -31,19 +31,6 @@
           <b-form-input id="url-input" v-model="url" class="input-form" placeholder="請貼上圖片網址" />
         </b-form-group>
       </b-tab>
-      <b-tab title="上傳圖片" title-link-class="nav-item-class" disabled>
-        <div class="field h-100 d-flex flex-column justify-content-center align-items-center" @drop.prevent="dropImage" @dragenter.prevent @dragover.prevent>
-          <div class="text-center my-1">
-            將圖片檔案拖曳到這裡
-          </div>
-          <div class="text-center my-1">
-            或
-          </div>
-          <b-button variant="primary my-1">
-            選擇要上傳的檔案
-          </b-button>
-        </div>
-      </b-tab>
     </b-tabs>
   </b-modal>
 </template>
