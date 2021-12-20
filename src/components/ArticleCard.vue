@@ -48,6 +48,7 @@
 <script>
 import moment from 'moment'
 import { Utils } from '@/utils'
+import { mapState, mapGetters } from 'vuex'
 export default {
   name: 'ArticleCard',
   props: {
@@ -90,13 +91,12 @@ export default {
     }
   },
   computed: {
+    ...mapState({ isProfileReady: 'article/isProfileReady' }),
+    ...mapGetters({ subscribedList: 'article/subscribedList' }),
     isSubscribed() {
       if (!this.isLogin) return false
 
       return this.subscribedList.some((s) => s.articleId === this.articleId)
-    },
-    subscribedList() {
-      return this.$store.getters['article/subscribedList']
     },
     bookmarkTooltip() {
       return this.isSubscribed ? '取消收藏文章' : '收藏文章'
