@@ -190,7 +190,7 @@
         >
           <b-icon icon="x" scale="1.66" variant="secondary" />
         </b-button>
-        <NewsPanel @importNews="importNews" />
+        <NewsPanel />
       </div>
       <div
         v-show="!showNewsSource"
@@ -377,17 +377,6 @@ export default {
             this.$store.commit('post/DELETE_BLOCK', index)
           }
         })
-    },
-    importNews(content) {
-      if (this.currentEditingEditor === null) {
-        this.$bvModal.msgBoxOk('請選擇編輯區塊，或是先新增段落後再引入')
-        return
-      }
-      let str = this.currentEditingEditor.getHTML()
-      content.forEach(text => {
-        str += `<p>${text}</p>`
-      })
-      this.currentEditingEditor.setContent(str, true)
     },
     onCitationRemoved(index) {
       console.log(this.post.citations)
