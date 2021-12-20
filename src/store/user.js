@@ -6,7 +6,6 @@ const getDefaultState = () => {
   return {
     isInitialized: false,
     name: '',
-    token: '',
     displayName: getUserInfo() ? getUserInfo().displayName : '',
     email: getUserInfo() ? getUserInfo().email : '',
     uid: getUserInfo() ? getUserInfo().uid : '',
@@ -36,9 +35,6 @@ const mutations = {
     state.uid = user ? user.uid : ''
     state.isInitialized = true
   },
-  SET_TOKEN(state, payload) {
-    state.token = payload
-  },
   RESET_USER(state) {
     Object.assign(state, getDefaultState())
   },
@@ -63,9 +59,7 @@ const actions = {
   async getToken({ commit }) {
     /* TODO: pack into interceptor of axios instance */
     if (FirebaseAuth.auth === null) throw new Error('firebase not initialized')
-    const token = await FirebaseAuth.token
-    commit('SET_TOKEN', token)
-    return FirebaseAuth.token
+    return await FirebaseAuth.token
   },
   sendUserInfo({ commit }, userInfo) {
     commit('SET_USER', userInfo)
