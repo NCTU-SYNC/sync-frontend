@@ -17,6 +17,10 @@ class FirebaseAuth {
     return this.instance
   }
 
+  get token() {
+    return this.instance.currentUser.getIdToken()
+  }
+
   async setupFirebase() {
     try {
       this.instance = firebase.auth()

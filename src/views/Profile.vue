@@ -125,14 +125,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'photoURL',
-      'displayName',
-      'uid',
-      'isLogin',
-      'user',
-      'token'
-    ]),
+    ...mapGetters(['photoURL', 'displayName', 'uid', 'isLogin', 'user']),
     ...mapGetters({ createAt: 'user/createAt', email: 'user/email' }),
     creationDateTime() {
       return this.createAt
@@ -160,13 +153,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions({ refreshToken: 'user/refreshToken' }),
+    ...mapActions({ getToken: 'user/getToken' }),
     async init() {
-      // ! refresh token before get articles
-      await this.refreshToken()
-      const { data } = await getArticlesInfo({
-        token: this.token
-      })
+      const token = await this.getToken()
+      const { data } = await getArticlesInfo({ token })
       if (data.code === 200) {
         const payload = data.data
         this.articles = payload

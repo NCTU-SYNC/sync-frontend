@@ -1,19 +1,13 @@
 import { login } from '@/api/user'
-import {
-  setToken,
-  setExpiredTime,
-  getExpiredTime,
-  setUserInfo,
-  getUserInfo
-} from '@/utils/auth'
+import { getExpiredTime, setUserInfo, getUserInfo } from '@/utils/auth'
 import FirebaseAuth from '@/utils/firebase.js'
 
 const getDefaultState = () => {
   return {
     isInitialized: false,
-    token: '',
     expirationTime: getExpiredTime(),
     name: '',
+    token: '',
     displayName: getUserInfo() ? getUserInfo().displayName : '',
     email: getUserInfo() ? getUserInfo().email : '',
     uid: getUserInfo() ? getUserInfo().uid : '',
@@ -60,9 +54,6 @@ const actions = {
       login(userdata)
         .then((response) => {
           const { data } = response
-          commit('SET_TOKEN', userdata.idToken)
-          setToken(userdata.idToken)
-          setExpiredTime(Date.now() + 30 * 60 * 1000)
           resolve(data.message)
         })
         .catch((error) => {
@@ -70,12 +61,12 @@ const actions = {
         })
     })
   },
-  async refreshToken({ commit }) {
-    const token = await FirebaseAuth.instance.currentUser
-      .getIdToken()
-      .catch((error) => console.error(error))
-
+  async getToken({ commit }) {
+    /* TODO: pack into interceptor of axios instance */
+    if (FirebaseAuth.auth === null) throw new Error('firebase not initialized')
+    const token = await FirebaseAuth.token
     commit('SET_TOKEN', token)
+    return FirebaseAuth.token
   },
   sendUserInfo({ commit }, userInfo) {
     commit('SET_USER', userInfo)

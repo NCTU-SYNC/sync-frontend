@@ -45,10 +45,10 @@ const mutations = {
 const actions = {
   async INITIALIZE({ commit, dispatch, rootGetters }) {
     // set token
-    await dispatch('user/refreshToken', null, { root: true })
     if (rootGetters.isLogin) {
       try {
-        const { data } = await getProfile({ token: rootGetters.token })
+        const token = await dispatch('user/getToken', null, { root: true })
+        const { data } = await getProfile({ token })
         commit('SET_PROFILE', data.data.articles || {})
         return Promise.resolve(data.data)
       } catch (error) {
