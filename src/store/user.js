@@ -1,11 +1,10 @@
 import { login } from '@/api/user'
-import { getExpiredTime, setUserInfo, getUserInfo } from '@/utils/auth'
+import { setUserInfo, getUserInfo } from '@/utils/auth'
 import FirebaseAuth from '@/utils/firebase.js'
 
 const getDefaultState = () => {
   return {
     isInitialized: false,
-    expirationTime: getExpiredTime(),
     name: '',
     token: '',
     displayName: getUserInfo() ? getUserInfo().displayName : '',
