@@ -155,6 +155,7 @@ export default {
         this.showBubbleMenu = false
         modalComponent.visible = true
         if (modal === 'link-modal') {
+          modalComponent.reset()
           if (this.editor.isActive('link')) {
             modalComponent.url = this.editor.getAttributes('link').href
           }
@@ -165,10 +166,10 @@ export default {
     addLink(data) {
       const { content, url } = data
       if (this.caretPosBeg === null || this.caretPosEnd === null) {
-        this.editor.chain().insertContent(`<a href=${url}>${content}</>`).focus().run()
+        this.editor.chain().insertContent(`${content}`).setLink({ href: `${url}`, target: '_blank' }).focus().run()
         return
       }
-      this.editor.chain().insertContentAt({ from: this.caretPosBeg, to: this.caretPosEnd }, `<a href=${url}>${content}</>`).focus().run()
+      this.editor.chain().insertContentAt({ from: this.caretPosBeg, to: this.caretPosEnd }, `${content}`).setLink({ href: `${url}`, target: '_blank' }).focus().run()
       this.showBubbleMenu = true
     },
     async addCitation(data) {
