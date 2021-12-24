@@ -166,10 +166,10 @@ export default {
     addLink(data) {
       const { content, url } = data
       if (this.caretPosBeg === null || this.caretPosEnd === null) {
-        this.editor.chain().insertContent(`${content}`).setLink({ href: `${url}`, target: '_blank' }).focus().run()
+        this.editor.chain().insertContent(`<a href="${url}" target="_blank">${content}</a>`).focus().run()
         return
       }
-      this.editor.chain().insertContentAt({ from: this.caretPosBeg, to: this.caretPosEnd }, `${content}`).setLink({ href: `${url}`, target: '_blank' }).focus().run()
+      this.editor.chain().insertContentAt({ from: this.caretPosBeg, to: this.caretPosEnd }, `<a href="${url}" target="_blank">${content}</a>`).focus().run()
       this.showBubbleMenu = true
     },
     async addCitation(data) {

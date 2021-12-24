@@ -38,24 +38,6 @@
     >
       <b-form-input id="citation-url" v-model="url" class="input-form" placeholder="請輸入新聞來源的網址" />
     </b-form-group>
-
-    <!-- <div class="edit-add-block-row edit-row">
-      <b-row>
-        <b-col cols="2" class="ml-3">附註內容：</b-col>
-        <b-col><input v-model="content" class="input" type="text" placeholder="請輸入或選取附註的內容文字"></b-col>
-      </b-row>
-    </div>
-    <div class="edit-add-block-row edit-row">
-      <b-row>
-        <b-col cols="2" class="ml-3">附註標題：</b-col>
-        <b-col><input v-model="title" class="input" type="text" placeholder="請輸入參考來源的附註標題"></b-col>
-      </b-row>
-      <b-row>
-        <b-col cols="2" class="ml-3">來源網址：</b-col>
-        <b-col><input v-model="url" class="input" type="text" placeholder="請輸入來源網址 URL"></b-col>
-      </b-row>
-    </div> -->
-
   </b-modal>
 </template>
 
