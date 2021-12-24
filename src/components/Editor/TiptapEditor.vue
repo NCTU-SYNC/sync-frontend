@@ -17,22 +17,24 @@
       </button>
     </bubble-menu>
 
-    <floating-menu
-      v-if="false"
-      class="floating-menu"
-      :tippy-options="{ duration: 100 }"
+    <bubble-menu
+      v-if="editable"
+      class="floating-menu-link"
+      :tippy-options="{ duration: 100, placement: 'bottom-start' }"
       :editor="editor"
+      :should-show="shouldShow"
     >
-      <button :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }" @click="editor.chain().focus().toggleHeading({ level: 1 }).run()">
-        H1
-      </button>
-      <button :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }" @click="editor.chain().focus().toggleHeading({ level: 2 }).run()">
-        H2
-      </button>
-      <button :class="{ 'is-active': editor.isActive('bulletList') }" @click="editor.chain().focus().toggleBulletList().run()">
-        Bullet List
-      </button>
-    </floating-menu>
+      <icon icon="link" size="md" class="link-icon" />
+      <div class="url">
+        <a :href="editor.getAttributes('link').href" target="_blank">{{ editor.getAttributes('link').href }}</a>
+      </div>
+      <b-button variant="link" class="text-nowrap menu-btn" @click="menuEditLink()">
+        編輯
+      </b-button>
+      <b-button variant="link" class="text-nowrap menu-btn" @click="menuRemoveLink()">
+        刪除
+      </b-button>
+    </bubble-menu>
 
     <menu-bar
       v-if="editable"
@@ -43,12 +45,12 @@
     <editor-content :editor="editor" :class="editable ? 'editor__content__edit': 'editor__content'" />
     <upload-image-modal ref="upload-image-modal" @addImage="addImage" />
     <citation-modal ref="citation-modal" @addCitation="addCitation" />
-    <link-modal ref="link-modal" @addLink="addLink" />
+    <link-modal ref="link-modal" :editor="editor" @addLink="addLink" />
   </div>
 </template>
 
 <script>
-import { Editor, EditorContent, BubbleMenu, FloatingMenu } from '@tiptap/vue-2'
+import { Editor, EditorContent, BubbleMenu } from '@tiptap/vue-2'
 import StarterKit from '@tiptap/starter-kit'
 import Highlight from '@tiptap/extension-highlight'
 import Placeholder from '@tiptap/extension-placeholder'
@@ -67,7 +69,6 @@ export default {
   components: {
     EditorContent,
     BubbleMenu,
-    FloatingMenu,
     MenuBar,
     UploadImageModal,
     CitationModal,
@@ -90,7 +91,11 @@ export default {
 
   data() {
     return {
-      editor: null
+      editor: null,
+      caretPosBeg: null,
+      caretPosEnd: null,
+      selectedText: '',
+      showBubbleMenu: true
     }
   },
 
@@ -104,6 +109,7 @@ export default {
       },
       onFocus: ({ editor }) => {
         this.$store.commit('post/FOCUS_EDITOR', editor)
+        this.showBubbleMenu = true
       },
       extensions: [
         StarterKit,
@@ -114,7 +120,9 @@ export default {
           placeholder: '段落內文'
         }),
         Typography,
-        Link,
+        Link.configure({
+          openOnClick: false
+        }),
         Image,
         Superscript
       ],
@@ -137,12 +145,31 @@ export default {
       }
     },
     showModal(modal) {
+      const { from, to } = this.editor.state.selection
+      this.caretPosBeg = from
+      this.caretPosEnd = to
+      this.text = this.editor.state.doc.textBetween(from, to, ' ')
       // prevent duplicated modals when there are multiple blocks
-      if (!this.$refs[modal].visible) { this.$refs[modal].visible = true }
+      if (!this.$refs[modal].visible) {
+        const modalComponent = this.$refs[modal]
+        this.showBubbleMenu = false
+        modalComponent.visible = true
+        if (modal === 'link-modal') {
+          if (this.editor.isActive('link')) {
+            modalComponent.url = this.editor.getAttributes('link').href
+          }
+          modalComponent.content = this.text
+        }
+      }
     },
     addLink(data) {
       const { content, url } = data
-      this.editor.commands.insertContent(`<a href=${url}>${content}</>`)
+      if (this.caretPosBeg === null || this.caretPosEnd === null) {
+        this.editor.chain().insertContent(`<a href=${url}>${content}</>`).focus().run()
+        return
+      }
+      this.editor.chain().insertContentAt({ from: this.caretPosBeg, to: this.caretPosEnd }, `<a href=${url}>${content}</>`).focus().run()
+      this.showBubbleMenu = true
     },
     async addCitation(data) {
       const { content, title, url } = data
@@ -150,6 +177,17 @@ export default {
       const { citations } = this.$store.state.post
       this.editor.commands.insertContent(`${content}<sup>${citations.length}</sup>`)
       this.editor.chain().focus().toggleSuperscript().run()
+    },
+    shouldShow({ editor, view, state, oldState }) {
+      return editor.isActive('link') && this.showBubbleMenu
+    },
+    menuRemoveLink() {
+      this.editor.chain().unsetLink().focus().run()
+    },
+    menuEditLink() {
+      this.showBubbleMenu = false
+      this.editor.commands.extendMarkRange('link')
+      this.showModal('link-modal')
     }
   }
 }
@@ -270,6 +308,52 @@ export default {
     height: 0;
     font-size: 1rem;
     line-height: 1.5rem;
+  }
+}
+
+.floating-menu-link {
+  display: flex;
+  align-items: center;
+  .link-icon {
+    margin-right: 14px;
+  }
+  .url {
+    font-size: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 221px;
+    text-overflow: ellipsis;
+    color: $blue-4;
+    text-decoration: underline $blue solid !important;
+    margin-right: 8px;
+    a {
+      font-size: 12px;
+      color: $blue-4;
+    }
+  }
+  max-width: 387px;
+  height: 36px;
+  padding: 6px 16px;
+  background: $white;
+  box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  button {
+    position: relative;
+    color: $text-2;
+    font-size: 14px;
+    padding: 0;
+    padding-left: 9px;
+    padding-right: 8px;
+    &::before {
+      content: '';
+      position: absolute;
+      border-left: 1px solid $gray-2;
+      height: 24px;
+      left: 0;
+    }
+    &:last-child{
+      padding-right: 0px;
+    }
   }
 }
 </style>

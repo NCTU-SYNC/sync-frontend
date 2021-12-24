@@ -16,21 +16,12 @@
     @ok="handleConfirm"
   >
     <div class="">
-      <!-- <b-row>
-        <b-col cols="2" class="ml-3">顯示文字：</b-col>
-        <b-col><input v-model="content" class="input" type="text" placeholder="請輸入或選取連結顯示的文字"></b-col>
-      </b-row>
-      <b-row>
-        <b-col cols="2" class="ml-3">來源網址：</b-col>
-        <b-col><input v-model="url" class="input" type="text" placeholder="請輸入來源網址 URL"></b-col>
-      </b-row>
-    </div> -->
       <b-form-group
         label-cols="auto"
         label="顯示文字："
         label-for="link-text"
       >
-        <b-form-input id="link-text" v-model="content" class="input-form" placeholder="請輸入或選取連結顯示的文字" />
+        <b-form-input id="link-text" v-model="content" autofocus class="input-form" placeholder="請輸入或選取連結顯示的文字" />
       </b-form-group>
 
       <b-form-group
