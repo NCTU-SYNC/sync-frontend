@@ -138,6 +138,20 @@ export default {
         this.isLoading = false
         return
       }
+      // check for empty editors
+      let noContent = false
+      for (const editor of Object.values(this.post.currentEditors)) {
+        if (editor.isEmpty) {
+          noContent = true
+          break
+        }
+      }
+      if (noContent) {
+        await this.$bvModal.msgBoxOk('段落內文不得為空白，請輸入段落內文')
+        this.isLoading = false
+        return
+      }
+
       const articleData = this.$store.getters['post/GET_PUBLISH_DATA']
       // add user credentials
       articleData.uid = this.uid
