@@ -96,13 +96,20 @@ export default {
         this.$bvModal.msgBoxOk('請先點擊畫面左方欲引入新聞的內文輸入框，之後再從右方新聞欄中引入新聞。')
         return
       }
-      const { title, url } = this // const title = this.title; const url ...
+      const { title, url } = this
       this.$store.dispatch('post/SUBMIT_CITATION_FORM', { title, url })
-      let str = currentEditingEditor.getHTML()
-      this.content.forEach((text) => {
-        str += `<p>${text}</p>`
+      let str = ''
+      this.content.slice(0, -1).forEach((text) => {
+        str += `<p>${text.replace(/^\s+|\s+$/g, '')}</p>`
       })
-      currentEditingEditor.commands.setContent(str, true)
+      // add citation superscript
+      const { citations } = this.$store.state.post
+      const lastP = this.content[this.content.length - 1].replace(/^\s+|\s+$/g, '')
+      str += `<p>${lastP}<sup>${citations.length}</sup></p><p></p>`
+
+      // insert at caret position or replace selected text
+      const { from, to } = currentEditingEditor.state.selection
+      currentEditingEditor.chain().insertContentAt({ from, to }, str).focus().run()
     },
     expandContent(isExpand) {
       this.expand = isExpand
