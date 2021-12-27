@@ -107,13 +107,18 @@ export default {
   border: 1px solid #dbdce1;
   border-radius: 4px;
   width: 60px;
-  padding: 0 5px;
+  padding: 0;
 
   input {
     font-size: 12px;
     line-height: 20px;
-    width: 14px;
-    padding: 0;
+    width: 26px;
+    padding: 0 5px;
+
+    &:focus {
+      border: 1px solid #6b6d76 !important;
+      border-radius: 4px !important;
+    }
   }
 
   * {

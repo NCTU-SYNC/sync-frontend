@@ -56,7 +56,7 @@
               class="my-2"
             />
             -->
-            <div class="d-flex pt-3">
+            <div class="d-flex py-3">
               <b-form-checkbox id="addtime" v-model="timeEnable" />
               <sync-time
                 v-model="tempData.blockTimeValue"
@@ -315,8 +315,8 @@ export default {
   .block-current-time {
     text-align: left;
     border-top: 1px solid #e9eeff;
-    padding: 0.5rem 0rem;
-    margin: 0.5rem 0;
+    padding: 1rem 0rem;
+    margin: 0;
 
     font-size: 12px;
     line-height: 20px;
@@ -335,8 +335,12 @@ export default {
     }
   }
   .btn-container {
-    margin-top: auto;
-    margin-left: auto;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid $gray-4;
+    margin: 0 -1.5rem;
+    padding: 1.25rem 1.25rem 0.5rem 1.25rem;
+    gap: 0.75rem;
   }
   li {
     height: 100%;
