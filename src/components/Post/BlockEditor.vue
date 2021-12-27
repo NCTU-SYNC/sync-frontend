@@ -1,10 +1,7 @@
 <template>
   <div>
     <div class="d-flex justify-content-start w-100">
-      <label
-        class="sr-only"
-        :for="`block-title-${block.id}`"
-      >段落標題</label>
+      <label class="sr-only" :for="`block-title-${block.id}`">段落標題</label>
       <b-form-input
         :id="`block-title-${block.id}`"
         ref="title-input-field"
@@ -25,16 +22,19 @@
           @show="dropdownOpen = true"
         >
           <template #button-content>
-            <div
-              class="dropdownbtn-text"
-            >
+            <div class="dropdownbtn-text">
               {{
                 tempData.blockDateValue && tempData.blockTimeValue
                   ? dropdownBtnDateTime
                   : '新增段落事件時間'
               }}
             </div>
-            <div class="btn-caret"><icon :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'" size="md" /></div>
+            <div class="btn-caret">
+              <icon
+                :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'"
+                size="md"
+              />
+            </div>
           </template>
           <b-dropdown-form>
             <b-calendar
@@ -42,6 +42,7 @@
               locale="zh"
               hide-header
             />
+            <!--
             <b-time
               v-model="tempData.blockTimeValue"
               locale="zh"
@@ -54,12 +55,27 @@
               :hide-header="true"
               class="my-2"
             />
+            -->
+            <div class="d-flex pt-3">
+              <b-form-checkbox id="addtime" v-model="timeEnable" />
+              <sync-time
+                v-model="tempData.blockTimeValue"
+                :enable="timeEnable"
+              />
+            </div>
             <div class="block-current-time">
-              事件時間：{{ displayDateTime }}
+              事件時間
+              <div>{{ displayDateTime }}</div>
             </div>
             <div class="btn-container">
-              <b-button variant="tertiary-lg" @click="closeDropdown">取消</b-button>
-              <b-button variant="primary-lg" @click="saveDateTimeChanges">確認</b-button>
+              <b-button
+                variant="tertiary-lg"
+                @click="closeDropdown"
+              >取消</b-button>
+              <b-button
+                variant="primary-lg"
+                @click="saveDateTimeChanges"
+              >確認</b-button>
             </div>
           </b-dropdown-form>
         </b-dropdown>
@@ -79,12 +95,14 @@
 
 <script>
 import TiptapEditor from '@/components/Editor/TiptapEditor.vue'
+import SyncTime from '@/components/Post/SyncTime.vue'
 import moment from 'moment'
 
 export default {
   name: 'TiptapEditPage',
   components: {
-    TiptapEditor
+    TiptapEditor,
+    SyncTime
   },
   props: {
     block: {
@@ -102,21 +120,42 @@ export default {
       linkUrl: null,
       linkMenuIsActive: false,
       initialized: false,
-      dropdownOpen: false
+      dropdownOpen: false,
+      timeEnable: false
     }
   },
   computed: {
     displayDateTime() {
-      return `${moment(this.tempData.blockDateValue).format('YYYY年M月DD日')} ${moment(`${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`).format('H點mm分')}`
+      return `${moment(this.tempData.blockDateValue).format('YYYY/MM/DD')} ${
+        this.timeEnable
+          ? moment(
+            `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`
+          ).format('HH:mm')
+          : ''
+      }`
     },
     dropdownBtnDateTime() {
-      return `${moment(this.tempData.blockDateValue).format('YYYY/MM/DD')} ${moment(`${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`).format('HH:mm')}`
+      return `${moment(this.tempData.blockDateValue).format('YYYY/MM/DD')} ${
+        this.timeEnable
+          ? moment(
+            `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`
+          ).format('HH:mm')
+          : ''
+      }`
     }
   },
   created() {
     this.tempData.blockTitle = this.block.blockTitle
-    if (this.block.blockDateTime) { this.tempData.blockDateValue = moment(this.block.blockDateTime).format('YYYY-MM-DD') }
-    if (this.block.blockDateTime) { this.tempData.blockTimeValue = moment(this.block.blockDateTime).format('HH:mm:ss') }
+    if (this.block.blockDateTime) {
+      this.tempData.blockDateValue = moment(this.block.blockDateTime).format(
+        'YYYY-MM-DD'
+      )
+    }
+    if (this.block.blockDateTime) {
+      this.tempData.blockTimeValue = moment(this.block.blockDateTime).format(
+        'HH:mm'
+      )
+    }
     this.initialized = true
   },
   methods: {
@@ -156,11 +195,14 @@ export default {
       this.closeDropdown()
     },
     resetDateTime() {
-      let currentDatetime = this.$store.getters['post/GET_BLOCK_DATETIME'](this.block.id)
+      let currentDatetime = this.$store.getters['post/GET_BLOCK_DATETIME'](
+        this.block.id
+      )
       if (currentDatetime === '') {
         currentDatetime = new Date().toISOString()
       }
-      this.tempData.blockDateValue = moment(currentDatetime).format('YYYY-MM-DD')
+      this.tempData.blockDateValue =
+        moment(currentDatetime).format('YYYY-MM-DD')
       this.tempData.blockTimeValue = moment(currentDatetime).format('HH:mm:ss')
     },
     closeDropdown() {
@@ -226,7 +268,7 @@ export default {
     color: $gray-8;
     width: 40px;
     height: 100%;
-    &::before{
+    &::before {
       position: absolute;
       content: '';
       left: 0;
@@ -239,10 +281,10 @@ export default {
 }
 
 ::v-deep .b-calendar {
-  button[title="Previous year"] {
+  button[title='Previous year'] {
     display: none;
   }
-  button[title="Next year"] {
+  button[title='Next year'] {
     display: none;
   }
 }
@@ -262,7 +304,7 @@ export default {
   }
   .block-current-time {
     text-align: center;
-    border-top: 1px solid #E9EEFF;
+    border-top: 1px solid #e9eeff;
     padding: 0.5rem 0rem;
     margin: 0.5rem 0;
   }
@@ -276,7 +318,7 @@ export default {
 }
 
 .a {
-button {
+  button {
     padding: 0 !important;
     border: none !important;
   }
