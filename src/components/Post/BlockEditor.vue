@@ -67,6 +67,7 @@
               <b-button
                 variant="link"
                 class="block-current-time--btn"
+                @click="resetDateTime"
               >清除時間</b-button>
               事件時間
               <div class="pt-2 block-current-time--res">
@@ -132,6 +133,8 @@ export default {
   },
   computed: {
     displayDateTime() {
+      if (!this.tempData.blockDateValue) return '-'
+
       return `${moment(this.tempData.blockDateValue).format('YYYY/MM/DD')} ${
         this.timeEnable
           ? moment(
@@ -207,9 +210,10 @@ export default {
       if (currentDatetime === '') {
         currentDatetime = new Date().toISOString()
       }
-      this.tempData.blockDateValue =
-        moment(currentDatetime).format('YYYY-MM-DD')
-      this.tempData.blockTimeValue = moment(currentDatetime).format('HH:mm:ss')
+      this.tempData.blockDateValue = ''
+      this.tempData.blockTimeValue = ''
+
+      this.timeEnable = false
     },
     closeDropdown() {
       this.$refs['datetime-dropdown'].hide(true)
