@@ -64,8 +64,14 @@
               />
             </div>
             <div class="block-current-time">
+              <b-button
+                variant="link"
+                class="block-current-time--btn"
+              >清除時間</b-button>
               事件時間
-              <div>{{ displayDateTime }}</div>
+              <div class="pt-2 block-current-time--res">
+                {{ displayDateTime }}
+              </div>
             </div>
             <div class="btn-container">
               <b-button
@@ -303,10 +309,26 @@ export default {
     height: 100%;
   }
   .block-current-time {
-    text-align: center;
+    text-align: left;
     border-top: 1px solid #e9eeff;
     padding: 0.5rem 0rem;
     margin: 0.5rem 0;
+
+    font-size: 12px;
+    line-height: 20px;
+
+    &--res {
+      color: $text-2;
+    }
+
+    &--btn {
+      float: right;
+      color: $blue-4;
+      padding: 0;
+
+      font-size: inherit;
+      line-height: inherit;
+    }
   }
   .btn-container {
     margin-top: auto;
