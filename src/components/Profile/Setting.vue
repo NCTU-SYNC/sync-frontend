@@ -33,7 +33,12 @@
                     且更改後，將會影響你過去所編輯過文章的名稱。
                   </p>
                 </template>
-                <b-form-input id="input-username" size="lg" required />
+                <b-form-input
+                  id="input-username"
+                  v-model="inputName"
+                  size="lg"
+                  required
+                />
               </b-form-group>
             </b-form>
           </b-container>
@@ -49,7 +54,7 @@
               class="rename-modal-btn"
               variant="white"
               type="submit"
-              @click="ok()"
+              @click="confirm"
             >儲存</b-button>
           </template>
         </b-modal>
@@ -90,6 +95,11 @@ export default {
   components: {
     PreferenceItem
   },
+  data() {
+    return {
+      inputName: '',
+    }
+  },
   computed: {
     ...mapGetters(['displayName', 'photoURL']),
     ...mapGetters({ email: 'user/email' }),
@@ -111,6 +121,12 @@ export default {
           false
         )
       ]
+    }
+  },
+  methods: {
+    confirm() {
+      this.updateDisplayName(this.inputName)
+      this.$bvModal.hide('rename-modal')
     }
   }
 }

@@ -73,6 +73,18 @@ const actions = {
   },
   removeUser({ commit }) {
     commit('RESET_USER')
+  },
+  updateDisplayName({ commit }, displayName) {
+    commit('SET_DISPALY_NAME', displayName)
+    FirebaseAuthInstance.instance.currentUser
+      .updateProfile({
+        displayName: displayName
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  },
+  updatePreferences({ commit }, preferences) {
   }
 }
 
