@@ -101,7 +101,7 @@
 <script>
 import ArticleCard from '@/components/ArticleCard.vue'
 import Setting from '@/components/Profile/Setting.vue'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import { getArticlesInfo } from '@/api/user'
 
@@ -153,10 +153,10 @@ export default {
     }
   },
   methods: {
+    ...mapActions({ getToken: 'user/getToken' }),
     async init() {
-      const { data } = await getArticlesInfo({
-        token: this.$store.getters.token
-      })
+      const token = await this.getToken()
+      const { data } = await getArticlesInfo({ token })
       if (data.code === 200) {
         const payload = data.data
         this.articles = payload

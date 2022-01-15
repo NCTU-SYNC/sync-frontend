@@ -272,7 +272,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isLogin', 'uid', 'token']),
+    ...mapGetters(['isLogin', 'uid']),
     ...mapGetters({ post: 'post' }),
     editPoint() {
       return this.post.isNewPost ? 5 : 2

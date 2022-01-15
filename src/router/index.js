@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import { getToken } from '@/utils/auth'
+import FirebaseAuthInstance from '@/utils/firebase.js'
 
 Vue.use(Router)
 
 const isLogin = () => {
-  return !!getToken()
+  return FirebaseAuthInstance.isLogin
 }
 
 export default new Router({

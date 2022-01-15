@@ -1,16 +1,10 @@
 import { login } from '@/api/user'
-import {
-  getToken,
-  setToken,
-  setExpiredTime,
-  setUserInfo,
-  getUserInfo
-} from '@/utils/auth'
+import { setUserInfo, getUserInfo } from '@/utils/auth'
+import FirebaseAuth from '@/utils/firebase.js'
 
 const getDefaultState = () => {
   return {
     isInitialized: false,
-    token: getToken(),
     name: '',
     displayName: getUserInfo() ? getUserInfo().displayName : '',
     email: getUserInfo() ? getUserInfo().email : '',
@@ -26,8 +20,9 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const getters = {
-  createAt: state => state.createAt,
-  email: state => state.email
+  createAt: (state) => state.createAt,
+  email: (state) => state.email,
+  expirationTime: (state) => state.expirationTime
 }
 
 const mutations = {
@@ -39,9 +34,6 @@ const mutations = {
     state.createAt = user ? user.metadata.a : ''
     state.uid = user ? user.uid : ''
     state.isInitialized = true
-  },
-  SET_TOKEN(state, payload) {
-    state.token = payload
   },
   RESET_USER(state) {
     Object.assign(state, getDefaultState())
@@ -55,17 +47,19 @@ const actions = {
   sendToken({ commit, dispatch }, userdata) {
     return new Promise((resolve, reject) => {
       login(userdata)
-        .then(response => {
+        .then((response) => {
           const { data } = response
-          commit('SET_TOKEN', userdata.idToken)
-          setToken(userdata.idToken)
-          setExpiredTime(Date.now() + 3 * 24 * 60 * 60 * 1000)
           resolve(data.message)
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error)
         })
     })
+  },
+  async getToken({ commit }) {
+    /* TODO: pack into interceptor of axios instance */
+    if (FirebaseAuth.auth === null) throw new Error('firebase not initialized')
+    return await FirebaseAuth.token
   },
   sendUserInfo({ commit }, userInfo) {
     commit('SET_USER', userInfo)
