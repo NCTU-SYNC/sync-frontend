@@ -23,6 +23,7 @@ const getDefaultState = () => {
         editedNotification: false,
         subscribedNotification: false
       },
+    nameModTime: [],
     email: getUserInfo() ? getUserInfo().email : '',
     uid: getUserInfo() ? getUserInfo().uid : '',
     gender: '',
@@ -38,7 +39,8 @@ const state = getDefaultState()
 const getters = {
   createAt: (state) => state.createAt,
   email: (state) => state.email,
-  preferences: (state) => state.preferences
+  preferences: (state) => state.preferences,
+  nameModTime: (state) => state.nameModTime
 }
 
 const mutations = {
@@ -68,6 +70,9 @@ const mutations = {
   },
   SET_PREFERENCES(state, preferences) {
     state.preferences = preferences
+  },
+  SET_NAME_MOD_TIME(state, nameModTime) {
+    state.nameModTime = nameModTime
   }
 }
 
@@ -77,6 +82,9 @@ const actions = {
       login(userdata)
         .then((response) => {
           const { data } = response
+          if (data.data.nameModTime) {
+            commit('SET_NAME_MOD_TIME', data.data.nameModTime)
+          }
           commit('SET_TOKEN', userdata.idToken)
           setToken(userdata.idToken)
           setExpiredTime(Date.now() + 3 * 24 * 60 * 60 * 1000)
