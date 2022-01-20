@@ -1,4 +1,4 @@
-import { login } from '@/api/user'
+import { login, updateProfilePref } from '@/api/user'
 import {
   getToken,
   setToken,
@@ -7,12 +7,22 @@ import {
   getUserInfo
 } from '@/utils/auth'
 
+/* ! TODO: replace with vuex action [SYNC-154] */
+import FirebaseAuthInstance from '@/utils/firebase'
+
 const getDefaultState = () => {
   return {
     isInitialized: false,
     token: getToken(),
     name: '',
     displayName: getUserInfo() ? getUserInfo().displayName : '',
+    preferences: getUserInfo()
+      ? getUserInfo().preferences
+      : {
+        isAnonymous: false,
+        editedNotification: false,
+        subscribedNotification: false
+      },
     email: getUserInfo() ? getUserInfo().email : '',
     uid: getUserInfo() ? getUserInfo().uid : '',
     gender: '',
@@ -26,8 +36,9 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const getters = {
-  createAt: state => state.createAt,
-  email: state => state.email
+  createAt: (state) => state.createAt,
+  email: (state) => state.email,
+  preferences: (state) => state.preferences
 }
 
 const mutations = {
@@ -48,6 +59,15 @@ const mutations = {
   },
   SET_NOTIFICATIONS(state, notifications) {
     state.notifications = notifications
+  },
+  SET_DISPALY_NAME(state, displayName) {
+    state.displayName = displayName
+    const data = getUserInfo()
+    data.displayName = displayName
+    setUserInfo(data)
+  },
+  SET_PREFERENCES(state, preferences) {
+    state.preferences = preferences
   }
 }
 
@@ -55,14 +75,14 @@ const actions = {
   sendToken({ commit, dispatch }, userdata) {
     return new Promise((resolve, reject) => {
       login(userdata)
-        .then(response => {
+        .then((response) => {
           const { data } = response
           commit('SET_TOKEN', userdata.idToken)
           setToken(userdata.idToken)
           setExpiredTime(Date.now() + 3 * 24 * 60 * 60 * 1000)
           resolve(data.message)
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error)
         })
     })
@@ -84,7 +104,22 @@ const actions = {
         console.error(error)
       })
   },
+  setPreferences({ commit }, preferences) {
+    commit('SET_PREFERENCES', preferences)
+  },
   updatePreferences({ commit }, preferences) {
+    commit('SET_PREFERENCES', preferences)
+    FirebaseAuthInstance.instance.currentUser
+      .getIdToken()
+      .then((token) => {
+        updateProfilePref({
+          token: token,
+          payload: { preferences: preferences }
+        })
+      })
+      .catch((error) => {
+        console.error(error)
+      })
   }
 }
 

@@ -3,6 +3,7 @@ import 'firebase/auth'
 import { setToken, removeToken, removeUserInfo } from '@/utils/auth'
 import { firebaseConfig } from '../../config/firebaseConfig'
 import store from '../store/index'
+import { getPref } from '@/api/user'
 
 class FirebaseAuth {
   constructor() {
@@ -31,10 +32,16 @@ class FirebaseAuth {
             isAnonymous: user.isAnonymous,
             uid: user.uid,
             providerData: user.providerData,
-            idToken: token
+            idToken: token,
+            preferences: user.preferences
           }
           store.dispatch('user/sendToken', data)
           store.dispatch('user/sendUserInfo', user)
+
+          // set preferences into vuex
+          const res = await getPref({ token })
+          store.dispatch('user/setPreferences', res.data.data)
+
           this.isLogin = true
         } else {
           this.isLogin = false
@@ -55,7 +62,10 @@ class FirebaseAuth {
   async handleSignup(email, password, displayName) {
     try {
       this.setUserInfo(email, password, displayName)
-      const { user } = await this.auth.createUserWithEmailAndPassword(email, password)
+      const { user } = await this.auth.createUserWithEmailAndPassword(
+        email,
+        password
+      )
       user.updateProfile({
         displayName
       })
@@ -68,7 +78,10 @@ class FirebaseAuth {
 
   async handleLogin(email, password) {
     try {
-      const { user } = await this.auth.signInWithEmailAndPassword(email, password)
+      const { user } = await this.auth.signInWithEmailAndPassword(
+        email,
+        password
+      )
       this.setUserInfo(email, password, user.displayName)
       store.dispatch('user/sendUserInfo', user)
       setToken(user.idToken)
