@@ -17,6 +17,22 @@ export function getProfile(data) {
   })
 }
 
+export function getPref(data) {
+  return request({
+    url: config.baseURL + `/profile/pref`,
+    method: 'post',
+    data
+  })
+}
+
+export function updateProfilePref(data) {
+  return request({
+    url: config.baseURL + `/profile/update/pref`,
+    method: 'post',
+    data
+  })
+}
+
 export function addViewArticleById(data) {
   return request({
     url: config.baseURL + `/profile/view`,
