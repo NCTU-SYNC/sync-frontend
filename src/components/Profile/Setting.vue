@@ -42,7 +42,7 @@
               </b-form-group>
             </b-form>
           </b-container>
-          <template #modal-footer="{ ok, cancel }">
+          <template #modal-footer="{ cancel }">
             <b-button
               class="rename-modal-btn"
               variant="white"
@@ -69,10 +69,11 @@
     <div class="section pt-5">
       <h4>偏好設定</h4>
       <PreferenceItem
-        v-for="(preference, preferenceIndex) in mockPreference"
+        v-for="(preference, preferenceIndex) in preferences"
         :key="preferenceIndex"
-        class="setting-pref"
         :preference="preference"
+        class="setting-pref"
+        @change="handleOnChange"
       />
     </div>
   </b-container>
@@ -80,14 +81,19 @@
 
 <script>
 import PreferenceItem from './PreferenceItem.vue'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 /* TODO: replace with API */
 class Preference {
-  constructor(title, description, status) {
+  constructor(title, description, name, status) {
     this.title = title
     this.description = description
+    this.name = name
     this.status = status
+  }
+
+  value() {
+    return [this.name, this.status]
   }
 }
 
@@ -98,35 +104,46 @@ export default {
   data() {
     return {
       inputName: '',
-    }
-  },
-  computed: {
-    ...mapGetters(['displayName', 'photoURL']),
-    ...mapGetters({ email: 'user/email' }),
-    mockPreference() {
-      return [
+      preferences: [
         new Preference(
           '匿名發文',
           '開啟後您的新增段落與文章預設作者都將匿名',
-          false
+          'isAnonymous',
+          this.$store.state.user.preferences.isAnonymous
         ),
         new Preference(
           '編輯文章更新通知',
           '開啟後您曾編輯過的文章有任何更新都將通知您',
-          false
+          'editedNotification',
+          this.$store.state.user.preferences.editedNotification
         ),
         new Preference(
           '收藏文章更新通知',
           '開啟後您的收藏文章有任何更新都將通知您',
-          false
+          'subscribedNotification',
+          this.$store.state.user.preferences.subscribedNotification
         )
       ]
     }
   },
+  computed: {
+    ...mapGetters(['displayName', 'photoURL']),
+    ...mapGetters({ email: 'user/email' })
+  },
   methods: {
+    ...mapActions({
+      updateDisplayName: 'user/updateDisplayName',
+      updatePreferences: 'user/updatePreferences'
+    }),
     confirm() {
       this.updateDisplayName(this.inputName)
       this.$bvModal.hide('rename-modal')
+    },
+    handleOnChange() {
+      const pref = Object.fromEntries(
+        this.preferences.map((pref) => pref.value())
+      )
+      this.updatePreferences(pref)
     }
   }
 }
