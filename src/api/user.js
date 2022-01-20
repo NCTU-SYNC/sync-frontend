@@ -17,6 +17,14 @@ export function getProfile(data) {
   })
 }
 
+export function updateNameModTime(data) {
+  return request({
+    url: config.baseURL + `/profile/updateNameModTime`,
+    method: 'post',
+    data
+  })
+}
+
 export function getPref(data) {
   return request({
     url: config.baseURL + `/profile/pref`,
