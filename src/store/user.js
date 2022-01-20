@@ -1,4 +1,4 @@
-import { login, updateProfilePref } from '@/api/user'
+import { login, updateNameModTime, updateProfilePref } from '@/api/user'
 import {
   getToken,
   setToken,
@@ -107,6 +107,16 @@ const actions = {
     FirebaseAuthInstance.instance.currentUser
       .updateProfile({
         displayName: displayName
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+    FirebaseAuthInstance.instance.currentUser
+      .getIdToken()
+      .then((token) => {
+        updateNameModTime({
+          token: token
+        }).then((res) => commit('SET_NAME_MOD_TIME', res.data.data))
       })
       .catch((error) => {
         console.error(error)

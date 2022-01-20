@@ -28,6 +28,7 @@
             <b-form>
               <b-form-group>
                 <template #description>
+                  <p v-if="!nameChangable">您已在這一個月內更改兩次顯示名稱</p>
                   <p class="mt-3">
                     顯示名稱在一個月內僅可以更改兩次。<br>
                     且更改後，將會影響你過去所編輯過文章的名稱。
@@ -82,6 +83,7 @@
 <script>
 import PreferenceItem from './PreferenceItem.vue'
 import { mapGetters, mapActions } from 'vuex'
+import moment from 'moment'
 
 /* TODO: replace with API */
 class Preference {
@@ -128,7 +130,12 @@ export default {
   },
   computed: {
     ...mapGetters(['displayName', 'photoURL']),
-    ...mapGetters({ email: 'user/email' })
+    ...mapGetters({ email: 'user/email', nameModTime: 'user/nameModTime' }),
+    nameChangable() {
+      if (this.nameModTime.length < 2) return true
+      const monthAgo = moment().subtract(1, 'months')
+      return this.nameModTime.some((time) => moment(time).isBefore(monthAgo))
+    }
   },
   methods: {
     ...mapActions({
@@ -136,7 +143,9 @@ export default {
       updatePreferences: 'user/updatePreferences'
     }),
     confirm() {
-      this.updateDisplayName(this.inputName)
+      if (this.nameChangable) {
+        this.updateDisplayName(this.inputName)
+      }
       this.$bvModal.hide('rename-modal')
     },
     handleOnChange() {
