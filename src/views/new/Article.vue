@@ -229,10 +229,12 @@ export default {
     this.getArticleData()
 
     // check if user logged in
-    this.isLogin = !!this.$store.getters.token
+    this.isLogin = this.$store.getters.isLogin
     if (this.isLogin) {
       this.$store.dispatch('article/VIEW', this.articleId)
-      this.isSubscribed = this.subscribedList.findIndex(s => s.articleId === this.articleId) >= 0
+      this.isSubscribed =
+        this.subscribedList.findIndex((s) => s.articleId === this.articleId) >=
+        0
     }
   },
   beforeDestroy() {

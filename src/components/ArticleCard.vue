@@ -116,7 +116,7 @@ export default {
   },
   created() {
     // check if user logged in
-    this.isLogin = !!this.$store.getters.token
+    this.isLogin = !!this.$store.getters.isLogin
   },
   methods: {
     getTitle(title) {
