@@ -17,8 +17,7 @@
           variant="white"
           no-caret
           toggle-class="datetime-dropdown"
-          @toggle="resetDateTime"
-          @hide="dropdownOpen = false"
+          @hidden="toggleHide"
           @show="dropdownOpen = true"
         >
           <template #button-content>
@@ -42,32 +41,18 @@
               locale="zh"
               hide-header
             />
-            <!--
-            <b-time
-              v-model="tempData.blockTimeValue"
-              locale="zh"
-              :now-button="true"
-              :show-seconds="false"
-              :minutes-step="10"
-              :no-close-button="true"
-              label-now-button="現在時間"
-              label-no-time-selected="時間"
-              :hide-header="true"
-              class="my-2"
-            />
-            -->
             <div class="d-flex py-3">
-              <b-form-checkbox id="addtime" v-model="timeEnable" />
+              <b-form-checkbox :id="`addtime_${block.id}`" v-model="tempData.timeEnable" :disabled="!tempData.blockDateValue" />
               <sync-time
                 v-model="tempData.blockTimeValue"
-                :enable="timeEnable"
+                :enable="tempData.timeEnable"
               />
             </div>
             <div class="block-current-time">
               <b-button
                 variant="link"
                 class="block-current-time--btn"
-                @click="resetDateTime"
+                @click="clearDateTime"
               >清除時間</b-button>
               事件時間
               <div class="pt-2 block-current-time--res">
@@ -122,13 +107,13 @@ export default {
       tempData: {
         blockTitle: '',
         blockDateValue: '',
-        blockTimeValue: ''
+        blockTimeValue: '',
+        timeEnable: null
       },
       linkUrl: null,
       linkMenuIsActive: false,
       initialized: false,
-      dropdownOpen: false,
-      timeEnable: false
+      dropdownOpen: false
     }
   },
   computed: {
@@ -136,7 +121,7 @@ export default {
       if (!this.tempData.blockDateValue) return '-'
 
       return `${moment(this.tempData.blockDateValue).format('YYYY/MM/DD')} ${
-        this.timeEnable
+        this.tempData.timeEnable
           ? moment(
             `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`
           ).format('HH:mm')
@@ -145,7 +130,7 @@ export default {
     },
     dropdownBtnDateTime() {
       return `${moment(this.tempData.blockDateValue).format('YYYY/MM/DD')} ${
-        this.timeEnable
+        this.tempData.timeEnable
           ? moment(
             `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`
           ).format('HH:mm')
@@ -159,17 +144,17 @@ export default {
       this.tempData.blockDateValue = moment(this.block.blockDateTime).format(
         'YYYY-MM-DD'
       )
-    }
-    if (this.block.blockDateTime) {
-      this.tempData.blockTimeValue = moment(this.block.blockDateTime).format(
-        'HH:mm'
-      )
+      if (this.block.timeEnable) {
+        this.tempData.blockTimeValue = moment(this.block.blockDateTime).format(
+          'HH:mm'
+        )
+        this.tempData.timeEnable = this.block.timeEnable
+      }
     }
     this.initialized = true
   },
   methods: {
     handleChangeTitle() {
-      // this.$emit('update:blockTitle', this.tempData.blockTitle)
       this.$store.commit('post/UPDATE_BLOCK_TITLE', {
         id: this.block.id,
         title: this.tempData.blockTitle
@@ -187,13 +172,6 @@ export default {
         datetime: `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`
       })
     },
-    separateDateAndTime(dateTimeString) {
-      const dateTime = new Date(dateTimeString)
-      return {
-        date: dateTime.toISOString().slice(0, 10),
-        time: dateTime.toLocaleTimeString('en-US', { hour12: false })
-      }
-    },
     saveDateTimeChanges() {
       const datetime = `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`
       const ISOformatDatetime = moment(datetime).toISOString()
@@ -201,25 +179,39 @@ export default {
         id: this.block.id,
         datetime: ISOformatDatetime
       })
+      this.$store.commit('post/TOGGLE_TIME_ENABLE', {
+        id: this.block.id,
+        value: this.tempData.timeEnable
+      })
       this.closeDropdown()
     },
-    resetDateTime() {
-      let currentDatetime = this.$store.getters['post/GET_BLOCK_DATETIME'](
-        this.block.id
-      )
-      if (currentDatetime === '') {
-        currentDatetime = new Date().toISOString()
-      }
+    clearDateTime() {
       this.tempData.blockDateValue = ''
       this.tempData.blockTimeValue = ''
-
-      this.timeEnable = false
+      this.tempData.timeEnable = false
+    },
+    fetchDateTime() {
+      if (this.block.blockDateTime) {
+        this.tempData.blockDateValue = moment(this.block.blockDateTime).format(
+          'YYYY-MM-DD'
+        )
+      }
+      if (this.block.blockDateTime) {
+        this.tempData.blockTimeValue = moment(this.block.blockDateTime).format(
+          'HH:mm'
+        )
+      }
+      this.tempData.timeEnable = this.block.timeEnable
     },
     closeDropdown() {
       this.$refs['datetime-dropdown'].hide(true)
     },
     focusOnTitle() {
       this.$refs['title-input-field'].focus()
+    },
+    toggleHide() {
+      this.fetchDateTime()
+      this.dropdownOpen = false
     }
   }
 }

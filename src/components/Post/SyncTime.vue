@@ -80,9 +80,17 @@ export default {
       )
     }
   },
+  created() {
+    if (this.enable) {
+      if (this.value) {
+        const timeArr = this.value.split(':')
+        this.hour = timeArr[0]
+        this.min = timeArr[1]
+      }
+    }
+  },
   methods: {
     hourFormat(e) {
-      console.log('hi')
       e.target.value = e.target.value.replace(/[^0-9]/g, '')
 
       if (e.target.value.length === 2) {

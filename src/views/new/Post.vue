@@ -345,7 +345,8 @@ export default {
         id: `${Utils.getRandomString()}-${(currentBlockCount + 1).toString()}`,
         blockTitle: '',
         blockDateTime: '',
-        content: null
+        content: null,
+        timeEnable: false
       }
       this.$store.commit('post/ADD_BLOCK', {
         index: index,
@@ -379,7 +380,6 @@ export default {
         })
     },
     onCitationRemoved(index) {
-      console.log(this.post.citations)
       if (this.post.citations[index]) {
         this.$bvModal
           .msgBoxConfirm(

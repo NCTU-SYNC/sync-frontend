@@ -103,6 +103,18 @@ const mutations = {
     state.blocks = data.blocks || []
     state.categorySelected = (data.category) ? data.category : '未分類'
     state.citations = data.citations || []
+    // init blocks, set timeEnable to be true to be compatible with older articles
+    for (const block of state.blocks) {
+      if (block.blockDateTime && !Object.prototype.hasOwnProperty.call(block, 'timeEnable')) {
+        block['timeEnable'] = true
+      }
+    }
+  },
+  TOGGLE_TIME_ENABLE(state, { id, value }) {
+    const block = state.blocks.find(b => b.id === id)
+    if (block) {
+      block.timeEnable = value
+    }
   }
 }
 
