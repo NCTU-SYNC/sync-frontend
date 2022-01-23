@@ -141,6 +141,7 @@
                 <p class="citations-container--title">新聞來源</p>
                 <b-card
                   v-for="(citation, index) in post.citations"
+                  ref="citation"
                   :key="index"
                   class="citations-container--card border-0"
                   body-class="p-3"

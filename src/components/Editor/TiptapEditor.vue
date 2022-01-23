@@ -6,13 +6,22 @@
       :tippy-options="{ duration: 100 }"
       :editor="editor"
     >
-      <button :class="{ 'is-active': editor.isActive('bold') }" @click="editor.chain().focus().toggleBold().run()">
+      <button
+        :class="{ 'is-active': editor.isActive('bold') }"
+        @click="editor.chain().focus().toggleBold().run()"
+      >
         Bold
       </button>
-      <button :class="{ 'is-active': editor.isActive('italic') }" @click="editor.chain().focus().toggleItalic().run()">
+      <button
+        :class="{ 'is-active': editor.isActive('italic') }"
+        @click="editor.chain().focus().toggleItalic().run()"
+      >
         Italic
       </button>
-      <button :class="{ 'is-active': editor.isActive('strike') }" @click="editor.chain().focus().toggleStrike().run()">
+      <button
+        :class="{ 'is-active': editor.isActive('strike') }"
+        @click="editor.chain().focus().toggleStrike().run()"
+      >
         Strike
       </button>
     </bubble-menu>
@@ -23,13 +32,22 @@
       :tippy-options="{ duration: 100 }"
       :editor="editor"
     >
-      <button :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }" @click="editor.chain().focus().toggleHeading({ level: 1 }).run()">
+      <button
+        :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
+        @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+      >
         H1
       </button>
-      <button :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }" @click="editor.chain().focus().toggleHeading({ level: 2 }).run()">
+      <button
+        :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
+        @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+      >
         H2
       </button>
-      <button :class="{ 'is-active': editor.isActive('bulletList') }" @click="editor.chain().focus().toggleBulletList().run()">
+      <button
+        :class="{ 'is-active': editor.isActive('bulletList') }"
+        @click="editor.chain().focus().toggleBulletList().run()"
+      >
         Bullet List
       </button>
     </floating-menu>
@@ -40,7 +58,10 @@
       :editor="editor"
       @showModal="showModal"
     />
-    <editor-content :editor="editor" :class="editable ? 'editor__content__edit': 'editor__content'" />
+    <editor-content
+      :editor="editor"
+      :class="editable ? 'editor__content__edit' : 'editor__content'"
+    />
     <upload-image-modal ref="upload-image-modal" @addImage="addImage" />
     <citation-modal ref="citation-modal" @addCitation="addCitation" />
     <link-modal ref="link-modal" @addLink="addLink" />
@@ -61,9 +82,9 @@ import MenuBar from './MenuBar.vue'
 import UploadImageModal from './Modals/UploadImageModal.vue'
 import CitationModal from './Modals/CitationModal.vue'
 import LinkModal from './Modals/LinkModal.vue'
+import Citation from './CitationExtention/Citation'
 
 export default {
-
   components: {
     EditorContent,
     BubbleMenu,
@@ -116,12 +137,16 @@ export default {
         Typography,
         Link,
         Image,
-        Superscript
+        Superscript,
+        Citation
       ],
       editable: this.editable,
       content: this.content
     })
-    this.$store.commit('post/REGISTER_EDITOR', { id: this.id, editor: this.editor })
+    this.$store.commit('post/REGISTER_EDITOR', {
+      id: this.id,
+      editor: this.editor
+    })
   },
 
   beforeDestroy() {
@@ -138,7 +163,9 @@ export default {
     },
     showModal(modal) {
       // prevent duplicated modals when there are multiple blocks
-      if (!this.$refs[modal].visible) { this.$refs[modal].visible = true }
+      if (!this.$refs[modal].visible) {
+        this.$refs[modal].visible = true
+      }
     },
     addLink(data) {
       const { content, url } = data
@@ -148,15 +175,17 @@ export default {
       const { content, title, url } = data
       await this.$store.dispatch('post/SUBMIT_CITATION_FORM', { title, url })
       const { citations } = this.$store.state.post
-      this.editor.commands.insertContent(`${content}<sup>${citations.length}</sup>`)
+      this.editor.commands.insertContent(
+        `${content}<tiptap-citation to="1">${citations.length}</tiptap-citation>`
+      )
       this.editor.chain().focus().toggleSuperscript().run()
+      // this.editor.chain().focus().toggleNode('citation').run()
     }
   }
 }
 </script>
 
 <style lang="scss">
-
 // .editor__header {
 //   margin-top: 0.5rem;
 // }
@@ -176,7 +205,8 @@ export default {
     vertical-align: text-top;
   }
   .ProseMirror {
-    ul, ol {
+    ul,
+    ol {
       padding-left: 2rem;
     }
     blockquote {
@@ -227,8 +257,8 @@ export default {
   }
 
   pre {
-    background: #0D0D0D;
-    color: #FFF;
+    background: #0d0d0d;
+    color: #fff;
     font-family: 'JetBrainsMono', monospace;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
@@ -248,12 +278,12 @@ export default {
 
   blockquote {
     padding-left: 1rem;
-    border-left: 2px solid rgba(#0D0D0D, 0.1);
+    border-left: 2px solid rgba(#0d0d0d, 0.1);
   }
 
   hr {
     border: none;
-    border-top: 2px solid rgba(#0D0D0D, 0.1);
+    border-top: 2px solid rgba(#0d0d0d, 0.1);
     margin: 2rem 0;
   }
 
