@@ -54,7 +54,7 @@
               </div>
               <div class="article-info d-flex justify-content-between">
                 <div class="seen-edit-info">觀看數：{{ viewCount }}｜編輯數：{{ editedCount }}</div>
-                <div class="lastUpdated">最後更新時間 {{ formatTime(lastUpdatedAt) }}</div>
+                <div class="lastUpdated">最後更新時間 {{ formatDateTime(lastUpdatedAt) }}</div>
               </div>
               <hr ref="title-gray-bar">
               <div class="d-flex justify-content-between">
@@ -103,8 +103,8 @@
                 <h2>
                   {{ block.blockTitle }}
                 </h2>
-                <div class="article-info">
-                  事件時間：{{ formatTime(block.blockDateTime) }}
+                <div v-if="block.blockDateTime" class="article-info">
+                  事件時間：{{ formatDateTime(block.blockDateTime, block.timeEnable) }}
                 </div>
               </div>
 
@@ -312,8 +312,11 @@ export default {
     formatDate(timeString) {
       return moment(timeString).format('YYYY.MM.DD')
     },
-    formatTime(timeString) {
-      return moment(timeString).format('YYYY/MM/DD HH:mm')
+    formatDateTime(timeString, timeEnable) {
+      if (timeEnable) {
+        return moment(timeString).format('YYYY/MM/DD HH:mm')
+      }
+      return moment(timeString).format('YYYY/MM/DD')
     },
     formatCategory(category) {
       return category === '' ? '未分類' : category
