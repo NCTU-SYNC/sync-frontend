@@ -105,8 +105,8 @@ const mutations = {
     state.citations = data.citations || []
     // init blocks, set timeEnable to be true to be compatible with older articles
     for (const block of state.blocks) {
-      if (block.blockDateTime && !Object.prototype.hasOwnProperty.call(block, 'timeEnable')) {
-        block['timeEnable'] = true
+      if (!Object.prototype.hasOwnProperty.call(block, 'timeEnable')) {
+        if (block.blockDateTime) { block['timeEnable'] = true } else { block['timeEnable'] = false }
       }
     }
   },
