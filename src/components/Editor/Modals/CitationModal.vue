@@ -17,55 +17,33 @@
   >
     <b-form-group
       label-cols="auto"
-      label="附註內容："
-      label-for="citation-superscript"
-    >
-      <b-form-input id="citation-superscript" v-model="content" class="input-form" placeholder="請輸入或選取附註的內容文字" />
-    </b-form-group>
-
-    <b-form-group
-      label-cols="auto"
       label="附註標題："
       label-for="citation-title"
     >
-      <b-form-input id="citation-title" v-model="title" class="input-form" placeholder="請輸入新聞來源的附註標題" />
+      <b-form-input
+        id="citation-title"
+        v-model="title"
+        class="input-form"
+        placeholder="請輸入新聞來源的附註標題"
+      />
     </b-form-group>
 
-    <b-form-group
-      label-cols="auto"
-      label="來源網址："
-      label-for="citation-url"
-    >
-      <b-form-input id="citation-url" v-model="url" class="input-form" placeholder="請輸入新聞來源的網址" />
+    <b-form-group label-cols="auto" label="來源網址：" label-for="citation-url">
+      <b-form-input
+        id="citation-url"
+        v-model="url"
+        class="input-form"
+        placeholder="請輸入新聞來源的網址"
+      />
     </b-form-group>
-
-    <!-- <div class="edit-add-block-row edit-row">
-      <b-row>
-        <b-col cols="2" class="ml-3">附註內容：</b-col>
-        <b-col><input v-model="content" class="input" type="text" placeholder="請輸入或選取附註的內容文字"></b-col>
-      </b-row>
-    </div>
-    <div class="edit-add-block-row edit-row">
-      <b-row>
-        <b-col cols="2" class="ml-3">附註標題：</b-col>
-        <b-col><input v-model="title" class="input" type="text" placeholder="請輸入參考來源的附註標題"></b-col>
-      </b-row>
-      <b-row>
-        <b-col cols="2" class="ml-3">來源網址：</b-col>
-        <b-col><input v-model="url" class="input" type="text" placeholder="請輸入來源網址 URL"></b-col>
-      </b-row>
-    </div> -->
-
   </b-modal>
 </template>
 
 <script>
 export default {
-  props: {
-  },
+  props: {},
   data() {
     return {
-      content: '',
       title: '',
       url: '',
       visible: false
@@ -73,7 +51,6 @@ export default {
   },
   methods: {
     reset() {
-      this.content = ''
       this.title = ''
       this.url = ''
       this.visible = false
@@ -83,7 +60,6 @@ export default {
     },
     handleConfirm() {
       const data = {
-        content: this.content,
         title: this.title,
         url: this.url
       }
@@ -112,7 +88,7 @@ export default {
   position: relative;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     width: 4px;
     left: 0px;
@@ -125,7 +101,7 @@ export default {
 
   &:focus-within {
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       width: 4px;
       left: 0px;
@@ -141,6 +117,6 @@ export default {
 
 .input {
   width: 90%;
-  padding: 10px
+  padding: 10px;
 }
 </style>

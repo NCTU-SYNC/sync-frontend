@@ -172,11 +172,11 @@ export default {
       this.editor.commands.insertContent(`<a href=${url}>${content}</>`)
     },
     async addCitation(data) {
-      const { content, title, url } = data
+      const { title, url } = data
       await this.$store.dispatch('post/SUBMIT_CITATION_FORM', { title, url })
       const { citations } = this.$store.state.post
       this.editor.commands.insertContent(
-        `${content}<tiptap-citation to="1">${citations.length}</tiptap-citation>`
+        `<tiptap-citation to="1">${citations.length}</tiptap-citation>`
       )
       this.editor.chain().focus().toggleSuperscript().run()
       // this.editor.chain().focus().toggleNode('citation').run()
