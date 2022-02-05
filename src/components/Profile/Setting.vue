@@ -6,59 +6,65 @@
     </div>
     <div class="section">
       <h4>顯示名稱</h4>
-      <div class="text-box">
-        <span class="m-0 flex-grow-1">{{ displayName }}</span>
-        <span class="text-box-divider" />
-        <b-button
-          id="rename-btn"
-          v-b-modal.rename-modal
-          variant="white"
-          size="lg"
-          class="m-0 font-size-1"
-        >更改</b-button>
-        <b-modal
-          id="rename-modal"
-          centered
-          title="更改顯示名稱"
-          title-class="font-weight-bold"
-          header-class="rename-modal-header border-0"
-          footer-class="border-0"
-        >
-          <b-container>
-            <b-form>
-              <b-form-group>
-                <template #description>
-                  <p v-if="!nameChangable">您已在這一個月內更改兩次顯示名稱</p>
-                  <p class="mt-3">
-                    顯示名稱在一個月內僅可以更改兩次。<br>
-                    且更改後，將會影響你過去所編輯過文章的名稱。
-                  </p>
-                </template>
-                <b-form-input
-                  id="input-username"
-                  v-model="inputName"
-                  size="lg"
-                  required
-                />
-              </b-form-group>
-            </b-form>
-          </b-container>
-          <template #modal-footer="{ cancel }">
-            <b-button
-              class="rename-modal-btn"
-              variant="white"
-              type="button"
-              @click="cancel()"
-            >取消</b-button>
-            <b-button
-              id="btn-ok"
-              class="rename-modal-btn"
-              variant="white"
-              type="submit"
-              @click="confirm"
-            >儲存</b-button>
-          </template>
-        </b-modal>
+      <div class="d-flex">
+        <div class="text-box">
+          <span class="m-0 flex-grow-1">{{ displayName }}</span>
+        </div>
+        <div class="ml-3 rename-btn">
+          <b-button
+            id="rename-btn"
+            v-b-modal.rename-modal
+            variant="white"
+            size="lg"
+            class="m-0 font-size-1"
+            :disabled="!nameChangable"
+          >更改</b-button>
+          <b-modal
+            id="rename-modal"
+            centered
+            title="更改顯示名稱"
+            title-class="font-weight-bold"
+            header-class="rename-modal-header border-0"
+            footer-class="border-0"
+          >
+            <b-container>
+              <b-form>
+                <b-form-group>
+                  <template #description>
+                    <p v-if="!nameChangable">
+                      您已在這一個月內更改兩次顯示名稱
+                    </p>
+                    <p class="mt-3">
+                      顯示名稱在一個月內僅可以更改兩次。<br>
+                      且更改後，將會影響你過去所編輯過文章的名稱。
+                    </p>
+                  </template>
+                  <b-form-input
+                    id="input-username"
+                    v-model="inputName"
+                    size="lg"
+                    required
+                  />
+                </b-form-group>
+              </b-form>
+            </b-container>
+            <template #modal-footer="{ cancel }">
+              <b-button
+                class="rename-modal-btn"
+                variant="white"
+                type="button"
+                @click="cancel()"
+              >取消</b-button>
+              <b-button
+                id="btn-ok"
+                class="rename-modal-btn"
+                variant="white"
+                type="submit"
+                @click="confirm"
+              >儲存</b-button>
+            </template>
+          </b-modal>
+        </div>
       </div>
     </div>
     <div class="section pb-3">
@@ -173,12 +179,22 @@ export default {
   }
 }
 
+.rename-btn {
+  width: 4rem;
+
+  button {
+    background: $blue;
+    color: $white !important;
+    border: 0;
+  }
+}
+
 .text-box {
   display: flex;
+  flex: 1;
   border: 1px solid $gray-400;
   border-radius: 5px;
-  width: 100%;
-  height: 3rem;
+  height: 2.5rem;
   align-items: center;
   justify-content: space-between;
   padding-left: 1rem;
