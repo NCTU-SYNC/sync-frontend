@@ -1,11 +1,6 @@
 import { login, updateNameModTime, updateProfilePref } from '@/api/user'
-import {
-  getToken,
-  setToken,
-  setExpiredTime,
-  setUserInfo,
-  getUserInfo
-} from '@/utils/auth'
+import { setUserInfo, getUserInfo } from '@/utils/auth'
+import FirebaseAuth from '@/utils/firebase.js'
 
 /* ! TODO: replace with vuex action [SYNC-154] */
 import FirebaseAuthInstance from '@/utils/firebase'
@@ -13,7 +8,6 @@ import FirebaseAuthInstance from '@/utils/firebase'
 const getDefaultState = () => {
   return {
     isInitialized: false,
-    token: getToken(),
     name: '',
     displayName: getUserInfo() ? getUserInfo().displayName : '',
     preferences: getUserInfo()
@@ -41,6 +35,7 @@ const getters = {
   email: (state) => state.email,
   preferences: (state) => state.preferences,
   nameModTime: (state) => state.nameModTime
+  expirationTime: (state) => state.expirationTime
 }
 
 const mutations = {
@@ -52,9 +47,6 @@ const mutations = {
     state.createAt = user ? user.metadata.a : ''
     state.uid = user ? user.uid : ''
     state.isInitialized = true
-  },
-  SET_TOKEN(state, payload) {
-    state.token = payload
   },
   RESET_USER(state) {
     Object.assign(state, getDefaultState())
@@ -82,18 +74,17 @@ const actions = {
       login(userdata)
         .then((response) => {
           const { data } = response
-          if (data.data.nameModTime) {
-            commit('SET_NAME_MOD_TIME', data.data.nameModTime)
-          }
-          commit('SET_TOKEN', userdata.idToken)
-          setToken(userdata.idToken)
-          setExpiredTime(Date.now() + 3 * 24 * 60 * 60 * 1000)
           resolve(data.message)
         })
         .catch((error) => {
           reject(error)
         })
     })
+  },
+  async getToken({ commit }) {
+    /* TODO: pack into interceptor of axios instance */
+    if (FirebaseAuth.auth === null) throw new Error('firebase not initialized')
+    return await FirebaseAuth.token
   },
   sendUserInfo({ commit }, userInfo) {
     commit('SET_USER', userInfo)

@@ -44,14 +44,11 @@ const mutations = {
 
 const actions = {
   async INITIALIZE({ commit, dispatch, rootGetters }) {
-    // if token is not set yet
-    if (!rootGetters.token) {
-      setTimeout(() => {
-        dispatch('INITIALIZE')
-      }, 1000)
-    } else if (rootGetters.isLogin) {
+    // set token
+    if (rootGetters.isLogin) {
       try {
-        const { data } = await getProfile({ token: rootGetters.token })
+        const token = await dispatch('user/getToken', null, { root: true })
+        const { data } = await getProfile({ token })
         commit('SET_PROFILE', data.data.articles || {})
         return Promise.resolve(data.data)
       } catch (error) {
@@ -66,8 +63,8 @@ const actions = {
       return Promise.resolve({ articles: getDefaultState(), notifications: [] })
     }
   },
-  async SUBSCRIBE({ commit, rootGetters }, articleId) {
-    const token = rootGetters.token
+  async SUBSCRIBE({ commit, dispatch }, articleId) {
+    const token = await dispatch('user/getToken', null, { root: true })
     const requestData = {
       articleId, token, subscribe: true
     }
@@ -82,8 +79,8 @@ const actions = {
       return Promise.reject(error)
     }
   },
-  async UNSUBSCRIBE({ commit, rootGetters }, articleId) {
-    const token = rootGetters.token
+  async UNSUBSCRIBE({ commit, dispatch }, articleId) {
+    const token = await dispatch('user/getToken', null, { root: true })
     const requestData = {
       articleId, token, subscribe: false
     }
@@ -106,7 +103,7 @@ const actions = {
       }, 100)
       return
     }
-    const token = rootGetters.token
+    const token = await dispatch('user/getToken', null, { root: true })
     const requestData = {
       articleId, token
     }
