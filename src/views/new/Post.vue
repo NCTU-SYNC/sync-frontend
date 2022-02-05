@@ -321,19 +321,18 @@ export default {
     this.$store.commit('post/SET_ARTICLEID', articleId)
     if (articleId) {
       this.isLoading = true
-      getArticleById(articleId)
-        .then(response => {
-          if (response.data.code === 200) {
-            const data = response.data.data
-            this.$store.commit('post/INIT_POST', { data })
-            this.isLoading = false
-            this.$nextTick(() => {
-              this.post.currentEditingEditor = null
-            })
-          } else {
-            throw new Error(response.data.message)
-          }
-        })
+      getArticleById(articleId).then((response) => {
+        if (response.data.code === 200) {
+          const data = response.data.data
+          this.$store.commit('post/INIT_POST', { data })
+          this.isLoading = false
+          this.$nextTick(() => {
+            this.post.currentEditingEditor = null
+          })
+        } else {
+          throw new Error(response.data.message)
+        }
+      })
       this.isLoading = false
     } else {
       this.handleAddBlock(-1)
@@ -373,7 +372,7 @@ export default {
           footerClass: 'modal-footer-confirm',
           centered: true
         })
-        .then(value => {
+        .then((value) => {
           if (value) {
             this.$store.commit('post/DELETE_BLOCK', index)
           }
@@ -385,14 +384,14 @@ export default {
         return
       }
       let str = this.currentEditingEditor.getHTML()
-      content.forEach(text => {
+      content.forEach((text) => {
         str += `<p>${text}</p>`
       })
       this.currentEditingEditor.setContent(str, true)
     },
     onCitationRemoved(index) {
-      console.log(this.post.citations)
       if (this.post.citations[index]) {
+        const node = this.post.citations[index].node
         this.$bvModal
           .msgBoxConfirm(
             `是否刪除引用：${this.post.citations[index].title}？`,
@@ -406,13 +405,15 @@ export default {
               centered: true
             }
           )
-          .then(value => {
+          .then((value) => {
             if (value) {
-              this.post.citations.splice(index, 1)
-              // TODO: remove citation in editor
+              node.deleteNode()
             }
           })
       }
+    },
+    handleCitationLoad(event) {
+      console.log(event)
     },
     handleShowTimeline(status) {
       this.isTimelineShow = status
@@ -714,11 +715,10 @@ export default {
   padding: 24px 32px;
 
   @media only screen and (max-width: 1439px) {
-  width: 132px;
-  padding-left: 0px;
-  padding-right: 0px;
+    width: 132px;
+    padding-left: 0px;
+    padding-right: 0px;
   }
-
 }
 
 .timeline-shrink {
@@ -830,7 +830,8 @@ export default {
   padding-left: 0;
   padding-right: 0;
   .dropdownbtn-text {
-    display: inline-flex;margin-right: 16px;
+    display: inline-flex;
+    margin-right: 16px;
     justify-content: center;
     align-items: center;
     font-size: 14px;

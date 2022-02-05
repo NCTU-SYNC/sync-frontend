@@ -173,13 +173,9 @@ export default {
     },
     async addCitation(data) {
       const { title, url } = data
-      await this.$store.dispatch('post/SUBMIT_CITATION_FORM', { title, url })
-      const { citations } = this.$store.state.post
       this.editor.commands.insertContent(
-        `<tiptap-citation to="1">${citations.length}</tiptap-citation>`
+        `<tiptap-citation title="${title}" url="${url}" />`
       )
-      this.editor.chain().focus().toggleSuperscript().run()
-      // this.editor.chain().focus().toggleNode('citation').run()
     }
   }
 }

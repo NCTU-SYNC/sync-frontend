@@ -8,8 +8,11 @@ export default Node.create({
   inline: true,
   addAttributes() {
     return {
-      to: {
-        default: undefined
+      title: {
+        default: ''
+      },
+      url: {
+        default: ''
       }
     }
   },
