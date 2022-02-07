@@ -104,7 +104,7 @@
                   {{ block.blockTitle }}
                 </h2>
                 <div v-if="block.blockDateTime" class="article-info">
-                  事件時間：{{ formatDateTime(block.blockDateTime, block.timeEnable) }}
+                  事件時間：{{ formatBlockDateTime(block.blockDateTime,block.timeEnable) }}
                 </div>
               </div>
 
@@ -312,8 +312,11 @@ export default {
     formatDate(timeString) {
       return moment(timeString).format('YYYY.MM.DD')
     },
-    formatDateTime(timeString, timeEnable) {
-      if (timeEnable) {
+    formatDateTime(timeString) {
+      return moment(timeString).format('YYYY/MM/DD HH:mm')
+    },
+    formatBlockDateTime(timeString, timeEnable) {
+      if (timeEnable === undefined || timeEnable === true) {
         return moment(timeString).format('YYYY/MM/DD HH:mm')
       }
       return moment(timeString).format('YYYY/MM/DD')

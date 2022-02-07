@@ -23,7 +23,7 @@
           <template #button-content>
             <div class="dropdownbtn-text">
               {{
-                tempData.blockDateValue && tempData.blockTimeValue
+                tempData.blockDateValue || tempData.blockTimeValue
                   ? dropdownBtnDateTime
                   : '新增段落事件時間'
               }}
