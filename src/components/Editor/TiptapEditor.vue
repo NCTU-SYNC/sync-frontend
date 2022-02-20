@@ -20,7 +20,7 @@
     <bubble-menu
       v-if="editable"
       class="floating-menu-link"
-      :tippy-options="{ duration: 100, placement: 'bottom-start' }"
+      :tippy-options="bubbleMenuOptions"
       :editor="editor"
       :should-show="shouldShow"
     >
@@ -63,6 +63,7 @@ import MenuBar from './MenuBar.vue'
 import UploadImageModal from './Modals/UploadImageModal.vue'
 import CitationModal from './Modals/CitationModal.vue'
 import LinkModal from './Modals/LinkModal.vue'
+// import { detectOverflow } from '@popperjs/core'
 
 export default {
 
@@ -95,7 +96,14 @@ export default {
       caretPosBeg: null,
       caretPosEnd: null,
       selectedText: '',
-      showBubbleMenu: true
+      bubbleMenuOptions: { duration: 100, placement: 'bottom-start', zIndex: 100, popperOptions: { modifiers: [
+        {
+          name: 'preventOverflow',
+          options: {
+            boundary: document.querySelector('.main-editor-area')
+          }
+        }
+      ] }}
     }
   },
 
@@ -109,7 +117,6 @@ export default {
       },
       onFocus: ({ editor }) => {
         this.$store.commit('post/FOCUS_EDITOR', editor)
-        this.showBubbleMenu = true
       },
       extensions: [
         StarterKit,
@@ -152,7 +159,6 @@ export default {
       // prevent duplicated modals when there are multiple blocks
       if (!this.$refs[modal].visible) {
         const modalComponent = this.$refs[modal]
-        this.showBubbleMenu = false
         modalComponent.visible = true
         if (modal === 'link-modal') {
           modalComponent.reset()
@@ -170,7 +176,6 @@ export default {
         return
       }
       this.editor.chain().insertContentAt({ from: this.caretPosBeg, to: this.caretPosEnd }, `<a href="${url}" target="_blank">${content}</a>`).focus().run()
-      this.showBubbleMenu = true
     },
     async addCitation(data) {
       const { content, title, url } = data
@@ -180,13 +185,12 @@ export default {
       this.editor.chain().focus().toggleSuperscript().run()
     },
     shouldShow({ editor, view, state, oldState }) {
-      return editor.isActive('link') && this.showBubbleMenu
+      return editor.isActive('link')
     },
     menuRemoveLink() {
       this.editor.chain().unsetLink().focus().run()
     },
     menuEditLink() {
-      this.showBubbleMenu = false
       this.editor.commands.extendMarkRange('link')
       this.showModal('link-modal')
     }
@@ -316,7 +320,7 @@ export default {
   display: flex;
   align-items: center;
   .link-icon {
-    margin-right: 14px;
+    flex-shrink: 0;
   }
   .url {
     font-size: 10px;
@@ -326,7 +330,8 @@ export default {
     text-overflow: ellipsis;
     color: $blue-4;
     text-decoration: underline $blue solid !important;
-    margin-right: 8px;
+    padding-right: 8px;
+    padding-left: 14px;
     a {
       font-size: 12px;
       color: $blue-4;
