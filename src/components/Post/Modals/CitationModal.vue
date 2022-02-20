@@ -1,7 +1,7 @@
 <template>
   <b-modal
     id="citation-modal"
-    v-model="visible"
+    :visible="true"
     centered
     title="新增新聞來源"
     size="lg"
@@ -43,14 +43,11 @@
 
 <script>
 export default {
-  props: {
-  },
   data() {
     return {
       content: '',
       title: '',
-      url: '',
-      visible: false
+      url: ''
     }
   },
   methods: {
@@ -69,8 +66,7 @@ export default {
         title: this.title,
         url: this.url
       }
-      this.$emit('addCitation', data)
-      this.reset()
+      this.$store.dispatch('post/SET_EDITOR_CITATION', data)
     }
   }
 }

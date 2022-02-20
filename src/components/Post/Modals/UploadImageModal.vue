@@ -1,7 +1,7 @@
 <template>
   <b-modal
     id="upload-image-modal"
-    v-model="visible"
+    :visible="true"
     centered
     title="插入圖片"
     size="lg"
@@ -63,7 +63,7 @@ export default {
         const data = {
           url: this.url
         }
-        this.$emit('addImage', data)
+        this.$store.commit('post/SET_EDITOR_IMAGE', data)
       }
     }
   }

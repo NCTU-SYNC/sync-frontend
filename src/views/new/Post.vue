@@ -219,6 +219,7 @@
         <p class="text-center">撰寫新文章，個人貢獻度 + {{ editPoint }} 分！</p>
       </b-alert>
     </transition>
+    <EditToolModal />
   </b-container>
 </template>
 
@@ -230,6 +231,7 @@ import NewsPanel from '@/components/NewsPanel'
 import { Utils } from '@/utils'
 import EditStar from '@/components/Icons/EditStar'
 import Tag from '@/components/Editor/Tag'
+import EditToolModal from '@/components/Post/EditToolModal'
 
 export default {
   name: 'Post',
@@ -237,7 +239,8 @@ export default {
     BlockEditor,
     NewsPanel,
     EditStar,
-    Tag
+    Tag,
+    EditToolModal
   },
   data() {
     return {

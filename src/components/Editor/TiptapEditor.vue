@@ -1,23 +1,6 @@
 <template>
   <div v-if="editor">
     <bubble-menu
-      v-if="false"
-      class="bubble-menu"
-      :tippy-options="{ duration: 100 }"
-      :editor="editor"
-    >
-      <button :class="{ 'is-active': editor.isActive('bold') }" @click="editor.chain().focus().toggleBold().run()">
-        Bold
-      </button>
-      <button :class="{ 'is-active': editor.isActive('italic') }" @click="editor.chain().focus().toggleItalic().run()">
-        Italic
-      </button>
-      <button :class="{ 'is-active': editor.isActive('strike') }" @click="editor.chain().focus().toggleStrike().run()">
-        Strike
-      </button>
-    </bubble-menu>
-
-    <bubble-menu
       v-if="editable"
       class="floating-menu-link"
       :tippy-options="bubbleMenuOptions"
@@ -43,9 +26,6 @@
       @showModal="showModal"
     />
     <editor-content :editor="editor" :class="editable ? 'editor__content__edit': 'editor__content'" />
-    <upload-image-modal ref="upload-image-modal" @addImage="addImage" />
-    <citation-modal ref="citation-modal" @addCitation="addCitation" />
-    <link-modal ref="link-modal" :editor="editor" @addLink="addLink" />
   </div>
 </template>
 
@@ -60,20 +40,13 @@ import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
 import Superscript from '@tiptap/extension-superscript'
 import MenuBar from './MenuBar.vue'
-import UploadImageModal from './Modals/UploadImageModal.vue'
-import CitationModal from './Modals/CitationModal.vue'
-import LinkModal from './Modals/LinkModal.vue'
-// import { detectOverflow } from '@popperjs/core'
 
 export default {
 
   components: {
     EditorContent,
     BubbleMenu,
-    MenuBar,
-    UploadImageModal,
-    CitationModal,
-    LinkModal
+    MenuBar
   },
   props: {
     id: {
@@ -144,45 +117,25 @@ export default {
   },
 
   methods: {
-    addImage(data) {
-      const { url } = data
-
-      if (url) {
-        this.editor.chain().focus().setImage({ src: url }).run()
-      }
-    },
     showModal(modal) {
       const { from, to } = this.editor.state.selection
-      this.caretPosBeg = from
-      this.caretPosEnd = to
       this.text = this.editor.state.doc.textBetween(from, to, ' ')
-      // prevent duplicated modals when there are multiple blocks
-      if (!this.$refs[modal].visible) {
-        const modalComponent = this.$refs[modal]
-        modalComponent.visible = true
-        if (modal === 'link-modal') {
-          modalComponent.reset()
-          if (this.editor.isActive('link')) {
-            modalComponent.url = this.editor.getAttributes('link').href
-          }
-          modalComponent.content = this.text
+      const context = {
+        caretPosBeg: from,
+        caretPosEnd: to
+      }
+      if (modal === 'link-modal') {
+        if (this.editor.isActive('link')) {
+          context['url'] = this.editor.getAttributes('link').href
         }
+        context['content'] = this.text
+        this.$store.commit('post/SET_MODAL_CONTEXT', { context })
+        this.$store.commit('post/SET_MODAL_COMPONENT', { componentString: 'LINK' })
+      } else if (modal === 'citation-modal') {
+        this.$store.commit('post/SET_MODAL_COMPONENT', { componentString: 'CITATION' })
+      } else if (modal === 'upload-image-modal') {
+        this.$store.commit('post/SET_MODAL_COMPONENT', { componentString: 'UPLOAD_IMAGE' })
       }
-    },
-    addLink(data) {
-      const { content, url } = data
-      if (this.caretPosBeg === null || this.caretPosEnd === null) {
-        this.editor.chain().insertContent(`<a href="${url}" target="_blank">${content}</a>`).focus().run()
-        return
-      }
-      this.editor.chain().insertContentAt({ from: this.caretPosBeg, to: this.caretPosEnd }, `<a href="${url}" target="_blank">${content}</a>`).focus().run()
-    },
-    async addCitation(data) {
-      const { content, title, url } = data
-      await this.$store.dispatch('post/SUBMIT_CITATION_FORM', { title, url })
-      const { citations } = this.$store.state.post
-      this.editor.commands.insertContent(`${content}<sup>${citations.length}</sup>`)
-      this.editor.chain().focus().toggleSuperscript().run()
     },
     shouldShow({ editor, view, state, oldState }) {
       return editor.isActive('link')

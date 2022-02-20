@@ -12,7 +12,9 @@ const getDefaultState = () => {
     categorySelected: '',
     currentEditingEditor: null,
     showAddPointsAlert: false,
-    currentEditors: {}
+    currentEditors: {},
+    modalComponent: null,
+    modalContext: {}
   }
 }
 
@@ -115,6 +117,27 @@ const mutations = {
     if (block) {
       block.timeEnable = value
     }
+  },
+  SET_MODAL_CONTEXT(state, { context }) {
+    state.modalContext = context
+  },
+  SET_MODAL_COMPONENT(state, { componentString }) {
+    state.modalComponent = componentString
+  },
+  SET_EDITOR_LINK(state, modalContent) {
+    const { content, url } = modalContent
+    const { caretPosBeg, caretPosEnd } = state.modalContext
+    if (caretPosBeg === null || caretPosEnd === null) {
+      state.currentEditingEditor.chain().insertContent(`<a href="${url}" target="_blank">${content}</a>`).focus().run()
+      return
+    }
+    state.currentEditingEditor.chain().insertContentAt({ from: caretPosBeg, to: caretPosEnd }, `<a href="${url}" target="_blank">${content}</a>`).focus().run()
+  },
+  SET_EDITOR_IMAGE(state, imageLink) {
+    const { url } = imageLink
+    if (url) {
+      state.currentEditingEditor.chain().focus().setImage({ src: url }).run()
+    }
   }
 }
 
@@ -150,11 +173,16 @@ const actions = {
     const findIndex = state.citations.findIndex(c => c.url === citation.url)
     if (findIndex === -1) {
       commit('PUSH_CITATION', citation)
-      return 'push'
     } else {
       commit('SET_CITATION', { index: findIndex, citation })
-      return 'replace'
     }
+  },
+  SET_EDITOR_CITATION({ dispatch, state }, citation) {
+    const { content, title, url } = citation
+    dispatch('SUBMIT_CITATION_FORM', { title, url })
+    const { citations } = state
+    state.currentEditingEditor.commands.insertContent(`${content}<sup>${citations.length}</sup>`)
+    state.currentEditingEditor.chain().focus().toggleSuperscript().run()
   }
 }
 

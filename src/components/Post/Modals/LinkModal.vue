@@ -1,7 +1,7 @@
 <template>
   <b-modal
     id="link-modal"
-    v-model="visible"
+    :visible="true"
     centered
     title="新增連結"
     size="lg"
@@ -37,12 +37,23 @@
 <script>
 export default {
   props: {
+    context: {
+      type: Object,
+      default: () => { return {} }
+    }
   },
   data() {
     return {
       content: '',
-      url: '',
-      visible: false
+      url: ''
+    }
+  },
+  created() {
+    if ('content' in this.context) {
+      this.content = this.context['content']
+    }
+    if ('url' in this.context) {
+      this.url = this.context['url']
     }
   },
   methods: {
@@ -58,8 +69,7 @@ export default {
         content: this.content,
         url: this.url
       }
-      this.$emit('addLink', data)
-      this.reset()
+      this.$store.commit('post/SET_EDITOR_LINK', data)
     }
   }
 }
