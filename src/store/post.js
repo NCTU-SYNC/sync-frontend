@@ -95,6 +95,7 @@ const mutations = {
   },
   REGISTER_EDITOR(state, { id, editor }) {
     state.currentEditors[id] = editor
+    editor.view.dom.id = id
   },
   INIT_POST(state, payload) {
     const data = payload.data
@@ -179,8 +180,9 @@ const actions = {
   },
   SET_EDITOR_CITATION({ dispatch, state }, citation) {
     const { title, url } = citation
+    const id = state.currentEditingEditor.view.dom.id
     state.currentEditingEditor.commands.insertContent(
-      `<tiptap-citation title=${title} url=${url} />`
+      `<tiptap-citation title=${title} url=${url} editorId=${id} />`
     )
   },
   UPDATE_EDTOR_CITATION({ dispatch, state }, { index, data }) {

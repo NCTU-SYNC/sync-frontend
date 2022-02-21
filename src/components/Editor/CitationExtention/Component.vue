@@ -18,7 +18,8 @@ export default {
       citation: {
         title: this.node.attrs.title,
         url: this.node.attrs.url,
-        node: this
+        node: this,
+        editorId: this.node.attrs.editorId
       }
     }
   },

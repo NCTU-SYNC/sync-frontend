@@ -13,6 +13,9 @@ export default Node.create({
       },
       url: {
         default: ''
+      },
+      editorId: {
+        default: ''
       }
     }
   },
