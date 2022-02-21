@@ -65,11 +65,6 @@ export default new Router({
       }
     },
     {
-      path: '/NewsPanel',
-      name: 'NewsPanel',
-      component: () => import('@/views/NewsPanel')
-    },
-    {
       path: '/history/:ArticleID',
       name: 'History',
       component: () => import('@/views/History')

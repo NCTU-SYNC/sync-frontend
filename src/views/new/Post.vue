@@ -183,7 +183,7 @@
           </b-row>
         </div>
       </div>
-      <div v-if="showNewsSource" class="news-area">
+      <div v-show="showNewsSource" class="news-area">
         <b-button
           variant="link"
           class="close-source"
@@ -191,10 +191,10 @@
         >
           <b-icon icon="x" scale="1.66" variant="secondary" />
         </b-button>
-        <NewsPanel @importNews="importNews" />
+        <NewsPanel />
       </div>
       <div
-        v-else
+        v-show="!showNewsSource"
         class="news-area-btn-only"
       >
         <b-button
@@ -220,6 +220,7 @@
         <p class="text-center">撰寫新文章，個人貢獻度 + {{ editPoint }} 分！</p>
       </b-alert>
     </transition>
+    <EditToolModal />
   </b-container>
 </template>
 
@@ -231,6 +232,7 @@ import NewsPanel from '@/components/NewsPanel'
 import { Utils } from '@/utils'
 import EditStar from '@/components/Icons/EditStar'
 import Tag from '@/components/Editor/Tag'
+import EditToolModal from '@/components/Post/EditToolModal'
 
 export default {
   name: 'Post',
@@ -238,7 +240,8 @@ export default {
     BlockEditor,
     NewsPanel,
     EditStar,
-    Tag
+    Tag,
+    EditToolModal
   },
   data() {
     return {
@@ -345,7 +348,8 @@ export default {
         id: `${Utils.getRandomString()}-${(currentBlockCount + 1).toString()}`,
         blockTitle: '',
         blockDateTime: '',
-        content: null
+        content: null,
+        timeEnable: false
       }
       this.$store.commit('post/ADD_BLOCK', {
         index: index,
@@ -377,17 +381,6 @@ export default {
             this.$store.commit('post/DELETE_BLOCK', index)
           }
         })
-    },
-    importNews(content) {
-      if (this.currentEditingEditor === null) {
-        this.$bvModal.msgBoxOk('請選擇編輯區塊，或是先新增段落後再引入')
-        return
-      }
-      let str = this.currentEditingEditor.getHTML()
-      content.forEach((text) => {
-        str += `<p>${text}</p>`
-      })
-      this.currentEditingEditor.setContent(str, true)
     },
     onCitationRemoved(index) {
       if (this.post.citations[index]) {

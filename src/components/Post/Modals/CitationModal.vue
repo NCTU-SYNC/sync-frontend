@@ -1,7 +1,7 @@
 <template>
   <b-modal
     id="citation-modal"
-    v-model="visible"
+    :visible="true"
     centered
     title="新增新聞來源"
     size="lg"
@@ -17,40 +17,42 @@
   >
     <b-form-group
       label-cols="auto"
+      label="附註內容："
+      label-for="citation-superscript"
+    >
+      <b-form-input id="citation-superscript" v-model="content" class="input-form" placeholder="請輸入或選取附註的內容文字" />
+    </b-form-group>
+
+    <b-form-group
+      label-cols="auto"
       label="附註標題："
       label-for="citation-title"
     >
-      <b-form-input
-        id="citation-title"
-        v-model="title"
-        class="input-form"
-        placeholder="請輸入新聞來源的附註標題"
-      />
+      <b-form-input id="citation-title" v-model="title" class="input-form" placeholder="請輸入新聞來源的附註標題" />
     </b-form-group>
 
-    <b-form-group label-cols="auto" label="來源網址：" label-for="citation-url">
-      <b-form-input
-        id="citation-url"
-        v-model="url"
-        class="input-form"
-        placeholder="請輸入新聞來源的網址"
-      />
+    <b-form-group
+      label-cols="auto"
+      label="來源網址："
+      label-for="citation-url"
+    >
+      <b-form-input id="citation-url" v-model="url" class="input-form" placeholder="請輸入新聞來源的網址" />
     </b-form-group>
   </b-modal>
 </template>
 
 <script>
 export default {
-  props: {},
   data() {
     return {
+      content: '',
       title: '',
-      url: '',
-      visible: false
+      url: ''
     }
   },
   methods: {
     reset() {
+      this.content = ''
       this.title = ''
       this.url = ''
       this.visible = false
@@ -60,11 +62,11 @@ export default {
     },
     handleConfirm() {
       const data = {
+        content: this.content,
         title: this.title,
         url: this.url
       }
-      this.$emit('addCitation', data)
-      this.reset()
+      this.$store.dispatch('post/SET_EDITOR_CITATION', data)
     }
   }
 }
@@ -88,7 +90,7 @@ export default {
   position: relative;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     width: 4px;
     left: 0px;
@@ -101,7 +103,7 @@ export default {
 
   &:focus-within {
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       width: 4px;
       left: 0px;
@@ -117,6 +119,6 @@ export default {
 
 .input {
   width: 90%;
-  padding: 10px;
+  padding: 10px
 }
 </style>

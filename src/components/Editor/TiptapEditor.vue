@@ -1,56 +1,23 @@
 <template>
   <div v-if="editor">
     <bubble-menu
-      v-if="false"
-      class="bubble-menu"
-      :tippy-options="{ duration: 100 }"
+      v-if="editable"
+      class="floating-menu-link"
+      :tippy-options="bubbleMenuOptions"
       :editor="editor"
+      :should-show="shouldShow"
     >
-      <button
-        :class="{ 'is-active': editor.isActive('bold') }"
-        @click="editor.chain().focus().toggleBold().run()"
-      >
-        Bold
-      </button>
-      <button
-        :class="{ 'is-active': editor.isActive('italic') }"
-        @click="editor.chain().focus().toggleItalic().run()"
-      >
-        Italic
-      </button>
-      <button
-        :class="{ 'is-active': editor.isActive('strike') }"
-        @click="editor.chain().focus().toggleStrike().run()"
-      >
-        Strike
-      </button>
+      <icon icon="link" size="md" class="link-icon" />
+      <div class="url">
+        <a :href="editor.getAttributes('link').href" target="_blank">{{ editor.getAttributes('link').href }}</a>
+      </div>
+      <b-button variant="link" class="text-nowrap menu-btn" @click="menuEditLink()">
+        編輯
+      </b-button>
+      <b-button variant="link" class="text-nowrap menu-btn" @click="menuRemoveLink()">
+        刪除
+      </b-button>
     </bubble-menu>
-
-    <floating-menu
-      v-if="false"
-      class="floating-menu"
-      :tippy-options="{ duration: 100 }"
-      :editor="editor"
-    >
-      <button
-        :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
-        @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
-      >
-        H1
-      </button>
-      <button
-        :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
-        @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
-      >
-        H2
-      </button>
-      <button
-        :class="{ 'is-active': editor.isActive('bulletList') }"
-        @click="editor.chain().focus().toggleBulletList().run()"
-      >
-        Bullet List
-      </button>
-    </floating-menu>
 
     <menu-bar
       v-if="editable"
@@ -58,18 +25,12 @@
       :editor="editor"
       @showModal="showModal"
     />
-    <editor-content
-      :editor="editor"
-      :class="editable ? 'editor__content__edit' : 'editor__content'"
-    />
-    <upload-image-modal ref="upload-image-modal" @addImage="addImage" />
-    <citation-modal ref="citation-modal" @addCitation="addCitation" />
-    <link-modal ref="link-modal" @addLink="addLink" />
+    <editor-content :editor="editor" :class="editable ? 'editor__content__edit': 'editor__content'" />
   </div>
 </template>
 
 <script>
-import { Editor, EditorContent, BubbleMenu, FloatingMenu } from '@tiptap/vue-2'
+import { Editor, EditorContent, BubbleMenu } from '@tiptap/vue-2'
 import StarterKit from '@tiptap/starter-kit'
 import Highlight from '@tiptap/extension-highlight'
 import Placeholder from '@tiptap/extension-placeholder'
@@ -79,20 +40,13 @@ import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
 import Superscript from '@tiptap/extension-superscript'
 import MenuBar from './MenuBar.vue'
-import UploadImageModal from './Modals/UploadImageModal.vue'
-import CitationModal from './Modals/CitationModal.vue'
-import LinkModal from './Modals/LinkModal.vue'
 import Citation from './CitationExtention/Citation'
 
 export default {
   components: {
     EditorContent,
     BubbleMenu,
-    FloatingMenu,
-    MenuBar,
-    UploadImageModal,
-    CitationModal,
-    LinkModal
+    MenuBar
   },
   props: {
     id: {
@@ -111,7 +65,18 @@ export default {
 
   data() {
     return {
-      editor: null
+      editor: null,
+      caretPosBeg: null,
+      caretPosEnd: null,
+      selectedText: '',
+      bubbleMenuOptions: { duration: 100, placement: 'bottom-start', zIndex: 100, popperOptions: { modifiers: [
+        {
+          name: 'preventOverflow',
+          options: {
+            boundary: document.querySelector('.main-editor-area')
+          }
+        }
+      ] }}
     }
   },
 
@@ -135,7 +100,9 @@ export default {
           placeholder: '段落內文'
         }),
         Typography,
-        Link,
+        Link.configure({
+          openOnClick: false
+        }),
         Image,
         Superscript,
         Citation
@@ -154,28 +121,35 @@ export default {
   },
 
   methods: {
-    addImage(data) {
-      const { url } = data
-
-      if (url) {
-        this.editor.chain().focus().setImage({ src: url }).run()
-      }
-    },
     showModal(modal) {
-      // prevent duplicated modals when there are multiple blocks
-      if (!this.$refs[modal].visible) {
-        this.$refs[modal].visible = true
+      const { from, to } = this.editor.state.selection
+      this.text = this.editor.state.doc.textBetween(from, to, ' ')
+      const context = {
+        caretPosBeg: from,
+        caretPosEnd: to
+      }
+      if (modal === 'link-modal') {
+        if (this.editor.isActive('link')) {
+          context['url'] = this.editor.getAttributes('link').href
+        }
+        context['content'] = this.text
+        this.$store.commit('post/SET_MODAL_CONTEXT', { context })
+        this.$store.commit('post/SET_MODAL_COMPONENT', { componentString: 'LINK' })
+      } else if (modal === 'citation-modal') {
+        this.$store.commit('post/SET_MODAL_COMPONENT', { componentString: 'CITATION' })
+      } else if (modal === 'upload-image-modal') {
+        this.$store.commit('post/SET_MODAL_COMPONENT', { componentString: 'UPLOAD_IMAGE' })
       }
     },
-    addLink(data) {
-      const { content, url } = data
-      this.editor.commands.insertContent(`<a href=${url}>${content}</>`)
+    shouldShow({ editor, view, state, oldState }) {
+      return editor.isActive('link')
     },
-    async addCitation(data) {
-      const { title, url } = data
-      this.editor.commands.insertContent(
-        `<tiptap-citation title="${title}" url="${url}" />`
-      )
+    menuRemoveLink() {
+      this.editor.chain().unsetLink().focus().run()
+    },
+    menuEditLink() {
+      this.editor.commands.extendMarkRange('link')
+      this.showModal('link-modal')
     }
   }
 }
@@ -296,6 +270,53 @@ export default {
     height: 0;
     font-size: 1rem;
     line-height: 1.5rem;
+  }
+}
+
+.floating-menu-link {
+  display: flex;
+  align-items: center;
+  .link-icon {
+    flex-shrink: 0;
+  }
+  .url {
+    font-size: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 221px;
+    text-overflow: ellipsis;
+    color: $blue-4;
+    text-decoration: underline $blue solid !important;
+    padding-right: 8px;
+    padding-left: 14px;
+    a {
+      font-size: 12px;
+      color: $blue-4;
+    }
+  }
+  max-width: 387px;
+  height: 36px;
+  padding: 6px 16px;
+  background: $white;
+  box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  button {
+    position: relative;
+    color: $text-2;
+    font-size: 14px;
+    padding: 0;
+    padding-left: 9px;
+    padding-right: 8px;
+    &::before {
+      content: '';
+      position: absolute;
+      border-left: 1px solid $gray-2;
+      height: 24px;
+      left: 0;
+    }
+    &:last-child{
+      padding-right: 0px;
+    }
   }
 }
 </style>
