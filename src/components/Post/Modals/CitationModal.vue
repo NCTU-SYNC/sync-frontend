@@ -3,9 +3,9 @@
     id="citation-modal"
     :visible="true"
     centered
-    title="新增新聞來源"
+    :title="modalTitle"
     size="lg"
-    ok-title="新增"
+    :ok-title="okTitle"
     cancel-title="取消"
     content-class="custom-modal"
     body-class="custom-modal-body"
@@ -17,42 +17,54 @@
   >
     <b-form-group
       label-cols="auto"
-      label="附註內容："
-      label-for="citation-superscript"
-    >
-      <b-form-input id="citation-superscript" v-model="content" class="input-form" placeholder="請輸入或選取附註的內容文字" />
-    </b-form-group>
-
-    <b-form-group
-      label-cols="auto"
       label="附註標題："
       label-for="citation-title"
     >
-      <b-form-input id="citation-title" v-model="title" class="input-form" placeholder="請輸入新聞來源的附註標題" />
+      <b-form-input
+        id="citation-title"
+        v-model="title"
+        class="input-form"
+        placeholder="請輸入新聞來源的附註標題"
+      />
     </b-form-group>
 
-    <b-form-group
-      label-cols="auto"
-      label="來源網址："
-      label-for="citation-url"
-    >
-      <b-form-input id="citation-url" v-model="url" class="input-form" placeholder="請輸入新聞來源的網址" />
+    <b-form-group label-cols="auto" label="來源網址：" label-for="citation-url">
+      <b-form-input
+        id="citation-url"
+        v-model="url"
+        class="input-form"
+        placeholder="請輸入新聞來源的網址"
+      />
     </b-form-group>
   </b-modal>
 </template>
 
 <script>
 export default {
+  props: {
+    context: {
+      type: Object,
+      default: () => {
+        return { index: -1 }
+      }
+    }
+  },
   data() {
     return {
-      content: '',
-      title: '',
-      url: ''
+      title: this.context.citation ? this.context.citation.title : '',
+      url: this.context.citation ? this.context.citation.url : ''
+    }
+  },
+  computed: {
+    modalTitle() {
+      return (this.context.index === -1 ? '新增' : '修改') + '新聞來源'
+    },
+    okTitle() {
+      return this.context.index === -1 ? '新增' : '確認'
     }
   },
   methods: {
     reset() {
-      this.content = ''
       this.title = ''
       this.url = ''
       this.visible = false
@@ -62,11 +74,17 @@ export default {
     },
     handleConfirm() {
       const data = {
-        content: this.content,
         title: this.title,
         url: this.url
       }
-      this.$store.dispatch('post/SET_EDITOR_CITATION', data)
+      if (this.context.index === -1) {
+        this.$store.dispatch('post/SET_EDITOR_CITATION', data)
+      } else {
+        this.$store.dispatch('post/UPDATE_EDTOR_CITATION', {
+          index: this.context.index,
+          data
+        })
+      }
     }
   }
 }

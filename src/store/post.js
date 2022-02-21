@@ -178,11 +178,15 @@ const actions = {
     }
   },
   SET_EDITOR_CITATION({ dispatch, state }, citation) {
-    const { content, title, url } = citation
-    dispatch('SUBMIT_CITATION_FORM', { title, url })
-    const { citations } = state
-    state.currentEditingEditor.commands.insertContent(`${content}<sup>${citations.length}</sup>`)
-    state.currentEditingEditor.chain().focus().toggleSuperscript().run()
+    const { title, url } = citation
+    state.currentEditingEditor.commands.insertContent(
+      `<tiptap-citation title=${title} url=${url} />`
+    )
+  },
+  UPDATE_EDTOR_CITATION({ dispatch, state }, { index, data }) {
+    const { title, url } = data
+    state.citations[index].title = title
+    state.citations[index].url = url
   }
 }
 

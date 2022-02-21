@@ -1,6 +1,6 @@
 <template inline-template>
   <node-view-wrapper as="span" role="button">
-    <sup @click="scrollToCitation">{{ index + 1 }}</sup>
+    <sup @click="editCitation">{{ index + 1 }}</sup>
   </node-view-wrapper>
 </template>
 
@@ -24,9 +24,6 @@ export default {
   },
   computed: {
     ...mapGetters({ post: 'post' }),
-    el() {
-      return this.$parent.$parent.$parent.$parent.$refs.citation[this.index]
-    },
     index() {
       return this.post.citations.indexOf(this.citation)
     }
@@ -38,8 +35,13 @@ export default {
     this.post.citations.splice(this.index, 1)
   },
   methods: {
-    scrollToCitation() {
-      this.el.scrollIntoView({ behavior: 'smooth' })
+    editCitation() {
+      const citations = this.$store.state.post.citations
+      const context = { index: this.index, citation: citations[this.index] }
+      this.$store.commit('post/SET_MODAL_CONTEXT', { context })
+      this.$store.commit('post/SET_MODAL_COMPONENT', {
+        componentString: 'CITATION'
+      })
     }
   }
 }

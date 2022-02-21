@@ -136,7 +136,10 @@ export default {
         this.$store.commit('post/SET_MODAL_CONTEXT', { context })
         this.$store.commit('post/SET_MODAL_COMPONENT', { componentString: 'LINK' })
       } else if (modal === 'citation-modal') {
-        this.$store.commit('post/SET_MODAL_COMPONENT', { componentString: 'CITATION' })
+        this.$store.commit('post/SET_MODAL_CONTEXT', { context: { index: -1 }})
+        this.$store.commit('post/SET_MODAL_COMPONENT', {
+          componentString: 'CITATION'
+        })
       } else if (modal === 'upload-image-modal') {
         this.$store.commit('post/SET_MODAL_COMPONENT', { componentString: 'UPLOAD_IMAGE' })
       }

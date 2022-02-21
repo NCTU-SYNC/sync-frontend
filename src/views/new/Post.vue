@@ -149,7 +149,11 @@
                   <div class="d-flex justify-content-between">
                     <div class="d-flex flex-column ">
                       <div class="d-flex mb-2">
-                        <div class="citation-list-tag">
+                        <div
+                          class="citation-list-tag"
+                          role="button"
+                          @click="scrollToCitationNode(index)"
+                        >
                           <div class="period" :data-label="index + 1" />
                         </div>
                         <div class="w-100 pl-2 ">
@@ -164,11 +168,9 @@
                       </b-link>
                     </div>
                     <div class="citation-list-btn">
-                      <!-- TODO: edit citation
-                      <b-button variant="link">
+                      <b-button variant="link" @click="onCitationEdited(index)">
                         編輯
                       </b-button>
-                      -->
                       <b-button
                         variant="link"
                         @click="onCitationRemoved(index)"
@@ -381,6 +383,23 @@ export default {
             this.$store.commit('post/DELETE_BLOCK', index)
           }
         })
+    },
+    scrollToCitationNode(index) {
+      const citations = this.$store.state.post.citations
+      console.log(citations[index].node)
+      console.log(citations[index].node.$el)
+      citations[index].node.$el.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      })
+    },
+    onCitationEdited(index) {
+      const citations = this.$store.state.post.citations
+      const context = { index: index, citation: citations[index] }
+      this.$store.commit('post/SET_MODAL_CONTEXT', { context })
+      this.$store.commit('post/SET_MODAL_COMPONENT', {
+        componentString: 'CITATION'
+      })
     },
     onCitationRemoved(index) {
       if (this.post.citations[index]) {
