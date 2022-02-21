@@ -1,7 +1,7 @@
 <template>
   <b-modal
     id="citation-modal"
-    :visible="true"
+    visible
     centered
     title="新增新聞來源"
     size="lg"

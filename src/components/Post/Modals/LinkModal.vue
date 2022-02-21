@@ -1,7 +1,7 @@
 <template>
   <b-modal
     id="link-modal"
-    :visible="true"
+    visible
     centered
     title="新增連結"
     size="lg"
