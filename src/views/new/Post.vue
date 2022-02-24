@@ -386,8 +386,6 @@ export default {
     },
     scrollToCitationNode(index) {
       const citations = this.$store.state.post.citations
-      console.log(citations[index].node)
-      console.log(citations[index].node.$el)
       citations[index].node.$el.scrollIntoView({
         behavior: 'smooth',
         block: 'center'

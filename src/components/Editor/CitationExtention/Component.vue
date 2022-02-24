@@ -33,7 +33,7 @@ export default {
     await this.$store.dispatch('post/SUBMIT_CITATION_FORM', this.citation)
   },
   beforeDestroy() {
-    this.post.citations.splice(this.index, 1)
+    this.$store.dispatch('post/REMOVE_EDITOR_CITATION', this.index)
   },
   methods: {
     editCitation() {

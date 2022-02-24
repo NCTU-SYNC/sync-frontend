@@ -37,25 +37,28 @@ const mutations = {
     state.currentEditingEditor = null
   },
   UPDATE_BLOCK_CONTENT(state, { id, content }) {
-    const block = state.blocks.find(b => b.id === id)
+    const block = state.blocks.find((b) => b.id === id)
     if (block) {
       block.content = content
     }
   },
   UPDATE_BLOCK_TITLE(state, { id, title }) {
-    const block = state.blocks.find(b => b.id === id)
+    const block = state.blocks.find((b) => b.id === id)
     if (block) {
       block.blockTitle = title
     }
   },
   UPDATE_BLOCK_DATETIME(state, { id, datetime }) {
-    const block = state.blocks.find(b => b.id === id)
+    const block = state.blocks.find((b) => b.id === id)
     if (block) {
       block.blockDateTime = datetime
     }
   },
   SET_CITATION(state, { index, citation }) {
     state.citations[index] = citation
+  },
+  SET_CITATION_LIST(state, citations) {
+    state.citations = citations
   },
   PUSH_CITATION(state, citation) {
     state.citations.push(citation)
@@ -104,17 +107,21 @@ const mutations = {
     state.postTitle = data.title
     state.postTags = data.tags || []
     state.blocks = data.blocks || []
-    state.categorySelected = (data.category) ? data.category : '未分類'
+    state.categorySelected = data.category ? data.category : '未分類'
     state.citations = data.citations || []
     // init blocks, set timeEnable to be true to be compatible with older articles
     for (const block of state.blocks) {
       if (!Object.prototype.hasOwnProperty.call(block, 'timeEnable')) {
-        if (block.blockDateTime) { block['timeEnable'] = true } else { block['timeEnable'] = false }
+        if (block.blockDateTime) {
+          block['timeEnable'] = true
+        } else {
+          block['timeEnable'] = false
+        }
       }
     }
   },
   TOGGLE_TIME_ENABLE(state, { id, value }) {
-    const block = state.blocks.find(b => b.id === id)
+    const block = state.blocks.find((b) => b.id === id)
     if (block) {
       block.timeEnable = value
     }
@@ -129,22 +136,36 @@ const mutations = {
     const { content, url } = modalContent
     const { caretPosBeg, caretPosEnd } = state.modalContext
     if (caretPosBeg === null || caretPosEnd === null) {
-      state.currentEditingEditor.chain().insertContent(`<a href="${url}" target="_blank">${content}</a>`).focus().run()
+      state.currentEditingEditor
+        .chain()
+        .insertContent(`<a href="${url}" target="_blank">${content}</a>`)
+        .focus()
+        .run()
       return
     }
-    state.currentEditingEditor.chain().insertContentAt({ from: caretPosBeg, to: caretPosEnd }, `<a href="${url}" target="_blank">${content}</a>`).focus().run()
+    state.currentEditingEditor
+      .chain()
+      .insertContentAt(
+        { from: caretPosBeg, to: caretPosEnd },
+        `<a href="${url}" target="_blank">${content}</a>`
+      )
+      .focus()
+      .run()
   },
   SET_EDITOR_IMAGE(state, imageLink) {
     const { url } = imageLink
     if (url) {
       state.currentEditingEditor.chain().focus().setImage({ src: url }).run()
     }
+  },
+  REMOVE_CITATION(state, index) {
+    state.citations.splice(index, 1)
   }
 }
 
 const getters = {
   GET_BLOCK_DATETIME: (state) => (id) => {
-    const block = state.blocks.find(block => block.id === id)
+    const block = state.blocks.find((block) => block.id === id)
     if (block) {
       return block.blockDateTime
     }
@@ -171,7 +192,7 @@ const getters = {
 
 const actions = {
   SUBMIT_CITATION_FORM({ commit, state }, citation) {
-    const findIndex = state.citations.findIndex(c => c.url === citation.url)
+    const findIndex = state.citations.findIndex((c) => c.url === citation.url)
     if (findIndex === -1) {
       commit('PUSH_CITATION', citation)
     } else {
@@ -189,6 +210,9 @@ const actions = {
     const { title, url } = data
     state.citations[index].title = title
     state.citations[index].url = url
+  },
+  REMOVE_EDITOR_CITATION({ commit }, index) {
+    commit('REMOVE_CITATION', index)
   }
 }
 

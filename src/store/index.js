@@ -3,6 +3,8 @@ import Vuex from 'vuex'
 import user from './user'
 import post from './post'
 import article from './article'
+
+import citationManagerPlugin from '@/utils/citationManager'
 Vue.use(Vuex)
 
 const getDefaultState = () => {
@@ -35,7 +37,8 @@ const store = new Vuex.Store({
     SET_FOOTER(state, show) {
       state.showFooter = show
     }
-  }
+  },
+  plugins: [citationManagerPlugin]
 })
 
 export default store
