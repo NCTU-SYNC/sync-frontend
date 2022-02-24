@@ -80,7 +80,7 @@ export default {
       if (this.context.index === -1) {
         this.$store.dispatch('post/SET_EDITOR_CITATION', data)
       } else {
-        this.$store.dispatch('post/UPDATE_EDTOR_CITATION', {
+        this.$store.dispatch('post/UPDATE_EDITOR_CITATION', {
           index: this.context.index,
           data
         })

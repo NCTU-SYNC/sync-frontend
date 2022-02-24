@@ -185,7 +185,7 @@ const actions = {
       `<tiptap-citation title=${title} url=${url} editorId=${id} />`
     )
   },
-  UPDATE_EDTOR_CITATION({ dispatch, state }, { index, data }) {
+  UPDATE_EDITOR_CITATION({ dispatch, state }, { index, data }) {
     const { title, url } = data
     state.citations[index].title = title
     state.citations[index].url = url
