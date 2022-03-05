@@ -1,6 +1,6 @@
-<template inline-template>
-  <node-view-wrapper as="span" role="button">
-    <sup @click="editCitation">{{ index + 1 }}</sup>
+<template>
+  <node-view-wrapper as="span" role="button" contenteditable="false">
+    <sup>{{ index + 1 }}</sup>
   </node-view-wrapper>
 </template>
 
@@ -31,6 +31,11 @@ export default {
   },
   async beforeMount() {
     await this.$store.dispatch('post/SUBMIT_CITATION_FORM', this.citation)
+  },
+  mounted() {
+    // ! cannot bind event listener on node-view-wrapper in template
+    // ! therfore we bind it here
+    this.$el.onclick = this.editCitation
   },
   beforeDestroy() {
     this.$store.dispatch('post/REMOVE_EDITOR_CITATION', this.index)

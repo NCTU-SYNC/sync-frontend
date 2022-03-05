@@ -5,6 +5,7 @@ import Component from './Component.vue'
 export default Node.create({
   name: 'citation',
   group: 'inline',
+  content: 'inline*',
   inline: true,
   addAttributes() {
     return {
