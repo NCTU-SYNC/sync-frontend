@@ -23,12 +23,11 @@
         </div>
       </div>
       <!-- right content -->
-      <div>
-        <b-img block center style="height: 300px;" :src="require('@/assets/images/thumbnail-placeholder.svg')" />
+      <div class="d-flex align-items-center">
+        <b-img block center style="max-height: 300px; max-width: 512px;" :src="imgLink" />
       </div>
     </div>
-  </div>
-</template>
+  </div></template>
 
 <script>
 import moment from 'moment'
@@ -69,8 +68,20 @@ export default {
       default: ''
     }
   },
+  data() {
+    return {
+      thumbnailPlaceholder: require('@/assets/images/thumbnail-placeholder.svg')
+    }
+  },
+  computed: {
+    imgLink() {
+      const imgLink = this.getArticleFirstImage(this.blocks)
+      return imgLink !== null ? imgLink : this.thumbnailPlaceholder
+    }
+  },
   methods: {
     getArticleContent: Utils.getArticleContent,
+    getArticleFirstImage: Utils.getArticleFirstImage,
     getCategory(newsCategory) {
       if (typeof newsCategory === 'string') {
         if (newsCategory.length === 0) { return '未分類' } else return newsCategory
