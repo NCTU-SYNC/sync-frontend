@@ -582,7 +582,8 @@ export default {
 }
 
 .news-area-btn-only {
-  width: 312px;
+  // design: 312px
+  width: 304px;
   text-align: right;
   padding: 24px 32px;
   @extend %panel-width-lg;
@@ -713,7 +714,8 @@ export default {
 // --------------- NEWS CLASSES ----------------
 
 %panel-width-lg {
-  @media only screen and (max-width: 1439px) {
+  // Macbook Pro resolution (1440px) - scrollbar width (~15px)
+  @media only screen and (max-width: 1424px) {
     width: 132px;
     padding-left: 0px;
     padding-right: 0px;
@@ -782,7 +784,8 @@ export default {
 }
 
 .timeline-panel-btn-only {
-  width: 312px;
+  // design: 312px
+  width: 304px;
   padding: 24px 32px;
 
   @media only screen and (max-width: 1439px) {
