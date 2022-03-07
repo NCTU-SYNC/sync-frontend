@@ -1,5 +1,10 @@
 <template>
-  <node-view-wrapper as="span" role="button" contenteditable="false">
+  <node-view-wrapper
+    as="span"
+    role="button"
+    class="citation__node-wrapper"
+    contenteditable="false"
+  >
     <sup>{{ index + 1 }}</sup>
   </node-view-wrapper>
 </template>
@@ -53,4 +58,11 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="scss">
+.citation__node-wrapper {
+  ::selection {
+    color: white;
+    background-color: $blue !important;
+  }
+}
+</style>

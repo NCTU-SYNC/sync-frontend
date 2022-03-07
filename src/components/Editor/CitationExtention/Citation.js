@@ -6,6 +6,7 @@ export default Node.create({
   name: 'citation',
   group: 'inline',
   content: 'inline*',
+  atom: true,
   inline: true,
   addAttributes() {
     return {
