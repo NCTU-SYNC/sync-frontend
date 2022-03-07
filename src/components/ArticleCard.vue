@@ -48,6 +48,7 @@
 <script>
 import moment from 'moment'
 import { Utils } from '@/utils'
+import { mapState, mapGetters } from 'vuex'
 export default {
   name: 'ArticleCard',
   props: {
@@ -86,13 +87,16 @@ export default {
   },
   data() {
     return {
-      isLogin: false,
-      isSubscribed: false
+      isLogin: false
     }
   },
   computed: {
-    subscribedList() {
-      return this.$store.getters['article/subscribedList']
+    ...mapState({ isProfileReady: 'article/isProfileReady' }),
+    ...mapGetters({ subscribedList: 'article/subscribedList' }),
+    isSubscribed() {
+      if (!this.isLogin) return false
+
+      return this.subscribedList.some((s) => s.articleId === this.articleId)
     },
     bookmarkTooltip() {
       return this.isSubscribed ? '取消收藏文章' : '收藏文章'
@@ -110,23 +114,9 @@ export default {
       return this.lg ? 190 : 140
     }
   },
-  watch: {
-    subscribedList(newList) {
-      if (newList) {
-        this.isSubscribed =
-          newList.findIndex(s => s.articleId === this.articleId) >= 0
-        return
-      }
-      this.isSubscribed = false
-    }
-  },
   created() {
     // check if user logged in
     this.isLogin = !!this.$store.getters.isLogin
-    if (this.isLogin) {
-      this.isSubscribed =
-        this.subscribedList.findIndex(s => s.articleId === this.articleId) >= 0
-    }
   },
   methods: {
     getTitle(title) {
