@@ -58,8 +58,15 @@
               </div>
               <hr ref="title-gray-bar">
               <div class="d-flex justify-content-between">
-                <div class="author-info">
-                  編輯者： {{ authorsString }}
+                <div class="author-info d-flex align-items-center">
+                  編輯者：
+                  <template v-if="authorsString.length > 1">
+                    {{ authorsString[0] }}
+                    <b-button v-b-modal.editors-modal variant="link" class="more-btn">{{ authorsString[1] }}</b-button>
+                  </template>
+                  <template v-else>
+                    {{ authorsString[0] }}
+                  </template>
                 </div>
                 <div class="icons">
                   <b-button
@@ -135,6 +142,21 @@
         </div>
       </transition>
     </div>
+    <b-modal
+      id="editors-modal"
+      size="lg"
+      hide-footer
+      centered
+      title="編輯者"
+      content-class="custom-modal"
+      body-class="custom-modal-body editor-modal-body"
+      header-class="custom-modal-header"
+    >
+      <div v-for="(author, idx) in authors" :key="idx" class="editor-list">
+        <icon icon="user" class="avatar-icon" />
+        {{ author.name }}
+      </div>
+    </b-modal>
   </b-container>
 </template>
 
@@ -196,11 +218,13 @@ export default {
       return this.windowScrollY > this.barDistToTop - 124
     },
     authorsString() {
+      const result = []
       let authorsString = ''
       const authors = this.authors
       authorsString = authors.slice(0, 3).map(user => user.name).join(', ')
-      if (authors.length > 3) { authorsString += ` + ${authors.length - 3} 人` }
-      return authorsString
+      result.push(authorsString)
+      if (authors.length > 3) { result.push(` + ${authors.length - 3} 人`) }
+      return result
     },
     bookmarkTooltip() {
       return this.isSubscribed ? '取消收藏文章' : '收藏文章'
@@ -350,6 +374,7 @@ export default {
 
 <style scoped lang="scss">
 @import '@/assets/scss/news.scss';
+@import '@/assets/scss/post/main.scss';
 
 p {
   letter-spacing: 0.25rem;
@@ -403,6 +428,10 @@ p {
 .author-info {
   font-size: 12px;
   overflow-wrap: anywhere;
+  .more-btn {
+    font-size: 12px;
+    padding: 0;
+  }
 }
 
 .icons {
@@ -612,6 +641,53 @@ p {
 
 html {
   scroll-behavior: smooth;
+}
+
+// editor-modal
+::v-deep .editor-modal-body {
+  overflow-y: auto;
+
+  // scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    background: transparent;
+  }
+
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    background: $gray-4;
+    height: 106px;
+  }
+
+  /* Handle on hover */
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+}
+.editor-list {
+  height: 36px;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  .avatar-icon {
+    margin-right: 10px;
+  }
+}
+
+::v-deep .modal-open {
+  overflow: inherit;
 }
 
 </style>
