@@ -165,6 +165,9 @@ const getters = {
       isAnonymous: state.isAnonymous,
       category: state.categorySelected ? state.categorySelected : '未分類'
     }
+  },
+  GET_ARTICLEID_STRING: (state) => {
+    return state.articleId || 'newArticle'
   }
 }
 

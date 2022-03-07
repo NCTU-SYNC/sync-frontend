@@ -163,6 +163,7 @@ export default {
           if (data.code === 200) {
             this.$store.commit('post/SET_ARTICLEID', data.id)
             this.showAddPointsAlertAndRedirect()
+            this.removeArticleLocalStorage()
           } else {
             this.$bvModal.msgBoxOk(data.message)
           }
@@ -178,6 +179,7 @@ export default {
           if (data.code === 200) {
             // show add point alert
             this.showAddPointsAlertAndRedirect()
+            this.removeArticleLocalStorage()
           } else {
             this.$bvModal.msgBoxOk(data.message)
           }
@@ -197,6 +199,7 @@ export default {
     },
     cancelPost() {
       const redirectArticleId = this.post.articleId
+      this.removeArticleLocalStorage()
       if (redirectArticleId) {
         this.$router.push({ name: 'Article', params: { ArticleID: redirectArticleId }})
         this.$store.commit('post/RESET_POST')
@@ -204,6 +207,9 @@ export default {
         this.$router.push({ name: 'Home' })
         this.$store.commit('post/RESET_POST')
       }
+    },
+    removeArticleLocalStorage() {
+      localStorage.removeItem(this.$store.getters['post/GET_ARTICLEID_STRING'])
     }
   }
 }
