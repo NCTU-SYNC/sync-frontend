@@ -15,7 +15,7 @@
     cancel-variant="cancel"
     @ok="handleConfirm"
   >
-    <div class="">
+    <b-form ref="link-form" @submit.stop.prevent="handleSubmit">
       <b-form-group
         label-cols="auto"
         label="顯示文字："
@@ -29,12 +29,16 @@
         label="來源網址："
         label-for="url-input"
       >
-        <b-form-input id="url-input" v-model="url" class="input-form" placeholder="請輸入來源網址 URL" />
+        <b-form-input id="url-input" v-model="url" class="input-form" placeholder="請輸入來源網址 URL" :state="urlState" />
+        <b-form-invalid-feedback :state="urlState">
+          請輸入合法的 URL，e.g. https://www.google.com
+        </b-form-invalid-feedback>
       </b-form-group>
-    </div></b-modal>
+    </b-form></b-modal>
 </template>
 
 <script>
+import { Utils } from '@/utils'
 export default {
   props: {
     context: {
@@ -45,7 +49,13 @@ export default {
   data() {
     return {
       content: '',
-      url: ''
+      url: '',
+      urlStartValidation: null
+    }
+  },
+  computed: {
+    urlState() {
+      return this.urlStartValidation && Utils.isValidUrl(this.url)
     }
   },
   created() {
@@ -64,12 +74,28 @@ export default {
     show() {
       this.$bvModal.show('link-modal')
     },
-    handleConfirm() {
+    checkFormValidity() {
+      this.urlStartValidation = true
+      return this.urlState
+    },
+    handleConfirm(bvModalEvt) {
+      // Prevent modal from closing
+      bvModalEvt.preventDefault()
+      this.handleSubmit()
+    },
+    handleSubmit() {
+      if (!this.checkFormValidity()) {
+        return
+      }
       const data = {
         content: this.content,
         url: this.url
       }
       this.$store.commit('post/SET_EDITOR_LINK', data)
+
+      this.$nextTick(() => {
+        this.$bvModal.hide('link-modal')
+      })
     }
   }
 }
@@ -78,4 +104,7 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/scss/post/main.scss';
 
+::v-deep .was-validated .form-control:invalid {
+  border-color: red;
+}
 </style>

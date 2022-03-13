@@ -57,10 +57,21 @@ function getArticleImages(blocks, result, limit = 10) {
   }
 }
 
+// url validation
+function isValidUrl(url) {
+  try {
+    new URL(url)
+  } catch (e) {
+    return false
+  }
+  return true
+}
+
 class Utils {
   static getRandomString = getRandomString
   static getArticleContent = getArticleContent
   static getArticleFirstImage = getArticleFirstImage
+  static isValidUrl = isValidUrl
 }
 
 export { Utils }
