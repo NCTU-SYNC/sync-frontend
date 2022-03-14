@@ -1,5 +1,5 @@
 <template>
-  <b-col>
+  <b-col class="d-flex justify-content-center">
     <b-card
       no-body
       :style="size"
