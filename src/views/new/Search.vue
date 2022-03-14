@@ -26,9 +26,9 @@
             <div class="search-options">
               新聞時間：
               <b-button-group>
-                <b-button variant="link" class="time-btn" :pressed="queryTimeSelected === 'qdr:w'">上禮拜</b-button>
-                <b-button variant="link" class="time-btn" :pressed="queryTimeSelected === 'qdr:m'">上個月</b-button>
-                <b-button variant="link" class="time-btn" :pressed="queryTimeSelected === 'qdr:a'">不限</b-button>
+                <b-button variant="link" class="time-btn" :pressed="queryTimeSelected === 'qdr:w'" @click="searchFilter('week')">上禮拜</b-button>
+                <b-button variant="link" class="time-btn" :pressed="queryTimeSelected === 'qdr:m'" @click="searchFilter('month')">上個月</b-button>
+                <b-button variant="link" class="time-btn" :pressed="queryTimeSelected === 'qdr:a'" @click="searchFilter('all')">不限</b-button>
               </b-button-group>
             </div>
           </div>
@@ -59,7 +59,6 @@
 </template>
 
 <script>
-import moment from 'moment'
 import { searchArticles } from '@/api/article'
 import ArticleCard from '@/components/ArticleCard.vue'
 export default {
@@ -75,15 +74,16 @@ export default {
       newsArr: [],
       filteredNewsArr: [],
       queryTimeSelected: 'qdr:a',
+      prevQueryTime: null,
       categorySelected: '',
-      timeQueries: [
-        ['qdr:a', '發布時間'],
-        ['qdr:h', '過去 1 小時'],
-        ['qdr:d', '過去 24 小時'],
-        ['qdr:w', '過去 1 週'],
-        ['qdr:m', '過去 1 個月'],
-        ['qdr:y', '過去 1 年']
-      ],
+      timeQueries: new Map([
+        ['all', 'qdr:a'],
+        ['hour', 'qdr:h'],
+        ['day', 'qdr:d'],
+        ['week', 'qdr:w'],
+        ['month', 'qdr:m'],
+        ['year', 'qdr:y']
+      ]),
       categoryQueries: ['不限主題', '政經', '社會', '環境', '運動', '國際', '科技', '生活'],
       isLoading: false
     }
@@ -94,38 +94,21 @@ export default {
         (this.currentPage - 1) * this.perPage,
         this.currentPage * this.perPage
       )
-    },
-    rows() {
-      return this.filteredNewsArr.length
-    },
-    timeQueryText() {
-      return this.queryTimeSelected.length > 0 ? this.timeQueries.find(e => e[0] === this.queryTimeSelected)[1] : '時間'
-    },
-    categoryText() {
-      return this.categorySelected.length > 0 ? this.categorySelected : '主題分類'
     }
   },
   methods: {
     async handleSearch() {
-      this.filteredNewsArr = this.newsArr
-      if (this.keyword === '') return
+      console.log('hi')
+      if (this.keyword === '' || (this.sentKeyword === this.keyword && this.queryTimeSelected === this.prevQueryTime)) return
       await this.searchArticles()
       this.filteredNewsArr = this.newsArr
       this.sentKeyword = this.keyword
+      this.prevQueryTime = this.queryTimeSelected
       this.resultCount = this.filteredNewsArr.length
     },
     handleArticleRoute(_id) {
       if (!_id) return
       this.$router.push({ path: `/article/${_id}` })
-    },
-    formatLastUpdate(lastUpdatedAt) {
-      if (!lastUpdatedAt) return '3小時'
-      else return moment(lastUpdatedAt).toNow(true)
-    },
-    handleChange(page) {
-      if (page !== this.currentPage) {
-        window.scrollTo(0, 0)
-      }
     },
     async searchArticles() {
       // Search for news
@@ -162,6 +145,12 @@ export default {
           this.isLoading = false
         }
       }
+    },
+    searchFilter(filterRange = 'all') {
+      if (this.timeQueries.get(filterRange) === this.queryTimeSelected) return
+      this.queryTimeSelected = this.timeQueries.get(filterRange)
+      console.log(this.queryTimeSelected)
+      this.handleSearch()
     },
     onTimeDropdownClicked(timeString) {
       this.queryTimeSelected = timeString
@@ -237,8 +226,9 @@ export default {
       &:last-child {
         margin-left: 8px;
       }
-      &:active {
+      &.active , &:active, &:focus {
         color: $blue !important;
+        font-weight: bold !important;
       }
     }
   }
