@@ -1,6 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import { setToken, removeToken, removeUserInfo } from '@/utils/auth'
+import { removeUserInfo } from '@/utils/auth'
 import { firebaseConfig } from '../../config/firebaseConfig'
 import store from '../store/index'
 
@@ -55,7 +55,10 @@ class FirebaseAuth {
   async handleSignup(email, password, displayName) {
     try {
       this.setUserInfo(email, password, displayName)
-      const { user } = await this.auth.createUserWithEmailAndPassword(email, password)
+      const { user } = await this.auth.createUserWithEmailAndPassword(
+        email,
+        password
+      )
       user.updateProfile({
         displayName
       })
@@ -68,10 +71,12 @@ class FirebaseAuth {
 
   async handleLogin(email, password) {
     try {
-      const { user } = await this.auth.signInWithEmailAndPassword(email, password)
+      const { user } = await this.auth.signInWithEmailAndPassword(
+        email,
+        password
+      )
       this.setUserInfo(email, password, user.displayName)
       store.dispatch('user/sendUserInfo', user)
-      setToken(user.idToken)
       return Promise.resolve(user)
     } catch (error) {
       return Promise.reject(error)
@@ -84,7 +89,6 @@ class FirebaseAuth {
       .signOut()
       .then(() => {
         if (this.isLogin) {
-          removeToken()
           removeUserInfo()
           store.dispatch('user/removeUser')
         }
@@ -98,10 +102,8 @@ class FirebaseAuth {
       provider.addScope('email')
       this.auth.useDeviceLanguage()
       const result = await this.auth.signInWithPopup(provider)
-      const idToken = result.credential.idToken
       const user = result.user
       store.dispatch('user/sendUserInfo', user)
-      setToken(idToken)
       return Promise.resolve(user)
     } catch (error) {
       return Promise.reject(error)
