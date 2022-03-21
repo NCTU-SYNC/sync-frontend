@@ -185,7 +185,7 @@ const getters = {
       tags: state.postTags,
       authors: state.postAuthors,
       blocks: state.blocks,
-      citations: state.citations,
+      citations: state.citation.getPublishList(),
       isAnonymous: state.isAnonymous,
       category: state.categorySelected ? state.categorySelected : '未分類'
     }
