@@ -131,7 +131,10 @@ export default {
         })
       }
 
-      this.$nextTick(() => this.close())
+      this.$nextTick(() => {
+        this.$bvToast.show('citation-toast')
+        this.close()
+      })
     }
   }
 }

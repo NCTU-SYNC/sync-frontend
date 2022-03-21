@@ -186,6 +186,20 @@
             </b-col>
           </b-row>
         </div>
+        <b-toast
+          id="citation-toast"
+          toast-class="citation-toast--toast"
+          body-class="citation-toast--toast-body"
+          toaster="citation-toaster"
+          no-close-button
+          auto-hide-delay="2500"
+        >
+          已新增至新聞來源
+        </b-toast>
+        <b-toaster
+          class="b-toaster-bottom-center citation-toast--toaster"
+          name="citation-toaster"
+        />
       </div>
       <div v-show="showNewsSource" class="news-area">
         <b-button
@@ -432,6 +446,32 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.citation-toast {
+  &--toast {
+    background-color: $blue !important;
+    border-radius: 0.5rem;
+  }
+
+  &--toast-body {
+    font-size: 18px;
+    line-height: 30px;
+    color: $white;
+    padding: 0.5rem 1rem;
+  }
+
+  &--toaster {
+    bottom: 3.5rem !important;
+
+    div {
+      display: flex;
+      width: fit-content;
+      margin: 0 auto;
+    }
+  }
+}
+</style>
 
 <style scoped lang="scss">
 @import '@/assets/scss/post/main.scss';
