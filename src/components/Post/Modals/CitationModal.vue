@@ -30,6 +30,11 @@
         placeholder="請輸入新聞來源的附註標題"
         @keypress.enter="handleConfirm"
       />
+      <label
+        v-if="!titleValid"
+        class="input-label--error"
+        for="citation-title"
+      >標題不可為空</label>
     </b-form-group>
 
     <b-form-group label-cols="auto" label="來源網址：" label-for="citation-url">
@@ -42,6 +47,11 @@
         placeholder="請輸入新聞來源的網址"
         @keypress.enter="handleConfirm"
       />
+      <label
+        v-if="!urlValid"
+        class="input-label--error"
+        for="citation-url"
+      >請輸入合法網址</label>
     </b-form-group>
   </b-modal>
 </template>
@@ -188,5 +198,13 @@ export default {
 .input {
   width: 90%;
   padding: 10px;
+
+  &-label {
+    &--error {
+      color: $red;
+      font-size: 12px;
+      line-height: 20px;
+    }
+  }
 }
 </style>
