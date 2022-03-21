@@ -65,7 +65,7 @@ class CitationInfo {
    * @param {CitationNode} node node to be connected
    */
   addNode(node) {
-    const editorId = store.state.post.currentEditingEditor.view.dom.id
+    const editorId = node.$props.editor.view.dom.id
     const citationNode = new CitationNode(node, editorId)
 
     this.nodes.push(citationNode)
@@ -278,6 +278,10 @@ class CitationManager {
     return this.citationList.map(
       (citationInfo) => new Proxy(citationInfo, CitationInfoHandler)
     )
+  }
+
+  getPublishList() {
+    return this.citationList.map((citationInfo) => citationInfo.info)
   }
 
   /**
