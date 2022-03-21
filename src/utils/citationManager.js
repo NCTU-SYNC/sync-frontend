@@ -21,6 +21,12 @@ class CitationInfo {
    * @param {String} url : url of citation
    */
   constructor(title, url) {
+    new URL(url)
+
+    if (title.length === 0) {
+      throw new CitationOpError('Citation.info: title should not be empty')
+    }
+
     this.info = { title, url, index: -1 }
     this.nodes = []
   }
@@ -83,7 +89,7 @@ class CitationInfo {
    * @throws {CitationOpError} : if an empty title passed
    */
   updateInfo({ title, url }) {
-    // new URL(url)
+    new URL(url)
 
     if (title.length === 0) {
       throw new CitationOpError('Citation.info: title should not be empty')

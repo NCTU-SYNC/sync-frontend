@@ -24,6 +24,7 @@
         id="citation-title"
         v-model="title"
         class="input-form"
+        :style="titleStyle"
         placeholder="請輸入新聞來源的附註標題"
       />
     </b-form-group>
@@ -33,6 +34,7 @@
         id="citation-url"
         v-model="url"
         class="input-form"
+        :style="urlStyle"
         placeholder="請輸入新聞來源的網址"
       />
     </b-form-group>
@@ -50,17 +52,14 @@ export default {
     }
   },
   data() {
+    let citation = {}
     if (!this.context.citation) {
-      return {
-        title: '',
-        url: '',
-        index: -1
-      }
+      citation = { title: '', url: '', index: -1 }
+    } else {
+      citation = { ...this.context.citation.info }
     }
 
-    const { title, url, index } = this.context.citation.info
-
-    return { title, url, index }
+    return { ...citation, titleValid: true, urlValid: true }
   },
   computed: {
     modalTitle() {
@@ -68,6 +67,12 @@ export default {
     },
     okTitle() {
       return this.index === -1 ? '新增' : '確認'
+    },
+    titleStyle() {
+      return this.titleValid ? '' : 'border-color: #FF601C !important'
+    },
+    urlStyle() {
+      return this.urlValid ? '' : 'border-color: #FF601C !important'
     }
   },
   methods: {
@@ -79,11 +84,29 @@ export default {
     show() {
       this.$bvModal.show('citation-modal')
     },
-    handleConfirm() {
+    close() {
+      this.$bvModal.hide('citation-modal')
+    },
+    handleConfirm(evt) {
+      evt.preventDefault()
+
+      if (this.title.length === 0) this.titleValid = false
+      else this.titleValid = true
+
+      try {
+        new URL(this.url)
+        this.urlValid = true
+      } catch (error) {
+        this.urlValid = false
+      }
+
+      if (!this.titleValid || !this.urlValid) return
+
       const data = {
         title: this.title,
         url: this.url
       }
+
       if (this.context.index === -1) {
         this.$store.dispatch('post/ADD_EDITOR_CITATION', data)
       } else {
@@ -93,6 +116,8 @@ export default {
           url: this.url
         })
       }
+
+      this.$nextTick(() => this.close())
     }
   }
 }
