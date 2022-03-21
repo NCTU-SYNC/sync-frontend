@@ -1,11 +1,10 @@
 <template>
   <b-container class="wrapper">
-    <b-row style="position: relative;" :class="{'justify-content-center': !showNewsSource}">
-      <div
-        v-if="isTimelineShow"
-        align-self="stretch"
-        class="timeline-panel"
-      >
+    <b-row
+      style="position: relative"
+      :class="{ 'justify-content-center': !showNewsSource }"
+    >
+      <div v-if="isTimelineShow" align-self="stretch" class="timeline-panel">
         <div class="bg-light timeline-header">
           <b-button
             variant="transparent"
@@ -32,7 +31,7 @@
       <div
         v-else
         class="timeline-panel-btn-only"
-        :class="{ 'timeline-shrink' : showNewsSource }"
+        :class="{ 'timeline-shrink': showNewsSource }"
       >
         <b-button
           variant="light"
@@ -74,7 +73,10 @@
                     }}
                   </div>
                   <div class="btn-chevron">
-                    <icon :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'" size="md" />
+                    <icon
+                      :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'"
+                      size="md"
+                    />
                   </div>
                 </template>
                 <b-dropdown-item-button
@@ -131,7 +133,7 @@
             </b-button>
           </div>
         </div>
-        <div v-if="post.citations.length > 0">
+        <div v-if="citationList.length > 0">
           <b-row>
             <b-col>
               <b-card
@@ -140,14 +142,14 @@
               >
                 <p class="citations-container--title">新聞來源</p>
                 <b-card
-                  v-for="(citation, index) in post.citations"
+                  v-for="(citation, index) in citationList"
                   ref="citation"
                   :key="index"
                   class="citations-container--card border-0"
                   body-class="p-3"
                 >
                   <div class="d-flex justify-content-between">
-                    <div class="d-flex flex-column ">
+                    <div class="d-flex flex-column">
                       <div class="d-flex mb-2">
                         <div
                           class="citation-list-tag"
@@ -156,15 +158,15 @@
                         >
                           <div class="period" :data-label="index + 1" />
                         </div>
-                        <div class="w-100 pl-2 ">
-                          <div>{{ citation.title }}</div>
+                        <div class="w-100 pl-2">
+                          <div>{{ citation.info.title }}</div>
                         </div>
                       </div>
                       <b-link
                         class="citation-list-link"
                         :href="citation.url"
                         target="_blank"
-                      >{{ citation.url }}
+                      >{{ citation.info.url }}
                       </b-link>
                     </div>
                     <div class="citation-list-btn">
@@ -195,14 +197,8 @@
         </b-button>
         <NewsPanel />
       </div>
-      <div
-        v-show="!showNewsSource"
-        class="news-area-btn-only"
-      >
-        <b-button
-          variant="light"
-          @click="handleShowNewsSource(true)"
-        >
+      <div v-show="!showNewsSource" class="news-area-btn-only">
+        <b-button variant="light" @click="handleShowNewsSource(true)">
           <icon icon="edit-source" />
           搜尋新聞
         </b-button>
@@ -309,6 +305,9 @@ export default {
       set(newValue) {
         this.$store.commit('post/SHOW_ADDPOINTS_ALERT', newValue)
       }
+    },
+    citationList() {
+      return this.post.citation.getList()
     }
   },
   watch: {
@@ -385,39 +384,34 @@ export default {
         })
     },
     scrollToCitationNode(index) {
-      const citations = this.$store.state.post.citations
-      citations[index].node.$el.scrollIntoView({
+      this.citationList[index].lastNode.node.$el.scrollIntoView({
         behavior: 'smooth',
         block: 'center'
       })
     },
     onCitationEdited(index) {
-      const citations = this.$store.state.post.citations
-      const context = { index: index, citation: citations[index] }
+      const context = { citation: this.citationList[index] }
       this.$store.commit('post/SET_MODAL_CONTEXT', { context })
       this.$store.commit('post/SET_MODAL_COMPONENT', {
         componentString: 'CITATION'
       })
     },
     onCitationRemoved(index) {
-      if (this.post.citations[index]) {
-        const node = this.post.citations[index].node
+      if (this.citationList[index]) {
+        const citation = this.citationList[index]
         this.$bvModal
-          .msgBoxConfirm(
-            `是否刪除引用：${this.post.citations[index].title}？`,
-            {
-              title: '刪除引用',
-              okVariant: 'danger',
-              okTitle: '刪除',
-              cancelTitle: '取消',
-              cancelVariant: 'outline-primary',
-              footerClass: 'modal-footer-confirm',
-              centered: true
-            }
-          )
+          .msgBoxConfirm(`是否刪除引用：${citation.info.title}？`, {
+            title: '刪除引用',
+            okVariant: 'danger',
+            okTitle: '刪除',
+            cancelTitle: '取消',
+            cancelVariant: 'outline-primary',
+            footerClass: 'modal-footer-confirm',
+            centered: true
+          })
           .then((value) => {
             if (value) {
-              node.deleteNode()
+              this.$store.dispatch('post/REMOVE_EDITOR_CITATION', citation)
             }
           })
       }

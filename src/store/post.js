@@ -1,3 +1,5 @@
+import CitationManager from '../utils/citationManager'
+
 const getDefaultState = () => {
   return {
     articleId: undefined,
@@ -8,7 +10,7 @@ const getDefaultState = () => {
     postTitle: '',
     postTags: [],
     blocks: [],
-    citations: [],
+    citation: new CitationManager(),
     categorySelected: '',
     currentEditingEditor: null,
     showAddPointsAlert: false,
@@ -199,20 +201,24 @@ const actions = {
       commit('SET_CITATION', { index: findIndex, citation })
     }
   },
-  SET_EDITOR_CITATION({ dispatch, state }, citation) {
+  ADD_EDITOR_CITATION({ state }, citation) {
     const { title, url } = citation
     const id = state.currentEditingEditor.view.dom.id
     state.currentEditingEditor.commands.insertContent(
       `<tiptap-citation title=${title} url=${url} editorId=${id} />`
     )
   },
-  UPDATE_EDITOR_CITATION({ dispatch, state }, { index, data }) {
-    const { title, url } = data
-    state.citations[index].title = title
-    state.citations[index].url = url
+  UPDATE_EDITOR_CITATION({ state }, { citation, title, url }) {
+    state.citation.updateCitation(citation, title, url)
   },
-  REMOVE_EDITOR_CITATION({ commit }, index) {
-    commit('REMOVE_CITATION', index)
+  REMOVE_EDITOR_CITATION({ state }, citation) {
+    state.citation.removeCitation(citation)
+  },
+  ADD_EDITOR_CITATION_NODE({ state }, { title, url, node }) {
+    return state.citation.registerNode(title, url, node)
+  },
+  REMOVE_EDITOR_CITATION_NODE({ state }, citation, node) {
+    state.citation.unregisterNode(citation, node)
   }
 }
 

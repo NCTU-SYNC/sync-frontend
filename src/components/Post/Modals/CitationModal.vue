@@ -45,22 +45,29 @@ export default {
     context: {
       type: Object,
       default: () => {
-        return { index: -1 }
+        return {}
       }
     }
   },
   data() {
-    return {
-      title: this.context.citation ? this.context.citation.title : '',
-      url: this.context.citation ? this.context.citation.url : ''
+    if (!this.context.citation) {
+      return {
+        title: '',
+        url: '',
+        index: -1
+      }
     }
+
+    const { title, url, index } = this.context.citation.info
+
+    return { title, url, index }
   },
   computed: {
     modalTitle() {
-      return (this.context.index === -1 ? '新增' : '修改') + '新聞來源'
+      return (this.index === -1 ? '新增' : '修改') + '新聞來源'
     },
     okTitle() {
-      return this.context.index === -1 ? '新增' : '確認'
+      return this.index === -1 ? '新增' : '確認'
     }
   },
   methods: {
@@ -78,11 +85,12 @@ export default {
         url: this.url
       }
       if (this.context.index === -1) {
-        this.$store.dispatch('post/SET_EDITOR_CITATION', data)
+        this.$store.dispatch('post/ADD_EDITOR_CITATION', data)
       } else {
         this.$store.dispatch('post/UPDATE_EDITOR_CITATION', {
-          index: this.context.index,
-          data
+          citation: this.context.citation,
+          title: this.title,
+          url: this.url
         })
       }
     }
@@ -108,7 +116,7 @@ export default {
   position: relative;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     width: 4px;
     left: 0px;
@@ -121,7 +129,7 @@ export default {
 
   &:focus-within {
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       width: 4px;
       left: 0px;
@@ -137,6 +145,6 @@ export default {
 
 .input {
   width: 90%;
-  padding: 10px
+  padding: 10px;
 }
 </style>

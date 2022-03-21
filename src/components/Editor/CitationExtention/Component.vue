@@ -5,13 +5,12 @@
     class="citation__node-wrapper"
     contenteditable="false"
   >
-    <sup>{{ index + 1 }}</sup>
+    <sup>{{ info.index + 1 }}</sup>
   </node-view-wrapper>
 </template>
 
 <script>
 import { NodeViewWrapper, nodeViewProps } from '@tiptap/vue-2'
-import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -21,21 +20,34 @@ export default {
   data() {
     return {
       citation: {
-        title: this.node.attrs.title,
-        url: this.node.attrs.url,
-        node: this,
-        editorId: this.node.attrs.editorId
-      }
+        info: { index: -1 }
+      },
+      editorId: ''
     }
   },
   computed: {
-    ...mapGetters({ post: 'post' }),
-    index() {
-      return this.post.citations.indexOf(this.citation)
+    info() {
+      return this.citation.info
+    }
+  },
+  watch: {
+    info(newInfo) {
+      this.node.attrs.title = newInfo.title
+      this.node.attrs.url = newInfo.url
     }
   },
   async beforeMount() {
-    await this.$store.dispatch('post/SUBMIT_CITATION_FORM', this.citation)
+    const title = this.node.attrs.title
+    const url = this.node.attrs.url
+
+    this.citation = await this.$store.dispatch(
+      'post/ADD_EDITOR_CITATION_NODE',
+      {
+        title: title,
+        url: url,
+        node: this
+      }
+    )
   },
   mounted() {
     // ! cannot bind event listener on node-view-wrapper in template
@@ -43,12 +55,15 @@ export default {
     this.$el.onclick = this.editCitation
   },
   beforeDestroy() {
-    this.$store.dispatch('post/REMOVE_EDITOR_CITATION', this.index)
+    this.$store.dispatch(
+      'post/REMOVE_EDITOR_CITATION_NODE',
+      this.citation,
+      this
+    )
   },
   methods: {
     editCitation() {
-      const citations = this.$store.state.post.citations
-      const context = { index: this.index, citation: citations[this.index] }
+      const context = { citation: this.citation }
       this.$store.commit('post/SET_MODAL_CONTEXT', { context })
       this.$store.commit('post/SET_MODAL_COMPONENT', {
         componentString: 'CITATION'
