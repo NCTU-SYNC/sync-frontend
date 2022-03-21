@@ -1,4 +1,4 @@
-import CitationManager from '../utils/citationManager'
+import CitationManager from '../components/Editor/CitationManager'
 
 const getDefaultState = () => {
   return {
