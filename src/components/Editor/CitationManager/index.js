@@ -1,5 +1,23 @@
 import store from '@/store/index'
 
+class CitationOpError extends Error {
+  /**
+   * Custom error for operation on citation
+   * @param {String} msg message of error
+   * @param  {...any} params other parameters
+   */
+  constructor(msg, ...params) {
+    super(msg, ...params)
+
+    // Maintains stack trace (V8 only)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, CitationOpError)
+    }
+
+    this.name = 'CitationOpError'
+  }
+}
+
 class CitationNode {
   /**
    * constructor of CitationNode
@@ -76,6 +94,31 @@ class CitationInfo {
   }
 
   /**
+   * update citation info
+   * @param {String} title : new title
+   * @param {String} url : new url
+   * @throws {TypeError} : if a invalid url passed
+   * @throws {CitationOpError} : if an empty title passed
+   */
+  updateInfo({ title, url }) {
+    new URL(url)
+
+    if (title.length === 0) {
+      throw new CitationOpError('Citation.info: title should not be empty')
+    }
+
+    this.info = Object.assign({}, this.info, { title, url })
+  }
+
+  /**
+   * update index of this citation
+   * @param {Number} index new index of node to be updated
+   */
+  updateIndex(index) {
+    this.info = Object.assign({}, this.info, { index })
+  }
+
+  /**
    * sort list of nodes from top to bottom
    */
   async sortNodesArray() {
@@ -104,49 +147,6 @@ class CitationInfo {
    */
   get lastNode() {
     return this.nodes[this.nodes.length - 1]
-  }
-
-  /**
-   * update citation info
-   * @param {String} title : new title
-   * @param {String} url : new url
-   * @throws {TypeError} : if a invalid url passed
-   * @throws {CitationOpError} : if an empty title passed
-   */
-  updateInfo({ title, url }) {
-    new URL(url)
-
-    if (title.length === 0) {
-      throw new CitationOpError('Citation.info: title should not be empty')
-    }
-
-    this.info = Object.assign({}, this.info, { title, url })
-  }
-
-  /**
-   * update index of this citation
-   * @param {Number} index new index of node to be updated
-   */
-  updateIndex(index) {
-    this.info = Object.assign({}, this.info, { index })
-  }
-}
-
-class CitationOpError extends Error {
-  /**
-   * Custom error for operation on citation
-   * @param {String} msg message of error
-   * @param  {...any} params other parameters
-   */
-  constructor(msg, ...params) {
-    super(msg, ...params)
-
-    // Maintains stack trace (V8 only)
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, CitationOpError)
-    }
-
-    this.name = 'CitationOpError'
   }
 }
 
