@@ -448,10 +448,26 @@ export default {
 </script>
 
 <style lang="scss">
+// toast animation
+@keyframes toastAnimation {
+  from {
+    transform: translateY(3.5rem);
+  }
+  to {
+    transform: translateY(-3.5rem);
+  }
+}
+
 .citation-toast {
   &--toast {
+    position: relative;
     background-color: $blue !important;
     border-radius: 0.5rem;
+    transform: translateY(-3.5rem);
+
+    animation-name: toastAnimation;
+    animation-duration: 0.3s;
+    animation-timing-function: ease;
   }
 
   &--toast-body {
@@ -462,8 +478,6 @@ export default {
   }
 
   &--toaster {
-    bottom: 3.5rem !important;
-
     div {
       display: flex;
       width: fit-content;
