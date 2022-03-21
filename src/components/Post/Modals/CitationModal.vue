@@ -28,7 +28,7 @@
         class="input-form"
         :style="titleStyle"
         placeholder="請輸入新聞來源的附註標題"
-        @enter="handleEnter"
+        @keypress.enter="handleConfirm"
       />
     </b-form-group>
 
@@ -40,7 +40,7 @@
         class="input-form"
         :style="urlStyle"
         placeholder="請輸入新聞來源的網址"
-        @enter="handleEnter"
+        @keypress.enter="handleConfirm"
       />
     </b-form-group>
   </b-modal>
@@ -94,9 +94,6 @@ export default {
     },
     autoFocus() {
       this.$refs.title.focus()
-    },
-    handleEnter(evt) {
-      console.log(evt)
     },
     handleConfirm(evt) {
       evt.preventDefault()
