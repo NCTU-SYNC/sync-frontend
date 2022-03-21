@@ -1,7 +1,7 @@
 <template>
   <node-view-wrapper
     as="span"
-    role="button"
+    :role="role"
     class="citation__node-wrapper"
     contenteditable="false"
   >
@@ -28,6 +28,9 @@ export default {
   computed: {
     info() {
       return this.citation.info
+    },
+    role() {
+      return this.$props.editor.options.editable ? 'button' : 'note'
     }
   },
   watch: {
