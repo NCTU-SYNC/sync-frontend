@@ -14,6 +14,7 @@
     ok-variant="ok"
     cancel-variant="cancel"
     @ok="handleConfirm"
+    @shown="autoFocus"
   >
     <b-form-group
       label-cols="auto"
@@ -22,20 +23,24 @@
     >
       <b-form-input
         id="citation-title"
+        ref="title"
         v-model="title"
         class="input-form"
         :style="titleStyle"
         placeholder="請輸入新聞來源的附註標題"
+        @enter="handleEnter"
       />
     </b-form-group>
 
     <b-form-group label-cols="auto" label="來源網址：" label-for="citation-url">
       <b-form-input
         id="citation-url"
+        ref="url"
         v-model="url"
         class="input-form"
         :style="urlStyle"
         placeholder="請輸入新聞來源的網址"
+        @enter="handleEnter"
       />
     </b-form-group>
   </b-modal>
@@ -87,6 +92,12 @@ export default {
     close() {
       this.$bvModal.hide('citation-modal')
     },
+    autoFocus() {
+      this.$refs.title.focus()
+    },
+    handleEnter(evt) {
+      console.log(evt)
+    },
     handleConfirm(evt) {
       evt.preventDefault()
 
@@ -100,7 +111,13 @@ export default {
         this.urlValid = false
       }
 
-      if (!this.titleValid || !this.urlValid) return
+      if (!this.titleValid) {
+        this.$refs.title.focus()
+        return
+      } else if (!this.urlValid) {
+        this.$refs.url.focus()
+        return
+      }
 
       const data = {
         title: this.title,
