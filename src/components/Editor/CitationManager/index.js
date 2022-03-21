@@ -77,7 +77,7 @@ class CitationInfo {
    * @param {CitationNode} node node to be removed
    * @returns Boolean true if list of node is empty after removing
    */
-  async removeNode(node) {
+  removeNode(node) {
     this.nodes.splice(this.nodes.indexOf(node), 1)
 
     if (this.nodes.length === 0) return true
@@ -222,13 +222,12 @@ class CitationManager {
     }
 
     const citationNode = new CitationNode(node)
-    citationInfo.removeNode(citationNode).then((res) => {
-      if (res === true) {
-        this.citationList.splice(citationInfo.index, 1)
-        this.citationMap.delete(key)
-        this.updateCitationIndex()
-      }
-    })
+    const nodeListEmpty = citationInfo.removeNode(citationNode)
+    if (nodeListEmpty) {
+      this.citationList.splice(citationInfo.index, 1)
+      this.citationMap.delete(key)
+      this.updateCitationIndex()
+    }
   }
 
   /**

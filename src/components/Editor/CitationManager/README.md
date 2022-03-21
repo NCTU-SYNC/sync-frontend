@@ -16,7 +16,7 @@ Object~String, String, Number~ info
 Array~CitationNode~ nodes
 
 addNode(CitationNode)
-async removeNode(CitationNode)
+removeNode(CitationNode)
 removeAllNode()
 async sortNodesArray()
 updateInfo(Object~String, String~)
