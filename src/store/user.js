@@ -34,7 +34,7 @@ const getters = {
   createAt: (state) => state.createAt,
   email: (state) => state.email,
   preferences: (state) => state.preferences,
-  nameModTime: (state) => state.nameModTime
+  nameModTime: (state) => state.nameModTime,
   expirationTime: (state) => state.expirationTime
 }
 
