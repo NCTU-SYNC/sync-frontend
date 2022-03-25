@@ -27,14 +27,13 @@
         v-model="title"
         class="input-form"
         :style="titleStyle"
+        :state="titleState"
         placeholder="請輸入新聞來源的附註標題"
         @keypress.enter="handleConfirm"
       />
-      <label
-        v-if="!titleValid"
-        class="input-label--error"
-        for="citation-title"
-      >標題不可為空</label>
+      <b-form-invalid-feedback :state="titleState">
+        顯示文字不可為空
+      </b-form-invalid-feedback>
     </b-form-group>
 
     <b-form-group label-cols="auto" label="來源網址：" label-for="citation-url">
@@ -44,19 +43,19 @@
         v-model="url"
         class="input-form"
         :style="urlStyle"
+        :state="urlState"
         placeholder="請輸入新聞來源的網址"
         @keypress.enter="handleConfirm"
       />
-      <label
-        v-if="!urlValid"
-        class="input-label--error"
-        for="citation-url"
-      >請輸入合法網址</label>
+      <b-form-invalid-feedback :state="urlState">
+        請輸入合法的 URL，e.g. https://www.google.com
+      </b-form-invalid-feedback>
     </b-form-group>
   </b-modal>
 </template>
 
 <script>
+import { Utils } from '@/utils'
 export default {
   props: {
     context: {
@@ -74,7 +73,12 @@ export default {
       citation = { ...this.context.citation.info }
     }
 
-    return { ...citation, titleValid: true, urlValid: true }
+    return {
+      ...citation,
+      titleValid: true,
+      urlValid: true,
+      startValidation: null
+    }
   },
   computed: {
     modalTitle() {
@@ -88,6 +92,12 @@ export default {
     },
     urlStyle() {
       return this.urlValid ? '' : 'border-color: #FF601C !important'
+    },
+    urlState() {
+      return this.startValidation && Utils.isValidUrl(this.url)
+    },
+    titleState() {
+      return this.startValidation && this.title.length !== 0
     }
   },
   methods: {
@@ -105,18 +115,19 @@ export default {
     autoFocus() {
       this.$refs.title.focus()
     },
+    checkFormValidity() {
+      this.startValidation = true
+      return this.urlState || this.titleState
+    },
     handleConfirm(evt) {
       evt.preventDefault()
 
+      if (!this.checkFormValidity()) {
+        return
+      }
+
       if (this.title.length === 0) this.titleValid = false
       else this.titleValid = true
-
-      try {
-        new URL(this.url)
-        this.urlValid = true
-      } catch (error) {
-        this.urlValid = false
-      }
 
       if (!this.titleValid) {
         this.$refs.title.focus()
