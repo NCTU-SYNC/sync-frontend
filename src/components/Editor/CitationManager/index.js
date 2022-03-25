@@ -108,6 +108,17 @@ class CitationInfo {
     }
 
     this.info = Object.assign({}, this.info, { title, url })
+
+    const ids = this.nodes.flatMap((n) => n.editorId)
+    for (const id of ids) {
+      this.nodes[0].node.$nextTick(() => {
+        const content = store.state.post.currentEditors[id].getJSON()
+        store.commit('post/UPDATE_BLOCK_CONTENT', {
+          id,
+          content
+        })
+      })
+    }
   }
 
   /**
