@@ -229,7 +229,7 @@ class CitationManager {
     const citationInfo = this.citationMap.get(key)
 
     if (!citationInfo) {
-      throw new CitationOpError('CitationManager: Citation not existed')
+      return
     }
 
     const citationNode = new CitationNode(node)
