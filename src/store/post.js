@@ -1,6 +1,9 @@
 import CitationManager from '../components/Editor/CitationManager'
 
+const citationManager = new CitationManager()
+
 const getDefaultState = () => {
+  citationManager.reset()
   return {
     articleId: undefined,
     isNewPost: false,
@@ -10,7 +13,7 @@ const getDefaultState = () => {
     postTitle: '',
     postTags: [],
     blocks: [],
-    citation: new CitationManager(),
+    citation: citationManager,
     categorySelected: '',
     currentEditingEditor: null,
     showAddPointsAlert: false,
@@ -107,7 +110,7 @@ const mutations = {
     state.postTags = data.tags || []
     state.blocks = data.blocks || []
     state.categorySelected = data.category || '未分類'
-    state.citation = new CitationManager()
+    state.citatoin.reset()
     // init blocks, set timeEnable to be true to be compatible with older articles
     for (const block of state.blocks) {
       if (!Object.prototype.hasOwnProperty.call(block, 'timeEnable')) {
