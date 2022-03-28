@@ -161,9 +161,9 @@ export default {
           const { data } = await createArticle(articleData)
           this.isLoading = false
           if (data.code === 200) {
+            this.removeArticleLocalStorage()
             this.$store.commit('post/SET_ARTICLEID', data.id)
             this.showAddPointsAlertAndRedirect()
-            this.removeArticleLocalStorage()
           } else {
             this.$bvModal.msgBoxOk(data.message)
           }

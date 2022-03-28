@@ -366,8 +366,7 @@ export default {
               throw new Error(response.data.message)
             }
           })
-      } else {
-        this.handleAddBlock(-1)
+      } else { // if new article
         if (localStorageData) {
           const { timeStamp } = localStorageData
           const localStorageDate = new Date(timeStamp)
@@ -395,8 +394,11 @@ export default {
                 })
               } else {
                 this.removeArticleLocalStorage()
+                this.handleAddBlock(-1)
               }
             })
+        } else {
+          this.handleAddBlock(-1)
         }
       }
       return true
