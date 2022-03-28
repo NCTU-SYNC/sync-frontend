@@ -191,6 +191,11 @@ class CitationManager {
     this.citationMap = new Map()
   }
 
+  reset() {
+    this.citationList = []
+    this.citationMap.clear()
+  }
+
   /**
    * connect node with citation.
    * if citation not existed, create new one.
