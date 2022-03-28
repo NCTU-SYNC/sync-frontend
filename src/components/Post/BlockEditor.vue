@@ -17,6 +17,7 @@
           variant="white"
           no-caret
           toggle-class="datetime-dropdown"
+          lazy
           @hidden="toggleHide"
           @show="dropdownOpen = true"
         >
@@ -119,35 +120,18 @@ export default {
   computed: {
     displayDateTime() {
       if (!this.tempData.blockDateValue) return '-'
-
-      return `${moment(this.tempData.blockDateValue).format('YYYY/MM/DD')} ${
-        this.tempData.timeEnable
-          ? moment(
-            `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`
-          ).format('HH:mm')
-          : ''
-      }`
+      return this.formattedDateTimeStr(this.tempData.blockDateValue, this.tempData.timeEnable, this.tempData.blockTimeValue)
     },
     dropdownBtnDateTime() {
-      return `${moment(this.tempData.blockDateValue).format('YYYY/MM/DD')} ${
-        this.tempData.timeEnable
-          ? moment(
-            `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`
-          ).format('HH:mm')
-          : ''
-      }`
+      return this.formattedDateTimeStr(this.tempData.blockDateValue, this.tempData.timeEnable, this.tempData.blockTimeValue)
     }
   },
   created() {
     this.tempData.blockTitle = this.block.blockTitle
     if (this.block.blockDateTime) {
-      this.tempData.blockDateValue = moment(this.block.blockDateTime).format(
-        'YYYY-MM-DD'
-      )
+      this.tempData.blockDateValue = this.formattedDateStr(this.block.blockDateTime)
       if (this.block.timeEnable) {
-        this.tempData.blockTimeValue = moment(this.block.blockDateTime).format(
-          'HH:mm'
-        )
+        this.tempData.blockTimeValue = this.formattedTimeStr(this.block.blockDateTime)
         this.tempData.timeEnable = this.block.timeEnable
       }
     }
@@ -158,18 +142,6 @@ export default {
       this.$store.commit('post/UPDATE_BLOCK_TITLE', {
         id: this.block.id,
         title: this.tempData.blockTitle
-      })
-    },
-    handleChangeDate() {
-      this.$store.commit('post/UPDATE_BLOCK_DATETIME', {
-        id: this.block.id,
-        datetime: `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`
-      })
-    },
-    handleChangeTime() {
-      this.$store.commit('post/UPDATE_BLOCK_DATETIME', {
-        id: this.block.id,
-        datetime: `${this.tempData.blockDateValue} ${this.tempData.blockTimeValue}`
       })
     },
     saveDateTimeChanges() {
@@ -192,14 +164,10 @@ export default {
     },
     fetchDateTime() {
       if (this.block.blockDateTime) {
-        this.tempData.blockDateValue = moment(this.block.blockDateTime).format(
-          'YYYY-MM-DD'
-        )
+        this.tempData.blockDateValue = this.formattedDateStr(this.block.blockDateTime)
       }
       if (this.block.blockDateTime) {
-        this.tempData.blockTimeValue = moment(this.block.blockDateTime).format(
-          'HH:mm'
-        )
+        this.tempData.blockTimeValue = this.formattedTimeStr(this.block.blockDateTime)
       }
       this.tempData.timeEnable = this.block.timeEnable
     },
@@ -212,6 +180,19 @@ export default {
     toggleHide() {
       this.fetchDateTime()
       this.dropdownOpen = false
+    },
+    formattedDateStr(datetimeValue) {
+      return moment(datetimeValue).format('YYYY/MM/DD')
+    },
+    formattedTimeStr(datetimeValue) {
+      return moment(datetimeValue).format('HH:mm')
+    },
+    formattedDateTimeStr(dateValue, timeEnable, timeValue) {
+      return `${this.formattedDateStr(dateValue)} ${
+        timeEnable
+          ? this.formattedTimeStr(`${dateValue} ${timeValue}`)
+          : ''
+      }`
     }
   }
 }

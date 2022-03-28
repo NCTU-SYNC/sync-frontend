@@ -393,10 +393,8 @@ export default {
       return moment(timeString).format('YYYY/MM/DD HH:mm')
     },
     formatBlockDateTime(timeString, timeEnable) {
-      if (timeEnable === undefined || timeEnable === true) {
-        return moment(timeString).format('YYYY/MM/DD HH:mm')
-      }
-      return moment(timeString).format('YYYY/MM/DD')
+      const displayTime = timeEnable || timeEnable === undefined
+      return moment(timeString).format(`YYYY/MM/DD${displayTime ? ' HH:mm' : ''}`)
     },
     formatCategory(category) {
       return category === '' ? '未分類' : category
