@@ -1,6 +1,9 @@
 import CitationManager from '../components/Editor/CitationManager'
 
+const citationManager = new CitationManager()
+
 const getDefaultState = () => {
+  citationManager.reset()
   return {
     articleId: undefined,
     isNewPost: false,
@@ -10,7 +13,7 @@ const getDefaultState = () => {
     postTitle: '',
     postTags: [],
     blocks: [],
-    citation: new CitationManager(),
+    citation: citationManager,
     categorySelected: '',
     currentEditingEditor: null,
     showAddPointsAlert: false,
