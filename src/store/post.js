@@ -106,7 +106,7 @@ const mutations = {
     state.postTitle = data.title
     state.postTags = data.tags || []
     state.blocks = data.blocks || []
-    state.categorySelected = data.category ? data.category : '未分類'
+    state.categorySelected = data.category || '未分類'
     state.citation = new CitationManager()
     // init blocks, set timeEnable to be true to be compatible with older articles
     for (const block of state.blocks) {
