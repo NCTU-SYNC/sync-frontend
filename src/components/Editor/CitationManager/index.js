@@ -322,13 +322,13 @@ class CitationManager {
     // set sorted list in citationList
     this.citationList = Object.values(bucket).flatMap((b) => b)
 
-    await this.updateCitationIndex()
+    this.updateCitationIndex()
   }
 
   /**
    * update index of each citation (usually after sorting)
    */
-  async updateCitationIndex() {
+  updateCitationIndex() {
     this.citationList.forEach((citation, index) => {
       citation.updateIndex(index)
     })
