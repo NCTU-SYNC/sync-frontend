@@ -430,9 +430,6 @@ export default {
           })
       }
     },
-    handleCitationLoad(event) {
-      console.log(event)
-    },
     handleShowTimeline(status) {
       this.isTimelineShow = status
     },
