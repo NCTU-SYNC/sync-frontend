@@ -39,22 +39,19 @@ const mutations = {
     state.currentEditingEditor = null
   },
   UPDATE_BLOCK_CONTENT(state, { id, content }) {
-    const block = state.blocks.find((b) => b.id === id)
-    if (block) {
-      block.content = content
-    }
+    const block = findBlockById(state, id)
+    if (!block) return
+    block.content = content
   },
   UPDATE_BLOCK_TITLE(state, { id, title }) {
-    const block = state.blocks.find((b) => b.id === id)
-    if (block) {
-      block.blockTitle = title
-    }
+    const block = findBlockById(state, id)
+    if (!block) return
+    block.blockTitle = title
   },
   UPDATE_BLOCK_DATETIME(state, { id, datetime }) {
-    const block = state.blocks.find((b) => b.id === id)
-    if (block) {
-      block.blockDateTime = datetime
-    }
+    const block = findBlockById(state, id)
+    if (!block) return
+    block.blockDateTime = datetime
   },
   SET_CITATION(state, { index, citation }) {
     state.citations[index] = citation
@@ -123,10 +120,9 @@ const mutations = {
     }
   },
   TOGGLE_TIME_ENABLE(state, { id, value }) {
-    const block = state.blocks.find((b) => b.id === id)
-    if (block) {
-      block.timeEnable = value
-    }
+    const block = findBlockById(state, id)
+    if (!block) return
+    block.timeEnable = value
   },
   SET_MODAL_CONTEXT(state, { context }) {
     state.modalContext = context
@@ -167,11 +163,9 @@ const mutations = {
 
 const getters = {
   GET_BLOCK_DATETIME: (state) => (id) => {
-    const block = state.blocks.find((block) => block.id === id)
-    if (block) {
-      return block.blockDateTime
-    }
-    return ''
+    const block = findBlockById(state, id)
+    if (!block) return ''
+    return block.blockDateTime
   },
   GET_EDITOR_BY_ID: (state) => (id) => {
     let editor = null
@@ -220,6 +214,12 @@ const actions = {
   REMOVE_EDITOR_CITATION_NODE({ state }, citation, node) {
     state.citation.unregisterNode(citation, node)
   }
+}
+
+// Helper functions
+
+function findBlockById(state, id) {
+  return state.blocks.find((block) => block.id === id)
 }
 
 export default {
