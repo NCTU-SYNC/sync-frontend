@@ -109,23 +109,17 @@ export default {
     },
     checkFormValidity() {
       this.startValidation = true
-      return this.urlState || this.titleState
+      return this.urlState && this.titleState
     },
     handleConfirm(evt) {
       evt.preventDefault()
 
       if (!this.checkFormValidity()) {
-        return
-      }
-
-      if (this.title.length === 0) this.titleValid = false
-      else this.titleValid = true
-
-      if (!this.titleValid) {
-        this.$refs.title.focus()
-        return
-      } else if (!this.urlValid) {
-        this.$refs.url.focus()
+        if (!this.titleState) {
+          this.$refs.title.focus()
+        } else if (!this.urlState) {
+          this.$refs.url.focus()
+        }
         return
       }
 
