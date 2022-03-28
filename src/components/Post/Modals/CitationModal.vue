@@ -26,7 +26,6 @@
         ref="title"
         v-model="title"
         class="input-form"
-        :style="titleStyle"
         :state="titleState"
         placeholder="請輸入新聞來源的附註標題"
         @keypress.enter="handleConfirm"
@@ -42,7 +41,6 @@
         ref="url"
         v-model="url"
         class="input-form"
-        :style="urlStyle"
         :state="urlState"
         placeholder="請輸入新聞來源的網址"
         @keypress.enter="handleConfirm"
@@ -86,12 +84,6 @@ export default {
     },
     okTitle() {
       return this.index === -1 ? '新增' : '確認'
-    },
-    titleStyle() {
-      return this.titleValid ? '' : 'border-color: #FF601C !important'
-    },
-    urlStyle() {
-      return this.urlValid ? '' : 'border-color: #FF601C !important'
     },
     urlState() {
       return this.startValidation && Utils.isValidUrl(this.url)
