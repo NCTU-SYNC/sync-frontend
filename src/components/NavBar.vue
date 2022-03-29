@@ -1,12 +1,14 @@
 <template>
-  <b-navbar ref="navbar" fixed="top" class="header-navbar" type="light" variant="faded">
-    <b-button class="px-0 px-md-2" variant="transparent" to="/post">
-      <icon icon="edit" />
-    </b-button>
-    <b-navbar-brand id="brand" to="/" class="centered-block"><Logo /></b-navbar-brand>
+  <b-navbar ref="navbar" fixed="top" class="navbar--container" type="light" variant="faded">
+    <b-navbar-nav class="navbar--item item-left">
+      <b-nav-item class="post px-0" to="/post">
+        <icon icon="edit" />
+      </b-nav-item>
+    </b-navbar-nav>
+    <b-navbar-brand id="brand" to="/" class="navbar--item item-center"><Logo /></b-navbar-brand>
 
-    <!-- Right aligned nav items -->
-    <b-navbar-nav class="ml-auto d-none d-md-flex align-items-center h-100">
+    <!-- Show when screen width is larger than md -->
+    <b-navbar-nav class="navbar--item item-right d-none d-md-flex align-items-center h-100">
       <div class="search-bar">
         <b-button variant="link" class="search-bar--submit"><icon icon="search" /></b-button>
         <b-form-input
@@ -57,7 +59,8 @@
         <b-dropdown-item href="#" @click="handleLogout">登出</b-dropdown-item>
       </b-nav-item-dropdown>
     </b-navbar-nav>
-    <b-navbar-nav class="ml-auto d-flex d-md-none align-items-center">
+    <!-- Show when screen width is smaller than md -->
+    <b-navbar-nav class="navbar--item item-right d-flex d-md-none align-items-center">
       <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><icon icon="search" /></b-nav-item>
       <b-button variant="link"><icon icon="notification" /></b-button>
       <b-nav-item v-if="getLoginStatus" to="/profile">
@@ -123,20 +126,33 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.header-navbar {
-  height: 4rem;
-  background-color: $white;
-  border-bottom: 1px solid $gray-light;
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
+.navbar {
+  &--container {
+    height: 4rem;
+    background-color: $white;
+    border-bottom: 1px solid $gray-light;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
 
-.centered-block {
-    left: 50%;
-    transform: translate(-50%, 0);
-    -webkit-transform: translate(-50%, 0);
-    position: absolute;
+  &--item {
+    flex: 1;
+  }
+  .item-left {
+    display: flex;
+    justify-content: begin;
+  }
+  .item-right {
+    display: flex;
+    justify-content: end;
+  }
+  .item-center {
+      margin: 0 !important;
+      // background: lime;
+      display: flex;
+      justify-content: center;
+  }
 }
 
 .avatar-user {
@@ -160,6 +176,7 @@ export default {
   overflow-x: hidden;
   overflow-y: scroll;
 }
+
 .search-bar {
   --size: 40px;
 
