@@ -7,7 +7,15 @@
 
     <!-- Right aligned nav items -->
     <b-navbar-nav class="ml-auto d-none d-md-flex align-items-center h-100">
-      <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><icon icon="search" /></b-nav-item>
+      <div class="search-bar">
+        <b-button variant="link" class="search-bar--submit"><icon icon="search" /></b-button>
+        <b-form-input
+          id="search-bar--inputid"
+          class="search-bar--input"
+          placeholder="搜尋文章"
+          type="search"
+        />
+      </div>
 
       <b-nav-item-dropdown
         size="lg"
@@ -152,7 +160,50 @@ export default {
   overflow-x: hidden;
   overflow-y: scroll;
 }
+.search-bar {
+  --size: 40px;
 
+  height: 40px;
+  width: var(--size);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  transition: width 300ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
+
+  &--input {
+    height: 40px;
+    opacity: 0;
+    cursor: pointer;
+    position: absolute;
+    &:active, &:focus {
+      border: 1px solid $blue !important;
+    }
+    &::placeholder{
+      color: $text-4;
+    }
+  }
+
+  &--submit {
+    padding: 0;
+    margin-right: auto;
+  }
+
+  &:focus-within {
+    width: 400px;
+
+    .search-bar--input {
+      border: 1px solid $gray-4 !important;
+      border-radius: 4px;
+      opacity: 1;
+      cursor: initial;
+      transition: opacity 150ms ease-in-out;
+      width: calc(100% - var(--size));
+    }
+
+  }
+}
 </style>
 
 <style lang="scss">
