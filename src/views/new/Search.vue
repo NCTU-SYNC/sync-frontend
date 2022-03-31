@@ -39,9 +39,9 @@
       <div
         class="d-flex justify-content-center cards-container"
       >
-        <b-row cols-sm="1" :cols-md="Math.min(2,filteredNewsArr.length)" :cols-lg="Math.min(3,filteredNewsArr.length)" style="max-width:1024px;">
+        <b-row cols-sm="1" :cols-md="Math.min(2,newsArr.length)" :cols-lg="Math.min(3, newsArr.length)" style="max-width:1024px;">
           <ArticleCard
-            v-for="(news, newsIndex) in filteredNewsArr"
+            v-for="(news, newsIndex) in newsArr"
             :key="newsIndex"
             :category="news.category"
             :title="news.title"
@@ -72,7 +72,6 @@ export default {
       sentKeyword: '',
       resultCount: 0,
       newsArr: [],
-      filteredNewsArr: [],
       queryTimeSelected: 'qdr:a',
       prevQueryTime: null,
       categorySelected: '',
@@ -88,23 +87,19 @@ export default {
       isLoading: false
     }
   },
-  computed: {
-    items() {
-      return this.filteredNewsArr.slice(
-        (this.currentPage - 1) * this.perPage,
-        this.currentPage * this.perPage
-      )
+  watch: {
+    async '$route.query'() {
+      await this.routerQuerySearch()
     }
   },
+  created() {
+    this.routerQuerySearch()
+  },
   methods: {
-    async handleSearch() {
-      console.log('hi')
-      if (this.keyword === '' || (this.sentKeyword === this.keyword && this.queryTimeSelected === this.prevQueryTime)) return
-      await this.searchArticles()
-      this.filteredNewsArr = this.newsArr
-      this.sentKeyword = this.keyword
-      this.prevQueryTime = this.queryTimeSelected
-      this.resultCount = this.filteredNewsArr.length
+    handleSearch() {
+      const routerQuery = this.$route.query
+      if (routerQuery.q === this.keyword && routerQuery.tbs === this.queryTimeSelected) return
+      this.$router.push({ path: 'search', query: { q: this.keyword, tbs: this.queryTimeSelected }})
     },
     handleArticleRoute(_id) {
       if (!_id) return
@@ -134,7 +129,6 @@ export default {
                 category, _id, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks
               })
             })
-            this.filteredNewsArr = this.newsArr
           } else {
             throw new Error(data.message)
           }
@@ -149,8 +143,23 @@ export default {
     searchFilter(filterRange = 'all') {
       if (this.timeQueries.get(filterRange) === this.queryTimeSelected) return
       this.queryTimeSelected = this.timeQueries.get(filterRange)
-      console.log(this.queryTimeSelected)
       this.handleSearch()
+    },
+    async routerQuerySearch() {
+      // Check if query string is empty
+      if (this.$route.query.q) {
+        // get query params from router
+        const routerQuery = { q: '', tbs: 'qdr:a', ...this.$route.query }
+        this.keyword = routerQuery.q
+        this.queryTimeSelected = routerQuery.tbs
+        // if did not change, return
+        if (routerQuery.q === '' || routerQuery.q === this.sentKeyword &&
+          routerQuery.tbs === this.prevQueryTime) { return }
+        await this.searchArticles()
+        this.sentKeyword = this.keyword
+        this.prevQueryTime = this.queryTimeSelected
+        this.resultCount = this.newsArr.length
+      }
     },
     onTimeDropdownClicked(timeString) {
       this.queryTimeSelected = timeString

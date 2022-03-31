@@ -9,15 +9,16 @@
 
     <!-- Show when screen width is larger than md -->
     <b-navbar-nav class="navbar--item item-right d-none d-md-flex align-items-center h-100">
-      <div class="search-bar">
-        <b-button variant="link" class="search-bar--submit"><icon icon="search" /></b-button>
+      <form class="search-bar" @submit.prevent="submitSearch">
+        <b-button variant="link" class="search-bar--submit" type="submit"><icon icon="search" /></b-button>
         <b-form-input
           id="search-bar--inputid"
+          v-model="keyword"
           class="search-bar--input"
           placeholder="搜尋文章"
           type="search"
         />
-      </div>
+      </form>
 
       <b-nav-item-dropdown
         size="lg"
@@ -87,6 +88,11 @@ import moment from 'moment'
 export default {
   name: 'NavBar',
   components: { Logo },
+  data() {
+    return {
+      keyword: ''
+    }
+  },
   computed: {
     getRedirectPath() {
       // 設置重新導向，若在首頁、註冊、登入頁面做切換不需設置redirect，其他頁面則需要重新導向，若已經設置重新導向頁面，則註冊、登入切換時，並不會互相把自己的頁面給放進重新導向內
@@ -120,6 +126,11 @@ export default {
         return moment(timeStamp._seconds * 1000).format('YYYY/MM/DD HH:mm')
       }
       return moment(timeStamp).format('YYYY/MM/DD HH:mm')
+    },
+    submitSearch() {
+      if (!this.keyword) return
+      if (this.keyword === this.$route.query.q) return
+      this.$router.push({ path: 'search', query: { q: this.keyword }})
     }
   }
 }
