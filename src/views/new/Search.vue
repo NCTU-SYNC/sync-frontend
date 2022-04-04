@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="search-page--container">
     <b-container fluid="xl" class="search-bar-container">
       <b-form
         class="d-flex justify-content-center"
@@ -35,26 +35,35 @@
         </div>
       </b-form>
     </b-container>
-    <b-container fluid="xl">
-      <div
-        class="d-flex justify-content-center cards-container"
-      >
-        <b-row cols-sm="1" :cols-md="Math.min(2,newsArr.length)" :cols-lg="Math.min(3, newsArr.length)" style="max-width:1024px;">
-          <ArticleCard
-            v-for="(news, newsIndex) in newsArr"
-            :key="newsIndex"
-            :category="news.category"
-            :title="news.title"
-            :views-count="news.viewsCount"
-            :tags="news.tags.slice(0,2)"
-            :last-updated-at="news.lastUpdatedAt"
-            :edited-count="news.editedCount"
-            :blocks="news.blocks"
-            :article-id="news._id"
-          />
-        </b-row>
+    <transition
+      name="fade"
+      mode="out-in"
+      :duration="1000"
+    >
+      <b-container v-if="!isLoading" fluid="xl">
+        <div
+          class="d-flex justify-content-center cards-container"
+        >
+          <b-row cols-sm="1" :cols-md="Math.min(2,newsArr.length)" :cols-lg="Math.min(3, newsArr.length)" style="max-width:1024px;">
+            <ArticleCard
+              v-for="(news, newsIndex) in newsArr"
+              :key="newsIndex"
+              :category="news.category"
+              :title="news.title"
+              :views-count="news.viewsCount"
+              :tags="news.tags.slice(0,2)"
+              :last-updated-at="news.lastUpdatedAt"
+              :edited-count="news.editedCount"
+              :blocks="news.blocks"
+              :article-id="news._id"
+            />
+          </b-row>
+        </div>
+      </b-container>
+      <div v-else class="loading-animation--container">
+        <b-img :src="require('@/assets/images/search-animation.svg')" class="loading-animation" />
       </div>
-    </b-container>
+    </transition>
   </div>
 </template>
 
@@ -98,7 +107,7 @@ export default {
   methods: {
     handleSearch() {
       const routerQuery = this.$route.query
-      if (routerQuery.q === this.keyword && routerQuery.tbs === this.queryTimeSelected) return
+      if (this.keyword === '' || routerQuery.q === this.keyword && routerQuery.tbs === this.queryTimeSelected) return
       this.$router.push({ path: 'search', query: { q: this.keyword, tbs: this.queryTimeSelected }})
     },
     handleArticleRoute(_id) {
@@ -175,7 +184,9 @@ export default {
 
 <style scoped lang="scss">
 @import '@/assets/scss/news.scss';
-
+.search-page--container {
+  min-height: 740px;
+}
 .search-bar-container {
   margin-top: 3rem;
   width: 100%;
@@ -241,7 +252,19 @@ export default {
       }
     }
   }
+}
 
+.loading-animation--container {
+  display: flex;
+  justify-content: center;
+  margin-top: 230px;
+  .loading-animation {
+    width: 60px;
+  }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
 }
 
 </style>
