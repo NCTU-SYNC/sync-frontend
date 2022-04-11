@@ -138,15 +138,8 @@ export default {
         this.isLoading = false
         return
       }
-      // check for empty editors
-      let noContent = false
-      for (const editor of Object.values(this.post.currentEditors)) {
-        if (editor.isEmpty) {
-          noContent = true
-          break
-        }
-      }
-      if (noContent) {
+
+      if (Object.values(this.post.currentEditors).some((editor) => editor.isEmpty)) {
         await this.$bvModal.msgBoxOk('段落內文不得為空白，請輸入段落內文')
         this.isLoading = false
         return
