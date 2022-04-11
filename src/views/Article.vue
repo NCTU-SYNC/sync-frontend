@@ -1,15 +1,34 @@
 <template>
   <b-container fluid class="article-container">
     <CategoryBar />
-    <div v-if="isPageReady" :class="{'position-relative': windowScrollY > FooterOffsetTop }">
+    <div
+      v-if="isPageReady"
+      :class="{ 'position-relative': windowScrollY > FooterOffsetTop }"
+    >
       <div
         class="timeline-container py-4"
-        :class="windowScrollY > FooterOffsetTop ? 'position-absolute' : isTimelineOutOfScreen ? 'position-fixed' : 'position-absolute'"
-        :style="windowScrollY > FooterOffsetTop ? 'bottom: 32px; right: calc(50vw + 360px + 64px - 15px);' : isTimelineOutOfScreen ? 'top: 104px;' : 'top: ' + (barDistToTop-20) +'px;'"
+        :class="
+          windowScrollY > FooterOffsetTop
+            ? 'position-absolute'
+            : isTimelineOutOfScreen
+              ? 'position-fixed'
+              : 'position-absolute'
+        "
+        :style="
+          windowScrollY > FooterOffsetTop
+            ? 'bottom: 32px; right: calc(50vw + 360px + 64px - 15px);'
+            : isTimelineOutOfScreen
+              ? 'top: 104px;'
+              : 'top: ' + (barDistToTop - 20) + 'px;'
+        "
       >
         <div class="timeline">
           <ul>
-            <li v-for="(block, blockIndex) in blocks" :key="blockIndex" @click="scrollTo(`block-${block._id}`)">
+            <li
+              v-for="(block, blockIndex) in blocks"
+              :key="blockIndex"
+              @click="scrollTo(`block-${block._id}`)"
+            >
               {{ block.blockTitle }}
             </li>
           </ul>
@@ -20,23 +39,26 @@
         :style="`top: ${firstBlockDistToTop}px;`"
       >
         <div class="d-flex align-items-center heading">
-          <h2 class="d-inline-block mb-0">推薦新聞 </h2>
+          <h2 class="d-inline-block mb-0">推薦新聞</h2>
           <hr class="d-inline-block line">
         </div>
         <ol>
-          <li v-for="(recNews, recNewsIndex) in recommendedNews" :key="recNewsIndex">
+          <li
+            v-for="(recNews, recNewsIndex) in recommendedNews"
+            :key="recNewsIndex"
+          >
             <div class="content">
-              <div class="title"><b-link :to="`/article/${recNews._id}`">{{ recNews.title }}</b-link></div>
+              <div class="title">
+                <b-link :to="`/article/${recNews._id}`">{{
+                  recNews.title
+                }}</b-link>
+              </div>
               <div class="date">{{ formatDate(recNews.lastUpdatedAt) }}</div>
             </div>
           </li>
         </ol>
       </div>
-      <transition
-        name="fade"
-        mode="out-in"
-        :duration="500"
-      >
+      <transition name="fade" mode="out-in" :duration="500">
         <div class="d-flex justify-content-center">
           <div class="main-content-container">
             <div class="title-block mt-5">
@@ -50,17 +72,25 @@
               </div>
 
               <div class="hashtag-container">
-                <span v-for="(tag, tagIndex) in tags" :key="tagIndex" class="hashtag"> #{{ tag }} </span>
+                <span
+                  v-for="(tag, tagIndex) in tags"
+                  :key="tagIndex"
+                  class="hashtag"
+                >
+                  #{{ tag }}
+                </span>
               </div>
               <div class="article-info d-flex justify-content-between">
-                <div class="seen-edit-info">觀看數：{{ viewCount }}｜編輯數：{{ editedCount }}</div>
-                <div class="lastUpdated">最後更新時間 {{ formatDateTime(lastUpdatedAt) }}</div>
+                <div class="seen-edit-info">
+                  觀看數：{{ viewCount }}｜編輯數：{{ editedCount }}
+                </div>
+                <div class="lastUpdated">
+                  最後更新時間 {{ formatDateTime(lastUpdatedAt) }}
+                </div>
               </div>
               <hr ref="title-gray-bar">
               <div class="d-flex justify-content-between">
-                <div class="author-info">
-                  編輯者： {{ authorsString }}
-                </div>
+                <div class="author-info">編輯者： {{ authorsString }}</div>
                 <div class="icons">
                   <b-button
                     v-b-tooltip.hover.bottom.v-secondary="'編輯內容'"
@@ -81,7 +111,7 @@
                   <b-button
                     v-b-tooltip.hover.bottom.v-secondary="bookmarkTooltip"
                     class="btn-icon ml-3"
-                    :class="isSubscribed ? 'subscribed': ''"
+                    :class="isSubscribed ? 'subscribed' : ''"
                     @click="handleClickBookmark"
                   >
                     <icon v-if="!isSubscribed" icon="save" />
@@ -96,31 +126,38 @@
               :ref="`block-${block._id}`"
               :key="index"
               class="block"
-              :class="citations.length===0?'no-citation':''"
+              :class="citations.length === 0 ? 'no-citation' : ''"
             >
-
               <div class="block-header">
                 <h2>
                   {{ block.blockTitle }}
                 </h2>
                 <div v-if="block.blockDateTime" class="article-info">
-                  事件時間：{{ formatBlockDateTime(block.blockDateTime,block.timeEnable) }}
+                  事件時間：{{
+                    formatBlockDateTime(block.blockDateTime, block.timeEnable)
+                  }}
                 </div>
               </div>
 
               <TiptapEditor
+                :id="block.id"
                 class="editor__content"
                 :content="block.content"
                 :editable="false"
               />
-
             </div>
 
-            <div v-if="citations.length!==0" class="citations">
+            <div v-if="citations.length !== 0" class="citations">
               <hr>
               <h2>新聞來源</h2>
-              <div v-for="(citation, index) in citations" :key="index" class="citation-item">
-                <div class="citation-title d-flex justify-content-start align-items-start">
+              <div
+                v-for="(citation, index) in citations"
+                :key="index"
+                class="citation-item"
+              >
+                <div
+                  class="citation-title d-flex justify-content-start align-items-start"
+                >
                   <div class="citation-title-square">
                     <div class="citation-title-label" :data-label="index + 1" />
                   </div>
@@ -128,7 +165,9 @@
                     {{ citation.title }}
                   </div>
                 </div>
-                <a class="citation-link" :href="citation.url" target="_blank">{{ citation.url }}</a>
+                <a class="citation-link" :href="citation.url" target="_blank">{{
+                  citation.url
+                }}</a>
               </div>
             </div>
           </div>
@@ -148,22 +187,32 @@ import CategoryBar from '@/components/CategoryBar.vue'
 export default {
   name: 'Article',
   components: {
-    TiptapEditor, CategoryBar
+    TiptapEditor,
+    CategoryBar
   },
   data() {
     return {
-      categoryList: ['即時', '政經', '國際', '社會', '科技', '環境', '生活', '運動'],
+      categoryList: [
+        '即時',
+        '政經',
+        '國際',
+        '社會',
+        '科技',
+        '環境',
+        '生活',
+        '運動'
+      ],
       recommendedNews: [],
       order: 'time',
       category: [],
       title: '',
       viewCount: 32,
       tags: [],
-      blocks: [],
+      blocks: null,
       authors: [],
       createdAt: '',
       editedCount: 0,
-      citations: [],
+      citation: {},
       lastUpdatedAt: '',
       timeId: null,
       time: moment(),
@@ -198,8 +247,13 @@ export default {
     authorsString() {
       let authorsString = ''
       const authors = this.authors
-      authorsString = authors.slice(0, 3).map(user => user.name).join(', ')
-      if (authors.length > 3) { authorsString += ` + ${authors.length - 3} 人` }
+      authorsString = authors
+        .slice(0, 3)
+        .map((user) => user.name)
+        .join(', ')
+      if (authors.length > 3) {
+        authorsString += ` + ${authors.length - 3} 人`
+      }
       return authorsString
     },
     bookmarkTooltip() {
@@ -209,7 +263,8 @@ export default {
   watch: {
     subscribedList(newList) {
       if (newList) {
-        this.isSubscribed = newList.findIndex(s => s.articleId === this.articleId) >= 0
+        this.isSubscribed =
+          newList.findIndex((s) => s.articleId === this.articleId) >= 0
         return
       }
       this.isSubscribed = false
@@ -234,7 +289,9 @@ export default {
     this.isLogin = this.$store.getters.isLogin
     if (this.isLogin) {
       this.$store.dispatch('article/VIEW', this.articleId)
-      this.isSubscribed = this.subscribedList.findIndex(s => s.articleId === this.articleId) >= 0
+      this.isSubscribed =
+        this.subscribedList.findIndex((s) => s.articleId === this.articleId) >=
+        0
     }
   },
   mounted() {
@@ -249,54 +306,70 @@ export default {
     getArticleData() {
       if (this.articleId) {
         this.isPageReady = false
-        getArticleById(this.articleId).then(response => {
-          if (response.data.code === 200) {
-            const { title, authors, tags, createdAt, blocks, lastUpdatedAt, category, editedCount, editingCount, citations, isPopular, viewsCount } = response.data.data
-            this.title = title
-            this.authors = authors
-            this.tags = tags
-            this.createdAt = createdAt
-            this.lastUpdatedAt = lastUpdatedAt
-            this.blocks = blocks
-            this.category = category
-            this.editedCount = editedCount
-            this.viewCount = viewsCount
-            this.editingCount = editingCount
-            this.isPopular = isPopular
-            this.citations = citations
-            this.citations.forEach((citation, index) => {
-              this.$store.commit('post/SET_CITATION', { index, citation })
-            })
+        getArticleById(this.articleId)
+          .then((response) => {
+            if (response.data.code === 200) {
+              const {
+                title,
+                authors,
+                tags,
+                createdAt,
+                blocks,
+                lastUpdatedAt,
+                category,
+                editedCount,
+                editingCount,
+                citations,
+                isPopular,
+                viewsCount
+              } = response.data.data
+              this.title = title
+              this.authors = authors
+              this.tags = tags
+              this.createdAt = createdAt
+              this.lastUpdatedAt = lastUpdatedAt
+              this.blocks = blocks
+              this.category = category
+              this.editedCount = editedCount
+              this.viewCount = viewsCount
+              this.editingCount = editingCount
+              this.isPopular = isPopular
+              this.citations = citations
+              this.isPageReady = true
+            }
+            this.$store.state.post.blocks = this.blocks
+          })
+          .catch((err) => {
+            console.error(err)
             this.isPageReady = true
-          }
-        }).catch(err => {
-          console.error(err)
-          this.isPageReady = true
-        })
+          })
       }
       this.isRecommendedReady = false
-      getRecommendedArticles({ limit: 5 }).then(response => {
-        const data = response.data
-        if (data.code === 200) {
-          const receivedNews = []
-          const articles = data.data[0]
-          for (const index in articles) {
-            const { title, lastUpdatedAt, _id } = articles[index]
-            receivedNews.push({ title, lastUpdatedAt, _id })
+      getRecommendedArticles({ limit: 5 })
+        .then((response) => {
+          const data = response.data
+          if (data.code === 200) {
+            const receivedNews = []
+            const articles = data.data[0]
+            for (const index in articles) {
+              const { title, lastUpdatedAt, _id } = articles[index]
+              receivedNews.push({ title, lastUpdatedAt, _id })
+            }
+            this.recommendedNews = receivedNews
+            this.isRecommendedReady = true
           }
-          this.recommendedNews = receivedNews
+        })
+        .catch((err) => {
+          console.error(err)
           this.isRecommendedReady = true
-        }
-      }).catch(err => {
-        console.error(err)
-        this.isRecommendedReady = true
-      })
+        })
     },
     setOffsetTopOfSideElements() {
       if (!this.isPageReady) return
       this.$nextTick(() => {
         this.barDistToTop = this.$refs['title-gray-bar'].offsetTop
-        this.firstBlockDistToTop = this.$refs[`block-${this.blocks[0]._id}`][0].offsetTop
+        this.firstBlockDistToTop =
+          this.$refs[`block-${this.blocks[0]._id}`][0].offsetTop
         setTimeout(() => {
           const footer = document.querySelector('.footer')
           this.FooterOffsetTop = footer.offsetTop - footer.offsetHeight - 518 // citation
@@ -304,7 +377,11 @@ export default {
       })
     },
     handleEditPostRoute(route) {
-      if (this.isLogin) { this.$router.push(route) } else { this.$bvModal.msgBoxOk('Please Login First') }
+      if (this.isLogin) {
+        this.$router.push(route)
+      } else {
+        this.$bvModal.msgBoxOk('Please Login First')
+      }
     },
     handleHistoryRoute() {
       this.$router.push(`/history/${this.articleId}`)
@@ -316,10 +393,8 @@ export default {
       return moment(timeString).format('YYYY/MM/DD HH:mm')
     },
     formatBlockDateTime(timeString, timeEnable) {
-      if (timeEnable === undefined || timeEnable === true) {
-        return moment(timeString).format('YYYY/MM/DD HH:mm')
-      }
-      return moment(timeString).format('YYYY/MM/DD')
+      const displayTime = timeEnable || timeEnable === undefined
+      return moment(timeString).format(`YYYY/MM/DD${displayTime ? ' HH:mm' : ''}`)
     },
     formatCategory(category) {
       return category === '' ? '未分類' : category
@@ -332,13 +407,16 @@ export default {
           this.$store.dispatch('article/UNSUBSCRIBE', this.articleId)
         }
       } catch (error) {
-        this.$bvModal.msgBoxOk(`${!this.isSubscribed ? '取消' : ''}追蹤文章失敗`, {
-          title: '追蹤文章',
-          okVariant: 'danger',
-          okTitle: '確定',
-          footerClass: 'modal-footer-confirm',
-          centered: true
-        })
+        this.$bvModal.msgBoxOk(
+          `${!this.isSubscribed ? '取消' : ''}追蹤文章失敗`,
+          {
+            title: '追蹤文章',
+            okVariant: 'danger',
+            okTitle: '確定',
+            footerClass: 'modal-footer-confirm',
+            centered: true
+          }
+        )
       }
     },
     scrollTo(refName) {
@@ -350,7 +428,6 @@ export default {
       this.windowScrollY = window.scrollY
     }
   }
-
 }
 </script>
 
@@ -370,7 +447,7 @@ p {
 }
 
 .btn-icon {
-  &::v-deep{
+  &::v-deep {
     border: 0px;
     background-color: #ffffff;
     padding: 0;
@@ -388,7 +465,7 @@ p {
   font-weight: bold;
   line-height: 56px;
   margin-bottom: 10px;
-  color: #0E0E0E;
+  color: #0e0e0e;
 }
 
 .article-info {
@@ -415,30 +492,30 @@ p {
   flex-shrink: 0;
 }
 
-.category-navbar{
+.category-navbar {
   border-bottom: 1px solid $gray-light;
 }
 
-.category-item{
+.category-item {
   font-size: 20px;
   line-height: 30px;
   letter-spacing: 8px;
   color: #232323;
 }
 
-.block{
+.block {
   margin-bottom: 56px;
-  .block-header{
+  .block-header {
     h2 {
       font-weight: 700;
       margin-bottom: 8px;
       line-height: 38px;
       letter-spacing: 4px;
-      color: #0E0E0E;
+      color: #0e0e0e;
     }
     margin-bottom: 18px;
   }
-  &:last-child.no-citation{
+  &:last-child.no-citation {
     margin-bottom: 218px;
   }
 }
@@ -469,12 +546,11 @@ p {
       }
     }
     .citation-link {
-        font-size: 12px;
-        text-decoration: none !important;
-        color: #a8a8a8 !important;
-        font-weight: 400;
-      }
-
+      font-size: 12px;
+      text-decoration: none !important;
+      color: #a8a8a8 !important;
+      font-weight: 400;
+    }
   }
   hr {
     margin-bottom: 40px;
@@ -485,7 +561,7 @@ p {
 }
 
 .article-container {
-  @media only screen and (min-width: map-get($grid-breakpoints, xl)){
+  @media only screen and (min-width: map-get($grid-breakpoints, xl)) {
     min-height: 1080px;
   }
 }
@@ -555,15 +631,14 @@ p {
       transform: translate(-2.5px) rotate(45deg);
     }
   }
-
 }
 
 ::-webkit-scrollbar {
-  width: 0;  /* Remove scrollbar space */
-  background: transparent;  /* Optional: just make scrollbar invisible */
+  width: 0; /* Remove scrollbar space */
+  background: transparent; /* Optional: just make scrollbar invisible */
 }
 
-.recommendedNews-container{
+.recommendedNews-container {
   @include hide-below-desktop;
   position: absolute;
   width: 264px;
@@ -608,7 +683,7 @@ p {
       }
     }
     li::before {
-      content: "0" counter(rec-count);
+      content: '0' counter(rec-count);
       color: $nature-3;
       font-size: 20px;
       margin-top: -3px;
@@ -619,5 +694,4 @@ p {
 html {
   scroll-behavior: smooth;
 }
-
 </style>

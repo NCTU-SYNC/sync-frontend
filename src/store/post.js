@@ -1,4 +1,9 @@
+import CitationManager from '../components/Editor/CitationManager'
+
+const citationManager = new CitationManager()
+
 const getDefaultState = () => {
+  citationManager.reset()
   return {
     articleId: undefined,
     isNewPost: false,
@@ -8,7 +13,7 @@ const getDefaultState = () => {
     postTitle: '',
     postTags: [],
     blocks: [],
-    citations: [],
+    citation: citationManager,
     categorySelected: '',
     currentEditingEditor: null,
     showAddPointsAlert: false,
@@ -37,25 +42,25 @@ const mutations = {
     state.currentEditingEditor = null
   },
   UPDATE_BLOCK_CONTENT(state, { id, content }) {
-    const block = state.blocks.find(b => b.id === id)
-    if (block) {
-      block.content = content
-    }
+    const block = findBlockById(state, id)
+    if (!block) return
+    block.content = content
   },
   UPDATE_BLOCK_TITLE(state, { id, title }) {
-    const block = state.blocks.find(b => b.id === id)
-    if (block) {
-      block.blockTitle = title
-    }
+    const block = findBlockById(state, id)
+    if (!block) return
+    block.blockTitle = title
   },
   UPDATE_BLOCK_DATETIME(state, { id, datetime }) {
-    const block = state.blocks.find(b => b.id === id)
-    if (block) {
-      block.blockDateTime = datetime
-    }
+    const block = findBlockById(state, id)
+    if (!block) return
+    block.blockDateTime = datetime
   },
   SET_CITATION(state, { index, citation }) {
     state.citations[index] = citation
+  },
+  SET_CITATION_LIST(state, citations) {
+    state.citations = citations
   },
   PUSH_CITATION(state, citation) {
     state.citations.push(citation)
@@ -95,6 +100,7 @@ const mutations = {
   },
   REGISTER_EDITOR(state, { id, editor }) {
     state.currentEditors[id] = editor
+    editor.view.dom.id = id
   },
   INIT_POST(state, payload) {
     const data = payload.data
@@ -103,20 +109,23 @@ const mutations = {
     state.postTitle = data.title
     state.postTags = data.tags || []
     state.blocks = data.blocks || []
-    state.categorySelected = (data.category) ? data.category : '未分類'
-    state.citations = data.citations || []
+    state.categorySelected = data.category || '未分類'
+    state.citation.reset()
     // init blocks, set timeEnable to be true to be compatible with older articles
     for (const block of state.blocks) {
       if (!Object.prototype.hasOwnProperty.call(block, 'timeEnable')) {
-        if (block.blockDateTime) { block['timeEnable'] = true } else { block['timeEnable'] = false }
+        if (block.blockDateTime) {
+          block['timeEnable'] = true
+        } else {
+          block['timeEnable'] = false
+        }
       }
     }
   },
   TOGGLE_TIME_ENABLE(state, { id, value }) {
-    const block = state.blocks.find(b => b.id === id)
-    if (block) {
-      block.timeEnable = value
-    }
+    const block = findBlockById(state, id)
+    if (!block) return
+    block.timeEnable = value
   },
   SET_MODAL_CONTEXT(state, { context }) {
     state.modalContext = context
@@ -128,10 +137,21 @@ const mutations = {
     const { content, url } = modalContent
     const { caretPosBeg, caretPosEnd } = state.modalContext
     if (caretPosBeg === null || caretPosEnd === null) {
-      state.currentEditingEditor.chain().insertContent(`<a href="${url}" target="_blank">${content}</a>`).focus().run()
+      state.currentEditingEditor
+        .chain()
+        .insertContent(`<a href="${url}" target="_blank">${content}</a>`)
+        .focus()
+        .run()
       return
     }
-    state.currentEditingEditor.chain().insertContentAt({ from: caretPosBeg, to: caretPosEnd }, `<a href="${url}" target="_blank">${content}</a>`).focus().run()
+    state.currentEditingEditor
+      .chain()
+      .insertContentAt(
+        { from: caretPosBeg, to: caretPosEnd },
+        `<a href="${url}" target="_blank">${content}</a>`
+      )
+      .focus()
+      .run()
   },
   SET_EDITOR_IMAGE(state, imageLink) {
     const { url } = imageLink
@@ -143,11 +163,9 @@ const mutations = {
 
 const getters = {
   GET_BLOCK_DATETIME: (state) => (id) => {
-    const block = state.blocks.find(block => block.id === id)
-    if (block) {
-      return block.blockDateTime
-    }
-    return ''
+    const block = findBlockById(state, id)
+    if (!block) return ''
+    return block.blockDateTime
   },
   GET_EDITOR_BY_ID: (state) => (id) => {
     let editor = null
@@ -161,7 +179,7 @@ const getters = {
       tags: state.postTags,
       authors: state.postAuthors,
       blocks: state.blocks,
-      citations: state.citations,
+      citations: state.citation.getPublishList(),
       isAnonymous: state.isAnonymous,
       category: state.categorySelected ? state.categorySelected : '未分類'
     }
@@ -173,20 +191,38 @@ const getters = {
 
 const actions = {
   SUBMIT_CITATION_FORM({ commit, state }, citation) {
-    const findIndex = state.citations.findIndex(c => c.url === citation.url)
+    const findIndex = state.citations.findIndex((c) => c.url === citation.url)
     if (findIndex === -1) {
       commit('PUSH_CITATION', citation)
     } else {
       commit('SET_CITATION', { index: findIndex, citation })
     }
   },
-  SET_EDITOR_CITATION({ dispatch, state }, citation) {
-    const { content, title, url } = citation
-    dispatch('SUBMIT_CITATION_FORM', { title, url })
-    const { citations } = state
-    state.currentEditingEditor.commands.insertContent(`${content}<sup>${citations.length}</sup>`)
-    state.currentEditingEditor.chain().focus().toggleSuperscript().run()
+  ADD_EDITOR_CITATION({ state }, citation) {
+    const { title, url } = citation
+    const id = state.currentEditingEditor.view.dom.id
+    state.currentEditingEditor.commands.insertContent(
+      `<tiptap-citation title=${title} url=${url} editorId=${id} />`
+    )
+  },
+  UPDATE_EDITOR_CITATION({ state }, { citation, title, url }) {
+    state.citation.updateCitation(citation, title, url)
+  },
+  REMOVE_EDITOR_CITATION({ state }, citation) {
+    state.citation.removeCitation(citation)
+  },
+  ADD_EDITOR_CITATION_NODE({ state }, { title, url, node }) {
+    return state.citation.registerNode(title, url, node)
+  },
+  REMOVE_EDITOR_CITATION_NODE({ state }, citation, node) {
+    state.citation.unregisterNode(citation, node)
   }
+}
+
+// Helper functions
+
+function findBlockById(state, id) {
+  return state.blocks.find((block) => block.id === id)
 }
 
 export default {

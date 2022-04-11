@@ -28,7 +28,10 @@
           label="圖片網址："
           label-for="url-input"
         >
-          <b-form-input id="url-input" v-model="url" class="input-form" placeholder="請貼上圖片網址" />
+          <b-form-input id="url-input" v-model="url" class="input-form" placeholder="請貼上圖片網址" :state="urlState" />
+          <b-form-invalid-feedback :state="urlState">
+            請輸入合法的 URL，e.g. https://www.google.com
+          </b-form-invalid-feedback>
         </b-form-group>
       </b-tab>
     </b-tabs>
@@ -36,6 +39,7 @@
 </template>
 
 <script>
+import { Utils } from '@/utils'
 export default {
   props: {
   },
@@ -43,12 +47,22 @@ export default {
     return {
       tabIndex: 0,
       url: '',
-      visible: false
+      visible: false,
+      urlStartValidation: null
+    }
+  },
+  computed: {
+    urlState() {
+      return this.urlStartValidation && Utils.isValidUrl(this.url)
     }
   },
   methods: {
     show() {
       this.$bvModal.show('upload-image-modal')
+    },
+    checkFormValidity() {
+      this.urlStartValidation = true
+      return this.urlState
     },
     dropImage(e) {
       const file = e.dataTransfer.files[0]
@@ -58,12 +72,23 @@ export default {
         return
       }
     },
-    handleConfirm() {
+    handleConfirm(bvModalEvt) {
+      bvModalEvt.preventDefault()
+      this.handleSubmit()
+    },
+    handleSubmit() {
+      if (!this.checkFormValidity()) {
+        return
+      }
       if (this.tabIndex !== 1) {
         const data = {
           url: this.url
         }
         this.$store.commit('post/SET_EDITOR_IMAGE', data)
+
+        this.$nextTick(() => {
+          this.$bvModal.hide('upload-image-modal')
+        })
       }
     }
   }

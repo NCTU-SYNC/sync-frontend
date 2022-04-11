@@ -1,11 +1,11 @@
 <template>
   <b-modal
     id="citation-modal"
-    visible
+    :visible="true"
     centered
-    title="新增新聞來源"
+    :title="modalTitle"
     size="lg"
-    ok-title="新增"
+    :ok-title="okTitle"
     cancel-title="取消"
     content-class="custom-modal"
     body-class="custom-modal-body"
@@ -14,45 +14,86 @@
     ok-variant="ok"
     cancel-variant="cancel"
     @ok="handleConfirm"
+    @shown="autoFocus"
   >
-    <b-form-group
-      label-cols="auto"
-      label="附註內容："
-      label-for="citation-superscript"
-    >
-      <b-form-input id="citation-superscript" v-model="content" class="input-form" placeholder="請輸入或選取附註的內容文字" />
-    </b-form-group>
-
     <b-form-group
       label-cols="auto"
       label="附註標題："
       label-for="citation-title"
     >
-      <b-form-input id="citation-title" v-model="title" class="input-form" placeholder="請輸入新聞來源的附註標題" />
+      <b-form-input
+        id="citation-title"
+        ref="title"
+        v-model="title"
+        class="input-form"
+        :state="titleState"
+        placeholder="請輸入新聞來源的附註標題"
+        @keypress.enter="handleConfirm"
+      />
+      <b-form-invalid-feedback :state="titleState">
+        顯示文字不可為空
+      </b-form-invalid-feedback>
     </b-form-group>
 
-    <b-form-group
-      label-cols="auto"
-      label="來源網址："
-      label-for="citation-url"
-    >
-      <b-form-input id="citation-url" v-model="url" class="input-form" placeholder="請輸入新聞來源的網址" />
+    <b-form-group label-cols="auto" label="來源網址：" label-for="citation-url">
+      <b-form-input
+        id="citation-url"
+        ref="url"
+        v-model="url"
+        class="input-form"
+        :state="urlState"
+        placeholder="請輸入新聞來源的網址"
+        @keypress.enter="handleConfirm"
+      />
+      <b-form-invalid-feedback :state="urlState">
+        請輸入合法的 URL，e.g. https://www.google.com
+      </b-form-invalid-feedback>
     </b-form-group>
   </b-modal>
 </template>
 
 <script>
+import { Utils } from '@/utils'
 export default {
+  props: {
+    context: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
+  },
   data() {
+    let citation = {}
+    if (!this.context.citation) {
+      citation = { title: '', url: '', index: -1 }
+    } else {
+      citation = { ...this.context.citation.info }
+    }
+
     return {
-      content: '',
-      title: '',
-      url: ''
+      ...citation,
+      titleValid: true,
+      urlValid: true,
+      startValidation: null
+    }
+  },
+  computed: {
+    modalTitle() {
+      return (this.index === -1 ? '新增' : '修改') + '新聞來源'
+    },
+    okTitle() {
+      return this.index === -1 ? '新增' : '確認'
+    },
+    urlState() {
+      return this.startValidation && Utils.isValidUrl(this.url)
+    },
+    titleState() {
+      return this.startValidation && this.title.length !== 0
     }
   },
   methods: {
     reset() {
-      this.content = ''
       this.title = ''
       this.url = ''
       this.visible = false
@@ -60,13 +101,47 @@ export default {
     show() {
       this.$bvModal.show('citation-modal')
     },
-    handleConfirm() {
+    close() {
+      this.$bvModal.hide('citation-modal')
+    },
+    autoFocus() {
+      this.$refs.title.focus()
+    },
+    checkFormValidity() {
+      this.startValidation = true
+      return this.urlState && this.titleState
+    },
+    handleConfirm(evt) {
+      evt.preventDefault()
+
+      if (!this.checkFormValidity()) {
+        if (!this.titleState) {
+          this.$refs.title.focus()
+        } else if (!this.urlState) {
+          this.$refs.url.focus()
+        }
+        return
+      }
+
       const data = {
-        content: this.content,
         title: this.title,
         url: this.url
       }
-      this.$store.dispatch('post/SET_EDITOR_CITATION', data)
+
+      if (this.context.index === -1) {
+        this.$store.dispatch('post/ADD_EDITOR_CITATION', data)
+      } else {
+        this.$store.dispatch('post/UPDATE_EDITOR_CITATION', {
+          citation: this.context.citation,
+          title: this.title,
+          url: this.url
+        })
+      }
+
+      this.$nextTick(() => {
+        this.$bvToast.show('citation-toast')
+        this.close()
+      })
     }
   }
 }
@@ -90,7 +165,7 @@ export default {
   position: relative;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     width: 4px;
     left: 0px;
@@ -103,7 +178,7 @@ export default {
 
   &:focus-within {
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       width: 4px;
       left: 0px;
@@ -119,6 +194,14 @@ export default {
 
 .input {
   width: 90%;
-  padding: 10px
+  padding: 10px;
+
+  &-label {
+    &--error {
+      color: $red;
+      font-size: 12px;
+      line-height: 20px;
+    }
+  }
 }
 </style>

@@ -1,11 +1,10 @@
 <template>
   <b-container class="wrapper">
-    <b-row style="position: relative;" :class="{'justify-content-center': !showNewsSource}">
-      <div
-        v-if="isTimelineShow"
-        align-self="stretch"
-        class="timeline-panel"
-      >
+    <b-row
+      style="position: relative"
+      :class="{ 'justify-content-center': !showNewsSource }"
+    >
+      <div v-if="isTimelineShow" align-self="stretch" class="timeline-panel">
         <div class="bg-light timeline-header">
           <b-button
             variant="transparent"
@@ -32,7 +31,7 @@
       <div
         v-else
         class="timeline-panel-btn-only"
-        :class="{ 'timeline-shrink' : showNewsSource }"
+        :class="{ 'timeline-shrink': showNewsSource }"
       >
         <b-button
           variant="light"
@@ -74,7 +73,10 @@
                     }}
                   </div>
                   <div class="btn-chevron">
-                    <icon :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'" size="md" />
+                    <icon
+                      :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'"
+                      size="md"
+                    />
                   </div>
                 </template>
                 <b-dropdown-item-button
@@ -131,7 +133,7 @@
             </b-button>
           </div>
         </div>
-        <div v-if="post.citations.length > 0">
+        <div v-if="citationList.length > 0">
           <b-row>
             <b-col>
               <b-card
@@ -140,34 +142,37 @@
               >
                 <p class="citations-container--title">新聞來源</p>
                 <b-card
-                  v-for="(citation, index) in post.citations"
+                  v-for="(citation, index) in citationList"
+                  ref="citation"
                   :key="index"
                   class="citations-container--card border-0"
                   body-class="p-3"
                 >
                   <div class="d-flex justify-content-between">
-                    <div class="d-flex flex-column ">
+                    <div class="d-flex flex-column">
                       <div class="d-flex mb-2">
-                        <div class="citation-list-tag">
+                        <div
+                          class="citation-list-tag"
+                          role="button"
+                          @click="scrollToCitationNode(index)"
+                        >
                           <div class="period" :data-label="index + 1" />
                         </div>
-                        <div class="w-100 pl-2 ">
-                          <div>{{ citation.title }}</div>
+                        <div class="w-100 pl-2">
+                          <div>{{ citation.info.title }}</div>
                         </div>
                       </div>
                       <b-link
                         class="citation-list-link"
                         :href="citation.url"
                         target="_blank"
-                      >{{ citation.url }}
+                      >{{ citation.info.url }}
                       </b-link>
                     </div>
                     <div class="citation-list-btn">
-                      <!-- TODO: edit citation
-                      <b-button variant="link">
+                      <b-button variant="link" @click="onCitationEdited(index)">
                         編輯
                       </b-button>
-                      -->
                       <b-button
                         variant="link"
                         @click="onCitationRemoved(index)"
@@ -181,6 +186,20 @@
             </b-col>
           </b-row>
         </div>
+        <b-toast
+          id="citation-toast"
+          toast-class="citation-toast--toast"
+          body-class="citation-toast--toast-body"
+          toaster="citation-toaster"
+          no-close-button
+          auto-hide-delay="2500"
+        >
+          已新增至新聞來源
+        </b-toast>
+        <b-toaster
+          class="b-toaster-bottom-center citation-toast--toaster"
+          name="citation-toaster"
+        />
       </div>
       <div v-show="showNewsSource" class="news-area">
         <b-button
@@ -308,6 +327,9 @@ export default {
       set(newValue) {
         this.$store.commit('post/SHOW_ADDPOINTS_ALERT', newValue)
       }
+    },
+    citationList() {
+      return this.post.citation.getList()
     }
   },
   watch: {
@@ -437,31 +459,41 @@ export default {
           footerClass: 'modal-footer-confirm',
           centered: true
         })
-        .then(value => {
+        .then((value) => {
           if (value) {
             this.$store.commit('post/DELETE_BLOCK', index)
           }
         })
     },
+    scrollToCitationNode(index) {
+      this.citationList[index].lastNode.node.$el.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      })
+    },
+    onCitationEdited(index) {
+      const context = { citation: this.citationList[index] }
+      this.$store.commit('post/SET_MODAL_CONTEXT', { context })
+      this.$store.commit('post/SET_MODAL_COMPONENT', {
+        componentString: 'CITATION'
+      })
+    },
     onCitationRemoved(index) {
-      if (this.post.citations[index]) {
+      if (this.citationList[index]) {
+        const citation = this.citationList[index]
         this.$bvModal
-          .msgBoxConfirm(
-            `是否刪除引用：${this.post.citations[index].title}？`,
-            {
-              title: '刪除引用',
-              okVariant: 'danger',
-              okTitle: '刪除',
-              cancelTitle: '取消',
-              cancelVariant: 'outline-primary',
-              footerClass: 'modal-footer-confirm',
-              centered: true
-            }
-          )
-          .then(value => {
+          .msgBoxConfirm(`是否刪除引用：${citation.info.title}？`, {
+            title: '刪除引用',
+            okVariant: 'danger',
+            okTitle: '刪除',
+            cancelTitle: '取消',
+            cancelVariant: 'outline-primary',
+            footerClass: 'modal-footer-confirm',
+            centered: true
+          })
+          .then((value) => {
             if (value) {
-              this.post.citations.splice(index, 1)
-              // TODO: remove citation in editor
+              this.$store.dispatch('post/REMOVE_EDITOR_CITATION', citation)
             }
           })
       }
@@ -501,6 +533,46 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+// toast animation
+@keyframes toastAnimation {
+  from {
+    transform: translateY(3.5rem);
+  }
+  to {
+    transform: translateY(-3.5rem);
+  }
+}
+
+.citation-toast {
+  &--toast {
+    position: relative;
+    background-color: $blue !important;
+    border-radius: 0.5rem;
+    transform: translateY(-3.5rem);
+
+    animation-name: toastAnimation;
+    animation-duration: 0.3s;
+    animation-timing-function: ease;
+  }
+
+  &--toast-body {
+    font-size: 18px;
+    line-height: 30px;
+    color: $white;
+    padding: 0.5rem 1rem;
+  }
+
+  &--toaster {
+    div {
+      display: flex;
+      width: fit-content;
+      margin: 0 auto;
+    }
+  }
+}
+</style>
 
 <style scoped lang="scss">
 @import '@/assets/scss/post/main.scss';
@@ -791,11 +863,10 @@ export default {
   padding: 24px 32px;
 
   @media only screen and (max-width: 1439px) {
-  width: 132px;
-  padding-left: 0px;
-  padding-right: 0px;
+    width: 132px;
+    padding-left: 0px;
+    padding-right: 0px;
   }
-
 }
 
 .timeline-shrink {
@@ -907,7 +978,8 @@ export default {
   padding-left: 0;
   padding-right: 0;
   .dropdownbtn-text {
-    display: inline-flex;margin-right: 16px;
+    display: inline-flex;
+    margin-right: 16px;
     justify-content: center;
     align-items: center;
     font-size: 14px;

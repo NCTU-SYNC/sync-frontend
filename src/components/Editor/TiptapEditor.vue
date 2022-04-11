@@ -40,9 +40,9 @@ import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
 import Superscript from '@tiptap/extension-superscript'
 import MenuBar from './MenuBar.vue'
+import Citation from './CitationExtention/Citation'
 
 export default {
-
   components: {
     EditorContent,
     BubbleMenu,
@@ -104,12 +104,16 @@ export default {
           openOnClick: false
         }),
         Image,
-        Superscript
+        Superscript,
+        Citation
       ],
       editable: this.editable,
       content: this.content
     })
-    this.$store.commit('post/REGISTER_EDITOR', { id: this.id, editor: this.editor })
+    this.$store.commit('post/REGISTER_EDITOR', {
+      id: this.id,
+      editor: this.editor
+    })
   },
 
   beforeDestroy() {
@@ -132,7 +136,10 @@ export default {
         this.$store.commit('post/SET_MODAL_CONTEXT', { context })
         this.$store.commit('post/SET_MODAL_COMPONENT', { componentString: 'LINK' })
       } else if (modal === 'citation-modal') {
-        this.$store.commit('post/SET_MODAL_COMPONENT', { componentString: 'CITATION' })
+        this.$store.commit('post/SET_MODAL_CONTEXT', { context: { index: -1 }})
+        this.$store.commit('post/SET_MODAL_COMPONENT', {
+          componentString: 'CITATION'
+        })
       } else if (modal === 'upload-image-modal') {
         this.$store.commit('post/SET_MODAL_COMPONENT', { componentString: 'UPLOAD_IMAGE' })
       }
@@ -152,7 +159,6 @@ export default {
 </script>
 
 <style lang="scss">
-
 // .editor__header {
 //   margin-top: 0.5rem;
 // }
@@ -172,7 +178,8 @@ export default {
     vertical-align: text-top;
   }
   .ProseMirror {
-    ul, ol {
+    ul,
+    ol {
       padding-left: 2rem;
     }
     blockquote {
@@ -223,8 +230,8 @@ export default {
   }
 
   pre {
-    background: #0D0D0D;
-    color: #FFF;
+    background: #0d0d0d;
+    color: #fff;
     font-family: 'JetBrainsMono', monospace;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
@@ -244,12 +251,12 @@ export default {
 
   blockquote {
     padding-left: 1rem;
-    border-left: 2px solid rgba(#0D0D0D, 0.1);
+    border-left: 2px solid rgba(#0d0d0d, 0.1);
   }
 
   hr {
     border: none;
-    border-top: 2px solid rgba(#0D0D0D, 0.1);
+    border-top: 2px solid rgba(#0d0d0d, 0.1);
     margin: 2rem 0;
   }
 

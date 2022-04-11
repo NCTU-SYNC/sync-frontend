@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import user from './user'
 import post from './post'
 import article from './article'
+
 Vue.use(Vuex)
 
 const getDefaultState = () => {
