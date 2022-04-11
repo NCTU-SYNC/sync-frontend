@@ -3,6 +3,7 @@ import 'firebase/auth'
 import { removeUserInfo } from '@/utils/auth'
 import { firebaseConfig } from '../../config/firebaseConfig'
 import store from '../store/index'
+import { getPref } from '@/api/user'
 
 class FirebaseAuth {
   constructor() {
@@ -17,12 +18,20 @@ class FirebaseAuth {
     return this.instance
   }
 
+  get token() {
+    return this.instance.currentUser.getIdToken()
+  }
+
   async setupFirebase() {
     try {
       this.instance = firebase.auth()
       const handler = async(user) => {
         if (user) {
-          const token = await this.instance.currentUser.getIdToken()
+          const token = await this.instance.currentUser
+            .getIdToken(/* force refresh */ true)
+            .catch((error) => {
+              console.error(error)
+            })
           var data = {
             displayName: user.displayName,
             email: user.email,
@@ -31,10 +40,16 @@ class FirebaseAuth {
             isAnonymous: user.isAnonymous,
             uid: user.uid,
             providerData: user.providerData,
-            idToken: token
+            idToken: token,
+            preferences: user.preferences
           }
           store.dispatch('user/sendToken', data)
           store.dispatch('user/sendUserInfo', user)
+
+          // set preferences into vuex
+          const res = await getPref({ token })
+          store.dispatch('user/setPreferences', res.data.data)
+
           this.isLogin = true
         } else {
           this.isLogin = false

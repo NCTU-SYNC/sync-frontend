@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { createArticle, updateArticleById } from '@/api/article'
 import firebase from '@/utils/firebase'
 import Logo from '@/components/Logo.vue'
@@ -68,7 +68,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isLogin', 'uid', 'token']),
+    ...mapGetters(['isLogin', 'uid']),
     ...mapGetters({ post: 'post' }),
     showAddPointsAlert: {
       get() {
@@ -102,6 +102,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions({ getToken: 'user/getToken' }),
     routeToArticle(articleId) {
       if (this.$route.params.ArticleID === articleId) {
         this.$emit('reloadData')
@@ -121,7 +122,7 @@ export default {
     },
     async publishArticle() {
       this.isLoading = true
-      if (!this.token || !this.isLogin) {
+      if (!this.isLogin) {
         await this.$bvModal.msgBoxOk('登入逾時或失效，請重新登入')
         this.isLoading = false
         this.$router.push('/login')
@@ -148,7 +149,7 @@ export default {
       const articleData = this.$store.getters['post/GET_PUBLISH_DATA']
       // add user credentials
       articleData.uid = this.uid
-      articleData.token = this.token
+      articleData.token = await this.getToken()
       if (this.post.isNewPost) {
         try {
           const { data } = await createArticle(articleData)
