@@ -1,7 +1,7 @@
 <template>
   <b-modal
     id="link-modal"
-    :visible="true"
+    visible
     centered
     title="新增連結"
     size="lg"
@@ -29,7 +29,15 @@
         label="來源網址："
         label-for="url-input"
       >
-        <b-form-input id="url-input" v-model="url" class="input-form" placeholder="請輸入來源網址 URL" :state="urlState" />
+        <b-form-input
+          id="url-input"
+          v-model="url"
+          class="input-form"
+          placeholder="請輸入來源網址 URL"
+          :state="urlState"
+          type="url"
+          autocomplete="off"
+        />
         <b-form-invalid-feedback :state="urlState">
           請輸入合法的 URL，e.g. https://www.google.com
         </b-form-invalid-feedback>

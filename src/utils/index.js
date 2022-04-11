@@ -21,9 +21,9 @@ function getArticleText(object, result, limit) {
       return
     }
   }
-  for (var i = 0; i < Object.keys(object).length; i++) {
-    if (typeof object[Object.keys(object)[i]] === 'object') {
-      getArticleText(object[Object.keys(object)[i]], result, limit)
+  for (const key of Object.keys(object)) {
+    if (typeof object[key] === 'object') {
+      getArticleText(object[key], result, limit)
       if (limit !== undefined && result.count > limit) {
         return
       }
@@ -47,9 +47,9 @@ function getArticleImages(blocks, result, limit = 10) {
       return
     }
   }
-  for (let i = 0; i < Object.keys(blocks).length; i++) {
-    if (typeof blocks[Object.keys(blocks)[i]] === 'object') {
-      getArticleImages(blocks[Object.keys(blocks)[i]], result, limit)
+  for (const key of Object.keys(blocks)) {
+    if (typeof blocks[key] === 'object') {
+      getArticleImages(blocks[key], result, limit)
       if (result.imgLinks.length >= limit) {
         return
       }

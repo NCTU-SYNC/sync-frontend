@@ -1,7 +1,7 @@
 <template>
   <b-modal
     id="upload-image-modal"
-    :visible="true"
+    visible
     centered
     title="插入圖片"
     size="lg"

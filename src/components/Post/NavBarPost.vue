@@ -139,15 +139,8 @@ export default {
         this.isLoading = false
         return
       }
-      // check for empty editors
-      let noContent = false
-      for (const editor of Object.values(this.post.currentEditors)) {
-        if (editor.isEmpty) {
-          noContent = true
-          break
-        }
-      }
-      if (noContent) {
+
+      if (Object.values(this.post.currentEditors).some((editor) => editor.isEmpty)) {
         await this.$bvModal.msgBoxOk('段落內文不得為空白，請輸入段落內文')
         this.isLoading = false
         return
@@ -162,6 +155,7 @@ export default {
           const { data } = await createArticle(articleData)
           this.isLoading = false
           if (data.code === 200) {
+            this.removeArticleLocalStorage()
             this.$store.commit('post/SET_ARTICLEID', data.id)
             this.showAddPointsAlertAndRedirect()
           } else {
@@ -179,6 +173,7 @@ export default {
           if (data.code === 200) {
             // show add point alert
             this.showAddPointsAlertAndRedirect()
+            this.removeArticleLocalStorage()
           } else {
             this.$bvModal.msgBoxOk(data.message)
           }
@@ -198,6 +193,7 @@ export default {
     },
     cancelPost() {
       const redirectArticleId = this.post.articleId
+      this.removeArticleLocalStorage()
       if (redirectArticleId) {
         this.$router.push({ name: 'Article', params: { ArticleID: redirectArticleId }})
         this.$store.commit('post/RESET_POST')
@@ -205,6 +201,9 @@ export default {
         this.$router.push({ name: 'Home' })
         this.$store.commit('post/RESET_POST')
       }
+    },
+    removeArticleLocalStorage() {
+      localStorage.removeItem(this.$store.getters['post/GET_ARTICLEID_STRING'])
     }
   }
 }

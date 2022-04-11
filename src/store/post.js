@@ -110,7 +110,7 @@ const mutations = {
     state.postTags = data.tags || []
     state.blocks = data.blocks || []
     state.categorySelected = data.category || '未分類'
-    state.citatoin.reset()
+    state.citation.reset()
     // init blocks, set timeEnable to be true to be compatible with older articles
     for (const block of state.blocks) {
       if (!Object.prototype.hasOwnProperty.call(block, 'timeEnable')) {
@@ -158,9 +158,6 @@ const mutations = {
     if (url) {
       state.currentEditingEditor.chain().focus().setImage({ src: url }).run()
     }
-  },
-  REMOVE_CITATION(state, index) {
-    state.citations.splice(index, 1)
   }
 }
 
@@ -186,6 +183,9 @@ const getters = {
       isAnonymous: state.isAnonymous,
       category: state.categorySelected ? state.categorySelected : '未分類'
     }
+  },
+  GET_ARTICLEID_STRING: (state) => {
+    return state.articleId || 'newArticle'
   }
 }
 
