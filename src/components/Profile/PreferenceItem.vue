@@ -1,11 +1,10 @@
 <template>
   <b-container class="no-gutters pl-0 pr-0 pb-3 mt-2">
     <b-form-checkbox
-      v-model="value"
+      v-model="preference.status"
       switch
       size="lg"
       class="switch--color float-right"
-      @change="handleOnChange"
     />
     <div>
       <div id="title">{{ preference.title }}</div>
@@ -20,17 +19,6 @@ export default {
     preference: {
       type: Object,
       required: true
-    }
-  },
-  data() {
-    return {
-      value: this.preference.status
-    }
-  },
-  methods: {
-    handleOnChange(value) {
-      this.preference.status = value
-      this.$emit('change')
     }
   }
 }
