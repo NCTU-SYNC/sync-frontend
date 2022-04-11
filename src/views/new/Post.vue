@@ -182,7 +182,7 @@
           </b-row>
         </div>
       </div>
-      <div v-if="showNewsSource" class="news-area">
+      <div v-show="showNewsSource" class="news-area">
         <b-button
           variant="link"
           class="close-source"
@@ -190,10 +190,10 @@
         >
           <b-icon icon="x" scale="1.66" variant="secondary" />
         </b-button>
-        <NewsPanel @importNews="importNews" />
+        <NewsPanel />
       </div>
       <div
-        v-else
+        v-show="!showNewsSource"
         class="news-area-btn-only"
       >
         <b-button
@@ -219,6 +219,7 @@
         <p class="text-center">撰寫新文章，個人貢獻度 + {{ editPoint }} 分！</p>
       </b-alert>
     </transition>
+    <EditToolModal />
   </b-container>
 </template>
 
@@ -230,6 +231,7 @@ import NewsPanel from '@/components/NewsPanel'
 import { Utils } from '@/utils'
 import EditStar from '@/components/Icons/EditStar'
 import Tag from '@/components/Editor/Tag'
+import EditToolModal from '@/components/Post/EditToolModal'
 
 export default {
   name: 'Post',
@@ -237,7 +239,8 @@ export default {
     BlockEditor,
     NewsPanel,
     EditStar,
-    Tag
+    Tag,
+    EditToolModal
   },
   data() {
     return {
@@ -268,7 +271,9 @@ export default {
       isLoading: false,
       isTimelineShow: false,
       showNewsSource: false,
-      dropdownOpen: false
+      dropdownOpen: false,
+      sessionTimestamp: new Date(),
+      cacheArticleTimer: null
     }
   },
   computed: {
@@ -310,42 +315,102 @@ export default {
       this.$refs.categoryRef.hide(true)
     }
   },
-  beforeDestroy() {},
+  beforeDestroy() {
+    clearInterval(this.cacheArticleTimer)
+  },
   created() {
     // 從route中獲得此文章的ID
-    this.$store.commit('post/RESET_POST')
-    const articleId = this.$route.params.ArticleID
-    const isNewPost = !(articleId || false)
-    this.$store.commit('post/SET_NEW_POST', isNewPost)
-    this.$store.commit('post/SET_ARTICLEID', articleId)
-    if (articleId) {
-      this.isLoading = true
-      getArticleById(articleId)
-        .then(response => {
-          if (response.data.code === 200) {
-            const data = response.data.data
-            this.$store.commit('post/INIT_POST', { data })
-            this.isLoading = false
-            this.$nextTick(() => {
-              this.post.currentEditingEditor = null
-            })
-          } else {
-            throw new Error(response.data.message)
-          }
-        })
-      this.isLoading = false
-    } else {
-      this.handleAddBlock(-1)
-    }
+    this.initPostPage().then(() => {
+      this.cacheArticleTimer = setInterval(() => {
+        this.setArticleLocalStorage()
+      }, 10000)
+    })
   },
   methods: {
+    async initPostPage() {
+      this.$store.commit('post/RESET_POST')
+      const articleId = this.$route.params.ArticleID
+      const isNewPost = !(articleId || false)
+      this.$store.commit('post/SET_NEW_POST', isNewPost)
+      this.$store.commit('post/SET_ARTICLEID', articleId)
+      const localStorageData = this.getArticleLocalStorage()
+      // fetch article either from localStorage or remote DB
+      if (articleId) {
+        this.isLoading = true
+        getArticleById(articleId)
+          .then(response => {
+            if (response.data.code === 200) {
+              let data = response.data.data
+              // check localStorage, use localStorage article if newer than lastUpdated
+              if (localStorageData) {
+                const { timeStamp } = localStorageData
+                const { lastUpdatedAt } = data
+                // use date comparison to guarantee correctness
+                const localStorageDate = new Date(timeStamp)
+                const receivedDate = new Date(lastUpdatedAt)
+                if (localStorageDate > receivedDate) {
+                  data = localStorageData
+                  this.$bvToast.toast(`已恢復您於 ${localStorageDate.toLocaleString()} 開始的編輯階段`, {
+                    title: '恢復編輯',
+                    autoHideDelay: 20000
+                  })
+                }
+              }
+              this.$store.commit('post/INIT_POST', { data })
+              this.isLoading = false
+              this.$nextTick(() => {
+                this.post.currentEditingEditor = null
+              })
+            } else {
+              this.isLoading = false
+              throw new Error(response.data.message)
+            }
+          })
+      } else { // if new article
+        if (localStorageData) {
+          const { timeStamp } = localStorageData
+          const localStorageDate = new Date(timeStamp)
+          this.$bvModal
+            .msgBoxConfirm(`您於 ${localStorageDate.toLocaleString()} 已有一篇標題為：「${localStorageData.title}」的文章正在編輯，
+              請問要繼續編輯嗎？`, {
+              title: '繼續編輯',
+              okTitle: '繼續編輯',
+              cancelTitle: '取消',
+              headerClass: 'custom-modal-header',
+              footerClass: 'custom-modal-footer',
+              okVariant: 'ok',
+              cancelVariant: 'cancel',
+              centered: true
+            }).then(value => {
+              if (value) {
+                const data = localStorageData
+                this.$store.commit('post/INIT_POST', { data })
+                this.$nextTick(() => {
+                  this.post.currentEditingEditor = null
+                })
+                this.$bvToast.toast(`已恢復您於 ${localStorageDate.toLocaleString()} 開始的編輯階段`, {
+                  title: '恢復編輯',
+                  autoHideDelay: 20000
+                })
+              } else {
+                this.removeArticleLocalStorage()
+                this.handleAddBlock(-1)
+              }
+            })
+        } else {
+          this.handleAddBlock(-1)
+        }
+      }
+      return true
+    },
     handleAddBlock(index) {
       const currentBlockCount = this.post.blocks.length
       const blockObj = {
         id: `${Utils.getRandomString()}-${(currentBlockCount + 1).toString()}`,
         blockTitle: '',
         blockDateTime: '',
-        content: null
+        content: null,
+        timeEnable: false
       }
       this.$store.commit('post/ADD_BLOCK', {
         index: index,
@@ -378,19 +443,7 @@ export default {
           }
         })
     },
-    importNews(content) {
-      if (this.currentEditingEditor === null) {
-        this.$bvModal.msgBoxOk('請選擇編輯區塊，或是先新增段落後再引入')
-        return
-      }
-      let str = this.currentEditingEditor.getHTML()
-      content.forEach(text => {
-        str += `<p>${text}</p>`
-      })
-      this.currentEditingEditor.setContent(str, true)
-    },
     onCitationRemoved(index) {
-      console.log(this.post.citations)
       if (this.post.citations[index]) {
         this.$bvModal
           .msgBoxConfirm(
@@ -422,6 +475,28 @@ export default {
     },
     focusOnTitle(blockId) {
       this.$refs[`block-${blockId}`][0].focusOnTitle()
+    },
+    // Saves article content into localStorage and adds timestamp
+    setArticleLocalStorage() {
+      const articleData = this.$store.getters['post/GET_PUBLISH_DATA']
+      articleData['timeStamp'] = this.sessionTimestamp
+      const storeData = JSON.stringify(articleData)
+      localStorage.setItem(this.$store.getters['post/GET_ARTICLEID_STRING'], storeData)
+    },
+    // get from localStorage
+    getArticleLocalStorage() {
+      const articleIdStr = this.$store.getters['post/GET_ARTICLEID_STRING']
+      const data = localStorage.getItem(articleIdStr)
+      let ret = null
+      try {
+        ret = JSON.parse(data)
+      } catch (e) {
+        console.error(e)
+      }
+      return ret
+    },
+    removeArticleLocalStorage() {
+      localStorage.removeItem(this.$store.getters['post/GET_ARTICLEID_STRING'])
     }
   }
 }
@@ -509,7 +584,8 @@ export default {
 }
 
 .news-area-btn-only {
-  width: 312px;
+  // design: 312px
+  width: 304px;
   text-align: right;
   padding: 24px 32px;
   @extend %panel-width-lg;
@@ -640,7 +716,8 @@ export default {
 // --------------- NEWS CLASSES ----------------
 
 %panel-width-lg {
-  @media only screen and (max-width: 1439px) {
+  // Macbook Pro resolution (1440px) - scrollbar width (~15px)
+  @media only screen and (max-width: 1424px) {
     width: 132px;
     padding-left: 0px;
     padding-right: 0px;
@@ -709,7 +786,8 @@ export default {
 }
 
 .timeline-panel-btn-only {
-  width: 312px;
+  // design: 312px
+  width: 304px;
   padding: 24px 32px;
 
   @media only screen and (max-width: 1439px) {

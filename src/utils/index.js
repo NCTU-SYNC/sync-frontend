@@ -21,9 +21,9 @@ function getArticleText(object, result, limit) {
       return
     }
   }
-  for (var i = 0; i < Object.keys(object).length; i++) {
-    if (typeof object[Object.keys(object)[i]] === 'object') {
-      getArticleText(object[Object.keys(object)[i]], result, limit)
+  for (const key of Object.keys(object)) {
+    if (typeof object[key] === 'object') {
+      getArticleText(object[key], result, limit)
       if (limit !== undefined && result.count > limit) {
         return
       }
@@ -31,9 +31,47 @@ function getArticleText(object, result, limit) {
   }
 }
 
+// returns first image in aricle, if no images exist, return null
+function getArticleFirstImage(blocks) {
+  const res = { imgLinks: [] }
+  getArticleImages(blocks, res, 1)
+  return res.imgLinks.length === 0 ? null : res.imgLinks[0]
+}
+
+// returns first "limit" numbers of image from article
+function getArticleImages(blocks, result, limit = 10) {
+  if (blocks == null) return
+  if (Object.prototype.hasOwnProperty.call(blocks, 'type') && blocks.type === 'image') {
+    result.imgLinks.push(blocks.attrs.src)
+    if (result.imgLinks.length >= limit) {
+      return
+    }
+  }
+  for (const key of Object.keys(blocks)) {
+    if (typeof blocks[key] === 'object') {
+      getArticleImages(blocks[key], result, limit)
+      if (result.imgLinks.length >= limit) {
+        return
+      }
+    }
+  }
+}
+
+// url validation
+function isValidUrl(url) {
+  try {
+    new URL(url)
+  } catch (e) {
+    return false
+  }
+  return true
+}
+
 class Utils {
   static getRandomString = getRandomString
   static getArticleContent = getArticleContent
+  static getArticleFirstImage = getArticleFirstImage
+  static isValidUrl = isValidUrl
 }
 
 export { Utils }
