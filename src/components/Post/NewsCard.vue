@@ -1,21 +1,21 @@
 <template>
-  <b-card
-    no-body
-  >
-    <b-card-header
-      header-tag="header"
-      class="news-header"
-    >
+  <b-card no-body>
+    <b-card-header header-tag="header" class="news-header">
       <h4>{{ title }}</h4>
     </b-card-header>
     <b-card-body>
       <b-card-text>
-        <p v-if="!expand" key="outline" class="content-outline">{{ outline }}
+        <p v-if="!expand" key="outline" class="content-outline">
+          {{ outline }}
           <b-button variant="link" @click="expandContent(true)">展開</b-button>
         </p>
-        <p v-for="(paragraph,index) in content" v-else :key="index">
+        <p v-for="(paragraph, index) in content" v-else :key="index">
           {{ paragraph }}
-          <b-button v-if="index===content.length-1" variant="link" @click="expandContent(false)">收合</b-button>
+          <b-button
+            v-if="index === content.length - 1"
+            variant="link"
+            @click="expandContent(false)"
+          >收合</b-button>
         </p>
       </b-card-text>
     </b-card-body>
@@ -25,9 +25,7 @@
         <span class="ml-2">{{ getDateTime }}</span>
         <span class="ml-2"> | </span>
         <span class="ml-2">
-          <b-link :href="url" target="_blank">
-            原文
-          </b-link>
+          <b-link :href="url" target="_blank"> 原文 </b-link>
         </span>
       </div>
       <input id="copy" type="hidden" :value="content">
@@ -93,23 +91,30 @@ export default {
     importNews() {
       const currentEditingEditor = this.$store.state.post.currentEditingEditor
       if (currentEditingEditor === null) {
-        this.$bvModal.msgBoxOk('請先點擊畫面左方欲引入新聞的內文輸入框，之後再從右方新聞欄中引入新聞。')
+        this.$bvModal.msgBoxOk(
+          '請先點擊畫面左方欲引入新聞的內文輸入框，之後再從右方新聞欄中引入新聞。'
+        )
         return
       }
       const { title, url } = this
-      this.$store.dispatch('post/SUBMIT_CITATION_FORM', { title, url })
       let str = ''
       this.content.slice(0, -1).forEach((text) => {
         str += `<p>${text.replace(/^\s+|\s+$/g, '')}</p>`
       })
-      // add citation superscript
-      const { citations } = this.$store.state.post
-      const lastP = this.content[this.content.length - 1].replace(/^\s+|\s+$/g, '')
-      str += `<p>${lastP}<sup>${citations.length}</sup></p><p></p>`
 
       // insert at caret position or replace selected text
       const { from, to } = currentEditingEditor.state.selection
-      currentEditingEditor.chain().insertContentAt({ from, to }, str).focus().run()
+      currentEditingEditor
+        .chain()
+        .insertContentAt({ from, to }, str)
+        .focus()
+        .run()
+
+      this.$store.dispatch('post/ADD_EDITOR_CITATION', { title, url })
+
+      this.$nextTick(() => {
+        this.$bvToast.show('citation-toast')
+      })
     },
     expandContent(isExpand) {
       this.expand = isExpand
@@ -121,7 +126,7 @@ export default {
 <style scoped lang="scss">
 @import '@/assets/scss/post/main.scss';
 .card {
-  border: 1px solid #DBDCE1;
+  border: 1px solid #dbdce1;
   color: $text-2;
   padding: 1rem;
   transition: all 1s;
