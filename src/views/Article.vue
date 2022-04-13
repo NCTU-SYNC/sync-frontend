@@ -550,6 +550,7 @@ p {
       text-decoration: none !important;
       color: #a8a8a8 !important;
       font-weight: 400;
+      word-break: break-all;
     }
   }
   hr {
