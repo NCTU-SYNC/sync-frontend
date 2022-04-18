@@ -44,7 +44,7 @@
         <div
           class="d-flex justify-content-center cards-container"
         >
-          <b-row cols-sm="1" :cols-md="Math.min(2,newsArr.length)" :cols-lg="Math.min(3, newsArr.length)" style="max-width:1024px;">
+          <b-row cols="1" :cols-md="Math.min(2,newsArr.length)" :cols-lg="Math.min(3, newsArr.length)" style="max-width:1024px;">
             <ArticleCard
               v-for="(news, newsIndex) in newsArr"
               :key="newsIndex"
