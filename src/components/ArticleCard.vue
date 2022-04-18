@@ -2,7 +2,7 @@
   <b-col class="d-flex justify-content-center">
     <b-card
       no-body
-      :style="size"
+      :class="{'card--wide': full}"
       class="card my-3 justify-content-center"
       footer-tag="footer"
       footer-bg-variant="white"
@@ -189,6 +189,15 @@ export default {
 
 .card {
   padding: 15.2px;
+  max-width: 320px;
+  height: 380px;
+  width: 100%;
+
+  &--wide {
+    max-width: 800px;
+    height: 276px;
+  }
+
 }
 .heading {
   // font-size: 22px;
