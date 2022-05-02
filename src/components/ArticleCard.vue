@@ -28,7 +28,7 @@
             </b-card-title>
           </div>
 
-          <b-card-text class="article-excerpt">
+          <b-card-text class="article-excerpt" :class="{'article-excerpt--wide': full}">
             {{ getArticleContent(blocks, excerptCount) }}
           </b-card-text>
         </b-link>
@@ -100,14 +100,8 @@ export default {
     cols() {
       return this.full ? 12 : 4
     },
-    size() {
-      return {
-        'max-width': this.full ? '800px' : '320px',
-        height: this.full ? '276px' : '380px'
-      }
-    },
     excerptCount() {
-      return this.lg ? 190 : 140
+      return this.full ? 190 : 140
     }
   },
   watch: {
@@ -220,6 +214,9 @@ export default {
   display: -webkit-box;
   -webkit-line-clamp: 7;
   -webkit-box-orient: vertical;
+  &--wide {
+    -webkit-line-clamp: 4;
+  }
 }
 
 .subscribe-btn {
