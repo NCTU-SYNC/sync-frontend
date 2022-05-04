@@ -22,6 +22,12 @@ export default new Router({
       hidden: true
     },
     {
+      path: '/login2',
+      name: 'Login2',
+      component: () => import('@/views/new/Login2'),
+      hidden: true
+    },
+    {
       path: '/search',
       name: 'Search',
       component: () => import('@/views/new/Search')
