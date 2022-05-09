@@ -130,7 +130,7 @@ export default {
     submitSearch() {
       if (!this.keyword) return
       if (this.keyword === this.$route.query.q) return
-      this.$router.push({ path: 'search', query: { q: this.keyword }})
+      this.$router.push({ path: '/search', query: { q: this.keyword }})
     }
   }
 }
