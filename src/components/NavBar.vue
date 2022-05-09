@@ -1,13 +1,24 @@
 <template>
-  <b-navbar ref="navbar" fixed="top" class="header-navbar" type="light" variant="faded">
-    <b-button class="px-0 px-md-2" variant="transparent" to="/post">
-      <icon icon="edit" />
-    </b-button>
-    <b-navbar-brand id="brand" to="/" class="centered-block"><Logo /></b-navbar-brand>
+  <b-navbar ref="navbar" fixed="top" class="navbar--container" type="light" variant="faded">
+    <b-navbar-nav class="navbar--item item-left">
+      <b-nav-item class="post px-0" to="/post">
+        <icon icon="edit" />
+      </b-nav-item>
+    </b-navbar-nav>
+    <b-navbar-brand id="brand" to="/" class="navbar--item item-center"><Logo /></b-navbar-brand>
 
-    <!-- Right aligned nav items -->
-    <b-navbar-nav class="ml-auto d-none d-md-flex align-items-center h-100">
-      <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><icon icon="search" /></b-nav-item>
+    <!-- Show when screen width is larger than md -->
+    <b-navbar-nav class="navbar--item item-right d-none d-md-flex align-items-center h-100">
+      <form class="search-bar" @submit.prevent="submitSearch">
+        <b-button variant="link" class="search-bar--submit" type="submit"><icon icon="search" /></b-button>
+        <b-form-input
+          id="search-bar--inputid"
+          v-model="keyword"
+          class="search-bar--input"
+          placeholder="搜尋文章"
+          type="search"
+        />
+      </form>
 
       <b-nav-item-dropdown
         size="lg"
@@ -49,7 +60,8 @@
         <b-dropdown-item href="#" @click="handleLogout">登出</b-dropdown-item>
       </b-nav-item-dropdown>
     </b-navbar-nav>
-    <b-navbar-nav class="ml-auto d-flex d-md-none align-items-center">
+    <!-- Show when screen width is smaller than md -->
+    <b-navbar-nav class="navbar--item item-right d-flex d-md-none align-items-center">
       <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><icon icon="search" /></b-nav-item>
       <b-button variant="link"><icon icon="notification" /></b-button>
       <b-nav-item v-if="getLoginStatus" to="/profile">
@@ -76,6 +88,11 @@ import moment from 'moment'
 export default {
   name: 'NavBar',
   components: { Logo },
+  data() {
+    return {
+      keyword: ''
+    }
+  },
   computed: {
     getRedirectPath() {
       // 設置重新導向，若在首頁、註冊、登入頁面做切換不需設置redirect，其他頁面則需要重新導向，若已經設置重新導向頁面，則註冊、登入切換時，並不會互相把自己的頁面給放進重新導向內
@@ -90,6 +107,11 @@ export default {
     },
     notifications() {
       return this.$store.getters.notifications
+    }
+  },
+  watch: {
+    '$route.query'() {
+      this.keyword = this.$route.query.q
     }
   },
   methods: {
@@ -109,26 +131,44 @@ export default {
         return moment(timeStamp._seconds * 1000).format('YYYY/MM/DD HH:mm')
       }
       return moment(timeStamp).format('YYYY/MM/DD HH:mm')
+    },
+    submitSearch() {
+      if (!this.keyword) return
+      if (this.keyword === this.$route.query.q) return
+      this.$router.push({ path: '/search', query: { q: this.keyword }})
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-.header-navbar {
-  height: 4rem;
-  background-color: $white;
-  border-bottom: 1px solid $gray-light;
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
+.navbar {
+  &--container {
+    height: 4rem;
+    background-color: $white;
+    border-bottom: 1px solid $gray-light;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
 
-.centered-block {
-    left: 50%;
-    transform: translate(-50%, 0);
-    -webkit-transform: translate(-50%, 0);
-    position: absolute;
+  &--item {
+    flex: 1;
+  }
+  .item-left {
+    display: flex;
+    justify-content: begin;
+  }
+  .item-right {
+    display: flex;
+    justify-content: end;
+  }
+  .item-center {
+      margin: 0 !important;
+      // background: lime;
+      display: flex;
+      justify-content: center;
+  }
 }
 
 .avatar-user {
@@ -153,6 +193,50 @@ export default {
   overflow-y: scroll;
 }
 
+.search-bar {
+  --size: 40px;
+
+  height: 40px;
+  width: var(--size);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  transition: width 300ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
+
+  &--input {
+    height: 40px;
+    opacity: 0;
+    cursor: pointer;
+    position: absolute;
+    &:active, &:focus {
+      border: 1px solid $blue !important;
+    }
+    &::placeholder{
+      color: $text-4;
+    }
+  }
+
+  &--submit {
+    padding: 0;
+    margin-right: auto;
+  }
+
+  &:focus-within {
+    width: 400px;
+
+    .search-bar--input {
+      border: 1px solid $gray-4 !important;
+      border-radius: 4px;
+      opacity: 1;
+      cursor: initial;
+      transition: opacity 150ms ease-in-out;
+      width: calc(100% - var(--size));
+    }
+
+  }
+}
 </style>
 
 <style lang="scss">
