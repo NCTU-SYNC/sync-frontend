@@ -109,6 +109,11 @@ export default {
       return this.$store.getters.notifications
     }
   },
+  watch: {
+    '$route.query'() {
+      this.keyword = this.$route.query.q
+    }
+  },
   methods: {
     routeToArticle(articleId) {
       if (this.$route.params.ArticleID === articleId) {
