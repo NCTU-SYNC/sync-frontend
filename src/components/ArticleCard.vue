@@ -139,7 +139,7 @@ export default {
     getDateTime(lastUpdatedAt) {
       const datetime = moment(lastUpdatedAt)
       if (datetime.isValid()) {
-        return datetime.format('YYYY.MM.DD HH:MM')
+        return datetime.format('YYYY.MM.DD HH:mm')
       }
       return ''
     },
