@@ -65,7 +65,7 @@ export default {
     },
     lastUpdatedAt: {
       type: String,
-      default: '2021.04.26'
+      default: '2021-04-26'
     },
     editedCount: {
       type: Number,
