@@ -35,4 +35,12 @@ describe('ArticleCard.vue', () => {
 
     // TODO: add test on content
   })
+
+  it('full card view', () => {
+    props.full = true
+    const { container } = render(ArticleCard, { props, store })
+    const fullCardText = container.querySelector('.article-excerpt--wide')
+
+    expect(fullCardText).toBeInTheDocument()
+  })
 })
