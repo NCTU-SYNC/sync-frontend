@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom'
 import { render, getByText } from '@testing-library/vue'
 import ArticleCard from '@/components/ArticleCard.vue'
 import store from '@/store'
