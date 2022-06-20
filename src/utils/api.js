@@ -1,8 +1,14 @@
 import axios from 'axios'
 import _ from 'lodash'
 
-function getBaseURL() {
+import firebaseAuth from '@/utils/firebase'
+
+export function getBaseURL() {
   return process.env.VUE_APP_BASE_URL + process.env.VUE_APP_API_URL
+}
+
+export function getToken() {
+  return firebaseAuth.token
 }
 
 const api = axios.create({
@@ -16,7 +22,7 @@ api.interceptors.request.use(
     if (!_.has(config, 'data')) {
       config.data = {}
     }
-    config.data.token = 'token'
+    config.data.token = getToken()
 
     return config
   },
@@ -25,4 +31,4 @@ api.interceptors.request.use(
   }
 )
 
-export { axios, api, getBaseURL }
+export { axios, api }
