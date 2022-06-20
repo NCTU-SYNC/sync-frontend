@@ -9,11 +9,6 @@ class FirebaseAuth {
     this.password = ''
     this.displayName = ''
     this.isLogin = false
-
-    if (process.env.NODE_ENV !== 'test') {
-      const { firebaseConfig } = import('../../config/firebaseConfig')
-      firebase.initializeApp(firebaseConfig)
-    }
   }
 
   get auth() {
@@ -25,6 +20,16 @@ class FirebaseAuth {
   }
 
   async setupFirebase() {
+    if (process.env.NODE_ENV === 'test') return Promise.resolve()
+
+    await import('/config/firebaseConfig')
+      .then(({ firebaseConfig }) => {
+        this.instance = firebase.initializeApp(firebaseConfig)
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+
     try {
       this.instance = firebase.auth()
       const handler = async(user) => {
