@@ -19,6 +19,8 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
+    if (config.method !== 'post' && config.method !== 'put') return config
+
     if (!_.has(config, 'data')) {
       config.data = {}
     }

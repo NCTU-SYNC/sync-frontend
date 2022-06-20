@@ -180,7 +180,7 @@
 <script>
 // test id:  5f5113349779a26bd0444b26
 import moment from 'moment'
-import { getArticleById, getRecommendedArticles } from '@/api/article'
+import articleAPI from '@/api/article'
 import TiptapEditor from '@/components/Editor/TiptapEditor.vue'
 import CategoryBar from '@/components/CategoryBar.vue'
 
@@ -306,7 +306,8 @@ export default {
     getArticleData() {
       if (this.articleId) {
         this.isPageReady = false
-        getArticleById(this.articleId)
+        articleAPI
+          .getById(this.articleId)
           .then((response) => {
             if (response.data.code === 200) {
               const {
@@ -345,7 +346,8 @@ export default {
           })
       }
       this.isRecommendedReady = false
-      getRecommendedArticles({ limit: 5 })
+      articleAPI
+        .getRecommended({ limit: 5 })
         .then((response) => {
           const data = response.data
           if (data.code === 200) {
@@ -394,7 +396,9 @@ export default {
     },
     formatBlockDateTime(timeString, timeEnable) {
       const displayTime = timeEnable || timeEnable === undefined
-      return moment(timeString).format(`YYYY/MM/DD${displayTime ? ' HH:mm' : ''}`)
+      return moment(timeString).format(
+        `YYYY/MM/DD${displayTime ? ' HH:mm' : ''}`
+      )
     },
     formatCategory(category) {
       return category === '' ? '未分類' : category

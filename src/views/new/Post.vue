@@ -211,14 +211,8 @@
         </b-button>
         <NewsPanel />
       </div>
-      <div
-        v-show="!showNewsSource"
-        class="news-area-btn-only"
-      >
-        <b-button
-          variant="light"
-          @click="handleShowNewsSource(true)"
-        >
+      <div v-show="!showNewsSource" class="news-area-btn-only">
+        <b-button variant="light" @click="handleShowNewsSource(true)">
           <icon icon="edit-source" />
           搜尋新聞
         </b-button>
@@ -244,7 +238,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getArticleById } from '@/api/article'
+import articleAPI from '@/api/article'
 import BlockEditor from '@/components/Post/BlockEditor'
 import NewsPanel from '@/components/NewsPanel'
 import { Utils } from '@/utils'
@@ -359,61 +353,73 @@ export default {
       // fetch article either from localStorage or remote DB
       if (articleId) {
         this.isLoading = true
-        getArticleById(articleId)
-          .then(response => {
-            if (response.data.code === 200) {
-              let data = response.data.data
-              // check localStorage, use localStorage article if newer than lastUpdated
-              if (localStorageData) {
-                const { timeStamp } = localStorageData
-                const { lastUpdatedAt } = data
-                // use date comparison to guarantee correctness
-                const localStorageDate = new Date(timeStamp)
-                const receivedDate = new Date(lastUpdatedAt)
-                if (localStorageDate > receivedDate) {
-                  data = localStorageData
-                  this.$bvToast.toast(`已恢復您於 ${localStorageDate.toLocaleString()} 開始的編輯階段`, {
+        articleAPI.getById(articleId).then((response) => {
+          if (response.data.code === 200) {
+            let data = response.data.data
+            // check localStorage, use localStorage article if newer than lastUpdated
+            if (localStorageData) {
+              const { timeStamp } = localStorageData
+              const { lastUpdatedAt } = data
+              // use date comparison to guarantee correctness
+              const localStorageDate = new Date(timeStamp)
+              const receivedDate = new Date(lastUpdatedAt)
+              if (localStorageDate > receivedDate) {
+                data = localStorageData
+                this.$bvToast.toast(
+                  `已恢復您於 ${localStorageDate.toLocaleString()} 開始的編輯階段`,
+                  {
                     title: '恢復編輯',
                     autoHideDelay: 20000
-                  })
-                }
+                  }
+                )
               }
-              this.$store.commit('post/INIT_POST', { data })
-              this.isLoading = false
-              this.$nextTick(() => {
-                this.post.currentEditingEditor = null
-              })
-            } else {
-              this.isLoading = false
-              throw new Error(response.data.message)
             }
-          })
-      } else { // if new article
+            this.$store.commit('post/INIT_POST', { data })
+            this.isLoading = false
+            this.$nextTick(() => {
+              this.post.currentEditingEditor = null
+            })
+          } else {
+            this.isLoading = false
+            throw new Error(response.data.message)
+          }
+        })
+      } else {
+        // if new article
         if (localStorageData) {
           const { timeStamp } = localStorageData
           const localStorageDate = new Date(timeStamp)
           this.$bvModal
-            .msgBoxConfirm(`您於 ${localStorageDate.toLocaleString()} 已有一篇標題為：「${localStorageData.title}」的文章正在編輯，
-              請問要繼續編輯嗎？`, {
-              title: '繼續編輯',
-              okTitle: '繼續編輯',
-              cancelTitle: '取消',
-              headerClass: 'custom-modal-header',
-              footerClass: 'custom-modal-footer',
-              okVariant: 'ok',
-              cancelVariant: 'cancel',
-              centered: true
-            }).then(value => {
+            .msgBoxConfirm(
+              `您於 ${localStorageDate.toLocaleString()} 已有一篇標題為：「${
+                localStorageData.title
+              }」的文章正在編輯，
+              請問要繼續編輯嗎？`,
+              {
+                title: '繼續編輯',
+                okTitle: '繼續編輯',
+                cancelTitle: '取消',
+                headerClass: 'custom-modal-header',
+                footerClass: 'custom-modal-footer',
+                okVariant: 'ok',
+                cancelVariant: 'cancel',
+                centered: true
+              }
+            )
+            .then((value) => {
               if (value) {
                 const data = localStorageData
                 this.$store.commit('post/INIT_POST', { data })
                 this.$nextTick(() => {
                   this.post.currentEditingEditor = null
                 })
-                this.$bvToast.toast(`已恢復您於 ${localStorageDate.toLocaleString()} 開始的編輯階段`, {
-                  title: '恢復編輯',
-                  autoHideDelay: 20000
-                })
+                this.$bvToast.toast(
+                  `已恢復您於 ${localStorageDate.toLocaleString()} 開始的編輯階段`,
+                  {
+                    title: '恢復編輯',
+                    autoHideDelay: 20000
+                  }
+                )
               } else {
                 this.removeArticleLocalStorage()
                 this.handleAddBlock(-1)
@@ -513,7 +519,10 @@ export default {
       const articleData = this.$store.getters['post/GET_PUBLISH_DATA']
       articleData['timeStamp'] = this.sessionTimestamp
       const storeData = JSON.stringify(articleData)
-      localStorage.setItem(this.$store.getters['post/GET_ARTICLEID_STRING'], storeData)
+      localStorage.setItem(
+        this.$store.getters['post/GET_ARTICLEID_STRING'],
+        storeData
+      )
     },
     // get from localStorage
     getArticleLocalStorage() {

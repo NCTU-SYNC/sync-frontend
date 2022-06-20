@@ -1,49 +1,61 @@
-import request from '@/utils/request'
-import config from './config'
+import APIBase from '.'
 
-export function getArticles() {
-  return request({
-    url: config.baseURL + `/article`,
-    method: 'get'
-  })
+class ArticleAPI extends APIBase {
+  constructor() {
+    super()
+    this.prefix_path = '/article'
+  }
+
+  /**
+   * fetch articles
+   * @returns {Promise<any>}
+   */
+  get() {
+    return this.action('/', {}, 'get')
+  }
+
+  getRecommended(params) {
+    return this.action('/recommended', params, 'get')
+  }
+
+  /**
+   * fetch article by id
+   * @param {string} id : article id
+   * @returns {Promise<any>}
+   */
+  getById(id) {
+    return this.action(`/${id}`, {}, 'get')
+  }
+
+  /**
+   * create new article
+   * @param {Any} data : article data
+   * @returns {Promise<any>}
+   */
+  create(data) {
+    return this.action('/', data, 'post')
+  }
+
+  /**
+   * update article by id
+   *
+   * ! **IMPORTANT**: id should be passed in data
+   * @param {Any} data : article data
+   * @returns {Promise<any>}
+   * @memberof ArticleAPI
+   */
+  update(data) {
+    return this.action('/', data, 'put')
+  }
+
+  search(data) {
+    // TODO: implement article/search
+    this.prefix_path = '/'
+    const ret = this.action('/search', data, 'get')
+    this.prefix_path = '/article'
+
+    return ret
+  }
 }
 
-export function getArticleById(articleId) {
-  return request({
-    url: config.baseURL + `/article/${articleId}`,
-    method: 'get'
-  })
-}
-
-export function createArticle(data) {
-  return request({
-    url: config.baseURL + `/article`,
-    method: 'post',
-    data
-  })
-}
-
-export function updateArticleById(data) {
-  return request({
-    url: config.baseURL + `/article`,
-    method: 'put',
-    data
-  })
-}
-
-export function searchArticles(data) {
-  return request({
-    url: config.baseURL + `/search`,
-    method: 'get',
-    params: data
-  })
-}
-
-// temporary
-export function getRecommendedArticles(data) {
-  return request({
-    url: config.baseURL + `/article`,
-    method: 'get',
-    params: data
-  })
-}
+export default new ArticleAPI()

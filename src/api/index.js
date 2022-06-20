@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { axios, api } from '@/utils/api'
+import { api } from '@/utils/api'
 
 function pathJoin(parts, sep) {
   const seperator = sep || '/'
