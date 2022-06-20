@@ -31,7 +31,7 @@ class APIBase {
         return api.post(url, data, config)
       case 'get':
         // if no param specified
-        if (_.isPlainObject(data) && JSON.stringify(data) == '{}') {
+        if (_.isPlainObject(data) && JSON.stringify(data) === '{}') {
           return api.get(url)
         } else return api.get(url, { params: data })
       case 'delete':
