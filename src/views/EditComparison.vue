@@ -47,13 +47,51 @@
         </b-row>
       </b-col>
     </b-row>
-    <slot v-for="(blockId, index) in diffOrderArr">
-      <ComparisonBlock
-        :base="getBlockInVersionByBlockId(versions[0], index, blockId)"
-        :article-diff="articleDiff[index]"
-        :link-container="linkContainer"
-      />
-    </slot>
+
+    <b-row
+      v-for="(blockId, index) in diffOrderArr"
+      :key="index"
+      class="divider"
+    >
+      <b-col cols="6">
+        <div
+          class="block"
+          :set="block = getBlockInVersionByBlockId(versions[0], index, blockId)"
+        >
+          <div v-if="block !== null" class="block-header">
+            <h2>
+              {{ block.blockInfo.blockTitle }}
+            </h2>
+          </div>
+          <TiptapEditor
+            v-if="block !== null"
+            :id="block.blockId"
+            :content="block.content"
+            class="editor__content__comparison"
+            :editable="false"
+          />
+        </div>
+      </b-col>
+      <b-col cols="6">
+        <div
+          :key="index"
+          class="block"
+          :set="block = getBlockInVersionByBlockId(versions[1], index, blockId)"
+        >
+          <div class="block-header">
+            <h2>
+              {{ block.blockInfo.blockTitle }}
+            </h2>
+          </div>
+          <TiptapEditor
+            :id="block.blockId"
+            class="editor__content__comparison"
+            :content="block.content"
+            :editable="false"
+          />
+        </div>
+      </b-col>
+    </b-row>
     <ComparisonCitation :citations="[versions[0].citations, versions[1].citations]" />
     <b-row class="mt-3" />
   </b-container>
@@ -61,13 +99,15 @@
 
 <script>
 import DiffMatchPatch from 'diff-match-patch'
-import { ComparisonBlock, ComparisonCitation } from '@/components/History'
+import { ComparisonCitation } from '@/components/History'
 import { getArticlesComparisonByVersionIndexes } from '@/api/history'
+import TiptapEditor from '@/components/Editor/TiptapEditor.vue'
 import moment from 'moment'
 
 export default {
   components: {
-    ComparisonBlock, ComparisonCitation
+    ComparisonCitation,
+    TiptapEditor
   },
   data() {
     return {
@@ -97,7 +137,9 @@ export default {
       blockquoteContainer: '{{blockquote}}',
       diffOrderArr: [],
       isPageReady: false,
-      isClickedRow: true
+      isClickedRow: true,
+      blocks1: [],
+      blocks2: []
     }
   },
   computed: {
@@ -145,6 +187,10 @@ export default {
         for (let i = 0; i < 2; i += 1) {
           const title = articles[i].title
           const blocks = articles[i].blocks
+          // if (i === 0) this.blocks1 = blocks
+          // else this.blocks2 = blocks
+          // console.log(blocks)
+          // const blockInfo = articles[i].blockInfo
           const author = articles[i].author
           const citations = articles[i].citations
           const updatedAt = moment(articles[i].updatedAt).format('YYYY/MM/DD HH:mm')
@@ -339,6 +385,7 @@ export default {
   > div > p {
     margin: 0;
   }
+  margin-top: 16px;
 }
 
 .comparison-header {
@@ -355,29 +402,19 @@ export default {
 .bg-diff {
   &-add {
     background-color: #1AE158;
+    border-radius: 4px;
   }
   &-delete {
     background-color: #FF4F4F;
+    border-radius: 4px;
   }
 }
-h4{
-  font-family: Noto Sans CJK TC;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 24px;
-  line-height: 32px;
-  text-align: center;
-}
-.clicked-row{
-  margin-left: 16px;
-  ::before{
-      content:"";
-      position:absolute;
-      width: 12px;
-      height: 12px;
-      left :10px;
-      top: 15px;
-      background: #2353FF;
+
+.block {
+  &-header {
+    h3 {
+      font-size: 24px;
     }
+  }
 }
 </style>

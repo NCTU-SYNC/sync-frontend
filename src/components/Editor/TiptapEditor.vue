@@ -190,6 +190,12 @@ export default {
       margin-bottom: 18px;
     }
   }
+  &__comparison {
+    p {
+      font-size: 16px;
+      line-height: 24px;
+    }
+  }
 }
 
 .editor__content__edit {
