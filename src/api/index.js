@@ -1,10 +1,17 @@
 import _ from 'lodash'
 import { api } from '@/utils/api'
+import FirebaseAuthInstance from '../utils/firebase'
 
 function pathJoin(parts, sep) {
   const seperator = sep || '/'
   const replace = new RegExp(seperator + '{1,}', 'g')
   return parts.join(seperator).replace(replace, seperator)
+}
+
+function addToken(data) {
+  if (!_.isObject(data)) throw new Error('data must be an object')
+
+  _.set(data, 'token', FirebaseAuthInstance.token)
 }
 
 class APIBase {
@@ -28,6 +35,7 @@ class APIBase {
 
     switch (method.toLowerCase()) {
       case 'post':
+        addToken(data)
         return api.post(url, data, config)
       case 'get':
         // if no param specified
@@ -38,6 +46,7 @@ class APIBase {
         return api.delete(url, { params: data })
       case 'put':
       case 'patch':
+        addToken(data)
         return api.patch(url, data)
       default:
         console.log('unknown method')
