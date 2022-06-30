@@ -347,7 +347,7 @@ export default {
       }
       this.isRecommendedReady = false
       articleAPI
-        .getRecommended({ limit: 5 })
+        .getRecommended(5)
         .then((response) => {
           const data = response.data
           if (data.code === 200) {

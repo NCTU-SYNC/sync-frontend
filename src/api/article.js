@@ -15,8 +15,13 @@ class ArticleAPI extends APIBase {
   }
 
   // TODO: temporary solution
-  getRecommended(params) {
-    return this.action('/', params, 'get')
+  /**
+   * get recommendations
+   * @param {Number} limit : limit number of articles
+   * @returns {Promise<Any>}
+   */
+  getRecommended(limit) {
+    return this.action('/', { limit }, 'get')
   }
 
   /**
