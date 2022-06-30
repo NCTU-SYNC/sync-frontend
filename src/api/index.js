@@ -24,7 +24,7 @@ class APIBase {
 
   getPath(path) {
     path = path || this.path
-    return pathJoin([this.baseURL, this.prefix_path, path], '/')
+    return pathJoin([this.prefix_path, path], '/')
   }
 
   async action(path = null, data = {}, method = null) {
