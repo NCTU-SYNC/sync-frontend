@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+import store from '@/store'
+
 export function getBaseURL() {
   return process.env.VUE_APP_BASE_URL + process.env.VUE_APP_API_URL
 }
