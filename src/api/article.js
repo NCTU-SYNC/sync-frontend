@@ -14,8 +14,9 @@ class ArticleAPI extends APIBase {
     return this.action('/', {}, 'get')
   }
 
+  // TODO: temporary solution
   getRecommended(params) {
-    return this.action('/recommended', params, 'get')
+    return this.action('/', params, 'get')
   }
 
   /**
