@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import NewsAPI from '@api/news'
+import NewsAPI from '@/api/news'
 import NewsCard from '@/components/Post/NewsCard'
 export default {
   name: 'NewsPanel',
