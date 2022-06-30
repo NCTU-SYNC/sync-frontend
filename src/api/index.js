@@ -8,10 +8,10 @@ function pathJoin(parts, sep) {
   return parts.join(seperator).replace(replace, seperator)
 }
 
-function addToken(data) {
+async function addToken(data) {
   if (!_.isObject(data)) throw new Error('data must be an object')
 
-  _.set(data, 'token', FirebaseAuthInstance.token)
+  _.set(data, 'token', await FirebaseAuthInstance.token)
 }
 
 class APIBase {
@@ -27,7 +27,7 @@ class APIBase {
     return pathJoin([this.baseURL, this.prefix_path, path], '/')
   }
 
-  action(path = null, data = {}, method = null) {
+  async action(path = null, data = {}, method = null) {
     method = method || this.defaultMethod
 
     const url = this.getPath(path)
@@ -35,7 +35,7 @@ class APIBase {
 
     switch (method.toLowerCase()) {
       case 'post':
-        addToken(data)
+        await addToken(data)
         return api.post(url, data, config)
       case 'get':
         // if no param specified
@@ -46,7 +46,7 @@ class APIBase {
         return api.delete(url, { params: data })
       case 'put':
       case 'patch':
-        addToken(data)
+        await addToken(data)
         return api.patch(url, data)
       default:
         console.log('unknown method')
