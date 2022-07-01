@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import APIBase from '.'
 
 class ArticleAPI extends APIBase {
@@ -63,5 +64,18 @@ class ArticleAPI extends APIBase {
     return ret
   }
 }
+
+export function getTimeQuery(timeRange = 'qdr:a') {
+  // if timeRange is not in TIME_QUERY, return TIME_QUERY.ALL
+  return _.includes(_.values(TIME_QUERY, timeRange)) ? timeRange : TIME_QUERY.ALL
+}
+
+export const TIME_QUERY = Object.freeze({
+  ALL: 'qdr:a',
+  YEAR: 'qdr:y',
+  MONTH: 'qdr:m',
+  WEEK: 'qdr:w',
+  DAY: 'qdr:d'
+})
 
 export default new ArticleAPI()
