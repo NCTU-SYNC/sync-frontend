@@ -65,9 +65,8 @@ class ArticleAPI extends APIBase {
   }
 }
 
-export function getTimeQuery(timeRange = 'qdr:a') {
-  // if timeRange is not in TIME_QUERY, return TIME_QUERY.ALL
-  return _.includes(_.values(TIME_QUERY, timeRange)) ? timeRange : TIME_QUERY.ALL
+export function getTimeQuery(timeRange = 'all') {
+  return _.get(TIME_QUERY, timeRange.toUpperCase(), TIME_QUERY.ALL)
 }
 
 export const TIME_QUERY = Object.freeze({
