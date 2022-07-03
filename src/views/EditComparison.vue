@@ -49,14 +49,13 @@
     </b-row>
 
     <b-row
-      v-for="(blockId, index) in diffOrderArr"
+      v-for="(block, index) in versions[0].blocks"
       :key="index"
       class="divider"
     >
       <b-col cols="6">
         <div
           class="block"
-          :set="block = getBlockInVersionByBlockId(versions[0], index, blockId)"
         >
           <div v-if="block !== null" class="block-header">
             <h2>
@@ -74,9 +73,7 @@
       </b-col>
       <b-col cols="6">
         <div
-          :key="index"
           class="block"
-          :set="block = getBlockInVersionByBlockId(versions[1], index, blockId)"
         >
           <div class="block-header">
             <h2>
@@ -103,6 +100,7 @@ import { ComparisonCitation } from '@/components/History'
 import { getArticlesComparisonByVersionIndexes } from '@/api/history'
 import TiptapEditor from '@/components/Editor/TiptapEditor.vue'
 import moment from 'moment'
+import VersionDiff from '@/utils/versionDiff'
 
 export default {
   components: {
@@ -187,10 +185,6 @@ export default {
         for (let i = 0; i < 2; i += 1) {
           const title = articles[i].title
           const blocks = articles[i].blocks
-          // if (i === 0) this.blocks1 = blocks
-          // else this.blocks2 = blocks
-          // console.log(blocks)
-          // const blockInfo = articles[i].blockInfo
           const author = articles[i].author
           const citations = articles[i].citations
           const updatedAt = moment(articles[i].updatedAt).format('YYYY/MM/DD HH:mm')
@@ -203,9 +197,16 @@ export default {
         if (this.compare === this.versionsLength || this.base === this.versionsLength) {
           this.versions[1].updatedAt += '（最新版）'
         }
-
+        console.log(this.versions)
         this.articleDiff = this.compareContent(this.versions[0].blocks, this.versions[1].blocks)
-        this.versions[1].articleDiff = this.articleDiff
+        const leftBlocks = this.versions[0].blocks.map((block) => block.content)
+        const rightBlocks = this.versions[1].blocks.map((block) => block.content)
+        const diff = new VersionDiff(leftBlocks, rightBlocks)
+        const { left, right } = diff.markedDoc()
+        console.log(left, right)
+        // this.versions[0].blocks = left
+        // this.versions[1].blocks = right
+        // this.versions[1].articleDiff = this.articleDiff
         this.isPageReady = true
       } catch (error) {
         console.error(error)
