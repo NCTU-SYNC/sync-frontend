@@ -56,9 +56,9 @@ export const mutations = {
 }
 
 export const actions = {
-  async setQuery({ commit, dispatch }, keyword, timeQuery, category) {
-    commit('SET_Q', keyword)
-    commit('SET_TBS', timeQuery)
+  async setQuery({ commit, dispatch }, { q, tbs, category }) {
+    commit('SET_Q', q)
+    commit('SET_TBS', tbs)
     commit('SET_CATEGORY', category)
 
     dispatch('search')
