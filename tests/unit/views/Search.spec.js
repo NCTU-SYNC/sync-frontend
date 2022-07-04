@@ -2,8 +2,8 @@ import { render, waitFor, fireEvent } from '@testing-library/vue'
 import Search from '@/views/new/Search.vue'
 import articleAPI from '@/api/article'
 
-jest.mock('@/store')
-jest.mock('@/api/article')
+jest.mock('@/router')
+jest.mock('@/utils/firebase')
 
 const mockRoute = {
   query: {
