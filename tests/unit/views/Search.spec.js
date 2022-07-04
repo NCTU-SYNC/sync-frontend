@@ -62,19 +62,19 @@ describe('Time Button', () => {
           mocks: {
             $route: mockRoute,
             $router: mockRouter
+          },
+          store,
+          props: {
+            query: {
+              q: 'test',
+              tbs: queryTbs,
+              category: ''
+            }
           }
         })
 
         const btn = await waitFor(() => getByText(btnName))
         await fireEvent.click(btn)
-
-        expect(mockRouter.push).toHaveBeenCalledWith({
-          path: 'search',
-          query: {
-            q: 'test',
-            tbs: queryTbs
-          }
-        })
 
         // btn should be active after being clicked
         expect(btn).toHaveClass('active')
