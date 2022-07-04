@@ -83,6 +83,7 @@ export default {
   },
   data() {
     return {
+      isCardFull: true,
       hashtag: '',
       sentHashtag: '',
       resultCount: 0,
@@ -131,7 +132,7 @@ export default {
         return
       }
       this.$router.push({
-        path: 'search',
+        path: 'hashtag',
         query: { q: this.hashtag, tbs: this.queryTimeSelected }
       })
     },
