@@ -1,36 +1,53 @@
 import _ from 'lodash'
 import articleAPI, { TIME_QUERY } from '@/api/article'
+import router from '@/router'
 
 const state = {
-  q: '',
-  tbs: TIME_QUERY.ALL,
-  category: '',
+  query: {
+    q: '',
+    tbs: TIME_QUERY.ALL,
+    category: ''
+  },
   result: null,
-  isLoading: false
+  isLoading: false,
+  needReload: false
 }
 
 export const getters = {
-  keyword: (state) => state.q,
-  timeQuery: (state) => state.tbs,
-  category: (state) => state.category
+  keyword: (state) => state.query.q,
+  timeQuery: (state) => state.query.tbs,
+  category: (state) => state.query.category,
+  result: (state) => state.result ?? [],
+  isLoading: (state) => state.isLoading
 }
 
 export const mutations = {
   SET_Q: (state, q) => {
-    state.q = q ?? ''
+    if (state.query.q === q) return
+
+    state.needReload = true
+    state.query.q = q ?? ''
   },
 
   SET_TBS: (state, tbs) => {
+    if (state.query.tbs === tbs) return
+
+    state.needReload = true
     // if tbs is not defined, set to default value
-    state.tbs = _.includes(_.values(TIME_QUERY), tbs) ? tbs : TIME_QUERY.ALL
+    state.query.tbs = _.includes(_.values(TIME_QUERY), tbs) ? tbs : TIME_QUERY.ALL
   },
 
   SET_CATEGORY: (state, category) => {
-    state.category = category ?? ''
+    if (state.query.category === category) return
+
+    state.needReload = true
+    state.query.category = category ?? ''
   },
 
   SET_RESULT: (state, result) => {
-    state.result = result
+    state.result = result.sort(
+      (cur, next) => new Date(next.lastUpdatedAt) - new Date(cur.lastUpdatedAt)
+    )
   },
 
   LOADING: (state, isLoading) => {
@@ -39,18 +56,64 @@ export const mutations = {
 }
 
 export const actions = {
-  async search({ commit, state }, query) {
-    commit('SET_Q', query.q)
-    commit('SET_TBS', query.tbs)
-    commit('SET_CATEGORY', query.category)
+  async setQuery({ commit, dispatch }, keyword, timeQuery, category) {
+    commit('SET_Q', keyword)
+    commit('SET_TBS', timeQuery)
+    commit('SET_CATEGORY', category)
 
-    const res = await articleAPI.search({
-      q: state.q,
-      tbs: state.tbs,
-      category: state.category
-    })
+    dispatch('search')
+  },
+
+  updateQuery({ state, dispatch }) {
+    const query = {}
+
+    if (state.q) query.q = state.q
+    if (state.tbs) query.tbs = state.tbs
+    if (state.category) query.category = state.category
+
+    dispatch('search')
+  },
+
+  updateKeyword({ commit, dispatch }, keyword) {
+    commit('SET_Q', keyword)
+
+    dispatch('updateQuery')
+  },
+
+  updateTimeQuery({ commit, dispatch }, timeQuery) {
+    commit('SET_TBS', timeQuery)
+
+    dispatch('updateQuery')
+  },
+
+  updateCategory({ commit, dispatch }, category) {
+    commit('SET_CATEGORY', category)
+
+    dispatch('updateQuery')
+  },
+
+  updateRouterQuery({ state }) {
+    const query = _.omitBy(state.query, _.isEmpty)
+
+    router.push({ path: 'search', query })
+      .catch(() => {}) // to supress 'NavigationDuplicated' error
+  },
+
+  async search({ commit, state, dispatch }) {
+    if (!state.needReload) return
+    if (state.isLoading) return
+
+    state.needReload = false
+    state.isLoading = true
+
+    const { q, tbs, category } = state.query
+
+    const res = await articleAPI.search(q, tbs, category)
 
     commit('SET_RESULT', res.data.data)
+    state.isLoading = false
+
+    dispatch('updateRouterQuery')
   }
 }
 

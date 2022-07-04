@@ -7,20 +7,21 @@ jest.mock('@/router', () => {
         tbs: 'qdr:a',
         category: 'news'
       }
-    }
+    },
+    push: jest.fn()
   }
 })
 jest.mock('@/api/article').resetAllMocks()
-const searchAPI = jest.spyOn(articleAPI, 'search')
 
 import { getters, mutations, actions } from '@/store/search'
-import articleAPI from '@/api/article'
 
 describe('getters', () => {
   const state = {
-    q: 'keyword',
-    tbs: 'qdr:a',
-    category: 'news'
+    query: {
+      q: 'keyword',
+      tbs: 'qdr:a',
+      category: 'news'
+    }
   }
 
   it.concurrent('keyword', () => {
@@ -44,9 +45,14 @@ describe('mutations', () => {
     { q: '', wanted: '' },
     { q: undefined, wanted: '' }
   ])('SET_Q: "$q"', ({ q, wanted }) => {
-    const state = { q: '' }
+    const state = {
+      query: {
+        q: ''
+      }
+    }
+
     SET_Q(state, q)
-    expect(state.q).toBe(wanted)
+    expect(state.query.q).toBe(wanted)
   })
 
   it.concurrent.each([
@@ -55,9 +61,10 @@ describe('mutations', () => {
     { tbs: '', wanted: 'qdr:a' },
     { tbs: undefined, wanted: 'qdr:a' }
   ])('SET_TBS: "$tbs"', ({ tbs, wanted }) => {
-    const state = { tbs: 'qdr:a' }
+    const state = { query: { tbs: 'qdr:a' }}
+
     SET_TBS(state, tbs)
-    expect(state.tbs).toBe(wanted)
+    expect(state.query.tbs).toBe(wanted)
   })
 
   it.concurrent.each([
@@ -65,14 +72,15 @@ describe('mutations', () => {
     { category: '', wanted: '' },
     { category: undefined, wanted: '' }
   ])('SET_CATEGORY: "$category"', ({ category, wanted }) => {
-    const state = { category: '' }
+    const state = { query: { category: '' }}
+
     SET_CATEGORY(state, category)
-    expect(state.category).toBe(wanted)
+    expect(state.query.category).toBe(wanted)
   })
 })
 
 describe('actions', () => {
-  it('search', async() => {
+  it('setQuery', async() => {
     const query = {
       q: 'test',
       tbs: 'qdr:a',
@@ -80,12 +88,17 @@ describe('actions', () => {
     }
 
     const mockCommit = jest.fn()
-    await actions.search({ commit: mockCommit }, query)
+    const mockDispatch = jest.fn()
+    await actions.setQuery(
+      { commit: mockCommit, dispatch: mockDispatch },
+      query.q,
+      query.tbs,
+      query.category
+    )
 
     expect(mockCommit).toHaveBeenCalledWith('SET_Q', 'test')
     expect(mockCommit).toHaveBeenCalledWith('SET_TBS', 'qdr:a')
     expect(mockCommit).toHaveBeenCalledWith('SET_CATEGORY', 'news')
-
-    expect(searchAPI).toBeCalled()
+    expect(mockDispatch).toHaveBeenCalledWith('search')
   })
 })
