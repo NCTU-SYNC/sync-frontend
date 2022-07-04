@@ -55,10 +55,17 @@ class ArticleAPI extends APIBase {
     return this.action('/', data, 'put')
   }
 
-  search(data) {
-    // TODO: implement article/search
+  search(keyword, timeQuery = 'qdr:a', category = '') {
     this.prefix_path = '/'
-    const ret = this.action('/search', data, 'get')
+    const query = {
+      q: keyword ?? '',
+      timeQuery: timeQuery ?? 'qdr:a',
+      category: category ?? ''
+    }
+
+    const ret = this.action('/search', {
+      ...query
+    }, 'get')
     this.prefix_path = '/article'
 
     return ret
