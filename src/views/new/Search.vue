@@ -3,26 +3,27 @@
     <b-container fluid="xl" class="search-bar-container">
       <b-form
         class="d-flex justify-content-center"
-        @submit.prevent="handleSearch"
+        @submit.prevent="submitHandler"
       >
         <div id="search-form">
           <div class="search-row d-flex align-items-center">
             <icon icon="news-panel-search" class="search-icon" size="md" />
             <b-form-input
               id="search-articles"
-              v-model="keyword"
+              :value="keyword"
               class="search-bar"
               placeholder="搜尋文章"
               :readonly="isLoading"
               type="search"
+              @input="setUnsentKeyword"
             />
           </div>
           <div
-            v-if="sentKeyword != ''"
+            v-if="keyword != ''"
             class="result-option-row d-flex justify-content-between"
           >
             <div class="result-detail">
-              有關“{{ sentKeyword }}”的 {{ resultCount }} 項搜尋結果
+              有關“{{ keyword }}”的 {{ resultSize }} 項搜尋結果
             </div>
             <div class="search-options">
               新聞時間：
@@ -30,19 +31,19 @@
                 <b-button
                   variant="link"
                   class="time-btn"
-                  :pressed="queryTimeSelected === 'qdr:w'"
+                  :pressed="timeQuery === getTimeQuery('week')"
                   @click="searchFilter('week')"
                 >上禮拜</b-button>
                 <b-button
                   variant="link"
                   class="time-btn"
-                  :pressed="queryTimeSelected === 'qdr:m'"
+                  :pressed="timeQuery === getTimeQuery('month')"
                   @click="searchFilter('month')"
                 >上個月</b-button>
                 <b-button
                   variant="link"
                   class="time-btn"
-                  :pressed="queryTimeSelected === 'qdr:a'"
+                  :pressed="timeQuery === getTimeQuery('all')"
                   @click="searchFilter('all')"
                 >不限</b-button>
               </b-button-group>
@@ -56,12 +57,12 @@
         <div class="d-flex justify-content-center cards-container">
           <b-row
             cols="1"
-            :cols-md="Math.min(2, newsArr.length)"
-            :cols-lg="Math.min(3, newsArr.length)"
+            :cols-md="Math.min(2, resultSize)"
+            :cols-lg="Math.min(3, resultSize)"
             style="max-width: 1024px"
           >
             <ArticleCard
-              v-for="(news, newsIndex) in newsArr"
+              v-for="(news, newsIndex) in result"
               :key="newsIndex"
               :category="news.category"
               :title="news.title"
@@ -86,30 +87,31 @@
 </template>
 
 <script>
-import articleAPI from '@/api/article'
+import _ from 'lodash'
+import { getTimeQuery } from '@/api/article'
 import ArticleCard from '@/components/ArticleCard.vue'
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   name: 'Search',
   components: {
     ArticleCard
   },
+  props: {
+    query: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data() {
     return {
-      keyword: '',
+      unsentKeyword: '',
       sentKeyword: '',
       resultCount: 0,
       newsArr: [],
       queryTimeSelected: 'qdr:a',
       prevQueryTime: null,
       categorySelected: '',
-      timeQueries: new Map([
-        ['all', 'qdr:a'],
-        ['hour', 'qdr:h'],
-        ['day', 'qdr:d'],
-        ['week', 'qdr:w'],
-        ['month', 'qdr:m'],
-        ['year', 'qdr:y']
-      ]),
       categoryQueries: [
         '不限主題',
         '政經',
@@ -119,118 +121,59 @@ export default {
         '國際',
         '科技',
         '生活'
-      ],
-      isLoading: false
+      ]
     }
   },
-  watch: {
-    async '$route.query'() {
-      await this.routerQuerySearch()
+  computed: {
+    ...mapGetters({
+      keyword: 'search/keyword',
+      timeQuery: 'search/timeQuery',
+      category: 'search/category',
+      isLoading: 'search/isLoading',
+      result: 'search/result'
+    }),
+    resultSize() {
+      return _.size(this.result)
     }
   },
   created() {
-    this.routerQuerySearch()
+    this.setQuery(this.$props.query)
   },
   methods: {
-    handleSearch() {
-      const routerQuery = this.$route.query
-      if (
-        this.keyword === '' ||
-        (routerQuery.q === this.keyword &&
-          routerQuery.tbs === this.queryTimeSelected)
-      ) {
-        return
-      }
-      this.$router.push({
-        path: 'search',
-        query: { q: this.keyword, tbs: this.queryTimeSelected }
-      })
+    ...mapActions({
+      setQuery: 'search/setQuery',
+      updateKeyword: 'search/updateKeyword',
+      updateTimeQuery: 'search/updateTimeQuery'
+    }),
+
+    setUnsentKeyword(keyword) {
+      this.unsentKeyword = keyword
     },
+
+    submitHandler() {
+      this.updateKeyword(this.unsentKeyword)
+    },
+
+    getTimeQuery(time) {
+      return getTimeQuery(time)
+    },
+
     handleArticleRoute(_id) {
       if (!_id) return
       this.$router.push({ path: `/article/${_id}` })
     },
-    async searchArticles() {
-      // Search for news
-      this.newsArr = []
-      if (this.keyword) {
-        try {
-          this.isLoading = true
-          const { data } = await articleAPI.search({
-            q: this.keyword,
-            tbs: this.queryTimeSelected,
-            category: this.categorySelected
-          })
-          const type = data.type
-          // const payload = data.data
-          if (type === 'success') {
-            // need to change
-            const articles = data.data.sort(
-              (a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt)
-            )
-            articles.forEach((article) => {
-              const {
-                category,
-                _id,
-                title,
-                viewsCount,
-                tags,
-                lastUpdatedAt,
-                editedCount,
-                blocks
-              } = article
-              this.newsArr.push({
-                category,
-                _id,
-                title,
-                viewsCount,
-                tags,
-                lastUpdatedAt,
-                editedCount,
-                blocks
-              })
-            })
-          } else {
-            throw new Error(data.message)
-          }
-        } catch (error) {
-          console.error(error.message)
-          this.$bvModal.msgBoxOk(error.message)
-        } finally {
-          this.isLoading = false
-        }
-      }
-    },
+
     searchFilter(filterRange = 'all') {
-      if (this.timeQueries.get(filterRange) === this.queryTimeSelected) return
-      this.queryTimeSelected = this.timeQueries.get(filterRange)
-      this.handleSearch()
+      if (getTimeQuery(filterRange) === this.queryTimeSelected) return
+      this.queryTimeSelected = getTimeQuery(filterRange)
+      this.updateTimeQuery(this.queryTimeSelected)
     },
-    async routerQuerySearch() {
-      // Check if query string is empty
-      if (this.$route.query.q) {
-        // get query params from router
-        const routerQuery = { q: '', tbs: 'qdr:a', ...this.$route.query }
-        this.keyword = routerQuery.q
-        this.queryTimeSelected = routerQuery.tbs
-        // if did not change, return
-        if (
-          routerQuery.q === '' ||
-          (routerQuery.q === this.sentKeyword &&
-            routerQuery.tbs === this.prevQueryTime)
-        ) {
-          return
-        }
-        await this.searchArticles()
-        this.sentKeyword = this.keyword
-        this.prevQueryTime = this.queryTimeSelected
-        this.resultCount = this.newsArr.length
-      }
-    },
+
     onTimeDropdownClicked(timeString) {
       this.queryTimeSelected = timeString
       this.searchArticles()
     },
+
     onCategoryDropdownClicked(categoryString) {
       this.categorySelected = categoryString
       this.searchArticles()

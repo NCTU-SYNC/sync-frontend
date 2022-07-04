@@ -1,6 +1,7 @@
 import { render, waitFor, fireEvent } from '@testing-library/vue'
 import Search from '@/views/new/Search.vue'
 import articleAPI from '@/api/article'
+import store from '@/store'
 
 jest.mock('@/router')
 jest.mock('@/utils/firebase')
@@ -10,8 +11,9 @@ const mockRoute = {
     q: 'test'
   }
 }
+
 const mockRouter = {
-  push: jest.fn()
+  push: jest.fn(() => new Promise())
 }
 
 describe('Time Button', () => {
@@ -23,6 +25,7 @@ describe('Time Button', () => {
     ])(
       '"$btnName" is bold when time query is "$queryTbs"',
       async({ btnName, queryTbs }) => {
+
         const searchAPI = jest.spyOn(articleAPI, 'search')
         searchAPI.mockImplementation(() => Promise.resolve({
           data: { type: 'success', data: [] }
@@ -34,6 +37,14 @@ describe('Time Button', () => {
           mocks: {
             $route: mockRoute,
             $router: mockRouter
+          },
+          store,
+          props: {
+            query: {
+              q: 'test',
+              tbs: queryTbs,
+              category: ''
+            }
           }
         })
 

@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import FirebaseAuthInstance from '@/utils/firebase.js'
-import store from '@/store'
 
 Vue.use(Router)
 
@@ -26,9 +25,7 @@ export default new Router({
       path: '/search',
       name: 'Search',
       component: () => import('@/views/new/Search'),
-      props: (route) => {
-        store.dispatch('search/search', route.query)
-      }
+      props: (route) => ({ query: route.query })
     },
     {
       path: '/signup',
