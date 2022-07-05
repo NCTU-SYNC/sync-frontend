@@ -91,9 +91,7 @@ describe('actions', () => {
     const mockDispatch = jest.fn()
     await actions.setQuery(
       { commit: mockCommit, dispatch: mockDispatch },
-      query.q,
-      query.tbs,
-      query.category
+      { q: query.q, tbs: query.tbs, category: query.category }
     )
 
     expect(mockCommit).toHaveBeenCalledWith('SET_Q', 'test')
