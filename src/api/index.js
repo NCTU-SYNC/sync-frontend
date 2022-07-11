@@ -45,6 +45,8 @@ class APIBase {
       case 'delete':
         return api.delete(url, { params: data })
       case 'put':
+        await addToken(data)
+        return api.put(url, data)
       case 'patch':
         await addToken(data)
         return api.patch(url, data)
