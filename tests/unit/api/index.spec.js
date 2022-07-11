@@ -24,7 +24,7 @@ describe('API basic spec', () => {
       .reply(204, null, {
         'Access-Control-Allow-Methods': 'POST, PATCH'
       })
-      .patch('/', (body) => body.token)
+      .put('/', (body) => body.token)
       .reply(200)
       .post('/', (body) => body.token)
       .reply(200)
