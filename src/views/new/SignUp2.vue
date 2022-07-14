@@ -8,23 +8,22 @@
   >
     <b-container fluid class="h-100 p-0">
       <b-row class="h-100" style="padding: 0 15px 0;">
-        <b-col class="left-modal">
-          <div class="content d-flex flex-column justify-content-between">
-            <div class="d-flex align-items-center">
-              <icon icon="logo" style="height: 80px" />
-              <strong class="title"> SYNC </strong>
+        <b-col class="left-modal d-flex justify-content-center align-items-center">
+          <div class="sync-logo d-flex align-items-center">
+            <icon icon="white-logo" style="height: 40px;" />
+            <strong class="title"> SYNC </strong>
+          </div>
+          <div class="slogan d-flex flex-column justify-content-center">
+            <div class="d-flex justify-content-start">
+              <icon icon="vector2" style="height: 40px;" />
             </div>
-            <div style="height: 120px">
-              <ui class="h-100 d-flex flex-column justify-content-between">
-                <li
-                  v-for="slogan in slogans"
-                  :key="slogan"
-                  class="d-flex align-items-center"
-                >
-                  <icon icon="vector" style="height: 10px" />
-                  <div class="slogan"> {{ slogan }} </div>
-                </li>
-              </ui>
+            <div class="w-100 d-flex flex-column align-items-center">
+              <p> 一個匯集資訊的同步協作平台，與他 </p>
+              <p> 人合作還原事件脈絡，讓所有人都能 </p>
+              <p> 從眾人提供的整合資訊中汲取所需。 </p>
+            </div>
+            <div class="d-flex justify-content-end">
+              <icon icon="vector2" style="height: 40px; transform: matrix(-1, 0, 0, -1, 0, 0);" />
             </div>
           </div>
         </b-col>
@@ -35,7 +34,7 @@
             @click="$router.back()"
           />
           <div class="content d-flex flex-column align-items-center">
-            <h3> 登入 </h3>
+            <h3> 註冊帳號 </h3>
             <b-button
               v-for="login in thirdPartyLogins"
               :key="login"
@@ -60,18 +59,20 @@
                 required
                 trim
                 :type="info.type"
-                :placeholder="info.name"
+                :placeholder="info.placeholder"
               />
             </b-form-group>
             <div class="w-100">
-              <b-form-checkbox size="sm" class="keep-login-button">
-                保持登入狀態
+              <b-form-checkbox size="md" class="confirm-button">
+                我已閱讀並同意遵守 SYNC
+                <b-link style="color: #2353FF;"> 服務條款 </b-link>
+                與
+                <b-link style="color: #2353FF;"> 隱私權政策 </b-link>
               </b-form-checkbox>
             </div>
-            <b-button block style="background: #2353FF;"> 登入 </b-button>
-            <div class="option w-100 d-flex justify-content-between">
-              <b-link style="color: black;"> 忘記密碼？ </b-link>
-              <b-link style="color: #2353FF;"> 註冊新帳號 </b-link>
+            <b-button block style="background: #2353FF;"> 註冊帳號 </b-button>
+            <div class="option w-100 d-flex justify-content-center">
+              <b-link style="font-size: 14px; color: #2353FF;"> 以現有帳號登入 </b-link>
             </div>
           </div>
         </b-col>
@@ -83,7 +84,7 @@
 <script>
 import firebase from '@/utils/firebase'
 export default {
-  name: 'Login2',
+  name: 'SignUp2',
   data() {
     return {
       auth: null,
@@ -108,10 +109,16 @@ export default {
       }],
       loginInfos: [{
         type: 'text',
-        name: '帳號/Email'
+        name: '使用者名稱',
+        placeholder: '使用者名稱，平台顯示名稱'
+      }, {
+        type: 'text',
+        name: '帳號/Email',
+        placeholder: '帳號/Email，有效的Email登入使用'
       }, {
         type: 'password',
-        name: '密碼'
+        name: '密碼',
+        placeholder: '密碼，至少六位數的英文與數字組合'
       }]
     }
   },
@@ -180,31 +187,37 @@ $theme-colors: () !important;
   border-radius: 16px;
 
   .left-modal {
-    background: linear-gradient(to bottom, #03081a, #0a194d);
+    background-image: url("~@/assets/images/SignUpModalBG.png");
+    background-position: center;
+    background-size: cover;
 
-    .content {
+    .sync-logo{
       position: absolute;
-      height: 280px;
-      width: 300px;
-      top: calc(50% - 280px / 2);
-      left: calc(50% - 300px / 2);
-
+      top: 0;
+      left: 0;
+      margin: 2.5rem;
       strong.title {
-        font-size: xxx-large;
+        font-size: xx-large;
         letter-spacing: 5px;
         color: white;
-        margin: 0 0 0 20px;
-        user-select: none;
-      }
-
-      .slogan {
-        font-size: large;
-        font-weight: normal;
-        letter-spacing: 2px;
-        color: white;
+        margin: 0 0 0 10px;
         user-select: none;
       }
     }
+
+    .slogan {
+      width: 400px;
+      p {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 30px;
+        letter-spacing: 2px;
+        color: #212124;
+        user-select: none;
+      }
+    }
+
   }
 
   .right-modal {
@@ -271,7 +284,9 @@ $theme-colors: () !important;
 
       }
 
-      .keep-login-button {
+      .confirm-button {
+        font-size: 12px;
+        line-height: 24px;
         margin: 28px 0 0;
       }
     }
