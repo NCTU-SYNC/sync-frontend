@@ -48,13 +48,16 @@
       </b-col>
     </b-row>
 
-    <b-row
+    <!-- <b-row
       v-for="(block, index) in versions[0].blocks"
       :key="index"
       class="divider"
-    >
+    > -->
+    <b-row class="divider">
       <b-col cols="6">
-        <div
+        <b-row
+          v-for="(block, index) in versions[0].blocks"
+          :key="index"
           class="block"
         >
           <div v-if="block !== null" class="block-header">
@@ -69,10 +72,12 @@
             class="editor__content__comparison"
             :editable="false"
           />
-        </div>
+        </b-row>
       </b-col>
       <b-col cols="6">
-        <div
+        <b-row
+          v-for="(block, index) in versions[1].blocks"
+          :key="index"
           class="block"
         >
           <div class="block-header">
@@ -86,7 +91,7 @@
             :content="block.content"
             :editable="false"
           />
-        </div>
+        </b-row>
       </b-col>
     </b-row>
     <ComparisonCitation :citations="[versions[0].citations, versions[1].citations]" />
@@ -100,6 +105,7 @@ import { ComparisonCitation } from '@/components/History'
 import { getArticlesComparisonByVersionIndexes } from '@/api/history'
 import TiptapEditor from '@/components/Editor/TiptapEditor.vue'
 import moment from 'moment'
+// eslint-disable-next-line no-unused-vars
 import VersionDiff from '@/utils/versionDiff'
 
 export default {
@@ -169,6 +175,8 @@ export default {
         })
         const { articles, length, base, compare, title, wordsChanged } = data.data
         this.versionsLength = length
+        const articles2 = JSON.parse(JSON.stringify(articles))
+        console.log('articles:', articles2)
         if (this.$route.query.base !== base.toString() || this.$route.query.compare !== compare.toString()) {
           this.$router.replace({ query: { base, compare }})
         }
@@ -197,16 +205,14 @@ export default {
         if (this.compare === this.versionsLength || this.base === this.versionsLength) {
           this.versions[1].updatedAt += '（最新版）'
         }
-        console.log(this.versions)
-        this.articleDiff = this.compareContent(this.versions[0].blocks, this.versions[1].blocks)
+        console.log('this.versions:', this.versions)
+        // this.articleDiff = this.compareContent(this.versions[0].blocks, this.versions[1].blocks)
         const leftBlocks = this.versions[0].blocks.map((block) => block.content)
         const rightBlocks = this.versions[1].blocks.map((block) => block.content)
         const diff = new VersionDiff(leftBlocks, rightBlocks)
-        const { left, right } = diff.markedDoc()
-        console.log(left, right)
-        // this.versions[0].blocks = left
-        // this.versions[1].blocks = right
-        // this.versions[1].articleDiff = this.articleDiff
+        console.log('diff:', diff)
+        const { leftDoc, rightDoc } = diff.markedDoc()
+        console.warn('get left and right:', leftDoc, rightDoc)
         this.isPageReady = true
       } catch (error) {
         console.error(error)

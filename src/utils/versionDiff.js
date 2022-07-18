@@ -1,4 +1,5 @@
 import * as jsondiffpatch from 'jsondiffpatch'
+import DiffMatchPatch from 'diff-match-patch'
 
 console.log(jsondiffpatch)
 
@@ -68,18 +69,22 @@ function getDeltaType(delta) {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 function createText(doc, text, textDiffType) {
   doc.push(new TextFactory(text, textDiffType))
 }
 
 function insertMark(doc, key, _new = true) {
   // if doc is on the left, key start with '_'
+  console.warn('insertMark:', doc, key, _new)
   if (_new === false) {
-    key = key.slice(1)
+    // why slice?
+    // key = key.slice(1)
   }
-  if (doc.marks === undefined) doc[key].marks = []
+  console.warn('doc key:', key, doc[key])
+  if (doc.marks === undefined) doc.marks = []
 
-  doc[key].marks.push(new HighlightFactory(_new))
+  doc.marks.push(new HighlightFactory(_new))
 }
 
 /**
@@ -88,9 +93,11 @@ function insertMark(doc, key, _new = true) {
 
   [unidiff](https://github.com/google/diff-match-patch/wiki/Unidiff)
 */
+// eslint-disable-next-line no-unused-vars
 function parseTextDiff(value) {
   const output = []
   const lines = value.split('\n@@ ')
+  console.log('PARSETEXTDIFF:', lines)
 
   for (let i = 0, l = lines.length; i < l; i++) {
     const line = lines[i]
@@ -135,6 +142,7 @@ function parseTextDiff(value) {
     output.push(lineOutput)
   }
 
+  console.log('PARSETEXTDIFF output:', output)
   return output
 }
 
@@ -146,10 +154,11 @@ function StackPayload(l, r, d) {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 function countWord(doc) {
   if (doc.content === undefined) {
-    console.log(doc)
-    return doc.text.length
+    console.warn('content is undefined', doc)
+    return doc.length
   }
   let len = 0
 
@@ -197,7 +206,7 @@ class VersionDiff {
    */
   markedDoc() {
     if (!this.marked) this.mark()
-
+    console.log('inVDiff:', this.left, this.right)
     return { leftDoc: this.left, rightDoc: this.right }
   }
 
@@ -217,47 +226,55 @@ class VersionDiff {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const { left: leftCur, right: rightCur, delta: deltaCur } = stack.shift()
-
+      console.log('current stack payload:', leftCur, rightCur)
       for (const key of Object.keys(deltaCur)) {
         // skip type descriptor
         // skip changes on marks
         if (key === '_t' || key === 'marks') continue
-        console.log(key, deltaCur)
+        console.warn('key, delta:', key, deltaCur[key])
         if (Array.isArray(deltaCur[key])) {
           switch (getDeltaType(deltaCur[key])) {
             case deltaType.ADD:
+              console.warn('mark, deltaType.ADD left right:', leftCur, rightCur)
               insertMark(rightCur, key, true)
-              this._wordCount.new += countWord(rightCur[key])
+              // this._wordCount.new += countWord(rightCur[key])
               break
             case deltaType.MOD:
               // TODO: generate MOD delta to test
+              console.warn('mark, deltaType.MOD left right:', leftCur, rightCur)
               insertMark(leftCur, key, false)
               insertMark(rightCur, key, true)
-              this._wordCount.new += countWord(rightCur[key])
-              this._wordCount.old += countWord(leftCur[key.slice(1)])
+              // this._wordCount.new += countWord(rightCur[key])
+              // this._wordCount.old += countWord(leftCur[key])
               break
             case deltaType.DEL:
+              console.warn('mark, deltaType.DEL left right:', leftCur, rightCur)
               insertMark(leftCur, key, false)
-              this._wordCount.old += countWord(leftCur[key.slice(1)])
+              // this._wordCount.old += countWord(leftCur[key.slice(1)])
               break
             case deltaType.TEXT:
               // clear content array
+              console.warn('mark, deltaType.TEXT left right:', leftCur, rightCur)
+              console.warn('mark, deltaType.TEXT before leftPar rightPar:', leftParent, rightParent)
               leftParent.splice(0, leftParent.length)
               rightParent.splice(0, rightParent.length)
-
-              for (const p of parseTextDiff(deltaCur[key][0])) {
-                for (const piece of p.pieces) {
-                  const text = decodeURI(piece.text)
-                  if (piece.type === 'added') {
-                    createText(leftParent, text, textDiffType.NEW)
-                    this._wordCount.new += text.length
-                  } else if (piece.type === 'deleted') {
-                    createText(leftParent, text, textDiffType.OLD)
-                    this._wordCount.old += text.length
-                  } else if (piece.type === 'context') {
-                    createText(leftParent, text, textDiffType.CONTEXT)
-                    createText(rightParent, text, textDiffType.CONTEXT)
-                  }
+              console.warn('mark, deltaType.TEXT leftPar rightPar:', leftParent, rightParent)
+              // eslint-disable-next-line no-case-declarations
+              const dmp = new DiffMatchPatch()
+              // eslint-disable-next-line no-case-declarations
+              const content = dmp.diff_main(leftCur.text, rightCur.text)
+              dmp.diff_cleanupSemantic(content)
+              for (const piece of content) {
+                // deleted
+                const text = piece[1]
+                if (piece[0] === -1) {
+                  createText(leftParent, text, textDiffType.OLD)
+                  // context
+                } else if (piece[0] === 0) {
+                  createText(leftParent, text, textDiffType.CONTEXT)
+                  createText(rightParent, text, textDiffType.CONTEXT)
+                } else if (piece[0] === 1) {
+                  createText(rightParent, text, textDiffType.NEW)
                 }
               }
               break
@@ -271,6 +288,8 @@ class VersionDiff {
           // after handle delta, continue to next key.
           // no iterate on child needed
           continue
+        } else {
+          console.warn('not array')
         }
 
         if (deltaCur[key] === undefined) break
@@ -283,7 +302,7 @@ class VersionDiff {
 
       leftParent = leftCur
       rightParent = rightCur
-
+      console.log('Update parents:', JSON.parse(JSON.stringify(leftParent)), JSON.parse(JSON.stringify(rightParent)))
       if (stack.length === 0) {
         break
       }
@@ -298,7 +317,7 @@ class VersionDiff {
     if (!this._delta) {
       this._delta = jsondiffpatch.diff(this.left, this.right)
     }
-
+    console.log('GET DELTA!', this._delta)
     return this._delta
   }
 

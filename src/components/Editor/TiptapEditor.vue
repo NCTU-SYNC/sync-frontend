@@ -94,7 +94,9 @@ export default {
       extensions: [
         StarterKit,
         Underline,
-        Highlight,
+        Highlight.configure({
+          multicolor: true
+        }),
         Placeholder.configure({
           emptyEditorClass: 'is-editor-empty',
           placeholder: '段落內文'
