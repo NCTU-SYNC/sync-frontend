@@ -121,42 +121,38 @@ export default {
       }]
     }
   },
-  watch: {
-    $route: {
-      handler(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
+  computed: {
+    accountOrEmail: function() {
+      return this.loginInfos[0].data
+    },
+    password: function() {
+      return this.loginInfos[1].data
     }
   },
   methods: {
-    onSubmit(evt) {
-      evt.preventDefault()
-      this.handleLogin()
-    },
-    onReset(evt) {
-      evt.preventDefault()
-      this.email = ''
-      this.password = ''
-      // Trick to reset/clear native browser form validation state
-      this.show = false
-      this.$nextTick(() => {
-        this.show = true
-      })
-    },
     async handleLogin() {
       try {
-        await firebase.handleLogin(this.email, this.password)
-        this.$router.push({ path: this.redirect || '/' })
+        await firebase.handleLogin(this.accountOrEmail, this.password)
+        this.$router.back()
       } catch (error) {
+        this.loginInfos.forEach(info => { info.data = '' })
         console.error(error)
         this.$bvModal.msgBoxOk(error.message)
       }
     },
-    async loginWithGoogle() {
+    thirdPartyLoginFunc(target) {
+      switch (target) {
+        // case 'Facebook':
+        //   return firebase.loginWithFacebook
+        case 'Google':
+          return firebase.loginWithGoogle
+      }
+    },
+    async handleThirdPartyLogin(target) {
+      const loginFunc = this.thirdPartyLoginFunc(target)
       try {
-        await firebase.loginWithGoogle()
-        this.$router.push({ path: this.redirect || '/' })
+        await loginFunc()
+        this.$router.back()
       } catch (error) {
         console.error(error)
         this.$bvModal.msgBoxOk(error.message)

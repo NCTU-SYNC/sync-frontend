@@ -146,42 +146,42 @@ export default {
       showTermsOfService: false
     }
   },
-  watch: {
-    $route: {
-      handler(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
+  computed: {
+    userName: function() {
+      return this.loginInfos[0].data
+    },
+    accountOrEmail: function() {
+      return this.loginInfos[1].data
+    },
+    password: function() {
+      return this.loginInfos[2].data
     }
   },
   methods: {
-    onSubmit(evt) {
-      evt.preventDefault()
-      this.handleLogin()
-    },
-    onReset(evt) {
-      evt.preventDefault()
-      this.email = ''
-      this.password = ''
-      // Trick to reset/clear native browser form validation state
-      this.show = false
-      this.$nextTick(() => {
-        this.show = true
-      })
-    },
-    async handleLogin() {
+    async handleSignUp() {
       try {
-        await firebase.handleLogin(this.email, this.password)
-        this.$router.push({ path: this.redirect || '/' })
+        await firebase.handleSignup(this.email, this.password, this.userName)
+        this.$router.back()
       } catch (error) {
+        this.loginInfos.forEach(info => { info.data = '' })
         console.error(error)
         this.$bvModal.msgBoxOk(error.message)
       }
     },
-    async loginWithGoogle() {
+    thirdPartyLoginFunc(target) {
+      switch (target) {
+        // case 'Facebook':
+        //   return firebase.loginWithFacebook
+        case 'Google':
+          return firebase.loginWithGoogle
+      }
+    },
+    async handleThirdPartyLogin(target) {
+      console.log(`login with ${target}`)
+      const loginFunc = this.thirdPartyLoginFunc(target)
       try {
-        await firebase.loginWithGoogle()
-        this.$router.push({ path: this.redirect || '/' })
+        await loginFunc()
+        this.$router.back()
       } catch (error) {
         console.error(error)
         this.$bvModal.msgBoxOk(error.message)
