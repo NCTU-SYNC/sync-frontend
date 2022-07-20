@@ -39,39 +39,49 @@
             <b-button
               v-for="login in thirdPartyLogins"
               :key="login"
-              block
               variant="light"
               class="d-flex align-items-center"
+              block
+              @click="handleThirdPartyLogin(login.name)"
             >
               <img :src="login.icon">
               <div> {{ login.name }} 註冊/登入 </div>
             </b-button>
             <div class="split-line w-100 d-flex align-items-center"> 或 </div>
-            <b-form-group
-              v-for="(info, index) in loginInfos"
-              :key="index"
-              :label="info.name"
-              :label-for="`${info.name}-id`"
-              label-class="form-label"
-              class="form w-100"
-            >
-              <b-form-input
-                :id="`${info.name}-id`"
-                required
-                trim
-                :type="info.type"
-                :placeholder="info.name"
-              />
-            </b-form-group>
-            <div class="w-100">
-              <b-form-checkbox size="sm" class="keep-login-button">
-                保持登入狀態
-              </b-form-checkbox>
-            </div>
-            <b-button block style="background: #2353FF;"> 登入 </b-button>
+            <b-form class="w-100" @submit="handleLogin">
+              <b-form-group
+                v-for="(info, index) in loginInfos"
+                :key="index"
+                :label="info.name"
+                :label-for="info.name"
+                label-class="form-label"
+                class="form w-100"
+              >
+                <b-form-input
+                  :id="info.name"
+                  v-model="info.data"
+                  :type="info.type"
+                  :placeholder="info.name"
+                  required
+                  trim
+                />
+              </b-form-group>
+              <div class="w-100">
+                <b-form-checkbox size="sm" class="keep-login-button">
+                  保持登入狀態
+                </b-form-checkbox>
+              </div>
+              <b-button type="submit" block style="background: #2353FF;"> 登入 </b-button>
+            </b-form>
             <div class="option w-100 d-flex justify-content-between">
-              <b-link style="color: black;"> 忘記密碼？ </b-link>
-              <b-link style="color: #2353FF;"> 註冊新帳號 </b-link>
+              <b-link
+                style="font-size: 14px; color: black;"
+              > 忘記密碼？ </b-link>
+              <b-link
+                style="font-size: 14px; color: #2353FF;"
+                to="/signup2"
+                replace
+              > 註冊新帳號 </b-link>
             </div>
           </div>
         </b-col>
@@ -86,32 +96,28 @@ export default {
   name: 'Login2',
   data() {
     return {
-      auth: null,
-      isInChooseMethod: true,
-      errorMessage: '',
-      email: '',
-      password: '',
-      show: true,
-      redirect: undefined,
-      icons: ['vector-icon.svg', 'logo-icon.svg'],
       slogans: [
         '一個匯集資訊的同步協作平台',
         '新聞的多元觀點與客觀事實',
         '共同編輯新聞系統'
       ],
-      thirdPartyLogins: [{
-        name: 'Facebook',
-        icon: 'https://img.icons8.com/color/24/000000/facebook-new.png'
-      }, {
-        name: 'Google',
-        icon: 'https://img.icons8.com/color/24/000000/google-logo.png'
-      }],
+      thirdPartyLogins: [
+      // {
+      //   name: 'Facebook',
+      //   icon: 'https://img.icons8.com/color/24/000000/facebook-new.png'
+      // },
+        {
+          name: 'Google',
+          icon: 'https://img.icons8.com/color/24/000000/google-logo.png'
+        }],
       loginInfos: [{
         type: 'text',
-        name: '帳號/Email'
+        name: '帳號/Email',
+        data: ''
       }, {
         type: 'password',
-        name: '密碼'
+        name: '密碼',
+        data: ''
       }]
     }
   },
