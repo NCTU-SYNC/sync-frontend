@@ -1,99 +1,90 @@
 <template>
-  <b-modal
-    visible
-    hide-header
-    hide-footer
-    body-class="p-0"
-    content-class="login-modal"
-  >
-    <b-container fluid class="h-100 p-0">
-      <b-row class="h-100" style="padding: 0 15px 0;">
-        <b-col class="left-modal">
-          <div class="content d-flex flex-column justify-content-between">
-            <div class="d-flex align-items-center">
-              <icon icon="logo" style="height: 80px" />
-              <strong class="title"> SYNC </strong>
-            </div>
-            <div style="height: 120px">
-              <ui class="h-100 d-flex flex-column justify-content-between">
-                <li
-                  v-for="slogan in slogans"
-                  :key="slogan"
-                  class="d-flex align-items-center"
-                >
-                  <icon icon="vector" style="height: 10px" />
-                  <div class="slogan"> {{ slogan }} </div>
-                </li>
-              </ui>
-            </div>
+  <b-container fluid class="h-100 p-0">
+    <b-row class="h-100" style="padding: 0 15px 0;">
+      <b-col class="left-modal">
+        <div class="content d-flex flex-column justify-content-between">
+          <div class="d-flex align-items-center">
+            <icon icon="logo" style="height: 80px" />
+            <strong class="title"> SYNC </strong>
           </div>
-        </b-col>
-
-        <b-col class="right-modal">
-          <b-button-close
-            style="margin: 1rem; position: absolute; top: 0; right: 0"
-            @click="$router.back()"
-          />
-          <div class="content d-flex flex-column align-items-center">
-            <h3> 登入 </h3>
-            <b-button
-              v-for="login in thirdPartyLogins"
-              :key="login"
-              variant="light"
-              class="d-flex align-items-center"
-              block
-              @click="handleThirdPartyLogin(login.name)"
-            >
-              <img :src="login.icon">
-              <div> {{ login.name }} 註冊/登入 </div>
-            </b-button>
-            <div class="split-line w-100 d-flex align-items-center"> 或 </div>
-            <b-form class="w-100" @submit="handleLogin">
-              <b-form-group
-                v-for="(info, index) in loginInfos"
-                :key="index"
-                :label="info.name"
-                :label-for="info.name"
-                label-class="form-label"
-                class="form w-100"
+          <div style="height: 120px">
+            <ui class="h-100 d-flex flex-column justify-content-between">
+              <li
+                v-for="slogan in slogans"
+                :key="slogan"
+                class="d-flex align-items-center"
               >
-                <b-form-input
-                  :id="info.name"
-                  v-model="info.data"
-                  :type="info.type"
-                  :placeholder="info.name"
-                  required
-                  trim
-                />
-              </b-form-group>
-              <div class="w-100">
-                <b-form-checkbox size="sm" class="keep-login-button">
-                  保持登入狀態
-                </b-form-checkbox>
-              </div>
-              <b-button type="submit" block style="background: #2353FF;"> 登入 </b-button>
-            </b-form>
-            <div class="option w-100 d-flex justify-content-between">
-              <b-link
-                style="font-size: 14px; color: black;"
-              > 忘記密碼？ </b-link>
-              <b-link
-                style="font-size: 14px; color: #2353FF;"
-                to="/signup2"
-                replace
-              > 註冊新帳號 </b-link>
-            </div>
+                <icon icon="vector" style="height: 10px" />
+                <div class="slogan"> {{ slogan }} </div>
+              </li>
+            </ui>
           </div>
-        </b-col>
-      </b-row>
-    </b-container>
-  </b-modal>
+        </div>
+      </b-col>
+
+      <b-col class="right-modal">
+        <b-button-close
+          style="margin: 1rem; position: absolute; top: 0; right: 0"
+          @click="$router.back()"
+        />
+        <div class="content d-flex flex-column align-items-center">
+          <h3> 登入 </h3>
+          <b-button
+            v-for="login in thirdPartyLogins"
+            :key="login"
+            variant="light"
+            class="d-flex align-items-center"
+            block
+            @click="handleThirdPartyLogin(login.name)"
+          >
+            <img :src="login.icon">
+            <div> {{ login.name }} 註冊/登入 </div>
+          </b-button>
+          <div class="split-line w-100 d-flex align-items-center"> 或 </div>
+          <b-form class="w-100" @submit="handleLogin">
+            <b-form-group
+              v-for="(info, index) in loginInfos"
+              :key="index"
+              :label="info.name"
+              :label-for="info.name"
+              label-class="form-label"
+              class="form w-100"
+            >
+              <b-form-input
+                :id="info.name"
+                v-model="info.data"
+                :type="info.type"
+                :placeholder="info.name"
+                required
+                trim
+              />
+            </b-form-group>
+            <div class="w-100">
+              <b-form-checkbox size="sm" class="keep-login-button">
+                保持登入狀態
+              </b-form-checkbox>
+            </div>
+            <b-button type="submit" block style="background: #2353FF;"> 登入 </b-button>
+          </b-form>
+          <div class="option w-100 d-flex justify-content-between">
+            <b-link
+              style="font-size: 14px; color: black;"
+            > 忘記密碼？ </b-link>
+            <b-link
+              style="font-size: 14px; color: #2353FF;"
+              @click="$router.replace({ name: 'SignUp' })"
+            > 註冊新帳號 </b-link>
+          </div>
+        </div>
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
 import firebase from '@/utils/firebase'
 export default {
-  name: 'Login2',
+  name: 'Login',
   data() {
     return {
       slogans: [
@@ -172,16 +163,7 @@ $theme-colors: () !important;
   }
 }
 
-::v-deep .login-modal {
-  height: 720px;
-  width: 960px;
-  top: calc(50% - 720px / 2);
-  left: calc(50% - 960px / 2);
-  overflow: hidden;
-  box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
-  border-radius: 16px;
-
-  .left-modal {
+.left-modal {
     background: linear-gradient(to bottom, #03081a, #0a194d);
 
     .content {
@@ -207,9 +189,9 @@ $theme-colors: () !important;
         user-select: none;
       }
     }
-  }
+}
 
-  .right-modal {
+.right-modal {
     .content {
       position: absolute;
       width: 320px;
@@ -277,6 +259,6 @@ $theme-colors: () !important;
         margin: 28px 0 0;
       }
     }
-  }
 }
+
 </style>

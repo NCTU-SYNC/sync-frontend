@@ -1,5 +1,5 @@
 <template>
-  <b-modal visible hide-footer>
+  <b-modal visible scrollable hide-footer>
     <strong> 服務條款 </strong>
     <p> 測試 </p>
   </b-modal>

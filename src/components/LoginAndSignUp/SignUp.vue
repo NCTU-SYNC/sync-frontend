@@ -1,112 +1,100 @@
 <template>
-  <div>
-    <b-modal
-      visible
-      hide-header
-      hide-footer
-      body-class="p-0"
-      content-class="signup-modal"
-    >
-      <b-container fluid class="h-100 p-0">
-        <b-row class="h-100" style="padding: 0 15px 0;">
-          <b-col class="left-modal d-flex justify-content-center align-items-center">
-            <div class="sync-logo d-flex align-items-center">
-              <icon icon="white-logo" style="height: 40px;" />
-              <strong class="title"> SYNC </strong>
-            </div>
-            <div class="slogan d-flex flex-column justify-content-center">
-              <div class="d-flex justify-content-start">
-                <icon icon="vector2" style="height: 40px;" />
-              </div>
-              <div class="w-100 d-flex flex-column align-items-center">
-                <p> 一個匯集資訊的同步協作平台，與他 </p>
-                <p> 人合作還原事件脈絡，讓所有人都能 </p>
-                <p> 從眾人提供的整合資訊中汲取所需。 </p>
-              </div>
-              <div class="d-flex justify-content-end">
-                <icon icon="vector2" style="height: 40px; transform: matrix(-1, 0, 0, -1, 0, 0);" />
-              </div>
-            </div>
-          </b-col>
+  <b-container fluid class="h-100 p-0">
+    <b-row class="h-100" style="padding: 0 15px 0;">
+      <b-col class="left-modal d-flex justify-content-center align-items-center">
+        <div class="sync-logo d-flex align-items-center">
+          <icon icon="white-logo" style="height: 40px;" />
+          <strong class="title"> SYNC </strong>
+        </div>
+        <div class="slogan d-flex flex-column justify-content-center">
+          <div class="d-flex justify-content-start">
+            <icon icon="vector2" style="height: 40px;" />
+          </div>
+          <div class="w-100 d-flex flex-column align-items-center">
+            <p> 一個匯集資訊的同步協作平台，與他 </p>
+            <p> 人合作還原事件脈絡，讓所有人都能 </p>
+            <p> 從眾人提供的整合資訊中汲取所需。 </p>
+          </div>
+          <div class="d-flex justify-content-end">
+            <icon icon="vector2" style="height: 40px; transform: matrix(-1, 0, 0, -1, 0, 0);" />
+          </div>
+        </div>
+      </b-col>
 
-          <b-col class="right-modal">
-            <b-button-close
-              style="margin: 1rem; position: absolute; top: 0; right: 0"
-              @click="$router.back()"
-            />
-            <div class="content d-flex flex-column align-items-center">
-              <h3> 註冊帳號 </h3>
-              <b-button
-                v-for="login in thirdPartyLogins"
-                :key="login"
-                variant="light"
-                class="d-flex align-items-center"
-                block
-                @click="handleThirdPartyLogin(login.name)"
-              >
-                <img :src="login.icon">
-                <div> {{ login.name }} 註冊/登入 </div>
-              </b-button>
-              <div class="split-line w-100 d-flex align-items-center"> 或 </div>
-              <b-form class="w-100" @submit="handleSignUp">
-                <b-form-group
-                  v-for="(info, index) in loginInfos"
-                  :key="index"
-                  :label="info.name"
-                  :label-for="info.name"
-                  label-class="form-label"
-                  class="form w-100"
-                >
-                  <b-form-input
-                    :id="info.name"
-                    v-model="info.data"
-                    :type="info.type"
-                    :placeholder="info.placeholder"
-                    required
-                    trim
-                  />
-                </b-form-group>
-                <div class="w-100">
-                  <b-form-checkbox size="md" class="confirm-button">
-                    我已閱讀並同意遵守 SYNC
-                    <b-link
-                      style="color: #2353FF;"
-                      @click.prevent="showPrivacyPolicy = !showPrivacyPolicy"
-                    > 服務條款 </b-link>
-                    與
-                    <b-link
-                      style="color: #2353FF;"
-                      @click.prevent="showTermsOfService = !showTermsOfService"
-                    > 隱私權政策 </b-link>
-                  </b-form-checkbox>
-                </div>
-                <b-button type="submit" block style="background: #2353FF;"> 註冊帳號 </b-button>
-              </b-form>
-              <div class="option w-100 d-flex justify-content-center">
+      <b-col class="right-modal">
+        <b-button-close
+          style="margin: 1rem; position: absolute; top: 0; right: 0"
+          @click="$router.back()"
+        />
+        <div class="content d-flex flex-column align-items-center">
+          <h3> 註冊帳號 </h3>
+          <b-button
+            v-for="login in thirdPartyLogins"
+            :key="login"
+            variant="light"
+            class="d-flex align-items-center"
+            block
+            @click="handleThirdPartyLogin(login.name)"
+          >
+            <img :src="login.icon">
+            <div> {{ login.name }} 註冊/登入 </div>
+          </b-button>
+          <div class="split-line w-100 d-flex align-items-center"> 或 </div>
+          <b-form class="w-100" @submit="handleSignUp">
+            <b-form-group
+              v-for="(info, index) in loginInfos"
+              :key="index"
+              :label="info.name"
+              :label-for="info.name"
+              label-class="form-label"
+              class="form w-100"
+            >
+              <b-form-input
+                :id="info.name"
+                v-model="info.data"
+                :type="info.type"
+                :placeholder="info.placeholder"
+                required
+                trim
+              />
+            </b-form-group>
+            <div class="w-100">
+              <b-form-checkbox size="md" class="confirm-button">
+                我已閱讀並同意遵守 SYNC
                 <b-link
-                  style="font-size: 14px; color: #2353FF;"
-                  to="/login2"
-                  replace
-                > 以現有帳號登入 </b-link>
-              </div>
+                  style="color: #2353FF;"
+                  @click.prevent="showTermsOfService = !showTermsOfService"
+                > 服務條款 </b-link>
+                與
+                <b-link
+                  style="color: #2353FF;"
+                  @click.prevent="showPrivacyPolicy = !showPrivacyPolicy"
+                > 隱私權政策 </b-link>
+              </b-form-checkbox>
             </div>
-          </b-col>
-        </b-row>
-      </b-container>
-    </b-modal>
-
-    <PrivacyPolicyModal v-if="showPrivacyPolicy" />
+            <b-button type="submit" block style="background: #2353FF;"> 註冊帳號 </b-button>
+          </b-form>
+          <div class="option w-100 d-flex justify-content-center">
+            <b-link
+              style="font-size: 14px; color: #2353FF;"
+              @click="$router.replace({ name: 'Login' })"
+            > 以現有帳號登入 </b-link>
+          </div>
+        </div>
+      </b-col>
+    </b-row>
     <TermsOfServiceModal v-if="showTermsOfService" />
-  </div>
+    <PrivacyPolicyModal v-if="showPrivacyPolicy" />
+  </b-container>
 </template>
 
 <script>
 import firebase from '@/utils/firebase'
-import PrivacyPolicyModal from '@/views/new/PrivacyPolicyModal'
-import TermsOfServiceModal from '@/views/new/TermsOfServiceModal'
+import PrivacyPolicyModal from '@/components/LoginAndSignUp/PrivacyPolicyModal.vue'
+import TermsOfServiceModal from '@/components/LoginAndSignUp/TermsOfServiceModal.vue'
 
 export default {
-  name: 'SignUp2',
+  name: 'SignUp',
   components: {
     PrivacyPolicyModal, TermsOfServiceModal
   },
@@ -201,16 +189,7 @@ $theme-colors: () !important;
   }
 }
 
-::v-deep .signup-modal {
-  height: 720px;
-  width: 960px;
-  top: calc(50% - 720px / 2);
-  left: calc(50% - 960px / 2);
-  overflow: hidden;
-  box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
-  border-radius: 16px;
-
-  .left-modal {
+.left-modal {
     background-image: url("~@/assets/images/SignUpModalBG.png");
     background-position: center;
     background-size: cover;
@@ -242,9 +221,9 @@ $theme-colors: () !important;
       }
     }
 
-  }
+}
 
-  .right-modal {
+.right-modal {
     .content {
       position: absolute;
       width: 320px;
@@ -313,6 +292,6 @@ $theme-colors: () !important;
         margin: 28px 0 0;
       }
     }
-  }
 }
+
 </style>
