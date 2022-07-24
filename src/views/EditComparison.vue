@@ -48,50 +48,39 @@
       </b-col>
     </b-row>
 
-    <!-- <b-row
-      v-for="(block, index) in versions[0].blocks"
+    <b-row
+      v-for="(blocks, index) in allDiff"
       :key="index"
       class="divider"
-    > -->
-    <b-row class="divider">
+    >
+      <!-- <b-row class="divider"> -->
       <b-col cols="6">
-        <b-row
-          v-for="(block, index) in versions[0].blocks"
-          :key="index"
-          class="block"
-        >
-          <div v-if="block !== null" class="block-header">
-            <h2>
-              {{ block.blockInfo.blockTitle }}
-            </h2>
-          </div>
-          <TiptapEditor
-            v-if="block !== null"
-            :id="block.blockId"
-            :content="block.content"
-            class="editor__content__comparison"
-            :editable="false"
-          />
-        </b-row>
+
+        <div v-if="blocks.left.title !== ''" class="block-header">
+          <h2>
+            {{ blocks.left.title }}
+          </h2>
+        </div>
+        <TiptapEditor
+          v-if="blocks.left.content !== null"
+          :id="blocks.left.blockId"
+          :content="blocks.left.content"
+          class="editor__content__comparison"
+          :editable="false"
+        />
       </b-col>
-      <b-col cols="6">
-        <b-row
-          v-for="(block, index) in versions[1].blocks"
-          :key="index"
-          class="block"
-        >
-          <div class="block-header">
-            <h2>
-              {{ block.blockInfo.blockTitle }}
-            </h2>
-          </div>
-          <TiptapEditor
-            :id="block.blockId"
-            class="editor__content__comparison"
-            :content="block.content"
-            :editable="false"
-          />
-        </b-row>
+      <b-col cols="6" :class="!blocks.left.content ? 'new-block': ''">
+        <div class="block-header">
+          <h2>
+            {{ blocks.right.title }}
+          </h2>
+        </div>
+        <TiptapEditor
+          :id="blocks.right.blockId"
+          class="editor__content__comparison"
+          :content="blocks.right.content"
+          :editable="false"
+        />
       </b-col>
     </b-row>
     <ComparisonCitation :citations="[versions[0].citations, versions[1].citations]" />
@@ -250,6 +239,7 @@ export default {
         let rightIdx = 0
         const leftBlocks = this.versions[0].blocks
         const rightBlocks = this.versions[1].blocks
+        this.allDiff = []
         for (const orderIdx of diffIdxOrder) {
           const obj = {
             left: {},
@@ -258,25 +248,27 @@ export default {
           if (leftBlocks[leftIdx]?.blockId === orderIdx) {
             obj.left = {
               title: leftBlocks[leftIdx].blockInfo.blockTitle,
-              content: leftBlocks[leftIdx].content
+              content: leftBlocks[leftIdx].content,
+              blockId: leftBlocks[leftIdx].blockId
             }
             leftIdx += 1
           } else {
             obj.left = {
               title: '',
-              content: {}
+              content: null
             }
           }
           if (rightBlocks[rightIdx]?.blockId === orderIdx) {
             obj.right = {
               title: rightBlocks[rightIdx].blockInfo.blockTitle,
-              content: rightBlocks[rightIdx].content
+              content: rightBlocks[rightIdx].content,
+              blockId: rightBlocks[rightIdx].blockId
             }
             rightIdx += 1
           } else {
             obj.right = {
               title: '',
-              content: {}
+              content: null
             }
           }
 
@@ -291,12 +283,7 @@ export default {
             console.warn('get left and right:', leftDoc, rightDoc)
           }
         }
-        // const leftBlocks = this.versions[0].blocks.map((block) => block.content)
-        // const rightBlocks = this.versions[1].blocks.map((block) => block.content)
-        // const diff = new VersionDiff(leftBlocks, rightBlocks)
-        // console.log('diff:', diff)
-        // const { leftDoc, rightDoc } = diff.markedDoc()
-        // console.warn('get left and right:', leftDoc, rightDoc)
+
         this.isPageReady = true
       } catch (error) {
         console.error(error)
@@ -508,4 +495,9 @@ export default {
     }
   }
 }
+
+.new-block {
+  background-color: rgba(26, 225, 91, 0.3);
+}
+
 </style>

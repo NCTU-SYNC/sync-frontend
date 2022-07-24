@@ -198,6 +198,9 @@ export default {
       line-height: 24px;
     }
   }
+  mark {
+    padding: 0 0.1rem;
+  }
 }
 
 .editor__content__edit {

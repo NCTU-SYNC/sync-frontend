@@ -1,12 +1,14 @@
-import * as jsondiffpatch from 'jsondiffpatch'
+import * as jdf from 'jsondiffpatch'
 import DiffMatchPatch from 'diff-match-patch'
 
-// const jsondiffpatch = jdf.create({
-//   textDiff: {
-//     minLength: 20
-//   }
-// })
+const jsondiffpatch = jdf.create({
+  textDiff: {
+    minLength: 20
+  }
+})
 // console.log(jsondiffpatch)
+const redColor = 'rgba(255, 79, 79, 0.3)'
+const greenColor = 'rgba(26, 225, 91, 0.3)'
 
 const textDiffType = Object.freeze({
   CONTEXT: 0,
@@ -26,7 +28,7 @@ function HighlightFactory(_new = true) {
   const obj = {
     type: 'highlight',
     attrs: {
-      color: _new ? 'green' : 'red'
+      color: _new ? greenColor : redColor
     }
   }
 
@@ -95,7 +97,7 @@ function insertMark(doc, key, _new = true) {
     if (doc[key].marks === undefined) doc[key].marks = []
     doc[key].marks.push(new HighlightFactory(_new))
   } else {
-    console.warn('doc key:', key, doc[key])
+    console.warn('doc key:', key, doc)
     if (doc.marks === undefined) doc.marks = []
     doc.marks.push(new HighlightFactory(_new))
   }
@@ -321,8 +323,8 @@ class VersionDiff {
           console.warn('not array')
         }
         console.log('KEY!!')
-        if (deltaCur[key] === undefined) break
-        if (leftCur[key] === undefined && rightCur[key] === undefined) break
+        // if (deltaCur[key] === undefined) break
+        // if (leftCur[key] === undefined && rightCur[key] === undefined) break
         console.warn('ADD NEW PAYLOAD:', key, JSON.parse(JSON.stringify(leftCur[key])), JSON.parse(JSON.stringify(rightCur[key])), JSON.parse(JSON.stringify(deltaCur[key])))
         stack.unshift(new StackPayload(leftCur[key], rightCur[key], deltaCur[key]))
 
