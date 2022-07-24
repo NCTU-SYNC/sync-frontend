@@ -1,7 +1,12 @@
 import * as jsondiffpatch from 'jsondiffpatch'
 import DiffMatchPatch from 'diff-match-patch'
 
-console.log(jsondiffpatch)
+// const jsondiffpatch = jdf.create({
+//   textDiff: {
+//     minLength: 20
+//   }
+// })
+// console.log(jsondiffpatch)
 
 const textDiffType = Object.freeze({
   CONTEXT: 0,
@@ -76,15 +81,26 @@ function createText(doc, text, textDiffType) {
 
 function insertMark(doc, key, _new = true) {
   // if doc is on the left, key start with '_'
-  console.warn('insertMark:', doc, key, _new)
+  console.warn('insertMark:', JSON.parse(JSON.stringify(doc)), key, _new)
   if (_new === false) {
     // why slice?
     // key = key.slice(1)
   }
-  console.warn('doc key:', key, doc[key])
-  if (doc.marks === undefined) doc.marks = []
+  if (Array.isArray(doc)) {
+    if (_new === false) {
+      // why slice?
+      key = key.slice(1)
+    }
+    console.warn('ISARRAY! doc key:', key, doc[key])
+    if (doc[key].marks === undefined) doc[key].marks = []
+    doc[key].marks.push(new HighlightFactory(_new))
+  } else {
+    console.warn('doc key:', key, doc[key])
+    if (doc.marks === undefined) doc.marks = []
+    doc.marks.push(new HighlightFactory(_new))
+  }
 
-  doc.marks.push(new HighlightFactory(_new))
+  console.warn('mark result:', JSON.parse(JSON.stringify(doc)))
 }
 
 /**
@@ -222,26 +238,26 @@ class VersionDiff {
     let rightParent
 
     stack.unshift(new StackPayload(this.left, this.right, this.delta))
-
+    if (stack[0].delta === undefined) return
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const { left: leftCur, right: rightCur, delta: deltaCur } = stack.shift()
-      console.log('current stack payload:', leftCur, rightCur)
+      console.log('current stack payload:', JSON.parse(JSON.stringify(leftCur)), JSON.parse(JSON.stringify(rightCur)), JSON.parse(JSON.stringify(deltaCur)))
       for (const key of Object.keys(deltaCur)) {
         // skip type descriptor
         // skip changes on marks
         if (key === '_t' || key === 'marks') continue
-        console.warn('key, delta:', key, deltaCur[key])
+        // console.warn('key, delta:', key, JSON.parse(JSON.stringify(deltaCur[key])))
         if (Array.isArray(deltaCur[key])) {
           switch (getDeltaType(deltaCur[key])) {
             case deltaType.ADD:
-              console.warn('mark, deltaType.ADD left right:', leftCur, rightCur)
+              // console.warn('mark, deltaType.ADD left right:', JSON.parse(key), JSON.parse(JSON.stringify(rightCur)))
               insertMark(rightCur, key, true)
               // this._wordCount.new += countWord(rightCur[key])
               break
             case deltaType.MOD:
               // TODO: generate MOD delta to test
-              console.warn('mark, deltaType.MOD left right:', leftCur, rightCur)
+              console.warn('mark, deltaType.MOD left right:', JSON.parse(JSON.stringify(leftCur)), JSON.parse(JSON.stringify(rightCur)))
               insertMark(leftCur, key, false)
               insertMark(rightCur, key, true)
               // this._wordCount.new += countWord(rightCur[key])
@@ -254,29 +270,42 @@ class VersionDiff {
               break
             case deltaType.TEXT:
               // clear content array
-              console.warn('mark, deltaType.TEXT left right:', leftCur, rightCur)
-              console.warn('mark, deltaType.TEXT before leftPar rightPar:', leftParent, rightParent)
-              leftParent.splice(0, leftParent.length)
-              rightParent.splice(0, rightParent.length)
-              console.warn('mark, deltaType.TEXT leftPar rightPar:', leftParent, rightParent)
+              console.warn('mark, deltaType.TEXT left right:', JSON.parse(JSON.stringify(leftCur)), JSON.parse(JSON.stringify(rightCur)))
+              console.warn('mark, deltaType.TEXT before leftPar rightPar:', JSON.parse(JSON.stringify(leftParent)), JSON.parse(JSON.stringify(rightParent)))
+              // eslint-disable-next-line no-case-declarations
+              const leftCurIdx = Array.isArray(leftParent) ? leftParent.indexOf(leftCur) : 0
+              // eslint-disable-next-line no-case-declarations
+              const rightCurIdx = Array.isArray(leftParent) ? rightParent.indexOf(rightCur) : 0
+              // leftParent.splice(0, leftParent.length)
+              // rightParent.splice(0, rightParent.length)
+              console.warn('mark, deltaType.TEXT leftPar rightPar:', JSON.parse(JSON.stringify(leftParent)), JSON.parse(JSON.stringify(rightParent)))
               // eslint-disable-next-line no-case-declarations
               const dmp = new DiffMatchPatch()
               // eslint-disable-next-line no-case-declarations
               const content = dmp.diff_main(leftCur.text, rightCur.text)
               dmp.diff_cleanupSemantic(content)
+              console.log('diff content:', content)
+              // eslint-disable-next-line no-case-declarations
+              const leftParentMod = []
+              // eslint-disable-next-line no-case-declarations
+              const rightParentMod = []
               for (const piece of content) {
                 // deleted
                 const text = piece[1]
                 if (piece[0] === -1) {
-                  createText(leftParent, text, textDiffType.OLD)
+                  createText(leftParentMod, text, textDiffType.OLD)
+                  // createText(rightParent, text, textDiffType.OLD)
                   // context
                 } else if (piece[0] === 0) {
-                  createText(leftParent, text, textDiffType.CONTEXT)
-                  createText(rightParent, text, textDiffType.CONTEXT)
+                  createText(leftParentMod, text, textDiffType.CONTEXT)
+                  createText(rightParentMod, text, textDiffType.CONTEXT)
                 } else if (piece[0] === 1) {
-                  createText(rightParent, text, textDiffType.NEW)
+                  createText(rightParentMod, text, textDiffType.NEW)
                 }
               }
+              leftParent.splice(leftCurIdx, 1, ...leftParentMod)
+              rightParent.splice(rightCurIdx, 1, ...rightParentMod)
+
               break
             case deltaType.MOV:
               // TODO: generate move delta to test
@@ -291,10 +320,10 @@ class VersionDiff {
         } else {
           console.warn('not array')
         }
-
+        console.log('KEY!!')
         if (deltaCur[key] === undefined) break
         if (leftCur[key] === undefined && rightCur[key] === undefined) break
-
+        console.warn('ADD NEW PAYLOAD:', key, JSON.parse(JSON.stringify(leftCur[key])), JSON.parse(JSON.stringify(rightCur[key])), JSON.parse(JSON.stringify(deltaCur[key])))
         stack.unshift(new StackPayload(leftCur[key], rightCur[key], deltaCur[key]))
 
         // objIter(delta[key], prevParent, nextParent)
@@ -317,7 +346,8 @@ class VersionDiff {
     if (!this._delta) {
       this._delta = jsondiffpatch.diff(this.left, this.right)
     }
-    console.log('GET DELTA!', this._delta)
+    const a = this._delta
+    console.log('GET DELTA!', a)
     return this._delta
   }
 

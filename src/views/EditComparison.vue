@@ -143,7 +143,8 @@ export default {
       isPageReady: false,
       isClickedRow: true,
       blocks1: [],
-      blocks2: []
+      blocks2: [],
+      allDiff: []
     }
   },
   computed: {
@@ -206,13 +207,96 @@ export default {
           this.versions[1].updatedAt += '（最新版）'
         }
         console.log('this.versions:', this.versions)
-        // this.articleDiff = this.compareContent(this.versions[0].blocks, this.versions[1].blocks)
-        const leftBlocks = this.versions[0].blocks.map((block) => block.content)
-        const rightBlocks = this.versions[1].blocks.map((block) => block.content)
-        const diff = new VersionDiff(leftBlocks, rightBlocks)
-        console.log('diff:', diff)
-        const { leftDoc, rightDoc } = diff.markedDoc()
-        console.warn('get left and right:', leftDoc, rightDoc)
+        console.log('same order')
+        // find common blocks and create id array
+        const leftBlockIds = this.versions[0].blocks.map((b) => b.blockId)
+        const rightBlockIds = this.versions[1].blocks.map((b) => b.blockId)
+        const commonBlockIds = leftBlockIds.filter(o => rightBlockIds.some((blockId) => o === blockId))
+          .map(b => b)
+        console.log('commonBlocks:', commonBlockIds)
+        const segments = [[]]
+        let cIdx = 0
+        let sIdx = 0
+        for (const bId of leftBlockIds) {
+          if (bId !== commonBlockIds[cIdx]) {
+            console.log('left removed', bId)
+            segments[sIdx].push(bId)
+          } else {
+            sIdx += 1
+            segments.push([])
+            if (cIdx + 1 < commonBlockIds.length) cIdx += 1
+          }
+        }
+        cIdx = 0
+        sIdx = 0
+        for (const bId of rightBlockIds) {
+          if (bId !== commonBlockIds[cIdx]) {
+            console.log('right added', bId)
+            segments[sIdx].push(bId)
+          } else {
+            sIdx += 1
+            if (cIdx + 1 < commonBlockIds.length) cIdx += 1
+          }
+        }
+        console.log('segments:', segments)
+        const diffIdxOrder = []
+        for (sIdx = 0; sIdx < segments.length; sIdx++) {
+          diffIdxOrder.push(...segments[sIdx])
+          if (sIdx < commonBlockIds.length) { diffIdxOrder.push(commonBlockIds[sIdx]) }
+        }
+        console.log(diffIdxOrder)
+
+        let leftIdx = 0
+        let rightIdx = 0
+        const leftBlocks = this.versions[0].blocks
+        const rightBlocks = this.versions[1].blocks
+        for (const orderIdx of diffIdxOrder) {
+          const obj = {
+            left: {},
+            right: {}
+          }
+          if (leftBlocks[leftIdx]?.blockId === orderIdx) {
+            obj.left = {
+              title: leftBlocks[leftIdx].blockInfo.blockTitle,
+              content: leftBlocks[leftIdx].content
+            }
+            leftIdx += 1
+          } else {
+            obj.left = {
+              title: '',
+              content: {}
+            }
+          }
+          if (rightBlocks[rightIdx]?.blockId === orderIdx) {
+            obj.right = {
+              title: rightBlocks[rightIdx].blockInfo.blockTitle,
+              content: rightBlocks[rightIdx].content
+            }
+            rightIdx += 1
+          } else {
+            obj.right = {
+              title: '',
+              content: {}
+            }
+          }
+
+          this.allDiff.push(obj)
+        }
+        console.log(this.allDiff)
+        for (const both of this.allDiff) {
+          console.log('compare:', JSON.parse(JSON.stringify(both.left)), JSON.parse(JSON.stringify(both.right)))
+          if (both.left.title !== '' && both.right.title !== '') {
+            const diff = new VersionDiff(both.left.content, both.right.content)
+            const { leftDoc, rightDoc } = diff.markedDoc()
+            console.warn('get left and right:', leftDoc, rightDoc)
+          }
+        }
+        // const leftBlocks = this.versions[0].blocks.map((block) => block.content)
+        // const rightBlocks = this.versions[1].blocks.map((block) => block.content)
+        // const diff = new VersionDiff(leftBlocks, rightBlocks)
+        // console.log('diff:', diff)
+        // const { leftDoc, rightDoc } = diff.markedDoc()
+        // console.warn('get left and right:', leftDoc, rightDoc)
         this.isPageReady = true
       } catch (error) {
         console.error(error)
