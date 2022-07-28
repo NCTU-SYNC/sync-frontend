@@ -1,11 +1,15 @@
-import * as jdf from 'jsondiffpatch'
+import * as jsondiffpatch from 'jsondiffpatch'
 import DiffMatchPatch from 'diff-match-patch'
 
-const jsondiffpatch = jdf.create({
-  textDiff: {
-    minLength: 20
-  }
-})
+// const jsondiffpatch = jdf.create({
+//   // objectHash: function(obj, index) {
+//   //   // try to find an id property, otherwise just use the index in the array
+//   //   return JSON.stringify(obj)
+//   // },
+//   // textDiff: {
+//   //   minLength: 20
+//   // }
+// })
 // console.log(jsondiffpatch)
 const redColor = 'rgba(255, 79, 79, 0.3)'
 const greenColor = 'rgba(26, 225, 91, 0.3)'
@@ -94,8 +98,14 @@ function insertMark(doc, key, _new = true) {
       key = key.slice(1)
     }
     console.warn('ISARRAY! doc key:', key, doc[key])
-    if (doc[key].marks === undefined) doc[key].marks = []
-    doc[key].marks.push(new HighlightFactory(_new))
+    if (!doc[key]?.content?.[0]?.text) {
+      if (doc[key].marks === undefined) doc[key].marks = []
+      doc[key].marks.push(new HighlightFactory(_new))
+    } else {
+      const paragraph = doc[key].content[0]
+      if (paragraph.marks === undefined) paragraph.marks = []
+      paragraph.marks.push(new HighlightFactory(_new))
+    }
   } else {
     console.warn('doc key:', key, doc)
     if (doc.marks === undefined) doc.marks = []
@@ -234,17 +244,17 @@ class VersionDiff {
    *  - mark the diff on left TipTap doc and right TipTap doc
    */
   mark() {
-    const stack = []
+    const queue = []
 
     let leftParent
     let rightParent
 
-    stack.unshift(new StackPayload(this.left, this.right, this.delta))
-    if (stack[0].delta === undefined) return
+    queue.unshift(new StackPayload(this.left, this.right, this.delta))
+    if (queue[0].delta === undefined) return
     // eslint-disable-next-line no-constant-condition
-    while (true) {
-      const { left: leftCur, right: rightCur, delta: deltaCur } = stack.shift()
-      console.log('current stack payload:', JSON.parse(JSON.stringify(leftCur)), JSON.parse(JSON.stringify(rightCur)), JSON.parse(JSON.stringify(deltaCur)))
+    while (queue.length !== 0) {
+      const { left: leftCur, right: rightCur, delta: deltaCur } = queue.shift()
+      console.log('current queue payload:', JSON.parse(JSON.stringify(leftCur)), JSON.parse(JSON.stringify(rightCur)), JSON.parse(JSON.stringify(deltaCur)))
       for (const key of Object.keys(deltaCur)) {
         // skip type descriptor
         // skip changes on marks
@@ -326,7 +336,7 @@ class VersionDiff {
         // if (deltaCur[key] === undefined) break
         // if (leftCur[key] === undefined && rightCur[key] === undefined) break
         console.warn('ADD NEW PAYLOAD:', key, JSON.parse(JSON.stringify(leftCur[key])), JSON.parse(JSON.stringify(rightCur[key])), JSON.parse(JSON.stringify(deltaCur[key])))
-        stack.unshift(new StackPayload(leftCur[key], rightCur[key], deltaCur[key]))
+        queue.unshift(new StackPayload(leftCur[key], rightCur[key], deltaCur[key]))
 
         // objIter(delta[key], prevParent, nextParent)
       }
@@ -334,7 +344,7 @@ class VersionDiff {
       leftParent = leftCur
       rightParent = rightCur
       console.log('Update parents:', JSON.parse(JSON.stringify(leftParent)), JSON.parse(JSON.stringify(rightParent)))
-      if (stack.length === 0) {
+      if (queue.length === 0) {
         break
       }
     }

@@ -54,7 +54,7 @@
       class="divider"
     >
       <!-- <b-row class="divider"> -->
-      <b-col cols="6">
+      <b-col cols="6" :class="!blocks.right.content ? 'deleted-block': ''">
 
         <div v-if="blocks.left.title !== ''" class="block-header">
           <h2>
@@ -496,6 +496,9 @@ export default {
   }
 }
 
+.deleted-block {
+  background-color: rgba(255, 79, 79, 0.3);
+}
 .new-block {
   background-color: rgba(26, 225, 91, 0.3);
 }
