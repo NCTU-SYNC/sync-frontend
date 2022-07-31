@@ -30,8 +30,8 @@
         <div class="content d-flex flex-column align-items-center">
           <h3>登入</h3>
           <b-button
-            v-for="login in thirdPartyLogins"
-            :key="login"
+            v-for="(login, index) in thirdPartyLogins"
+            :key="index"
             variant="light"
             class="d-flex align-items-center"
             block

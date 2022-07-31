@@ -71,7 +71,8 @@
       hide-header
       hide-footer
       body-class="p-0"
-      content-class="modal"
+      dialog-class="h-100 w-100"
+      content-class="login-modal"
     > <component
       :is="modalComponent"
       @showLogin="isModalLogin=true"
@@ -140,9 +141,9 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 
-::v-deep .modal {
+.login-modal {
   height: 720px;
   width: 960px;
   top: calc(50% - 720px / 2);
