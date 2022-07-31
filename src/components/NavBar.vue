@@ -36,8 +36,8 @@
         </div>
 
       </b-nav-item-dropdown>
-      <b-nav-item v-show="!getLoginStatus" :to="{ name: 'SignUp', query: getRedirectPath }">註冊</b-nav-item>
-      <b-nav-item v-show="!getLoginStatus" :to="{ name: 'Login', query: getRedirectPath}">登入</b-nav-item>
+      <b-nav-item v-show="!getLoginStatus" @click="modalShow = true; isModalLogin = false">註冊</b-nav-item>
+      <b-nav-item v-show="!getLoginStatus" @click="modalShow = true; isModalLogin = true">登入</b-nav-item>
       <b-nav-item-dropdown v-show="getLoginStatus" no-caret right>
         <!-- Using 'button-content' slot -->
         <template v-slot:button-content>
@@ -65,6 +65,19 @@
         </b-iconstack>
       </b-nav-item>
     </b-navbar-nav>
+
+    <b-modal
+      v-model="modalShow"
+      hide-header
+      hide-footer
+      body-class="p-0"
+      content-class="modal"
+    > <component
+      :is="modalComponent"
+      @showLogin="isModalLogin=true"
+      @showSignUp="isModalLogin=false"
+    />
+    </b-modal>
   </b-navbar>
 </template>
 
@@ -76,6 +89,12 @@ import moment from 'moment'
 export default {
   name: 'NavBar',
   components: { Logo },
+  data: function() {
+    return {
+      modalShow: false,
+      isModalLogin: true
+    }
+  },
   computed: {
     getRedirectPath() {
       // 設置重新導向，若在首頁、註冊、登入頁面做切換不需設置redirect，其他頁面則需要重新導向，若已經設置重新導向頁面，則註冊、登入切換時，並不會互相把自己的頁面給放進重新導向內
@@ -90,6 +109,13 @@ export default {
     },
     notifications() {
       return this.$store.getters.notifications
+    },
+    modalComponent() {
+      if (this.isModalLogin) {
+        return () => import('@/components/Account/Login.vue')
+      } else {
+        return () => import('@/components/Account/SignUp.vue')
+      }
     }
   },
   methods: {
@@ -115,6 +141,17 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
+::v-deep .modal {
+  height: 720px;
+  width: 960px;
+  top: calc(50% - 720px / 2);
+  left: calc(50% - 960px / 2);
+  overflow: hidden;
+  box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 16px;
+}
+
 .header-navbar {
   height: 4rem;
   background-color: $white;
