@@ -18,9 +18,7 @@ export default new Router({
     {
       path: '/login',
       name: 'Login',
-      component: () => import('@/components/LoginAndSignUp/LoginAndSignUpModal'),
-      props: { isLogin: true },
-      hidden: true
+      component: () => import('@/components/Account/Login')
     },
     {
       path: '/search',
@@ -30,9 +28,7 @@ export default new Router({
     {
       path: '/signup',
       name: 'SignUp',
-      component: () => import('@/components/LoginAndSignUp/LoginAndSignUpModal'),
-      props: { isLogin: false },
-      hidden: true
+      component: () => import('@/components/Account/SignUp')
     },
     {
       path: '/article/:ArticleID',
