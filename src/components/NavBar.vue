@@ -73,11 +73,18 @@
       body-class="p-0"
       dialog-class="h-100 w-100"
       content-class="login-modal"
-    > <component
-      :is="modalComponent"
-      @showLogin="isModalLogin=true"
-      @showSignUp="isModalLogin=false"
-    />
+    >
+      <transition
+        name="fade"
+        mode="out-in"
+        :duration="200"
+      >
+        <component
+          :is="modalComponent"
+          @showLogin="isModalLogin=true"
+          @showSignUp="isModalLogin=false"
+        />
+      </transition>
     </b-modal>
   </b-navbar>
 </template>
