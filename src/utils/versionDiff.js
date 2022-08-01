@@ -94,10 +94,10 @@ function insertMark(doc, key, _new = true) {
   }
   if (Array.isArray(doc)) {
     if (_new === false) {
-      // why slice?
       key = key.slice(1)
     }
     console.warn('ISARRAY! doc key:', key, doc[key])
+    // deal with array structure
     if (!doc[key]?.content?.[0]?.text) {
       if (doc[key].marks === undefined) doc[key].marks = []
       doc[key].marks.push(new HighlightFactory(_new))
@@ -108,8 +108,17 @@ function insertMark(doc, key, _new = true) {
     }
   } else {
     console.warn('doc key:', key, doc)
-    if (doc.marks === undefined) doc.marks = []
-    doc.marks.push(new HighlightFactory(_new))
+    if (doc.type === 'paragraph') {
+      if (doc[key] === 'paragraph') return
+      const paragraphContent = doc[key]?.[0]
+      if (paragraphContent) {
+        if (paragraphContent.marks === undefined) paragraphContent.marks = []
+        paragraphContent?.marks.push(new HighlightFactory(_new))
+      }
+    } else {
+      if (doc.marks === undefined) doc.marks = []
+      doc.marks.push(new HighlightFactory(_new))
+    }
   }
 
   console.warn('mark result:', JSON.parse(JSON.stringify(doc)))
