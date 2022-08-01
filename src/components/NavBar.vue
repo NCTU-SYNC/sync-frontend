@@ -145,12 +145,12 @@ export default {
 
 .login-modal {
   height: 720px;
-  width: 960px;
+  width: 960px !important;
   top: calc(50% - 720px / 2);
   left: calc(50% - 960px / 2);
   overflow: hidden;
   box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
-  border-radius: 16px;
+  border-radius: 16px !important;
 }
 
 .header-navbar {
