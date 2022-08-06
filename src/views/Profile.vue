@@ -1,6 +1,6 @@
 <template>
   <b-container fluid class="no-gutters pl-0 pr-0">
-    <b-row>
+    <div class="d-flex">
       <div class="sidebar">
         <b-container class="personal-status">
           <b-avatar size="5rem" :src="photoURL" class="float-left" />
@@ -93,8 +93,7 @@
           />
         </slot>
       </div>
-      <div class="m-4" />
-    </b-row>
+    </div>
   </b-container>
 </template>
 
@@ -207,6 +206,7 @@ a {
   width: 300px;
   padding-top: 1.5rem;
   border-right: 1px solid $gray-400;
+  flex-shrink: 0;
 }
 
 .avatar {
@@ -312,6 +312,7 @@ a {
 .tab-content {
   padding: 3rem 4rem;
   box-sizing: content-box;
+  flex-shrink: 1;
 }
 
 /*

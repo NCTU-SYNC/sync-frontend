@@ -1,167 +1,118 @@
 <template>
-  <div>
-    <b-container fluid="xl" class="search-bar-field d-flex flex-column justify-content-center">
-      <b-row align-h="center">
-        <b-col cols="8" class="d-flex justify-content-between search-bar px-1">
-          <b-form-input
-            v-model="keyword"
-            type="text"
-            placeholder="搜尋..."
-            class="pl-1"
-            @keyup.enter="searchArticles"
-          />
-          <!-- @input="handleSearch" -->
-          <b-button
-            variant="link"
-            :disabled="keyword.length === 0 || isLoading"
-            @click="searchArticles"
-          >
-            <img :src="require('@/assets/images/search-icon.svg').default">
-          </b-button>
-        </b-col>
-      </b-row>
-      <b-row class="mt-3" align-h="center">
-        <b-col cols="8" class="d-flex justify-content-between">
-          <div>
-            <b-dropdown
-              id="dropdown-time"
-              variant="outline-primary"
-              toggle-class="rounded-pill px-4"
-            >
-              <template v-slot:button-content>
-                {{ timeQueryText }}
-              </template>
-              <slot v-for="timeQuery in timeQueries">
-                <b-dropdown-item @click="onTimeDropdownClicked(timeQuery[0])">{{ timeQuery[1] }}</b-dropdown-item>
-              </slot>
-            </b-dropdown>
-            <b-dropdown
-              id="dropdown-category"
-              class="ml-2"
-              variant="outline-primary"
-              toggle-class="rounded-pill px-4"
-            >
-              <template v-slot:button-content>
-                {{ categoryText }}
-              </template>
-              <slot v-for="categoryQuery in categoryQueries">
-                <b-dropdown-item @click="onCategoryDropdownClicked(categoryQuery)">{{ categoryQuery }}</b-dropdown-item>
-              </slot>
-            </b-dropdown>
-          </div>
-          <!-- edit -->
-          <b-dropdown id="dropdown-sort" variant="outline-primary" text="排列方式" class="mr-4" toggle-class="rounded-pill">
-            <b-dropdown-item>最相關</b-dropdown-item>
-            <b-dropdown-divider />
-            <b-dropdown-item>最熱門</b-dropdown-item>
-            <b-dropdown-divider />
-            <b-dropdown-item>最新的</b-dropdown-item>
-          </b-dropdown>
-        </b-col>
-      </b-row>
-    </b-container>
-    <b-container fluid="xl">
-      <div class="p-3 news-grid">
-        <b-link
-          v-for="(news, newsIndex) in items"
-          :key="newsIndex"
+  <div class="search-page--container">
+    <b-container fluid="xl" class="search-bar-container">
+      <b-form
+        class="d-flex justify-content-center"
+        @submit.prevent="handleSearch"
+      >
+        <div
+          id="search-form"
         >
-          <div
-            class="pb-4"
-            @click="handleArticleRoute(news._id)"
-          >
-            <p class="news-category">
-              {{ news.category }}
-            </p>
-            <p class="news-title">
-              {{ news.title }}
-            </p>
-            <div class="news-info">
-              <span class="mr-3">{{ `更新於 ${formatLastUpdate(news.lastUpdatedAt)} 前` }}</span>
-              <b-icon
-                icon="eye-fill"
-                class="mr-1"
-              /><span>{{ news.viewsCount }} 次觀看</span>
+          <div class="search-row d-flex align-items-center">
+            <icon icon="news-panel-search" class="search-icon" size="md" />
+            <b-form-input
+              id="search-articles"
+              v-model="keyword"
+              class="search-bar"
+              placeholder="搜尋文章"
+              :readonly="isLoading"
+              type="search"
+            />
+          </div>
+          <div v-if="sentKeyword!=''" class="result-option-row d-flex justify-content-between">
+            <div class="result-detail">
+              有關“{{ sentKeyword }}”的 {{ resultCount }} 項搜尋結果
+            </div>
+            <div class="search-options">
+              新聞時間：
+              <b-button-group>
+                <b-button variant="link" class="time-btn" :pressed="queryTimeSelected === 'qdr:w'" @click="searchFilter('week')">上禮拜</b-button>
+                <b-button variant="link" class="time-btn" :pressed="queryTimeSelected === 'qdr:m'" @click="searchFilter('month')">上個月</b-button>
+                <b-button variant="link" class="time-btn" :pressed="queryTimeSelected === 'qdr:a'" @click="searchFilter('all')">不限</b-button>
+              </b-button-group>
             </div>
           </div>
-        </b-link>
-      </div>
+        </div>
+      </b-form>
     </b-container>
-    <b-pagination
-      v-model="currentPage"
-      :total-rows="rows"
-      :per-page="perPage"
-      align="center"
-      hide-goto-end-buttons
-      @change="handleChange"
-    />
-    <!-- <Footer /> -->
+    <transition
+      name="fade"
+      mode="out-in"
+      :duration="1000"
+    >
+      <b-container v-if="!isLoading" fluid="xl">
+        <div
+          class="d-flex justify-content-center cards-container"
+        >
+          <b-row cols="1" :cols-md="Math.min(2,newsArr.length)" :cols-lg="Math.min(3, newsArr.length)" style="max-width:1024px;">
+            <ArticleCard
+              v-for="(news, newsIndex) in newsArr"
+              :key="newsIndex"
+              :category="news.category"
+              :title="news.title"
+              :views-count="news.viewsCount"
+              :tags="news.tags.slice(0,2)"
+              :last-updated-at="news.lastUpdatedAt"
+              :edited-count="news.editedCount"
+              :blocks="news.blocks"
+              :article-id="news._id"
+            />
+          </b-row>
+        </div>
+      </b-container>
+      <div v-else class="loading-animation--container">
+        <b-img :src="require('@/assets/images/search-animation.svg')" class="loading-animation" />
+      </div>
+    </transition>
   </div>
 </template>
 
 <script>
-import moment from 'moment'
 import { searchArticles } from '@/api/article'
+import ArticleCard from '@/components/ArticleCard.vue'
 export default {
   name: 'Search',
   components: {
+    ArticleCard
   },
   data() {
     return {
       keyword: '',
-      perPage: 12,
-      currentPage: 1,
+      sentKeyword: '',
+      resultCount: 0,
       newsArr: [],
-      filteredNewsArr: [],
       queryTimeSelected: 'qdr:a',
+      prevQueryTime: null,
       categorySelected: '',
-      timeQueries: [
-        ['qdr:a', '發布時間'],
-        ['qdr:h', '過去 1 小時'],
-        ['qdr:d', '過去 24 小時'],
-        ['qdr:w', '過去 1 週'],
-        ['qdr:m', '過去 1 個月'],
-        ['qdr:y', '過去 1 年']
-      ],
+      timeQueries: new Map([
+        ['all', 'qdr:a'],
+        ['hour', 'qdr:h'],
+        ['day', 'qdr:d'],
+        ['week', 'qdr:w'],
+        ['month', 'qdr:m'],
+        ['year', 'qdr:y']
+      ]),
       categoryQueries: ['不限主題', '政經', '社會', '環境', '運動', '國際', '科技', '生活'],
       isLoading: false
     }
   },
-  computed: {
-    items() {
-      return this.filteredNewsArr.slice(
-        (this.currentPage - 1) * this.perPage,
-        this.currentPage * this.perPage
-      )
-    },
-    rows() {
-      return this.filteredNewsArr.length
-    },
-    timeQueryText() {
-      return this.queryTimeSelected.length > 0 ? this.timeQueries.find(e => e[0] === this.queryTimeSelected)[1] : '時間'
-    },
-    categoryText() {
-      return this.categorySelected.length > 0 ? this.categorySelected : '主題分類'
+  watch: {
+    async '$route.query'() {
+      await this.routerQuerySearch()
     }
+  },
+  created() {
+    this.routerQuerySearch()
   },
   methods: {
     handleSearch() {
-      this.filteredNewsArr = this.newsArr
-      if (this.keyword === '') return
-      this.filteredNewsArr = this.newsArr.filter(news => news.title.includes(this.keyword))
+      const routerQuery = this.$route.query
+      if (this.keyword === '' || routerQuery.q === this.keyword && routerQuery.tbs === this.queryTimeSelected) return
+      this.$router.push({ path: 'search', query: { q: this.keyword, tbs: this.queryTimeSelected }})
     },
     handleArticleRoute(_id) {
       if (!_id) return
       this.$router.push({ path: `/article/${_id}` })
-    },
-    formatLastUpdate(lastUpdatedAt) {
-      if (!lastUpdatedAt) return '3小時'
-      else return moment(lastUpdatedAt).toNow(true)
-    },
-    handleChange(page) {
-      if (page !== this.currentPage) {
-        window.scrollTo(0, 0)
-      }
     },
     async searchArticles() {
       // Search for news
@@ -182,12 +133,11 @@ export default {
             // need to change
             const articles = data.data.sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
             articles.forEach(article => {
-              const { category, _id, title, lastUpdatedAt, viewsCount } = article
+              const { category, _id, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks } = article
               this.newsArr.push({
-                _id, category, title, lastUpdatedAt, viewsCount
+                category, _id, title, viewsCount, tags, lastUpdatedAt, editedCount, blocks
               })
             })
-            this.filteredNewsArr = this.newsArr
           } else {
             throw new Error(data.message)
           }
@@ -197,6 +147,27 @@ export default {
         } finally {
           this.isLoading = false
         }
+      }
+    },
+    searchFilter(filterRange = 'all') {
+      if (this.timeQueries.get(filterRange) === this.queryTimeSelected) return
+      this.queryTimeSelected = this.timeQueries.get(filterRange)
+      this.handleSearch()
+    },
+    async routerQuerySearch() {
+      // Check if query string is empty
+      if (this.$route.query.q) {
+        // get query params from router
+        const routerQuery = { q: '', tbs: 'qdr:a', ...this.$route.query }
+        this.keyword = routerQuery.q
+        this.queryTimeSelected = routerQuery.tbs
+        // if did not change, return
+        if (routerQuery.q === '' || routerQuery.q === this.sentKeyword &&
+          routerQuery.tbs === this.prevQueryTime) { return }
+        await this.searchArticles()
+        this.sentKeyword = this.keyword
+        this.prevQueryTime = this.queryTimeSelected
+        this.resultCount = this.newsArr.length
       }
     },
     onTimeDropdownClicked(timeString) {
@@ -213,19 +184,87 @@ export default {
 
 <style scoped lang="scss">
 @import '@/assets/scss/news.scss';
+.search-page--container {
+  min-height: 740px;
+}
+.search-bar-container {
+  margin-top: 3rem;
+  width: 100%;
+}
 
-.search-bar-field {
-  height: 20vh;
-  background: #F3F3F3;
-  .search-bar {
-    border-bottom: 1px solid $gray;
+#search-form {
+  width: 55%;
+}
+.search-row {
+  position: relative;
+}
+.search-icon {
+  position: absolute;
+  left: 13px;
+  width: 18px;
+  height: 18px;
+}
+.search-bar {
+  height: 40px;
+  border: 1px solid $gray-4 !important;
+  border-radius: 4px;
+  padding-left: 42px;
+  &:active, &:focus {
+    border: 1px solid $blue !important;
+  }
+  &::placeholder{
+    color: $text-4;
   }
 }
-input, input:focus {
-  border: 0px !important;
-  background: transparent;
-  font-size: 1.8em;
-  font-family: 'Noto Sans CJK TC';
-  font-weight: medium;
+.cards-container {
+  margin: 48px 0;
 }
+.result-option-row {
+  margin-top: 12px;
+  .result-detail {
+    color: $text-3;
+    font-size: 12px;
+  }
+  .search-options {
+    font-size: 14px;
+    .time-btn {
+      position: relative;
+      font-size: 14px;
+      padding: 0;
+      &:not(:last-child) {
+        margin: 0 8px;
+        &::before {
+          content: "";
+          position: absolute;
+          display: block;
+          right: -9px;
+          top: -1px;
+          border-right: 1px solid $gray-4;
+          height: 24px;
+        }
+      }
+      &:last-child {
+        margin-left: 8px;
+      }
+      &.active , &:active, &:focus {
+        color: $blue !important;
+        font-weight: bold !important;
+      }
+    }
+  }
+}
+
+.loading-animation--container {
+  display: flex;
+  justify-content: center;
+  margin-top: 230px;
+  .loading-animation {
+    width: 60px;
+  }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+
 </style>
