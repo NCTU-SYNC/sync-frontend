@@ -36,8 +36,8 @@
         </div>
 
       </b-nav-item-dropdown>
-      <b-nav-item v-show="!getLoginStatus" @click="modalShow = true; isModalLogin = false">註冊</b-nav-item>
-      <b-nav-item v-show="!getLoginStatus" @click="modalShow = true; isModalLogin = true">登入</b-nav-item>
+      <b-nav-item v-show="!getLoginStatus" :to="{ name: 'SignUp', query: getRedirectPath }">註冊</b-nav-item>
+      <b-nav-item v-show="!getLoginStatus" :to="{ name: 'Login', query: getRedirectPath}">登入</b-nav-item>
       <b-nav-item-dropdown v-show="getLoginStatus" no-caret right>
         <!-- Using 'button-content' slot -->
         <template v-slot:button-content>
@@ -79,11 +79,7 @@
         mode="out-in"
         :duration="200"
       >
-        <component
-          :is="modalComponent"
-          @showLogin="isModalLogin=true"
-          @showSignUp="isModalLogin=false"
-        />
+        <component :is="modalComponent" />
       </transition>
     </b-modal>
   </b-navbar>
@@ -97,10 +93,14 @@ import moment from 'moment'
 export default {
   name: 'NavBar',
   components: { Logo },
-  data: function() {
-    return {
-      modalShow: false,
-      isModalLogin: true
+  props: {
+    modalShow: {
+      type: Boolean,
+      default: false
+    },
+    modalType: {
+      type: String,
+      default: 'login'
     }
   },
   computed: {
@@ -119,7 +119,7 @@ export default {
       return this.$store.getters.notifications
     },
     modalComponent() {
-      if (this.isModalLogin) {
+      if (this.modalType === 'login') {
         return () => import('@/components/Account/Login.vue')
       } else {
         return () => import('@/components/Account/SignUp.vue')

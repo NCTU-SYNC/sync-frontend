@@ -25,7 +25,7 @@
       <b-col class="right-modal">
         <b-button-close
           style="margin: 1rem; position: absolute; top: 0; right: 0"
-          @click="$router.back()"
+          @click="$router.replace(getRedirectPath ? getRedirectPath.redirect : { name: 'Home' })"
         />
         <div class="content d-flex flex-column align-items-center">
           <h3>登入</h3>
@@ -72,7 +72,7 @@
             <b-link style="font-size: 14px; color: black"> 忘記密碼？ </b-link>
             <b-link
               style="font-size: 14px; color: #2353ff"
-              @click="$emit('showSignUp')"
+              :to="{ name: 'SignUp', query: getRedirectPath }"
             >
               註冊新帳號
             </b-link>
@@ -124,6 +124,9 @@ export default {
     },
     password: function() {
       return this.loginInfos[1].data
+    },
+    getRedirectPath: function() {
+      return this.$route.query.redirect ? { redirect: this.$route.query.redirect } : null
     }
   },
   methods: {

@@ -29,7 +29,7 @@
       <b-col class="right-modal">
         <b-button-close
           style="margin: 1rem; position: absolute; top: 0; right: 0"
-          @click="$router.back()"
+          @click="$router.replace(getRedirectPath ? getRedirectPath.redirect : { name: 'Home' })"
         />
         <div class="content d-flex flex-column align-items-center">
           <h3>註冊帳號</h3>
@@ -88,7 +88,7 @@
           <div class="option w-100 d-flex justify-content-center">
             <b-link
               style="font-size: 14px; color: #2353ff"
-              @click="$emit('showLogin')"
+              :to="{ name: 'Login', query: getRedirectPath }"
             >
               以現有帳號登入
             </b-link>
@@ -162,6 +162,9 @@ export default {
     },
     password: function() {
       return this.loginInfos[2].data
+    },
+    getRedirectPath: function() {
+      return this.$route.query.redirect ? { redirect: this.$route.query.redirect } : null
     }
   },
   methods: {

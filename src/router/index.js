@@ -18,7 +18,8 @@ export default new Router({
     {
       path: '/login',
       name: 'Login',
-      component: () => import('@/components/Account/Login')
+      component: () => import('@/components/NavBar'),
+      props: { modalShow: true, modalType: 'login' }
     },
     {
       path: '/search',
@@ -28,7 +29,8 @@ export default new Router({
     {
       path: '/signup',
       name: 'SignUp',
-      component: () => import('@/components/Account/SignUp')
+      component: () => import('@/components/NavBar'),
+      props: { modalShow: true, modalType: 'signup' }
     },
     {
       path: '/article/:ArticleID',
