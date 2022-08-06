@@ -37,7 +37,7 @@
             block
             @click="handleThirdPartyLogin(login.name)"
           >
-            <img :src="login.icon">
+            <icon :icon="login.icon" />
             <div>{{ login.name }} 註冊/登入</div>
           </b-button>
           <div class="split-line w-100 d-flex align-items-center">或</div>
@@ -97,11 +97,11 @@ export default {
       thirdPartyLogins: [
         // {
         //   name: 'Facebook',
-        //   icon: 'https://img.icons8.com/color/24/000000/facebook-new.png'
+        //   icon: 'facebook-circle'
         // },
         {
           name: 'Google',
-          icon: 'https://img.icons8.com/color/24/000000/google-logo.png'
+          icon: 'google'
         }
       ],
       loginInfos: [
