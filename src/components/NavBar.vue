@@ -1,24 +1,13 @@
 <template>
-  <b-navbar ref="navbar" fixed="top" class="navbar--container" type="light" variant="faded">
-    <b-navbar-nav class="navbar--item item-left">
-      <b-nav-item class="post px-0" to="/post">
-        <icon icon="edit" />
-      </b-nav-item>
-    </b-navbar-nav>
-    <b-navbar-brand id="brand" to="/" class="navbar--item item-center"><Logo /></b-navbar-brand>
+  <b-navbar ref="navbar" fixed="top" class="header-navbar" type="light" variant="faded">
+    <b-button class="px-0 px-md-2" variant="transparent" to="/post">
+      <icon icon="edit" />
+    </b-button>
+    <b-navbar-brand id="brand" to="/" class="centered-block"><Logo /></b-navbar-brand>
 
-    <!-- Show when screen width is larger than md -->
-    <b-navbar-nav class="navbar--item item-right d-none d-md-flex align-items-center h-100">
-      <form class="search-bar" @submit.prevent="submitSearch">
-        <b-button variant="link" class="search-bar--submit" type="submit"><icon icon="search" /></b-button>
-        <b-form-input
-          id="search-bar--inputid"
-          v-model="keyword"
-          class="search-bar--input"
-          placeholder="搜尋文章"
-          type="search"
-        />
-      </form>
+    <!-- Right aligned nav items -->
+    <b-navbar-nav class="ml-auto d-none d-md-flex align-items-center h-100">
+      <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><icon icon="search" /></b-nav-item>
 
       <b-nav-item-dropdown
         size="lg"
@@ -60,8 +49,7 @@
         <b-dropdown-item href="#" @click="handleLogout">登出</b-dropdown-item>
       </b-nav-item-dropdown>
     </b-navbar-nav>
-    <!-- Show when screen width is smaller than md -->
-    <b-navbar-nav class="navbar--item item-right d-flex d-md-none align-items-center">
+    <b-navbar-nav class="ml-auto d-flex d-md-none align-items-center">
       <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><icon icon="search" /></b-nav-item>
       <b-button variant="link"><icon icon="notification" /></b-button>
       <b-nav-item v-if="getLoginStatus" to="/profile">
@@ -139,11 +127,6 @@ export default {
       }
     }
   },
-  watch: {
-    '$route.query'() {
-      this.keyword = this.$route.query.q
-    }
-  },
   methods: {
     routeToArticle(articleId) {
       if (this.$route.params.ArticleID === articleId) {
@@ -161,11 +144,6 @@ export default {
         return moment(timeStamp._seconds * 1000).format('YYYY/MM/DD HH:mm')
       }
       return moment(timeStamp).format('YYYY/MM/DD HH:mm')
-    },
-    submitSearch() {
-      if (!this.keyword) return
-      if (this.keyword === this.$route.query.q) return
-      this.$router.push({ path: '/search', query: { q: this.keyword }})
     }
   }
 }
