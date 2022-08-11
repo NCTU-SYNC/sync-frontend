@@ -45,7 +45,7 @@ const mutations = {
 const actions = {
   sendToken({ commit, dispatch }, userdata) {
     return new Promise((resolve, reject) => {
-      UserAPI.login(userdata.idToken)
+      UserAPI.login(userdata)
         .then((response) => {
           const { data } = response
           resolve(data.message)

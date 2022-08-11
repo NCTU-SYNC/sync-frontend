@@ -6,8 +6,8 @@ class UserAPI extends APIBase {
     this.prefix_path = ''
   }
 
-  login(idToken) {
-    return this.action('/login', { idToken }, 'post')
+  login(userdata) {
+    return this.action('/login', userdata, 'post')
   }
 
   /**
