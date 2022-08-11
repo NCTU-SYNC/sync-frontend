@@ -31,10 +31,6 @@ api.interceptors.response.use(
 
     // if the custom code is not 20000, it is judged as an error.
     if (res.status !== 200) {
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.status === 508 || res.status === 512 || res.status === 514) {
-        // TODO: re-auth
-      }
       return Promise.reject(new Error(res.data.message))
     } else {
       return Promise.resolve(res)
