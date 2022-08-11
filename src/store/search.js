@@ -108,10 +108,15 @@ export const actions = {
 
     const { q, tbs, category } = state.query
 
-    const res = await articleAPI.search(q, tbs, category)
+    try {
+      const res = await articleAPI.search(q, tbs, category)
+      commit('SET_RESULT', res.data.data)
+    } catch (error) {
+      commit('SET_RESULT', [])
+    } finally {
+      state.isLoading = false
+    }
 
-    commit('SET_RESULT', res.data.data)
-    state.isLoading = false
 
     dispatch('updateRouterQuery')
   }
