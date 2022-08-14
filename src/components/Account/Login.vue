@@ -145,9 +145,9 @@ export default {
     thirdPartyLoginFunc(target) {
       switch (target) {
         // case 'Facebook':
-        //   return firebase.loginWithFacebook
+        //   return firebase.loginWithFacebook.bind(firebase)
         case 'Google':
-          return firebase.loginWithGoogle
+          return firebase.loginWithGoogle.bind(firebase)
       }
     },
     async handleThirdPartyLogin(target) {
