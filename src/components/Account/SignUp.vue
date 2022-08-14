@@ -39,7 +39,7 @@
             variant="light"
             class="d-flex align-items-center"
             block
-            @click="handleThirdPartyLogin(login.name)"
+            @click="handleThirdPartyLogin(login)"
           >
             <icon :icon="login.icon" />
             <div>{{ login.name }} 註冊/登入</div>
@@ -119,16 +119,7 @@ export default {
         '新聞的多元觀點與客觀事實',
         '共同編輯新聞系統'
       ],
-      thirdPartyLogins: [
-        // {
-        //   name: 'Facebook',
-        //   icon: 'facebook-circle'
-        // },
-        {
-          name: 'Google',
-          icon: 'google'
-        }
-      ],
+      thirdPartyLogins: firebase.thirdPartyLogins,
       loginInfos: [
         {
           type: 'text',
@@ -180,17 +171,11 @@ export default {
         this.$bvModal.msgBoxOk(error.message)
       }
     },
-    thirdPartyLoginFunc(target) {
-      switch (target) {
-        // case 'Facebook':
-        //   return firebase.loginWithFacebook.bind(firebase)
-        case 'Google':
-          return firebase.loginWithGoogle.bind(firebase)
-      }
-    },
     async handleThirdPartyLogin(target) {
       console.log(`login with ${target}`)
-      const loginFunc = this.thirdPartyLoginFunc(target)
+
+      const loginFunc = firebase.getThirdPartyLoginMethods(target.id)
+
       try {
         await loginFunc()
         this.$router.back()

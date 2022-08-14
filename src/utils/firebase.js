@@ -21,6 +21,29 @@ class FirebaseAuth {
     return this.instance.currentUser.getIdToken()
   }
 
+  thirdPartyLogins = [
+    {
+      id: 'google',
+      name: 'Google',
+      icon: 'google'
+    }
+
+    // {
+    //   id: 'fb',
+    //   name: 'Facebook',
+    //   icon: 'facebook'
+    // }
+  ]
+
+  thirdPartyLoginMethods = new Map([
+    ['google', this.loginWithGoogle.bind(this)]
+    // ['fb', this.loginWithFacebook.bind(this)]
+  ])
+
+  getThirdPartyLoginMethods(id) {
+    return this.thirdPartyLoginMethods.get(id)
+  }
+
   async setupFirebase() {
     try {
       this.instance = firebase.auth()
