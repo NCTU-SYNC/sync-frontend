@@ -57,5 +57,8 @@
   ],
   "resolutions": {
     "prosemirror-model": "1.11.2"
+  },
+  "volta": {
+    "node": "14.20.0"
   }
 }
