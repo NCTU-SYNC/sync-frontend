@@ -59,6 +59,7 @@
                 v-model="info.data"
                 :type="info.type"
                 :placeholder="info.placeholder"
+                :state="info.validator()"
                 required
                 trim
               />
@@ -121,24 +122,28 @@ export default {
         '共同編輯新聞系統'
       ],
       thirdPartyLogins: firebase.thirdPartyLogins,
+      isSubmitted: false,
       loginInfos: [
         {
           type: 'text',
           name: '使用者名稱',
           placeholder: '使用者名稱，平台顯示名稱',
-          data: ''
+          data: '',
+          validator: () => this.validName()
         },
         {
           type: 'text',
           name: '帳號/Email',
           placeholder: '帳號/Email，有效的Email登入使用',
-          data: ''
+          data: '',
+          validator: () => this.validEmail()
         },
         {
           type: 'password',
           name: '密碼',
           placeholder: '密碼，至少六位數的英文與數字組合',
-          data: ''
+          data: '',
+          validator: () => this.validPassword()
         }
       ],
       showPrivacyPolicy: false,
@@ -160,7 +165,25 @@ export default {
     }
   },
   methods: {
+    validName() {
+      return this.isSubmitted ? this.loginInfos[0].data.length >= 2 : null
+    },
+    validEmail() {
+      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+      return this.isSubmitted ? re.test(this.loginInfos[1].data) : null
+    },
+    validPassword() {
+      const re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
+
+      return this.isSubmitted ? re.test(this.loginInfos[2].data) : null
+    },
     async handleSignUp() {
+      if (!this.loginInfos.every(info => !info.validator())) {
+        this.isSubmitted = true
+        return
+      }
+
       try {
         await firebase.handleSignup(this.email, this.password, this.userName)
         this.$router.back()
@@ -171,6 +194,8 @@ export default {
         console.error(error)
         this.$bvModal.msgBoxOk(error.message)
       }
+
+      this.isSubmitted = true
     },
     async handleThirdPartyLogin(target) {
       console.log(`login with ${target}`)
