@@ -116,6 +116,11 @@ export default {
       default: 'login'
     }
   },
+  data() {
+    return {
+      keyword: ''
+    }
+  },
   computed: {
     getRedirectPath() {
       // 設置重新導向，若在首頁、註冊、登入頁面做切換不需設置redirect，其他頁面則需要重新導向，若已經設置重新導向頁面，則註冊、登入切換時，並不會互相把自己的頁面給放進重新導向內
