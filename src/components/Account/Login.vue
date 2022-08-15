@@ -8,16 +8,16 @@
             <strong class="title"> SYNC </strong>
           </div>
           <div style="height: 120px">
-            <ui class="h-100 d-flex flex-column justify-content-between">
+            <ul class="h-100 m-0 p-0 d-flex flex-column justify-content-between">
               <li
                 v-for="slogan in slogans"
                 :key="slogan"
-                class="d-flex align-items-center"
+                class="d-flex align-items-center slogan-box"
               >
                 <icon icon="vector" style="height: 10px" />
                 <div class="slogan">{{ slogan }}</div>
               </li>
-            </ui>
+            </ul>
           </div>
         </div>
       </b-col>
@@ -181,6 +181,10 @@ export default {
       letter-spacing: 2px;
       color: white;
       user-select: none;
+
+      &-box {
+        padding-bottom: 1.25rem;
+      }
     }
   }
 }
