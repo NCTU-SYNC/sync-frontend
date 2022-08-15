@@ -65,7 +65,7 @@ export default {
     },
     lastUpdatedAt: {
       type: String,
-      default: '2021.04.26'
+      default: '2021-04-26'
     },
     editedCount: {
       type: Number,
@@ -139,7 +139,7 @@ export default {
     getDateTime(lastUpdatedAt) {
       const datetime = moment(lastUpdatedAt)
       if (datetime.isValid()) {
-        return datetime.format('YYYY.MM.DD HH:MM')
+        return datetime.format('YYYY.MM.DD HH:mm')
       }
       return ''
     },

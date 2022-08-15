@@ -1,0 +1,23 @@
+name: SYNC CI
+
+on:
+  push:
+    branches: ["upgrade-tiptap"]
+  pull_request:
+    branches: ["upgrade-tiptap"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js lts/fermium
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/fermium
+          cache: "yarn"
+      - name: Install dependencies
+        run: yarn install
+      - name: Run unit tests
+        run: yarn test:unit

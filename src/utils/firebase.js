@@ -1,7 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import { removeUserInfo } from '@/utils/auth'
-import { firebaseConfig } from '../../config/firebaseConfig'
 import store from '../store/index'
 
 class FirebaseAuth {
@@ -10,7 +9,6 @@ class FirebaseAuth {
     this.password = ''
     this.displayName = ''
     this.isLogin = false
-    firebase.initializeApp(firebaseConfig)
   }
 
   get auth() {
@@ -22,6 +20,16 @@ class FirebaseAuth {
   }
 
   async setupFirebase() {
+    if (process.env.NODE_ENV === 'test') return Promise.resolve()
+
+    await import('/config/firebaseConfig')
+      .then(({ firebaseConfig }) => {
+        this.instance = firebase.initializeApp(firebaseConfig)
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+
     try {
       this.instance = firebase.auth()
       const handler = async(user) => {
@@ -63,7 +71,10 @@ class FirebaseAuth {
   async handleSignup(email, password, displayName) {
     try {
       this.setUserInfo(email, password, displayName)
-      const { user } = await this.auth.createUserWithEmailAndPassword(email, password)
+      const { user } = await this.auth.createUserWithEmailAndPassword(
+        email,
+        password
+      )
       user.updateProfile({
         displayName
       })
@@ -76,7 +87,10 @@ class FirebaseAuth {
 
   async handleLogin(email, password) {
     try {
-      const { user } = await this.auth.signInWithEmailAndPassword(email, password)
+      const { user } = await this.auth.signInWithEmailAndPassword(
+        email,
+        password
+      )
       this.setUserInfo(email, password, user.displayName)
       store.dispatch('user/sendUserInfo', user)
       return Promise.resolve(user)
