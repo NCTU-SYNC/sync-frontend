@@ -25,6 +25,7 @@ beforeEach(() => {
 describe('ArticleCard.vue', () => {
   it('default value', () => {
     const { container } = render(ArticleCard, { props, store, router })
+
     const heading = container.querySelector('.heading')
     const footer = container.querySelector('.card-footer')
     const category = container.querySelector('.article-category')

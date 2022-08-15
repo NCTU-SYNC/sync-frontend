@@ -72,13 +72,14 @@
               </div>
 
               <div class="hashtag-container">
-                <span
+                <b-link
                   v-for="(tag, tagIndex) in tags"
                   :key="tagIndex"
+                  :to="{path: '../hashtag', query: { q: tag } }"
                   class="hashtag"
                 >
                   #{{ tag }}
-                </span>
+                </b-link>
               </div>
               <div class="article-info d-flex justify-content-between">
                 <div class="seen-edit-info">
@@ -482,7 +483,7 @@ p {
   margin-bottom: 24px;
   .hashtag {
     font-size: 12px;
-    color: $blue;
+    color: $blue !important;
     margin-right: 12px;
   }
 }

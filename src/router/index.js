@@ -74,6 +74,11 @@ export default new Router({
       path: '/compare/:ArticleID',
       name: 'EditComparison',
       component: () => import('@/views/EditComparison')
+    },
+    {
+      path: '/hashtag',
+      name: 'Hashtag',
+      component: () => import('@/views/new/Hashtag')
     }
   ],
   scrollBehavior(to, from, savedPosition) {
