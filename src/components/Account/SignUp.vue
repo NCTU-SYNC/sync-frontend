@@ -185,7 +185,7 @@ export default {
       }
 
       try {
-        await firebase.handleSignup(this.email, this.password, this.userName)
+        await firebase.handleSignup(this.accountOrEmail, this.password, this.userName)
         this.$router.back()
       } catch (error) {
         this.loginInfos.forEach((info) => {
