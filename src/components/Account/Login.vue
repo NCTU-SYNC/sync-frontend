@@ -73,6 +73,7 @@
             <b-link
               style="font-size: 14px; color: #2353ff"
               :to="{ name: 'SignUp', query: getRedirectPath }"
+              replace
             >
               註冊新帳號
             </b-link>

@@ -89,6 +89,7 @@
             <b-link
               style="font-size: 14px; color: #2353ff"
               :to="{ name: 'Login', query: getRedirectPath }"
+              replace
             >
               以現有帳號登入
             </b-link>
