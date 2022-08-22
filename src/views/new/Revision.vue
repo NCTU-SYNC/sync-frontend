@@ -129,7 +129,7 @@
 </template>
 
 <script>
-import { getBlockRevisionById } from '@/api/history'
+import historyAPI from '@/api/history'
 import DiffMatchPatch from 'diff-match-patch'
 import moment from 'moment'
 
@@ -185,7 +185,8 @@ export default {
   methods: {
     async handleGetBlockRevision(revisionIndex = undefined) {
       try {
-        const { data } = await getBlockRevisionById({ blockId: this.blockId, revisionIndex })
+        const { data } = await historyAPI.getBlockRevision(this.blockId, revisionIndex)
+
         const { currentRevision, revisions, from } = data.data
         this.currentRevision = currentRevision
         this.revisions = revisions

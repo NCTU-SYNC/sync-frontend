@@ -24,7 +24,8 @@ export default new Router({
     {
       path: '/search',
       name: 'Search',
-      component: () => import('@/views/new/Search')
+      component: () => import('@/views/new/Search'),
+      props: (route) => ({ query: route.query })
     },
     {
       path: '/signup',

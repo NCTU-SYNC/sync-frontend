@@ -1,5 +1,11 @@
 <template>
-  <b-navbar ref="navbar" fixed="top" class="header-navbar" type="light" variant="faded">
+  <b-navbar
+    ref="navbar"
+    fixed="top"
+    class="header-navbar"
+    type="light"
+    variant="faded"
+  >
     <b-navbar-brand id="brand" to="/"><Logo /></b-navbar-brand>
 
     <!-- Right aligned nav items -->
@@ -8,8 +14,17 @@
         <input id="checkbox-title" v-model="isAnonymous" type="checkbox">
         <label for="checkbox-title"><span />匿名發文</label>
       </b-form-group>
-      <b-button variant="secondary" class="cancel-btn" @click="cancelPost">取消</b-button>
-      <b-button variant="primary" class="publish-btn" :disabled="isLoading" @click="publishArticle">儲存</b-button>
+      <b-button
+        variant="secondary"
+        class="cancel-btn"
+        @click="cancelPost"
+      >取消</b-button>
+      <b-button
+        variant="primary"
+        class="publish-btn"
+        :disabled="isLoading"
+        @click="publishArticle"
+      >儲存</b-button>
       <b-nav-item-dropdown
         size="lg"
         variant="link"
@@ -26,22 +41,34 @@
           <h3>通知</h3>
           <slot v-for="(notification, notificationIndex) in notifications">
             <b-dropdown-item-button
-              v-if="notification.type = 'update'"
+              v-if="(notification.type = 'update')"
               button-class="btn-wrap"
               @click="routeToArticle(notification.articleId)"
             >{{ notification.title || notification.articleId }} 文章有更新唷！
-              <p class="text-secondary m-0">{{ getDateString(notification.lastUpdatedAt) }}</p></b-dropdown-item-button>
-            <b-dropdown-divider v-if="notificationIndex < notifications.length - 1" />
+              <p class="text-secondary m-0">
+                {{ getDateString(notification.lastUpdatedAt) }}
+              </p></b-dropdown-item-button>
+            <b-dropdown-divider
+              v-if="notificationIndex < notifications.length - 1"
+            />
           </slot>
-
         </div>
-
       </b-nav-item-dropdown>
-      <b-nav-item-dropdown v-show="getLoginStatus" no-caret right toggle-class="p-0">
+      <b-nav-item-dropdown
+        v-show="getLoginStatus"
+        no-caret
+        right
+        toggle-class="p-0"
+      >
         <!-- Using 'button-content' slot -->
         <template v-slot:button-content>
           <span>
-            <img class="avatar-user" height="48" width="48" :src="getPhotoURL">
+            <img
+              class="avatar-user"
+              height="48"
+              width="48"
+              :src="getPhotoURL"
+            >
           </span>
         </template>
         <b-dropdown-item to="/profile">個人頁面</b-dropdown-item>
@@ -53,7 +80,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { createArticle, updateArticleById } from '@/api/article'
+import articleAPI from '@/api/article'
 import firebase from '@/utils/firebase'
 import Logo from '@/components/Logo.vue'
 import moment from 'moment'
@@ -140,7 +167,9 @@ export default {
         return
       }
 
-      if (Object.values(this.post.currentEditors).some((editor) => editor.isEmpty)) {
+      if (
+        Object.values(this.post.currentEditors).some((editor) => editor.isEmpty)
+      ) {
         await this.$bvModal.msgBoxOk('段落內文不得為空白，請輸入段落內文')
         this.isLoading = false
         return
@@ -149,10 +178,9 @@ export default {
       const articleData = this.$store.getters['post/GET_PUBLISH_DATA']
       // add user credentials
       articleData.uid = this.uid
-      articleData.token = await this.getToken()
       if (this.post.isNewPost) {
         try {
-          const { data } = await createArticle(articleData)
+          const { data } = await articleAPI.create(articleData)
           this.isLoading = false
           if (data.code === 200) {
             this.removeArticleLocalStorage()
@@ -168,7 +196,7 @@ export default {
       } else {
         articleData.id = this.post.articleId
         try {
-          const { data } = await updateArticleById(articleData)
+          const { data } = await articleAPI.update(articleData)
           this.isLoading = false
           if (data.code === 200) {
             // show add point alert
@@ -187,7 +215,10 @@ export default {
       this.showAddPointsAlert = true
       const redirectArticleId = this.post.articleId
       this.redirectTimerId = setTimeout(() => {
-        this.$router.push({ name: 'Article', params: { ArticleID: redirectArticleId }})
+        this.$router.push({
+          name: 'Article',
+          params: { ArticleID: redirectArticleId }
+        })
         this.$store.commit('post/RESET_POST')
       }, 2000)
     },
@@ -195,7 +226,10 @@ export default {
       const redirectArticleId = this.post.articleId
       this.removeArticleLocalStorage()
       if (redirectArticleId) {
-        this.$router.push({ name: 'Article', params: { ArticleID: redirectArticleId }})
+        this.$router.push({
+          name: 'Article',
+          params: { ArticleID: redirectArticleId }
+        })
         this.$store.commit('post/RESET_POST')
       } else {
         this.$router.push({ name: 'Home' })
@@ -210,7 +244,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/scss/post/main.scss";
+@import '@/assets/scss/post/main.scss';
 .header-navbar {
   height: 4rem;
   background-color: $white;
@@ -222,24 +256,24 @@ export default {
 }
 
 .centered-block {
-    left: 50%;
-    transform: translate(-50%, 0);
-    -webkit-transform: translate(-50%, 0);
-    position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  -webkit-transform: translate(-50%, 0);
+  position: absolute;
 }
 
 .avatar-user {
-    -webkit-background-size: 32px 32px;
-    background-size: 32px 32px;
-    border: 0;
-    -webkit-border-radius: 50%;
-    border-radius: 50%;
-    display: block;
-    margin: 0;
-    position: relative;
-    height: 32px;
-    width: 32px;
-    z-index: 0;
+  -webkit-background-size: 32px 32px;
+  background-size: 32px 32px;
+  border: 0;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+  display: block;
+  margin: 0;
+  position: relative;
+  height: 32px;
+  width: 32px;
+  z-index: 0;
 }
 
 .notification-container {
@@ -272,30 +306,32 @@ export default {
     cursor: pointer;
   }
 
-  input[type="checkbox"] {
-    display:none;
+  input[type='checkbox'] {
+    display: none;
   }
 
-  input[type="checkbox"] + label span {
-    display:inline-block;
+  input[type='checkbox'] + label span {
+    display: inline-block;
     width: 16px;
     height: 16px;
     margin: 0 0.5rem 0.25rem 0;
     vertical-align: middle;
-    background: url('~@/assets/images/ic-checkbox-inactivated.svg') 0 center no-repeat;
+    background: url('~@/assets/images/ic-checkbox-inactivated.svg') 0 center
+      no-repeat;
     cursor: pointer;
     border-radius: 2px;
   }
 
-  input[type="checkbox"] + label span:hover {
+  input[type='checkbox'] + label span:hover {
     background: url('~@/assets/images/ic-checkbox-hover.svg') 0 center no-repeat;
   }
 
-  input[type="checkbox"]:checked + label span {
-    background: url('~@/assets/images/ic-checkbox-activated.svg') 0 center no-repeat;
+  input[type='checkbox']:checked + label span {
+    background: url('~@/assets/images/ic-checkbox-activated.svg') 0 center
+      no-repeat;
   }
 
-  input[type=checkbox]+ label {
+  input[type='checkbox'] + label {
     color: $text-2;
     user-select: none; /* 防止文字被滑鼠選取反白 */
   }

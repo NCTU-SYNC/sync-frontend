@@ -13,12 +13,20 @@
     <b-row class="mt-2 pb-2">
       <b-col class="d-flex justify-content-center align-items-center">
         <div>
-          <b-button variant="link" :disabled="base <= 1" @click="onPrevArticleClicked">
+          <b-button
+            variant="link"
+            :disabled="base <= 1"
+            @click="onPrevArticleClicked"
+          >
             <b-icon icon="chevron-left" />
             前一版
           </b-button>
           <span> &nbsp; | &nbsp;</span>
-          <b-button variant="link" :disabled="base + 1 >= versionsLength" @click="onNextArticleClicked">
+          <b-button
+            variant="link"
+            :disabled="base + 1 >= versionsLength"
+            @click="onNextArticleClicked"
+          >
             後一版
             <b-icon icon="chevron-right" />
           </b-button>
@@ -29,19 +37,35 @@
       <b-col>
         <b-row class="divider">
           <b-col class="py-2 comparison-header" cols="6">
-            <div :class="{'clicked-row': isClickedRow && base > compare}">
-              <span class="mr-2 pr-2 border-right">{{ versions[0].updatedAt }}</span>
-              <span>{{ versions[0].author.isAnonymous ? '匿名' : versions[0].author.name }}</span>
+            <div :class="{ 'clicked-row': isClickedRow && base > compare }">
+              <span class="mr-2 pr-2 border-right">{{
+                versions[0].updatedAt
+              }}</span>
+              <span>{{
+                versions[0].author.isAnonymous
+                  ? '匿名'
+                  : versions[0].author.name
+              }}</span>
             </div>
           </b-col>
           <b-col class="py-2 comparison-header d-flex" cols="6">
-            <div :class="{'clicked-row': isClickedRow && base < compare}">
-              <span class="mr-2 pr-2 border-right">{{ versions[1].updatedAt }}</span>
-              <span>{{ versions[1].author.isAnonymous ? '匿名' : versions[1].author.name }}</span>
+            <div :class="{ 'clicked-row': isClickedRow && base < compare }">
+              <span class="mr-2 pr-2 border-right">{{
+                versions[1].updatedAt
+              }}</span>
+              <span>{{
+                versions[1].author.isAnonymous
+                  ? '匿名'
+                  : versions[1].author.name
+              }}</span>
             </div>
             <div>
-              <span class="bg-diff-add px-2 py-1 m-2">+{{ wordsChanged.added }}</span>
-              <span class="bg-diff-delete px-2 py-1 m-2">-{{ wordsChanged.deleted }}</span>
+              <span
+                class="bg-diff-add px-2 py-1 m-2"
+              >+{{ wordsChanged.added }}</span>
+              <span
+                class="bg-diff-delete px-2 py-1 m-2"
+              >-{{ wordsChanged.deleted }}</span>
             </div>
           </b-col>
         </b-row>
@@ -54,7 +78,9 @@
         :link-container="linkContainer"
       />
     </slot>
-    <ComparisonCitation :citations="[versions[0].citations, versions[1].citations]" />
+    <ComparisonCitation
+      :citations="[versions[0].citations, versions[1].citations]"
+    />
     <b-row class="mt-3" />
   </b-container>
 </template>
@@ -62,12 +88,13 @@
 <script>
 import DiffMatchPatch from 'diff-match-patch'
 import { ComparisonBlock, ComparisonCitation } from '@/components/History'
-import { getArticlesComparisonByVersionIndexes } from '@/api/history'
+import historyAPI from '@/api/history'
 import moment from 'moment'
 
 export default {
   components: {
-    ComparisonBlock, ComparisonCitation
+    ComparisonBlock,
+    ComparisonCitation
   },
   data() {
     return {
@@ -122,14 +149,19 @@ export default {
       try {
         this.isPageReady = false
         this.versions = {}
-        const { data } = await getArticlesComparisonByVersionIndexes({
-          articleId: this.articleId,
-          base: this.base,
-          compare: this.compare
-        })
-        const { articles, length, base, compare, title, wordsChanged } = data.data
+        const { data } = await historyAPI.getComparison(
+          this.articleId,
+          this.base,
+          this.compare
+        )
+
+        const { articles, length, base, compare, title, wordsChanged } =
+          data.data
         this.versionsLength = length
-        if (this.$route.query.base !== base.toString() || this.$route.query.compare !== compare.toString()) {
+        if (
+          this.$route.query.base !== base.toString() ||
+          this.$route.query.compare !== compare.toString()
+        ) {
           this.$router.replace({ query: { base, compare }})
         }
         this.wordsChanged = wordsChanged
@@ -147,18 +179,26 @@ export default {
           const blocks = articles[i].blocks
           const author = articles[i].author
           const citations = articles[i].citations
-          const updatedAt = moment(articles[i].updatedAt).format('YYYY/MM/DD HH:mm')
+          const updatedAt = moment(articles[i].updatedAt).format(
+            'YYYY/MM/DD HH:mm'
+          )
           this.versions = {
             ...this.versions,
             [i]: { title, blocks, author, updatedAt, citations }
           }
         }
 
-        if (this.compare === this.versionsLength || this.base === this.versionsLength) {
+        if (
+          this.compare === this.versionsLength ||
+          this.base === this.versionsLength
+        ) {
           this.versions[1].updatedAt += '（最新版）'
         }
 
-        this.articleDiff = this.compareContent(this.versions[0].blocks, this.versions[1].blocks)
+        this.articleDiff = this.compareContent(
+          this.versions[0].blocks,
+          this.versions[1].blocks
+        )
         this.versions[1].articleDiff = this.articleDiff
         this.isPageReady = true
       } catch (error) {
@@ -174,7 +214,9 @@ export default {
           if (block.blockId === diffArrBlockId) {
             return block
           }
-          const nonOrderedBlock = versionContent.blocks.find(b => b.blockId === diffArrBlockId)
+          const nonOrderedBlock = versionContent.blocks.find(
+            (b) => b.blockId === diffArrBlockId
+          )
           return nonOrderedBlock || null
         }
       }
@@ -258,9 +300,17 @@ export default {
           text: ''
         }
         // 設定 base，若無 base 則給予空物件比對
-        const base = diffDict[blockId] ? diffDict[blockId].base ? diffDict[blockId].base : empty : empty
+        const base = diffDict[blockId]
+          ? diffDict[blockId].base
+            ? diffDict[blockId].base
+            : empty
+          : empty
         // 設定 base，若無 base 則給予空物件比對
-        const compare = diffDict[blockId] ? diffDict[blockId].compare ? diffDict[blockId].compare : empty : empty
+        const compare = diffDict[blockId]
+          ? diffDict[blockId].compare
+            ? diffDict[blockId].compare
+            : empty
+          : empty
         const titleDiff = dmp.diff_main(base.title, compare.title)
         const contentDiff = dmp.diff_main(base.text, compare.text)
         dmp.diff_cleanupSemantic(titleDiff)
@@ -273,14 +323,21 @@ export default {
     },
     getPlainText(blockContent) {
       let content = ''
-      blockContent.content.content.forEach(paragraph => {
+      blockContent.content.content.forEach((paragraph) => {
         if (paragraph.content) {
           if (paragraph.type === 'paragraph') {
-            paragraph.content.forEach(text => {
-              if (text.marks && text.marks.some(mark => mark.type === 'link')) {
-                content += this.linkContainer + JSON.stringify({
-                  text: text.text, marks: text.marks
-                }) + this.linkContainer
+            paragraph.content.forEach((text) => {
+              if (
+                text.marks &&
+                text.marks.some((mark) => mark.type === 'link')
+              ) {
+                content +=
+                  this.linkContainer +
+                  JSON.stringify({
+                    text: text.text,
+                    marks: text.marks
+                  }) +
+                  this.linkContainer
               } else {
                 content += text.text
               }
@@ -289,12 +346,19 @@ export default {
             // 暫時關閉 blockquote 比對功能
             // content += this.blockquoteContainer
             const payload = paragraph.content
-            payload.forEach(p => {
-              p.content.forEach(text => {
-                if (text.marks && text.marks.some(mark => mark.type === 'link')) {
-                  content += this.linkContainer + JSON.stringify({
-                    text: text.text, marks: text.marks
-                  }) + this.linkContainer
+            payload.forEach((p) => {
+              p.content.forEach((text) => {
+                if (
+                  text.marks &&
+                  text.marks.some((mark) => mark.type === 'link')
+                ) {
+                  content +=
+                    this.linkContainer +
+                    JSON.stringify({
+                      text: text.text,
+                      marks: text.marks
+                    }) +
+                    this.linkContainer
                 } else {
                   content += text.text
                 }
@@ -331,10 +395,10 @@ export default {
 <style lang="scss" scoped>
 .divider {
   > div:first-child {
-    border-right: 2px solid #E6E6E6;
+    border-right: 2px solid #e6e6e6;
   }
   > div:last-child {
-    border-left: 2px solid #E6E6E6;
+    border-left: 2px solid #e6e6e6;
   }
   > div > p {
     margin: 0;
@@ -354,13 +418,13 @@ export default {
 
 .bg-diff {
   &-add {
-    background-color: #1AE158;
+    background-color: #1ae158;
   }
   &-delete {
-    background-color: #FF4F4F;
+    background-color: #ff4f4f;
   }
 }
-h4{
+h4 {
   font-family: Noto Sans CJK TC;
   font-style: normal;
   font-weight: bold;
@@ -368,16 +432,16 @@ h4{
   line-height: 32px;
   text-align: center;
 }
-.clicked-row{
+.clicked-row {
   margin-left: 16px;
-  ::before{
-      content:"";
-      position:absolute;
-      width: 12px;
-      height: 12px;
-      left :10px;
-      top: 15px;
-      background: #2353FF;
-    }
+  ::before {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    left: 10px;
+    top: 15px;
+    background: #2353ff;
+  }
 }
 </style>

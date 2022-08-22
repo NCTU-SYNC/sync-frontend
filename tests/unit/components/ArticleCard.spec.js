@@ -1,6 +1,10 @@
 import { render, getByText } from '@testing-library/vue'
 import ArticleCard from '@/components/ArticleCard.vue'
 import store from '@/store'
+import router from '@/router'
+
+jest.mock('@/utils/firebase')
+jest.mock('@/router')
 
 let props
 
@@ -20,7 +24,8 @@ beforeEach(() => {
 
 describe('ArticleCard.vue', () => {
   it('default value', () => {
-    const { container } = render(ArticleCard, { props, store })
+    const { container } = render(ArticleCard, { props, store, router })
+
     const heading = container.querySelector('.heading')
     const footer = container.querySelector('.card-footer')
     const category = container.querySelector('.article-category')
@@ -37,7 +42,7 @@ describe('ArticleCard.vue', () => {
 
   it('full card view', () => {
     props.full = true
-    const { container } = render(ArticleCard, { props, store })
+    const { container } = render(ArticleCard, { props, store, router })
     const fullCardText = container.querySelector('.article-excerpt--wide')
 
     expect(fullCardText).toBeInTheDocument()
