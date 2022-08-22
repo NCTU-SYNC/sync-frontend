@@ -26,7 +26,7 @@
         </div>
       </b-col>
 
-      <b-col class="right-modal">
+      <b-col class="right-modal d-flex justify-content-center">
         <b-button-close
           style="margin: 1rem; position: absolute; top: 0; right: 0"
           @click="$router.replace(getRedirectPath ? getRedirectPath.redirect : { name: 'Home' })"
@@ -262,7 +262,6 @@ export default {
     position: absolute;
     width: 320px;
     top: 20px;
-    left: calc(50% - 320px / 2);
 
     h3 {
       margin: 20px 0;

@@ -1,7 +1,7 @@
 <template>
   <b-container fluid class="h-100 p-0">
     <b-row class="h-100" style="padding: 0 15px 0">
-      <b-col class="left-modal">
+      <b-col class="left-modal d-flex justify-content-center align-items-center">
         <div class="content d-flex flex-column justify-content-between">
           <div class="d-flex align-items-center">
             <icon icon="logo" style="height: 80px" />
@@ -22,7 +22,7 @@
         </div>
       </b-col>
 
-      <b-col class="right-modal">
+      <b-col class="right-modal d-flex justify-content-center">
         <b-button-close
           style="margin: 1rem; position: absolute; top: 0; right: 0"
           @click="$router.replace(getRedirectPath ? getRedirectPath.redirect : { name: 'Home' })"
@@ -164,8 +164,6 @@ export default {
     position: absolute;
     height: 280px;
     width: 300px;
-    top: calc(50% - 280px / 2);
-    left: calc(50% - 300px / 2);
 
     strong.title {
       font-size: xxx-large;
@@ -194,7 +192,6 @@ export default {
     position: absolute;
     width: 320px;
     top: 20px;
-    left: calc(50% - 320px / 2);
 
     h3 {
       margin: 20px 0;
