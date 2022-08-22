@@ -1,9 +1,9 @@
 <template>
   <b-container fluid class="h-100 p-0">
     <b-row class="h-100" style="padding: 0 15px 0">
-      <b-col class="left-modal d-flex justify-content-center align-items-center">
-        <div class="content d-flex flex-column justify-content-between">
-          <div class="d-flex align-items-center">
+      <b-col class="left-modal">
+        <div class="content d-flex flex-column">
+          <div class="d-flex align-items-center left-modal-logo">
             <icon icon="logo" style="height: 80px" />
             <strong class="title"> SYNC </strong>
           </div>
@@ -159,11 +159,17 @@ export default {
 }
 .left-modal {
   background: linear-gradient(to bottom, #03081a, #0a194d);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0;
+
+  &-logo {
+    padding-bottom: 5rem;
+  }
 
   .content {
-    position: absolute;
-    height: 280px;
-    width: 300px;
+    padding-left: 4rem;
 
     strong.title {
       font-size: xxx-large;
