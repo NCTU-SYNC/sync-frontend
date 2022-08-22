@@ -18,8 +18,8 @@ export default new Router({
     {
       path: '/login',
       name: 'Login',
-      component: () => import('@/views/new/Login'),
-      hidden: true
+      component: () => import('@/components/NavBar'),
+      props: { modalShow: true, modalType: 'login' }
     },
     {
       path: '/search',
@@ -30,8 +30,8 @@ export default new Router({
     {
       path: '/signup',
       name: 'SignUp',
-      component: () => import('@/views/new/SignUp'),
-      hidden: true
+      component: () => import('@/components/NavBar'),
+      props: { modalShow: true, modalType: 'signup' }
     },
     {
       path: '/article/:ArticleID',

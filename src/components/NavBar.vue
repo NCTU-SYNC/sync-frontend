@@ -43,9 +43,7 @@
               <p class="text-secondary m-0">{{ getDateString(notification.lastUpdatedAt) }}</p></b-dropdown-item-button>
             <b-dropdown-divider v-if="notificationIndex < notifications.length - 1" />
           </slot>
-
         </div>
-
       </b-nav-item-dropdown>
       <b-nav-item v-show="!getLoginStatus" :to="{ name: 'SignUp', query: getRedirectPath }">註冊</b-nav-item>
       <b-nav-item v-show="!getLoginStatus" :to="{ name: 'Login', query: getRedirectPath}">登入</b-nav-item>
@@ -77,6 +75,25 @@
         </b-iconstack>
       </b-nav-item>
     </b-navbar-nav>
+
+    <b-modal
+      v-model="modalShow"
+      no-close-on-backdrop
+      no-close-on-esc
+      hide-header
+      hide-footer
+      body-class="p-0"
+      dialog-class="h-100 w-100"
+      content-class="login-modal"
+    >
+      <transition
+        name="fade"
+        mode="out-in"
+        :duration="200"
+      >
+        <component :is="modalComponent" />
+      </transition>
+    </b-modal>
   </b-navbar>
 </template>
 
@@ -88,6 +105,17 @@ import moment from 'moment'
 export default {
   name: 'NavBar',
   components: { Logo },
+
+  props: {
+    modalShow: {
+      type: Boolean,
+      default: false
+    },
+    modalType: {
+      type: String,
+      default: 'login'
+    }
+  },
   data() {
     return {
       keyword: ''
@@ -107,6 +135,13 @@ export default {
     },
     notifications() {
       return this.$store.getters.notifications
+    },
+    modalComponent() {
+      if (this.modalType === 'login') {
+        return () => import('@/components/Account/Login.vue')
+      } else {
+        return () => import('@/components/Account/SignUp.vue')
+      }
     }
   },
   watch: {
@@ -142,6 +177,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
 .navbar {
   &--container {
     height: 4rem;
@@ -151,7 +187,6 @@ export default {
     align-items: center;
     width: 100%;
   }
-
   &--item {
     flex: 1;
   }
@@ -161,7 +196,7 @@ export default {
   }
   .item-right {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
   }
   .item-center {
       margin: 0 !important;
@@ -195,7 +230,6 @@ export default {
 
 .search-bar {
   --size: 40px;
-
   height: 40px;
   width: var(--size);
   display: flex;
@@ -204,7 +238,6 @@ export default {
   position: relative;
   overflow: hidden;
   transition: width 300ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
-
   &--input {
     height: 40px;
     opacity: 0;
@@ -217,15 +250,12 @@ export default {
       color: $text-4;
     }
   }
-
   &--submit {
     padding: 0;
     margin-right: auto;
   }
-
   &:focus-within {
     width: 400px;
-
     .search-bar--input {
       border: 1px solid $gray-4 !important;
       border-radius: 4px;
@@ -234,14 +264,42 @@ export default {
       transition: opacity 150ms ease-in-out;
       width: calc(100% - var(--size));
     }
-
   }
 }
+
+.header-navbar {
+  height: 4rem;
+  background-color: $white;
+  border-bottom: 1px solid $gray-light;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.centered-block {
+    left: 50%;
+    transform: translate(-50%, 0);
+    -webkit-transform: translate(-50%, 0);
+    position: absolute;
+}
+
 </style>
 
 <style lang="scss">
+
 .btn-wrap {
   white-space: normal !important;
   word-wrap: break-word !important;
 }
+
+.login-modal {
+  height: 720px;
+  width: 960px !important;
+  top: calc(50% - 720px / 2);
+  left: calc(50% - 960px / 2);
+  overflow: hidden;
+  box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 16px !important;
+}
+
 </style>
