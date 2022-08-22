@@ -117,7 +117,6 @@ export const actions = {
       state.isLoading = false
     }
 
-
     dispatch('updateRouterQuery')
   }
 }
