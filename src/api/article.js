@@ -59,7 +59,7 @@ class ArticleAPI extends APIBase {
     this.prefix_path = '/'
     const query = {
       q: keyword ?? '',
-      timeQuery: timeQuery ?? 'qdr:a',
+      tbs: timeQuery ?? 'qdr:a',
       category: category ?? ''
     }
 
