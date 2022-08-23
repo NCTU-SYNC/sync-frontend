@@ -243,7 +243,6 @@ class VersionDiff {
    */
   markedDoc() {
     if (!this.marked) this.mark()
-    console.log('inVDiff:', this.left, this.right)
     return { leftDoc: this.left, rightDoc: this.right }
   }
 

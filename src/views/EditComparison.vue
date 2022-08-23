@@ -89,12 +89,10 @@
 </template>
 
 <script>
-import DiffMatchPatch from 'diff-match-patch'
 import { ComparisonCitation } from '@/components/History'
 import { getArticlesComparisonByVersionIndexes } from '@/api/history'
 import TiptapEditor from '@/components/Editor/TiptapEditor.vue'
 import moment from 'moment'
-// eslint-disable-next-line no-unused-vars
 import VersionDiff from '@/utils/versionDiff'
 
 export default {
@@ -165,8 +163,6 @@ export default {
         })
         const { articles, length, base, compare, title, wordsChanged } = data.data
         this.versionsLength = length
-        const articles2 = JSON.parse(JSON.stringify(articles))
-        console.log('articles:', articles2)
         if (this.$route.query.base !== base.toString() || this.$route.query.compare !== compare.toString()) {
           this.$router.replace({ query: { base, compare }})
         }
@@ -180,6 +176,7 @@ export default {
           articles.reverse()
         }
 
+        // Get two versions of article
         for (let i = 0; i < 2; i += 1) {
           const title = articles[i].title
           const blocks = articles[i].blocks
@@ -195,20 +192,25 @@ export default {
         if (this.compare === this.versionsLength || this.base === this.versionsLength) {
           this.versions[1].updatedAt += '（最新版）'
         }
-        console.log('this.versions:', this.versions)
-        console.log('same order')
+
         // find common blocks and create id array
         const leftBlockIds = this.versions[0].blocks.map((b) => b.blockId)
         const rightBlockIds = this.versions[1].blocks.map((b) => b.blockId)
         const commonBlockIds = leftBlockIds.filter(o => rightBlockIds.some((blockId) => o === blockId))
           .map(b => b)
-        console.log('commonBlocks:', commonBlockIds)
+
+        // The code below is used to match common blocks between the
+        // old article (left) and new article (right).
+        // If a block is removed or added,
+        // it has to maintain its relative position in the comparison order.
+
         const segments = [[]]
         let cIdx = 0
         let sIdx = 0
+        // find removed blocks
         for (const bId of leftBlockIds) {
           if (bId !== commonBlockIds[cIdx]) {
-            console.log('left removed', bId)
+            // Left block removed
             segments[sIdx].push(bId)
           } else {
             sIdx += 1
@@ -216,71 +218,73 @@ export default {
             if (cIdx + 1 < commonBlockIds.length) cIdx += 1
           }
         }
+        // find added blocks
         cIdx = 0
         sIdx = 0
         for (const bId of rightBlockIds) {
           if (bId !== commonBlockIds[cIdx]) {
-            console.log('right added', bId)
+            // Right block added
             segments[sIdx].push(bId)
           } else {
             sIdx += 1
             if (cIdx + 1 < commonBlockIds.length) cIdx += 1
           }
         }
-        console.log('segments:', segments)
+
+        // build diff order
+        // We will compare the article blocks in this order
         const diffIdxOrder = []
         for (sIdx = 0; sIdx < segments.length; sIdx++) {
           diffIdxOrder.push(...segments[sIdx])
           if (sIdx < commonBlockIds.length) { diffIdxOrder.push(commonBlockIds[sIdx]) }
         }
-        console.log(diffIdxOrder)
 
         let leftIdx = 0
         let rightIdx = 0
         const leftBlocks = this.versions[0].blocks
         const rightBlocks = this.versions[1].blocks
+
+        // if left or right block does not exists, fill blank block
         this.allDiff = []
         for (const orderIdx of diffIdxOrder) {
-          const obj = {
+          const comparisonPair = {
             left: {},
             right: {}
           }
           if (leftBlocks[leftIdx]?.blockId === orderIdx) {
-            obj.left = {
+            comparisonPair.left = {
               title: leftBlocks[leftIdx].blockInfo.blockTitle,
               content: leftBlocks[leftIdx].content,
               blockId: leftBlocks[leftIdx].blockId
             }
             leftIdx += 1
           } else {
-            obj.left = {
+            comparisonPair.left = {
               title: '',
               content: null
             }
           }
           if (rightBlocks[rightIdx]?.blockId === orderIdx) {
-            obj.right = {
+            comparisonPair.right = {
               title: rightBlocks[rightIdx].blockInfo.blockTitle,
               content: rightBlocks[rightIdx].content,
               blockId: rightBlocks[rightIdx].blockId
             }
             rightIdx += 1
           } else {
-            obj.right = {
+            comparisonPair.right = {
               title: '',
               content: null
             }
           }
-
-          this.allDiff.push(obj)
+          this.allDiff.push(comparisonPair)
         }
-        console.log(this.allDiff)
+
+        // Run version comparison
         for (const both of this.allDiff) {
-          console.log('compare:', JSON.parse(JSON.stringify(both.left)), JSON.parse(JSON.stringify(both.right)))
           if (both.left.title !== '' && both.right.title !== '') {
             const diff = new VersionDiff(both.left.content, both.right.content)
-            const { leftDoc, rightDoc } = diff.markedDoc()
-            console.warn('get left and right:', leftDoc, rightDoc)
+            diff.mark()
           }
         }
 
@@ -288,148 +292,6 @@ export default {
       } catch (error) {
         console.error(error)
       }
-    },
-    getBlockInVersionByBlockId(versionContent, index, diffArrBlockId) {
-      // 根據 Diff array 找出該 block 傳入 ComparisonBlock，若無則傳入 null，用於顯示版本比對 block
-      // diffArrBlockId: 渲染時根據base和compare比較後產生的聯集陣列 blockId
-      if (versionContent) {
-        const block = versionContent.blocks[index]
-        if (block !== undefined) {
-          if (block.blockId === diffArrBlockId) {
-            return block
-          }
-          const nonOrderedBlock = versionContent.blocks.find(b => b.blockId === diffArrBlockId)
-          return nonOrderedBlock || null
-        }
-      }
-      return null
-    },
-    union(arg) {
-      var arrs = [].slice.call(arg)
-      var out = []
-      for (var i = 0, l = arrs.length; i < l; i++) {
-        for (var j = 0, jl = arrs[i].length; j < jl; j++) {
-          var currEl = arrs[i][j]
-          if (out.indexOf(currEl) === -1) {
-            if (j - 1 !== -1 && out.indexOf(arrs[i][j - 1]) > -1) {
-              out.splice(out.indexOf(arrs[i][j - 1]) + 1, 0, currEl)
-            } else {
-              out.push(currEl)
-            }
-          }
-        }
-      }
-      return out
-    },
-    compareContent(blocks1, blocks2) {
-      const dmp = new DiffMatchPatch()
-      // diff 的陣列
-      const articleDiff = []
-      // 存放 diff base 和 compare 的 dictionary
-      const diffDict = {}
-      const baseOrderArr = []
-      for (const block of blocks1) {
-        // 確認有blockId
-        if (block.blockId) {
-          baseOrderArr.push(block.blockId)
-          // 確認字典裡面尚無 blockId
-          if (diffDict[block.blockId] === undefined) {
-            // 設定 base 的標題與文字
-            diffDict[block.blockId] = {
-              base: {
-                title: block.blockInfo.blockTitle,
-                text: this.getPlainText(block)
-              }
-            }
-          }
-        }
-      }
-
-      const compareOrderArr = []
-      for (const block of blocks2) {
-        // 確認有blockId
-        if (block.blockId) {
-          // 若比較的版本有插入新段落，則在 order 陣列新增，待會則照順序查看陣列
-          // if (!diffOrderArr.includes(block.blockId)) {
-          //  diffOrderArr.splice(i, 0, block.blockId)
-          // }
-          compareOrderArr.push(block.blockId)
-          // 確認字典裡面尚無 blockId
-          if (diffDict[block.blockId] === undefined) {
-            diffDict[block.blockId] = {
-              // 設定 compare 的標題與文字
-              compare: {
-                title: block.blockInfo.blockTitle,
-                text: this.getPlainText(block)
-              }
-            }
-          } else {
-            // 設定 compare 的標題與文字
-            diffDict[block.blockId].compare = {
-              title: block.blockInfo.blockTitle,
-              text: this.getPlainText(block)
-            }
-          }
-        }
-      }
-
-      // 排列 diff id 順序的陣列
-      const diffOrderArr = [...new Set([...baseOrderArr, ...compareOrderArr])]
-
-      for (const blockId of diffOrderArr) {
-        const empty = {
-          title: '',
-          text: ''
-        }
-        // 設定 base，若無 base 則給予空物件比對
-        const base = diffDict[blockId] ? diffDict[blockId].base ? diffDict[blockId].base : empty : empty
-        // 設定 base，若無 base 則給予空物件比對
-        const compare = diffDict[blockId] ? diffDict[blockId].compare ? diffDict[blockId].compare : empty : empty
-        const titleDiff = dmp.diff_main(base.title, compare.title)
-        const contentDiff = dmp.diff_main(base.text, compare.text)
-        dmp.diff_cleanupSemantic(titleDiff)
-        dmp.diff_cleanupSemantic(contentDiff)
-        articleDiff.push({ titleDiff, contentDiff })
-      }
-
-      this.diffOrderArr = diffOrderArr
-      return articleDiff
-    },
-    getPlainText(blockContent) {
-      let content = ''
-      blockContent.content.content.forEach(paragraph => {
-        if (paragraph.content) {
-          if (paragraph.type === 'paragraph') {
-            paragraph.content.forEach(text => {
-              if (text.marks && text.marks.some(mark => mark.type === 'link')) {
-                content += this.linkContainer + JSON.stringify({
-                  text: text.text, marks: text.marks
-                }) + this.linkContainer
-              } else {
-                content += text.text
-              }
-            })
-          } else if (paragraph.type === 'blockquote') {
-            // 暫時關閉 blockquote 比對功能
-            // content += this.blockquoteContainer
-            const payload = paragraph.content
-            payload.forEach(p => {
-              p.content.forEach(text => {
-                if (text.marks && text.marks.some(mark => mark.type === 'link')) {
-                  content += this.linkContainer + JSON.stringify({
-                    text: text.text, marks: text.marks
-                  }) + this.linkContainer
-                } else {
-                  content += text.text
-                }
-              })
-            })
-            // content += this.blockquoteContainer
-          }
-        }
-        content += '\n\n'
-      })
-      return content
     },
     onPrevArticleClicked() {
       if (this.base <= 1) {
