@@ -53,7 +53,6 @@
       :key="index"
       class="divider"
     >
-      <!-- <b-row class="divider"> -->
       <b-col cols="6" :class="!blocks.right.content ? 'deleted-block': ''">
 
         <div v-if="blocks.left.title !== ''" class="block-header">
