@@ -196,9 +196,7 @@ export default {
       if (param) {
         try {
           const categoricNews = []
-          const { data } = await articleAPI.search({
-            category: param
-          })
+          const { data } = await articleAPI.search(undefined, undefined, param)
           const type = data.type
           if (type === 'success') {
             const articles = data.data.sort(
