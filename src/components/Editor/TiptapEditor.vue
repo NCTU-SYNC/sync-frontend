@@ -94,7 +94,9 @@ export default {
       extensions: [
         StarterKit,
         Underline,
-        Highlight,
+        Highlight.configure({
+          multicolor: true
+        }),
         Placeholder.configure({
           emptyEditorClass: 'is-editor-empty',
           placeholder: '段落內文'
@@ -189,6 +191,15 @@ export default {
       margin-top: 18px;
       margin-bottom: 18px;
     }
+  }
+  &__comparison {
+    p {
+      font-size: 16px;
+      line-height: 24px;
+    }
+  }
+  mark {
+    padding: 0 0.1rem;
   }
 }
 
