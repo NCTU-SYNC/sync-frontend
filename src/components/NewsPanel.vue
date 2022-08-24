@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { getNews } from '@/api/news'
+import NewsAPI from '@/api/news'
 import NewsCard from '@/components/Post/NewsCard'
 export default {
   name: 'NewsPanel',
@@ -129,12 +129,13 @@ export default {
       if (this.searchKeyword) {
         try {
           this.isLoading = true
-          const { data } = await getNews({
-            q: this.searchKeyword,
-            page: this.pageNumber,
-            tbs: this.queryTimeSelected,
-            media: this.mediaSelected
-          })
+          const { data } = await NewsAPI.search(
+            this.searchKeyword,
+            this.pageNumber,
+            this.queryTimeSelected,
+            this.mediaSelected
+          )
+
           const type = data.type
           const payload = data.data
           if (type === 'success') {

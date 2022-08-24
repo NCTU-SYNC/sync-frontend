@@ -18,19 +18,20 @@ export default new Router({
     {
       path: '/login',
       name: 'Login',
-      component: () => import('@/views/new/Login'),
-      hidden: true
+      component: () => import('@/components/NavBar'),
+      props: { modalShow: true, modalType: 'login' }
     },
     {
       path: '/search',
       name: 'Search',
-      component: () => import('@/views/new/Search')
+      component: () => import('@/views/new/Search'),
+      props: (route) => ({ query: route.query })
     },
     {
       path: '/signup',
       name: 'SignUp',
-      component: () => import('@/views/new/SignUp'),
-      hidden: true
+      component: () => import('@/components/NavBar'),
+      props: { modalShow: true, modalType: 'signup' }
     },
     {
       path: '/article/:ArticleID',
@@ -73,6 +74,11 @@ export default new Router({
       path: '/compare/:ArticleID',
       name: 'EditComparison',
       component: () => import('@/views/EditComparison')
+    },
+    {
+      path: '/hashtag',
+      name: 'Hashtag',
+      component: () => import('@/views/new/Hashtag')
     }
   ],
   scrollBehavior(to, from, savedPosition) {

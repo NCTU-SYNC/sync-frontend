@@ -9,7 +9,13 @@
         ><b-link :to="`/article/${newsId}`">{{ title }}</b-link></h1>
         <div class="d-flex justify-content-between">
           <div v-if="tags.length > 0" class="headline-tags">
-            <span v-for="(tag, tagIndex) in tags" :key="tagIndex"> #{{ tag }} </span>
+            <b-link
+              v-for="(tag, tagIndex) in tags"
+              :key="tagIndex"
+              :to="{path: '../hashtag', query: { q: tag } }"
+              class="hashtag"
+            > #{{ tag }}
+            </b-link>
           </div>
         </div>
         <div
@@ -129,7 +135,9 @@ export default {
 .headline-tags {
   margin-top: 8px;
   font-size: 12px;
-  color: $blue;
+  .hashtag{
+    color: $blue !important;
+  }
 }
 
 .article-footer {

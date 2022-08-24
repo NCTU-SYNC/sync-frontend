@@ -1,6 +1,5 @@
-import { login } from '@/api/user'
+import UserAPI from '@/api/user'
 import { setUserInfo, getUserInfo } from '@/utils/auth'
-import FirebaseAuth from '@/utils/firebase.js'
 
 const getDefaultState = () => {
   return {
@@ -46,7 +45,7 @@ const mutations = {
 const actions = {
   sendToken({ commit, dispatch }, userdata) {
     return new Promise((resolve, reject) => {
-      login(userdata)
+      UserAPI.login(userdata)
         .then((response) => {
           const { data } = response
           resolve(data.message)
@@ -55,11 +54,6 @@ const actions = {
           reject(error)
         })
     })
-  },
-  async getToken({ commit }) {
-    /* TODO: pack into interceptor of axios instance */
-    if (FirebaseAuth.auth === null) throw new Error('firebase not initialized')
-    return await FirebaseAuth.token
   },
   sendUserInfo({ commit }, userInfo) {
     commit('SET_USER', userInfo)

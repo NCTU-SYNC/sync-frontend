@@ -72,13 +72,14 @@
               </div>
 
               <div class="hashtag-container">
-                <span
+                <b-link
                   v-for="(tag, tagIndex) in tags"
                   :key="tagIndex"
+                  :to="{path: '../hashtag', query: { q: tag } }"
                   class="hashtag"
                 >
                   #{{ tag }}
-                </span>
+                </b-link>
               </div>
               <div class="article-info d-flex justify-content-between">
                 <div class="seen-edit-info">
@@ -180,7 +181,7 @@
 <script>
 // test id:  5f5113349779a26bd0444b26
 import moment from 'moment'
-import { getArticleById, getRecommendedArticles } from '@/api/article'
+import articleAPI from '@/api/article'
 import TiptapEditor from '@/components/Editor/TiptapEditor.vue'
 import CategoryBar from '@/components/CategoryBar.vue'
 
@@ -306,7 +307,8 @@ export default {
     getArticleData() {
       if (this.articleId) {
         this.isPageReady = false
-        getArticleById(this.articleId)
+        articleAPI
+          .getById(this.articleId)
           .then((response) => {
             if (response.data.code === 200) {
               const {
@@ -345,7 +347,8 @@ export default {
           })
       }
       this.isRecommendedReady = false
-      getRecommendedArticles({ limit: 5 })
+      articleAPI
+        .getRecommended(5)
         .then((response) => {
           const data = response.data
           if (data.code === 200) {
@@ -394,7 +397,9 @@ export default {
     },
     formatBlockDateTime(timeString, timeEnable) {
       const displayTime = timeEnable || timeEnable === undefined
-      return moment(timeString).format(`YYYY/MM/DD${displayTime ? ' HH:mm' : ''}`)
+      return moment(timeString).format(
+        `YYYY/MM/DD${displayTime ? ' HH:mm' : ''}`
+      )
     },
     formatCategory(category) {
       return category === '' ? '未分類' : category
@@ -478,7 +483,7 @@ p {
   margin-bottom: 24px;
   .hashtag {
     font-size: 12px;
-    color: $blue;
+    color: $blue !important;
     margin-right: 12px;
   }
 }

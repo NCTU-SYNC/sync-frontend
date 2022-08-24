@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import user from './user'
 import post from './post'
 import article from './article'
+import search from './search'
 
 Vue.use(Vuex)
 
@@ -18,7 +19,8 @@ const store = new Vuex.Store({
   modules: {
     user,
     post,
-    article
+    article,
+    search
   },
   state,
   getters: {

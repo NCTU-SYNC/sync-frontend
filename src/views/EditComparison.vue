@@ -13,12 +13,20 @@
     <b-row class="mt-2 pb-2">
       <b-col class="d-flex justify-content-center align-items-center">
         <div>
-          <b-button variant="link" :disabled="base <= 1" @click="onPrevArticleClicked">
+          <b-button
+            variant="link"
+            :disabled="base <= 1"
+            @click="onPrevArticleClicked"
+          >
             <b-icon icon="chevron-left" />
             前一版
           </b-button>
           <span> &nbsp; | &nbsp;</span>
-          <b-button variant="link" :disabled="base + 1 >= versionsLength" @click="onNextArticleClicked">
+          <b-button
+            variant="link"
+            :disabled="base + 1 >= versionsLength"
+            @click="onNextArticleClicked"
+          >
             後一版
             <b-icon icon="chevron-right" />
           </b-button>
@@ -29,19 +37,35 @@
       <b-col>
         <b-row class="divider">
           <b-col class="py-2 comparison-header" cols="6">
-            <div :class="{'clicked-row': isClickedRow && base > compare}">
-              <span class="mr-2 pr-2 border-right">{{ versions[0].updatedAt }}</span>
-              <span>{{ versions[0].author.isAnonymous ? '匿名' : versions[0].author.name }}</span>
+            <div :class="{ 'clicked-row': isClickedRow && base > compare }">
+              <span class="mr-2 pr-2 border-right">{{
+                versions[0].updatedAt
+              }}</span>
+              <span>{{
+                versions[0].author.isAnonymous
+                  ? '匿名'
+                  : versions[0].author.name
+              }}</span>
             </div>
           </b-col>
           <b-col class="py-2 comparison-header d-flex" cols="6">
-            <div :class="{'clicked-row': isClickedRow && base < compare}">
-              <span class="mr-2 pr-2 border-right">{{ versions[1].updatedAt }}</span>
-              <span>{{ versions[1].author.isAnonymous ? '匿名' : versions[1].author.name }}</span>
+            <div :class="{ 'clicked-row': isClickedRow && base < compare }">
+              <span class="mr-2 pr-2 border-right">{{
+                versions[1].updatedAt
+              }}</span>
+              <span>{{
+                versions[1].author.isAnonymous
+                  ? '匿名'
+                  : versions[1].author.name
+              }}</span>
             </div>
             <div>
-              <span class="bg-diff-add px-2 py-1 m-2">+{{ wordsChanged.added }}</span>
-              <span class="bg-diff-delete px-2 py-1 m-2">-{{ wordsChanged.deleted }}</span>
+              <span
+                class="bg-diff-add px-2 py-1 m-2"
+              >+{{ wordsChanged.added }}</span>
+              <span
+                class="bg-diff-delete px-2 py-1 m-2"
+              >-{{ wordsChanged.deleted }}</span>
             </div>
           </b-col>
         </b-row>
@@ -89,8 +113,8 @@
 
 <script>
 import { ComparisonCitation } from '@/components/History'
-import { getArticlesComparisonByVersionIndexes } from '@/api/history'
 import TiptapEditor from '@/components/Editor/TiptapEditor.vue'
+import historyAPI from '@/api/history'
 import moment from 'moment'
 import VersionDiff from '@/utils/versionDiff'
 
@@ -155,14 +179,19 @@ export default {
       try {
         this.isPageReady = false
         this.versions = {}
-        const { data } = await getArticlesComparisonByVersionIndexes({
-          articleId: this.articleId,
-          base: this.base,
-          compare: this.compare
-        })
-        const { articles, length, base, compare, title, wordsChanged } = data.data
+        const { data } = await historyAPI.getComparison(
+          this.articleId,
+          this.base,
+          this.compare
+        )
+
+        const { articles, length, base, compare, title, wordsChanged } =
+          data.data
         this.versionsLength = length
-        if (this.$route.query.base !== base.toString() || this.$route.query.compare !== compare.toString()) {
+        if (
+          this.$route.query.base !== base.toString() ||
+          this.$route.query.compare !== compare.toString()
+        ) {
           this.$router.replace({ query: { base, compare }})
         }
         this.wordsChanged = wordsChanged
@@ -181,14 +210,19 @@ export default {
           const blocks = articles[i].blocks
           const author = articles[i].author
           const citations = articles[i].citations
-          const updatedAt = moment(articles[i].updatedAt).format('YYYY/MM/DD HH:mm')
+          const updatedAt = moment(articles[i].updatedAt).format(
+            'YYYY/MM/DD HH:mm'
+          )
           this.versions = {
             ...this.versions,
             [i]: { title, blocks, author, updatedAt, citations }
           }
         }
 
-        if (this.compare === this.versionsLength || this.base === this.versionsLength) {
+        if (
+          this.compare === this.versionsLength ||
+          this.base === this.versionsLength
+        ) {
           this.versions[1].updatedAt += '（最新版）'
         }
 
@@ -316,10 +350,10 @@ export default {
 <style lang="scss" scoped>
 .divider {
   > div:first-child {
-    border-right: 2px solid #E6E6E6;
+    border-right: 2px solid #e6e6e6;
   }
   > div:last-child {
-    border-left: 2px solid #E6E6E6;
+    border-left: 2px solid #e6e6e6;
   }
   > div > p {
     margin: 0;

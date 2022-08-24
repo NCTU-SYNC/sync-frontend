@@ -14,7 +14,11 @@
       <b-col class="d-flex justify-content-end align-items-center">
         <div class="h-100 d-flex align-items-center">
           <!-- issue: https://github.com/vuejs/eslint-plugin-vue/issues/370 -->
-          <span class="ml-1 pr-2 ">{{ from + 1 }}-{{ versionsLength &lt; to ? versionsLength: to }}篇</span>
+          <span
+            class="ml-1 pr-2"
+          >{{ from + 1 }}-{{ versionsLength &lt; to ? versionsLength: to
+
+          }}篇</span>
           <span class="ml-1 pl-2">(共{{ versionsLength }}篇)</span>
         </div>
 
@@ -35,28 +39,23 @@
             <b-icon icon="chevron-right" />
           </b-button>
         </div>
-
       </b-col>
     </b-row>
     <b-row class="history-header">
       <b-col sm="4">
-        <div class="date-container">
-          版本日期
-        </div>
+        <div class="date-container">版本日期</div>
       </b-col>
-      <b-col sm="6">
-        編輯者
-      </b-col>
-      <b-col sm="2" class="compared-container">
-        版本比較
-      </b-col>
+      <b-col sm="6"> 編輯者 </b-col>
+      <b-col sm="2" class="compared-container"> 版本比較 </b-col>
     </b-row>
     <b-row
       v-for="(item, itemIndex) in historyItemsWithoutMonths"
       :key="itemIndex"
       class="history-row"
-      :class="{ 'hovered-row' : item.index != null,
-                'compared-row' : isComparedRow(item.index)}"
+      :class="{
+        'hovered-row': item.index != null,
+        'compared-row': isComparedRow(item.index)
+      }"
     >
       <b-col sm="4">
         <div class="date-container">
@@ -75,9 +74,13 @@
         <div v-if="item.type !== 'header'">
           <b-link
             class="pr-2 link-right nowrap"
-            :class="{ 'text-primary': item.index !== 1,
-                      'hovered-link': item.index !== 1}"
-            :to="`/compare/${articleId}?base=${item.index - 1}&compare=${item.index}`"
+            :class="{
+              'text-primary': item.index !== 1,
+              'hovered-link': item.index !== 1
+            }"
+            :to="`/compare/${articleId}?base=${item.index - 1}&compare=${
+              item.index
+            }`"
             :disabled="item.index === 1"
             @mouseover="onPrevLinkMouseover(item.index)"
             @mouseout="onPrevLinkMouseout(item.index)"
@@ -85,22 +88,23 @@
 
           <b-link
             class="pl-2 nowrap"
-            :class="{ 'text-primary': item.index !== versionsLength,
-                      'hovered-link': item.index !== versionsLength}"
+            :class="{
+              'text-primary': item.index !== versionsLength,
+              'hovered-link': item.index !== versionsLength
+            }"
             :to="`/compare/${articleId}?base=${versionsLength}&compare=${item.index}`"
             :disabled="item.index === versionsLength"
             @mouseover="onLatestLinkMouseover(item.index)"
             @mouseout="onLatestLinkMouseout(item.index)"
           >與最新版比較</b-link>
         </div>
-
       </b-col>
     </b-row>
   </b-container>
 </template>
 
 <script>
-import { getArticleVersionsById } from '@/api/history'
+import historyAPI from '@/api/history'
 import moment from 'moment'
 
 export default {
@@ -167,12 +171,13 @@ export default {
       this.$route.query.limit = this.historyShowCount
       this.$route.query.page = this.currentViewPage
       try {
-        const { data } = await getArticleVersionsById({
-          articleId: this.articleId,
-          limit: this.historyShowCount,
-          page: this.currentViewPage
-        })
-        const { currentVersion, versions, length, limit, page, from, to } = data.data
+        const { data } = await historyAPI.getVersions(
+          this.articleId,
+          this.historyShowCount,
+          this.currentViewPage
+        )
+        const { currentVersion, versions, length, limit, page, from, to } =
+          data.data
         this.currentVersion = currentVersion
         this.versionsLength = length
         this.from = from
@@ -197,10 +202,15 @@ export default {
             author: version.author.name,
             updatedAt,
             index: version.versionIndex,
-            editTextCounts: { added: version.wordsChanged.added, deleted: version.wordsChanged.deleted }
+            editTextCounts: {
+              added: version.wordsChanged.added,
+              deleted: version.wordsChanged.deleted
+            }
           })
         }
-        this.historyItemsWithoutMonths = this.historyItems.filter(item => item.type !== 'header')
+        this.historyItemsWithoutMonths = this.historyItems.filter(
+          (item) => item.type !== 'header'
+        )
         this.historyShowCount = limit
         this.currentViewPage = page
       } catch (error) {
@@ -209,19 +219,29 @@ export default {
     },
     onLimitDropdownClicked(value) {
       this.historyShowCount = value
-      this.$router.replace({ query: { limit: this.historyShowCount, page: this.currentViewPage }})
+      this.$router.replace({
+        query: { limit: this.historyShowCount, page: this.currentViewPage }
+      })
       this.handleGetArticleVersions()
     },
     onNextPageClicked() {
-      if (!this.isNextPageButtonEnable) { return }
+      if (!this.isNextPageButtonEnable) {
+        return
+      }
       this.currentViewPage += 1
-      this.$router.replace({ query: { limit: this.historyShowCount, page: this.currentViewPage }})
+      this.$router.replace({
+        query: { limit: this.historyShowCount, page: this.currentViewPage }
+      })
       this.handleGetArticleVersions()
     },
     onPrevPageClicked() {
-      if (!this.isPrevPageButtonEnable) { return }
+      if (!this.isPrevPageButtonEnable) {
+        return
+      }
       this.currentViewPage -= 1
-      this.$router.replace({ query: { limit: this.historyShowCount, page: this.currentViewPage }})
+      this.$router.replace({
+        query: { limit: this.historyShowCount, page: this.currentViewPage }
+      })
       this.handleGetArticleVersions()
     },
     onLatestLinkMouseover(index) {
@@ -241,9 +261,9 @@ export default {
       this.isHoveringPrevLink = false
     },
     isComparedRow(index) {
-      if (this.isHoveringPrevLink && (index === this.currentHoveredRow - 1)) {
+      if (this.isHoveringPrevLink && index === this.currentHoveredRow - 1) {
         return true
-      } else if (this.isHoveringLatestLink && (index === this.versionsLength)) {
+      } else if (this.isHoveringLatestLink && index === this.versionsLength) {
         return true
       } else {
         return false
@@ -255,13 +275,13 @@ export default {
 <style lang="scss" scoped>
 .history-header {
   height: 4rem;
-  border-top:1px solid;
+  border-top: 1px solid;
   border-bottom: 1px solid;
   font-family: Noto Sans CJK TC;
   font-weight: bold;
   div {
     display: flex;
-    align-items: center
+    align-items: center;
   }
 }
 
@@ -271,16 +291,15 @@ export default {
   border-bottom: 1px solid $gray-500;
   div {
     display: flex;
-    align-items: center
+    align-items: center;
   }
 
   .compare-options {
-    justify-content: center
-    }
-
+    justify-content: center;
+  }
 }
 
-h4{
+h4 {
   font-family: Noto Sans CJK TC;
   font-style: normal;
   font-weight: bold;
@@ -298,34 +317,34 @@ h5 {
 
 .bg-diff {
   &-add {
-    background-color: #1AE158;
+    background-color: #1ae158;
   }
   &-delete {
-    background-color: #FF4F4F;
+    background-color: #ff4f4f;
   }
 }
-.compared-row{
-  background-color:#E9EEFF;
+.compared-row {
+  background-color: #e9eeff;
 }
 .hovered-link:hover {
-   color:#2353FF !important;
+  color: #2353ff !important;
 }
 .hovered-row:hover {
-    background-color: #F6F6F8;
-    &::before{
-      content:"";
-      position:absolute;
-      width: 12px;
-      height: 12px;
-      left :10px;
-      top: 25px;
-      background: #2353FF;
-    }
+  background-color: #f6f6f8;
+  &::before {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    left: 10px;
+    top: 25px;
+    background: #2353ff;
+  }
 }
-.date-container{
+.date-container {
   margin-left: 16px;
 }
-.compared-container{
+.compared-container {
   margin-left: -40px;
 }
 .nowrap {

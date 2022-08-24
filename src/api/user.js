@@ -1,42 +1,53 @@
-import request from '@/utils/request'
-import config from './config'
+import APIBase from '.'
 
-export function login(data) {
-  return request({
-    url: config.baseURL + `/login`,
-    method: 'post',
-    data
-  })
+class UserAPI extends APIBase {
+  constructor() {
+    super()
+    this.prefix_path = ''
+  }
+
+  login(userdata) {
+    return this.action('/login', userdata, 'post')
+  }
+
+  /**
+   * get user's profile from firebase
+   * @returns {Promise<Any>}
+   */
+  getProfile() {
+    return this.action('/profile', {}, 'post')
+  }
+
+  /**
+   * get:
+   *  - viewed articles
+   *  - subscribed articles
+   *  - edited articles
+   *  - user's point
+   * @returns {Promise<Any>}
+   */
+  getArticleInfo() {
+    return this.action('/profile/article', {}, 'post')
+  }
+
+  /**
+   * add article to user's viewed history
+   * @param {String} articleId : article id
+   * @returns {Promise<Any>}
+   */
+  articleViewed(articleId) {
+    return this.action('/profile/view', { articleId }, 'post')
+  }
+
+  /**
+   * subscribe or unsubscribe article
+   * @param {String} articleId
+   * @param {Boolean} subscribe : subscribe or unsubscribe
+   * @returns {Promise<Any>}
+   */
+  subscribeArticle(articleId, subscribe) {
+    return this.action('profile/subscribe', { articleId, subscribe }, 'post')
+  }
 }
 
-export function getProfile(data) {
-  return request({
-    url: config.baseURL + `/profile`,
-    method: 'post',
-    data
-  })
-}
-
-export function addViewArticleById(data) {
-  return request({
-    url: config.baseURL + `/profile/view`,
-    method: 'post',
-    data
-  })
-}
-
-export function subscribeArticleById(data) {
-  return request({
-    url: config.baseURL + `/profile/subscribe`,
-    method: 'post',
-    data
-  })
-}
-
-export function getArticlesInfo(data) {
-  return request({
-    url: config.baseURL + `/profile/article`,
-    method: 'post',
-    data
-  })
-}
+export default new UserAPI()
