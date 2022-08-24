@@ -74,8 +74,9 @@
 </template>
 
 <script>
-import { searchArticles } from '@/api/article'
+import ArticleAPI from '@/api/article'
 import ArticleCard from '@/components/ArticleCard.vue'
+
 export default {
   name: 'Hashtag',
   components: {
@@ -146,11 +147,12 @@ export default {
       if (this.hashtag) {
         try {
           this.isLoading = true
-          const { data } = await searchArticles({
-            tag: this.hashtag,
-            tbs: this.queryTimeSelected,
-            category: this.categorySelected
-          })
+          const { data } = await ArticleAPI.search(
+            undefined,
+            this.queryTimeSelected,
+            this.categorySelected,
+            this.hashtag
+          )
           const type = data.type
           // const payload = data.data
           if (type === 'success') {
