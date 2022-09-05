@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export function getBaseURL() {
-  return process.env.VUE_APP_BASE_URL + process.env.VUE_APP_API_URL
+  return import.meta.env.VITE_APP_BASE_URL + import.meta.env.VITE_APP_API_URL
 }
 
 const api = axios.create({
