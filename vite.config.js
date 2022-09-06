@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import vue from '@vitejs/plugin-vue2'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import path from 'node:path'
@@ -40,6 +40,10 @@ export default defineConfig({
       }
     }),
 
+    // Good chunking strategy for SPA
+    // See: https://vitejs.dev/guide/build.html#chunking-strategy
+    splitVendorChunkPlugin(),
+
     createSvgIconsPlugin({
       iconDirs: [
         path.resolve(__dirname, 'src/assets/icons/editor'),
@@ -48,6 +52,14 @@ export default defineConfig({
       symbolId: '[name]'
     })
   ],
+
+  build: {
+    minify: 'terser',
+    terserOptions: {
+      drop_console: true,
+      drop_debugger: true
+    }
+  },
 
   resolve: {
     alias: {
