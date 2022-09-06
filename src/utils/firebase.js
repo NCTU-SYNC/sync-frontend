@@ -1,5 +1,8 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
+import {
+  getAuth, signInWithPopup, createUserWithEmailAndPassword,
+  signOut, GoogleAuthProvider, signInWithEmailAndPassword
+} from 'firebase/auth'
 import { removeUserInfo } from '@/utils/auth'
 import store from '../store/index'
 
@@ -23,11 +26,11 @@ class FirebaseAuth {
   }
 
   get auth() {
-    return this.instance
+    return getAuth()
   }
 
   get token() {
-    return this.instance.currentUser.getIdToken()
+    return this.auth.currentUser.getIdToken()
   }
 
   thirdPartyLogins = [
@@ -63,10 +66,10 @@ class FirebaseAuth {
     }
 
     try {
-      this.instance = getAuth()
+      // this.instance = getAuth()
       const handler = async(user) => {
         if (user) {
-          const token = await this.instance.currentUser
+          const token = await this.auth.currentUser
             .getIdToken(/* force refresh */ true)
             .catch((error) => {
               console.error(error)
@@ -103,10 +106,13 @@ class FirebaseAuth {
   async handleSignup(email, password, displayName) {
     try {
       this.setUserInfo(email, password, displayName)
-      const { user } = await this.auth.createUserWithEmailAndPassword(
+      const { user } = await createUserWithEmailAndPassword(
+        this.auth,
         email,
         password
       )
+      this.isLogin = true
+
       user.updateProfile({
         displayName
       })
@@ -119,38 +125,45 @@ class FirebaseAuth {
 
   async handleLogin(email, password) {
     try {
-      const { user } = await this.auth.signInWithEmailAndPassword(
+      const { user } = await signInWithEmailAndPassword(
+        this.auth,
         email,
         password
       )
+
+      this.isLogin = true
       this.setUserInfo(email, password, user.displayName)
       store.dispatch('user/sendUserInfo', user)
       return Promise.resolve(user)
     } catch (error) {
       return Promise.reject(error)
     }
+
   }
 
-  handleLogout() {
-    getAuth()
-      .signOut()
-      .then(() => {
-        if (this.isLogin) {
-          removeUserInfo()
-          store.dispatch('user/removeUser')
-        }
-      })
+  async handleLogout() {
+    try {
+      await signOut(this.auth)
+    } catch (err) {
+      console.error(err)
+    } finally {
+        removeUserInfo()
+        store.dispatch('user/removeUser')
+    }
   }
 
   async loginWithGoogle() {
     try {
-      const provider = new getAuth().GoogleAuthProvider()
+      const provider = new GoogleAuthProvider()
       provider.addScope('profile')
       provider.addScope('email')
       this.auth.useDeviceLanguage()
-      const result = await this.auth.signInWithPopup(provider)
+      const result = await signInWithPopup(this.auth, provider)
+      this.isLogin = true
+
       const user = result.user
       store.dispatch('user/sendUserInfo', user)
+
       return Promise.resolve(user)
     } catch (error) {
       return Promise.reject(error)
