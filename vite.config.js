@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue2'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
-import path from "node:path"
+import path from 'node:path'
 
 export default defineConfig({
   css: {
@@ -15,7 +15,31 @@ export default defineConfig({
   },
 
   plugins: [
-    vue(),
+    vue({
+      target: 'modern',
+      vueTemplateOptions: {
+        compilerOptions: {
+          whiteSpace: 'condense'
+        },
+
+        transformAssetUrls: {
+          video: ['src', 'poster'],
+          source: ['src'],
+          img: ['src'],
+          image: ['xlink:href', 'href'],
+          use: ['xlink:href', 'href'],
+          'b-avatar': 'src',
+          'b-img': 'src',
+          'b-img-lazy': 'src',
+          'b-card': 'img-src',
+          'b-card-img': 'src',
+          'b-card-img-lazy': ['src', 'blank-src'],
+          'b-carousel-slide': 'img-src',
+          'b-embed': 'src'
+        }
+      }
+    }),
+
     createSvgIconsPlugin({
       iconDirs: [
         path.resolve(__dirname, 'src/assets/icons/editor'),
@@ -25,10 +49,9 @@ export default defineConfig({
     })
   ],
 
-
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': path.resolve(__dirname, './src')
     },
 
     extensions: ['.js', '.mjs', '.json', '.vue']
