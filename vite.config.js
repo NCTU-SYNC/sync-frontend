@@ -1,5 +1,6 @@
 import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import vue from '@vitejs/plugin-vue2'
+import legacy from '@vitejs/plugin-legacy'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import path from 'node:path'
 
@@ -38,6 +39,12 @@ export default defineConfig({
           'b-embed': 'src'
         }
       }
+    }),
+
+    legacy({
+      targets: [
+        'defaults and not IE 11'
+      ]
     }),
 
     // Good chunking strategy for SPA
