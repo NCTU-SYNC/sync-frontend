@@ -1,5 +1,5 @@
-import firebase from 'firebase/app'
-import 'firebase/auth'
+import { initializeApp } from 'firebase/app'
+import { getAuth } from 'firebase/auth'
 import { removeUserInfo } from '@/utils/auth'
 import store from '../store/index'
 
@@ -47,14 +47,14 @@ class FirebaseAuth {
 
     await import('/config/firebaseConfig')
       .then(({ firebaseConfig }) => {
-        this.instance = firebase.initializeApp(firebaseConfig)
+        this.instance = initializeApp(firebaseConfig)
       })
       .catch((err) => {
         console.error(err)
       })
 
     try {
-      this.instance = firebase.auth()
+      this.instance = getAuth()
       const handler = async(user) => {
         if (user) {
           const token = await this.instance.currentUser
@@ -79,7 +79,7 @@ class FirebaseAuth {
           this.isLogin = false
         }
       }
-      firebase.auth().onAuthStateChanged(handler)
+      getAuth().onAuthStateChanged(handler)
     } catch (error) {
       console.error(error)
     }
@@ -123,8 +123,7 @@ class FirebaseAuth {
   }
 
   handleLogout() {
-    firebase
-      .auth()
+    getAuth()
       .signOut()
       .then(() => {
         if (this.isLogin) {
@@ -136,7 +135,7 @@ class FirebaseAuth {
 
   async loginWithGoogle() {
     try {
-      const provider = new firebase.auth.GoogleAuthProvider()
+      const provider = new getAuth().GoogleAuthProvider()
       provider.addScope('profile')
       provider.addScope('email')
       this.auth.useDeviceLanguage()
