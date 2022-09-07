@@ -3,6 +3,7 @@ import {
   getAuth, signInWithPopup, createUserWithEmailAndPassword,
   signOut, GoogleAuthProvider, signInWithEmailAndPassword
 } from 'firebase/auth'
+import { connectFunctionsEmulator, getFunctions, httpsCallable } from 'firebase/functions'
 import { removeUserInfo } from '@/utils/auth'
 import store from '../store/index'
 
@@ -63,6 +64,17 @@ class FirebaseAuth {
       this.instance = initializeApp(firebaseConfig)
     } catch(err) {
       console.error(err)
+    }
+
+    if (import.meta.env.VITE_FIREBASE_EMULATOR === '1') {
+      const { connectAuthEmulator } = await import('firebase/auth')
+      connectAuthEmulator(this.auth, 'http://localhost:9099')
+
+      const FunctionsInstance = getFunctions(this.instance)
+
+      connectFunctionsEmulator(FunctionsInstance, 'localhost', '5001')
+
+      this.getProfile = httpsCallable(FunctionsInstance, 'getProfile')
     }
 
     try {
