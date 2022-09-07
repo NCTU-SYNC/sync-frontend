@@ -69,12 +69,6 @@ class FirebaseAuth {
     if (import.meta.env.VITE_FIREBASE_EMULATOR === '1') {
       const { connectAuthEmulator } = await import('firebase/auth')
       connectAuthEmulator(this.auth, 'http://localhost:9099')
-
-      const FunctionsInstance = getFunctions(this.instance)
-
-      connectFunctionsEmulator(FunctionsInstance, 'localhost', '5001')
-
-      this.getProfile = httpsCallable(FunctionsInstance, 'getProfile')
     }
 
     try {

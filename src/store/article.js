@@ -48,10 +48,6 @@ const actions = {
     // set token
     if (rootGetters.isLogin) {
       try {
-        const token = await FirebaseAuthInstance.token
-        const profile = await FirebaseAuthInstance.getProfile({ token })
-        console.log(profile)
-
         const { data } = await UserAPI.getProfile()
         commit('SET_PROFILE', data.data.articles || {})
         return Promise.resolve(data.data)
