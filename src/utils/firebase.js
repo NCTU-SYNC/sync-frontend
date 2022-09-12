@@ -2,9 +2,17 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import { removeUserInfo } from '@/utils/auth'
 import store from '../store/index'
+import { firebaseConfig } from '/config/firebaseConfig'
 
 class FirebaseAuth {
   constructor() {
+    try {
+      this.app = firebase.initializeApp(firebaseConfig)
+    } catch (error) {
+      this.app = null
+      console.error(error)
+    }
+
     this.email = ''
     this.password = ''
     this.displayName = ''
@@ -53,14 +61,6 @@ class FirebaseAuth {
 
   async setupFirebase() {
     if (process.env.NODE_ENV === 'test') return Promise.resolve()
-
-    await import('/config/firebaseConfig')
-      .then(({ firebaseConfig }) => {
-        this.app = firebase.initializeApp(firebaseConfig)
-      })
-      .catch((err) => {
-        console.error(err)
-      })
 
     try {
       const handler = async(user) => {
