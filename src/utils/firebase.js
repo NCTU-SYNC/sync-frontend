@@ -12,11 +12,11 @@ class FirebaseAuth {
   }
 
   get auth() {
-    return this.instance
+    return this.app.auth()
   }
 
   get token() {
-    return this.instance.currentUser.getIdToken()
+    return this.auth.currentUser.getIdToken()
   }
 
   thirdPartyLogins = [
@@ -47,17 +47,16 @@ class FirebaseAuth {
 
     await import('/config/firebaseConfig')
       .then(({ firebaseConfig }) => {
-        this.instance = firebase.initializeApp(firebaseConfig)
+        this.app = firebase.initializeApp(firebaseConfig)
       })
       .catch((err) => {
         console.error(err)
       })
 
     try {
-      this.instance = firebase.auth()
       const handler = async(user) => {
         if (user) {
-          const token = await this.instance.currentUser
+          const token = await this.auth.currentUser
             .getIdToken(/* force refresh */ true)
             .catch((error) => {
               console.error(error)
