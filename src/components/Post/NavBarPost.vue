@@ -292,7 +292,7 @@ export default {
   margin-right: 32px;
 }
 
-::v-deep .notification-btn.nav-link.dropdown-toggle {
+:deep(.notification-btn.nav-link.dropdown-toggle) {
   padding: 0;
   margin-right: 24px;
 }

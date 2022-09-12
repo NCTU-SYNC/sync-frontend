@@ -451,12 +451,10 @@ p {
   margin-bottom: 50px;
 }
 
-.btn-icon {
-  &::v-deep {
-    border: 0px;
-    background-color: #ffffff;
-    padding: 0;
-  }
+:deep(.btn-icon) {
+  border: 0px;
+  background-color: #ffffff;
+  padding: 0;
 }
 
 .category {

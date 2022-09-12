@@ -949,7 +949,8 @@ export default {
     background: #c4c4c4;
   }
 }
-::v-deep .category-dropdown {
+
+:deep(.category-dropdown) {
   ul.dropdown-menu {
     min-width: 130px;
     font-size: 14px;
@@ -978,7 +979,7 @@ export default {
     }
   }
 }
-::v-deep .category-dropdown-btn {
+:deep(.category-dropdown-btn) {
   width: 130px;
   height: 40px;
   display: flex;
