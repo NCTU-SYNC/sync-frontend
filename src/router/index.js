@@ -8,7 +8,7 @@ const isLogin = () => {
   return FirebaseAuthInstance.isLogin
 }
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
@@ -42,15 +42,15 @@ export default new Router({
       path: '/profile',
       name: 'Profile',
       component: () => import('@/views/Profile'),
-      beforeEnter: (to, from, next) => {
-        isLogin() ? next() : next('/login')
+      meta: {
+        requiresAuth: true
       }
     },
     {
       path: '/article/:ArticleID/post',
       component: () => import('@/views/new/Post'),
-      beforeEnter: (to, from, next) => {
-        isLogin() ? next() : next('/login')
+      meta: {
+        requiresAuth: true
       }
     },
     {
@@ -61,8 +61,8 @@ export default new Router({
       path: '/post',
       name: 'Post',
       component: () => import('@/views/new/Post'),
-      beforeEnter: (to, from, next) => {
-        isLogin() ? next() : next('/login')
+      meta: {
+        requiresAuth: true
       }
     },
     {
@@ -85,3 +85,16 @@ export default new Router({
     return { x: 0, y: 0 }
   }
 })
+
+router.beforeEach(async(to, from, next) => {
+  const requiresAuth = to.matched.some(rec => rec.meta.requiresAuth)
+
+  if (requiresAuth && !isLogin()) {
+    next('/login')
+    return
+  }
+
+  next()
+})
+
+export default router
