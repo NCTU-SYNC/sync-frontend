@@ -42,6 +42,15 @@ class FirebaseAuth {
     return this.thirdPartyLoginMethods.get(id)
   }
 
+  async getCurrentUser() {
+    return new Promise((res) => {
+      const unsubscribe = this.auth.onAuthStateChanged((user) => {
+        unsubscribe()
+        res(user)
+      })
+    })
+  }
+
   async setupFirebase() {
     if (process.env.NODE_ENV === 'test') return Promise.resolve()
 
