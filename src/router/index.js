@@ -4,10 +4,6 @@ import FirebaseAuthInstance from '@/utils/firebase.js'
 
 Vue.use(Router)
 
-const isLogin = () => {
-  return FirebaseAuthInstance.isLogin
-}
-
 const router = new Router({
   routes: [
     {
@@ -89,7 +85,7 @@ const router = new Router({
 router.beforeEach(async(to, from, next) => {
   const requiresAuth = to.matched.some(rec => rec.meta.requiresAuth)
 
-  if (requiresAuth && !isLogin()) {
+  if (requiresAuth && !await FirebaseAuthInstance.getCurrentUser()) {
     next('/login')
     return
   }
