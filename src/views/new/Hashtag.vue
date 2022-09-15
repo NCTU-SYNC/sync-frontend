@@ -65,7 +65,7 @@
         class="loading-animation--container"
       >
         <b-img
-          :src="require('@/assets/images/search-animation.svg')"
+          src="src/assets/images/search-animation.svg"
           class="loading-animation"
         />
       </div>
@@ -110,7 +110,7 @@ export default {
         '科技',
         '生活'
       ],
-      isLoading: false,
+      isLoading: true,
       hashtagText: this.$route.query.q
     }
   },
