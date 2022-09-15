@@ -37,11 +37,6 @@ export default {
       type: String,
       default: null
     }
-  },
-  methods: {
-    getIconUrl(icon) {
-      return require(`@/assets/icons/editor/ic-${icon}.svg`)
-    }
   }
 }
 </script>

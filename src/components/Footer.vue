@@ -50,11 +50,6 @@ export default {
       secondColumnButtons: ['訂閱電子報', '加入編輯群', '聯絡我們'],
       icons: ['facebook-icon.svg', 'youtube-icon.svg', 'instagram-icon.svg', 'twitter-icon.svg']
     }
-  },
-  methods: {
-    getImgUrl(icon) {
-      return require('@/assets/images/' + icon)
-    }
   }
 }
 </script>
