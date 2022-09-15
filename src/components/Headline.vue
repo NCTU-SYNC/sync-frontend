@@ -38,6 +38,8 @@
 <script>
 import moment from 'moment'
 import { Utils } from '@/utils'
+import thumbnailPlaceholder from '@/assets/images/thumbnail-placeholder.svg'
+
 export default {
   name: 'Headline',
   props: {
@@ -74,15 +76,10 @@ export default {
       default: ''
     }
   },
-  data() {
-    return {
-      thumbnailPlaceholder: require('@/assets/images/thumbnail-placeholder.svg')
-    }
-  },
   computed: {
     imgLink() {
       const imgLink = this.getArticleFirstImage(this.blocks)
-      return imgLink !== null ? imgLink : this.thumbnailPlaceholder
+      return imgLink !== null ? imgLink : thumbnailPlaceholder
     }
   },
   methods: {
