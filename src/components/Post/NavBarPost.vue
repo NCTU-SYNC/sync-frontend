@@ -316,18 +316,18 @@ export default {
     height: 16px;
     margin: 0 0.5rem 0.25rem 0;
     vertical-align: middle;
-    background: url('~@/assets/images/ic-checkbox-inactivated.svg') 0 center
+    background: url('@/assets/images/ic-checkbox-inactivated.svg') 0 center
       no-repeat;
     cursor: pointer;
     border-radius: 2px;
   }
 
   input[type='checkbox'] + label span:hover {
-    background: url('~@/assets/images/ic-checkbox-hover.svg') 0 center no-repeat;
+    background: url('@/assets/images/ic-checkbox-hover.svg') 0 center no-repeat;
   }
 
   input[type='checkbox']:checked + label span {
-    background: url('~@/assets/images/ic-checkbox-activated.svg') 0 center
+    background: url('@/assets/images/ic-checkbox-activated.svg') 0 center
       no-repeat;
   }
 

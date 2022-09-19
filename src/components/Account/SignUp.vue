@@ -223,7 +223,7 @@ export default {
   }
 }
 .left-modal {
-  background-image: url("~@/assets/images/SignUpModalBG.png");
+  background-image: url("@/assets/images/SignUpModalBG.png");
   background-position: center;
   background-size: cover;
 
