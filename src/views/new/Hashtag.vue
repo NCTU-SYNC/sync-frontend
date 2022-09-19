@@ -110,7 +110,7 @@ export default {
         '科技',
         '生活'
       ],
-      isLoading: true,
+      isLoading: false,
       hashtagText: this.$route.query.q
     }
   },
