@@ -34,6 +34,9 @@
     "vuex": "^3.6.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.19.1",
+    "@babel/eslint-parser": "^7.19.1",
+    "@babel/preset-env": "^7.19.1",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/vue": "5",
     "@vitejs/plugin-legacy": "^2.1.0",

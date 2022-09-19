@@ -7,6 +7,17 @@ module.exports = {
     es2021: true
   },
 
+  parser: '@babel/eslint-parser',
+
+  parserOptions: {
+    requireConfigFile: false,
+    babelOptions: {
+      babelrc: false,
+      configFile: false,
+      presets: ['@babel/preset-env']
+    }
+  },
+
   extends: [
     'plugin:vue/recommended',
     'eslint:recommended'
