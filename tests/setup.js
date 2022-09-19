@@ -8,7 +8,7 @@ import '@/assets/scss/main.scss'
 
 expect.extend(matchers)
 
-Vue.component('Icon', SvgIcon)
+Vue.component('SyncIcon', SvgIcon)
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)
