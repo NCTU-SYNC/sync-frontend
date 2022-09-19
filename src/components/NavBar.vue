@@ -2,7 +2,7 @@
   <b-navbar ref="navbar" fixed="top" class="navbar--container" type="light" variant="faded">
     <b-navbar-nav class="navbar--item item-left">
       <b-nav-item class="post px-0" to="/post">
-        <icon icon="edit" />
+        <SyncIcon icon="edit" />
       </b-nav-item>
     </b-navbar-nav>
     <b-navbar-brand id="brand" to="/" class="navbar--item item-center"><Logo /></b-navbar-brand>
@@ -10,7 +10,7 @@
     <!-- Show when screen width is larger than md -->
     <b-navbar-nav class="navbar--item item-right d-none d-md-flex align-items-center h-100">
       <form class="search-bar" @submit.prevent="submitSearch">
-        <b-button variant="link" class="search-bar--submit" type="submit"><icon icon="search" /></b-button>
+        <b-button variant="link" class="search-bar--submit" type="submit"><SyncIcon icon="search" /></b-button>
         <b-form-input
           id="search-bar--inputid"
           v-model="keyword"
@@ -30,7 +30,7 @@
         menu-class="p-0"
       >
         <template v-slot:button-content>
-          <icon icon="notification" />
+          <SyncIcon icon="notification" />
         </template>
         <div class="notification-container">
           <h3>通知</h3>
@@ -60,8 +60,8 @@
     </b-navbar-nav>
     <!-- Show when screen width is smaller than md -->
     <b-navbar-nav class="navbar--item item-right d-flex d-md-none align-items-center">
-      <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><icon icon="search" /></b-nav-item>
-      <b-button variant="link"><icon icon="notification" /></b-button>
+      <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><SyncIcon icon="search" /></b-nav-item>
+      <b-button variant="link"><SyncIcon icon="notification" /></b-button>
       <b-nav-item v-if="getLoginStatus" to="/profile">
         <img class="avatar-user" :src="getPhotoURL">
       </b-nav-item>

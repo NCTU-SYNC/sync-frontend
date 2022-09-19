@@ -35,7 +35,7 @@
         menu-class="p-0"
       >
         <template v-slot:button-content>
-          <icon icon="notification" />
+          <SyncIcon icon="notification" />
         </template>
         <div class="notification-container">
           <h3>通知</h3>

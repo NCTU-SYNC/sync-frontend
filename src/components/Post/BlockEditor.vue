@@ -30,7 +30,7 @@
               }}
             </div>
             <div class="btn-caret">
-              <icon
+              <SyncIcon
                 :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'"
                 size="md"
               />

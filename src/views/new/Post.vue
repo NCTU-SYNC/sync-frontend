@@ -38,7 +38,7 @@
           class="btn-edit"
           @click="handleShowTimeline(true)"
         >
-          <icon icon="edit-timeline" />
+          <SyncIcon icon="edit-timeline" />
           <span v-if="!showNewsSource">段落標題</span>
         </b-button>
       </div>
@@ -73,7 +73,7 @@
                     }}
                   </div>
                   <div class="btn-chevron">
-                    <icon
+                    <SyncIcon
                       :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'"
                       size="md"
                     />
@@ -213,7 +213,7 @@
       </div>
       <div v-show="!showNewsSource" class="news-area-btn-only">
         <b-button variant="light" @click="handleShowNewsSource(true)">
-          <icon icon="edit-source" />
+          <SyncIcon icon="edit-source" />
           搜尋新聞
         </b-button>
       </div>

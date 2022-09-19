@@ -33,7 +33,7 @@
     <div v-for="(section, sectionIndex) in allArticles" :key="sectionIndex">
       <b-row class="py-5 heading-bar">
         <b-col class="d-flex justify-content-center align-items-center">
-          <icon :icon="section.iconPath" class="mr-3" />
+          <SyncIcon :icon="section.iconPath" class="mr-3" />
           <h1 class="home-heading">{{ section.title }}</h1>
         </b-col>
       </b-row>

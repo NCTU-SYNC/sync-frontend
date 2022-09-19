@@ -5,12 +5,12 @@
         class="left-modal d-flex justify-content-center align-items-center"
       >
         <div class="sync-logo d-flex align-items-center">
-          <icon icon="white-logo" style="height: 40px" />
+          <SyncIcon icon="white-logo" style="height: 40px" />
           <strong class="title"> SYNC </strong>
         </div>
         <div class="slogan d-flex flex-column justify-content-center">
           <div class="d-flex justify-content-start">
-            <icon icon="vector2" style="height: 40px" />
+            <SyncIcon icon="vector2" style="height: 40px" />
           </div>
           <div class="w-100 d-flex flex-column align-items-center">
             <p>一個匯集資訊的同步協作平台，與他</p>
@@ -18,7 +18,7 @@
             <p>從眾人提供的整合資訊中汲取所需。</p>
           </div>
           <div class="d-flex justify-content-end">
-            <icon
+            <SyncIcon
               icon="vector2"
               style="height: 40px; transform: matrix(-1, 0, 0, -1, 0, 0)"
             />
@@ -41,7 +41,7 @@
             block
             @click="handleThirdPartyLogin(login)"
           >
-            <icon :icon="login.icon" />
+            <SyncIcon :icon="login.icon" />
             <div>{{ login.name }} 註冊/登入</div>
           </b-button>
           <div class="split-line w-100 d-flex align-items-center">或</div>

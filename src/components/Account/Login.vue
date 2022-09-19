@@ -4,7 +4,7 @@
       <b-col class="left-modal">
         <div class="content d-flex flex-column">
           <div class="d-flex align-items-center left-modal-logo">
-            <icon icon="logo" style="height: 80px" />
+            <SyncIcon icon="logo" style="height: 80px" />
             <strong class="title"> SYNC </strong>
           </div>
           <div style="height: 120px">
@@ -14,7 +14,7 @@
                 :key="slogan"
                 class="d-flex align-items-center slogan-box"
               >
-                <icon icon="vector" style="height: 10px" />
+                <SyncIcon icon="vector" style="height: 10px" />
                 <div class="slogan">{{ slogan }}</div>
               </li>
             </ul>
@@ -37,7 +37,7 @@
             block
             @click="handleThirdPartyLogin(login)"
           >
-            <icon :icon="login.icon" />
+            <SyncIcon :icon="login.icon" />
             <div>{{ login.name }} 註冊/登入</div>
           </b-button>
           <div class="split-line w-100 d-flex align-items-center">或</div>
