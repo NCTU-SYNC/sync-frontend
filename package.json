@@ -8,7 +8,7 @@
     "preview": "vite preview",
     "vitest": "vitest --ui",
     "test:unit": "vitest run",
-    "lint": "vue-cli-service lint"
+    "lint": "eslint --cache --fix ."
   },
   "dependencies": {
     "@tiptap/core": "^2.0.0-beta.183",
