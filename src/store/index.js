@@ -1,5 +1,6 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
+// import Vuex from 'vuex'
+import Vuex from 'vuex/dist/vuex.common' // Why this: `Render()` in Testing Library uses common js
 import user from './user'
 import post from './post'
 import article from './article'
