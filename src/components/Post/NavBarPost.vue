@@ -34,7 +34,7 @@
         right
         menu-class="p-0"
       >
-        <template v-slot:button-content>
+        <template #button-content>
           <SyncIcon icon="notification" />
         </template>
         <div class="notification-container">
@@ -61,7 +61,7 @@
         toggle-class="p-0"
       >
         <!-- Using 'button-content' slot -->
-        <template v-slot:button-content>
+        <template #button-content>
           <span>
             <img
               class="avatar-user"

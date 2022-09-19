@@ -29,7 +29,7 @@
         right
         menu-class="p-0"
       >
-        <template v-slot:button-content>
+        <template #button-content>
           <SyncIcon icon="notification" />
         </template>
         <div class="notification-container">
@@ -49,7 +49,7 @@
       <b-nav-item v-show="!getLoginStatus" :to="{ name: 'Login', query: getRedirectPath}">登入</b-nav-item>
       <b-nav-item-dropdown v-show="getLoginStatus" no-caret right>
         <!-- Using 'button-content' slot -->
-        <template v-slot:button-content>
+        <template #button-content>
           <span>
             <img class="avatar-user" height="48" width="48" :src="getPhotoURL">
           </span>
