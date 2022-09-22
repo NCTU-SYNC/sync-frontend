@@ -24,6 +24,8 @@
     "axios": "^0.27.2",
     "bootstrap": "^4.6.1",
     "bootstrap-vue": "^2.22.0",
+    "diff-match-patch": "^1.0.5",
+    "fast-glob": "^3.2.12",
     "firebase": "^9.9.4",
     "js-cookie": "^3.0.1",
     "jsondiffpatch": "^0.4.1",
@@ -62,5 +64,6 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "packageManager": "yarn@3.2.3"
 }
