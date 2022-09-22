@@ -3,7 +3,6 @@ import {
   getAuth, signInWithPopup, createUserWithEmailAndPassword,
   signOut, GoogleAuthProvider, signInWithEmailAndPassword
 } from 'firebase/auth'
-import { connectFunctionsEmulator, getFunctions, httpsCallable } from 'firebase/functions'
 import { removeUserInfo } from '@/utils/auth'
 import store from '../store/index'
 

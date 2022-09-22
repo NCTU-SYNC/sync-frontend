@@ -112,7 +112,8 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/scss/post/main.scss';
 
-::v-deep .was-validated .form-control:invalid {
-  border-color: red;
+:deep(.was-validated) :deep(.form-control:invalid) {
+  // border-color: red;
+  border-color: green;
 }
 </style>

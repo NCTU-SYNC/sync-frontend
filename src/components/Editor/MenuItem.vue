@@ -6,7 +6,7 @@
     :title="title"
     @click="action"
   >
-    <icon :icon="icon" size="md" />
+    <SyncIcon :icon="icon" size="md" />
   </button>
 </template>
 

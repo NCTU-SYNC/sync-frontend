@@ -4,6 +4,8 @@ import legacy from '@vitejs/plugin-legacy'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import path from 'node:path'
 
+// / <reference types="vitest" />
+// / <reference types="vite/client" />
 export default defineConfig({
   css: {
     preprocessorOptions: {
@@ -80,5 +82,11 @@ export default defineConfig({
 
   server: {
     port: '8080'
+  },
+
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: 'tests/setup.js'
   }
 })
