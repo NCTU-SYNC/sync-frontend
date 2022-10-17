@@ -83,9 +83,7 @@ const router = new Router({
 })
 
 router.beforeEach(async(to, from, next) => {
-  const requiresAuth = to.matched.some(rec => rec.meta.requiresAuth)
-
-  if (requiresAuth && !await FirebaseAuthInstance.getCurrentUser()) {
+  if (to.meta.requiresAuth && !await FirebaseAuthInstance.getCurrentUser()) {
     next('/login')
     return
   }
