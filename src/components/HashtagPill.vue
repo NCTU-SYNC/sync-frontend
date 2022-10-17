@@ -7,7 +7,7 @@ export default {
   props: {
     name: {
       type: String,
-      default: ''
+      required: true
     }
   },
   methods: {
