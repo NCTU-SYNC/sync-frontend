@@ -2,9 +2,17 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import { removeUserInfo } from '@/utils/auth'
 import store from '../store/index'
+import { firebaseConfig } from '/config/firebaseConfig'
 
 class FirebaseAuth {
   constructor() {
+    try {
+      this.app = firebase.initializeApp(firebaseConfig)
+    } catch (error) {
+      this.app = null
+      console.error(error)
+    }
+
     this.email = ''
     this.password = ''
     this.displayName = ''
@@ -12,11 +20,11 @@ class FirebaseAuth {
   }
 
   get auth() {
-    return this.instance
+    return this.app.auth()
   }
 
   get token() {
-    return this.instance.currentUser.getIdToken()
+    return this.auth.currentUser.getIdToken()
   }
 
   thirdPartyLogins = [
@@ -42,22 +50,22 @@ class FirebaseAuth {
     return this.thirdPartyLoginMethods.get(id)
   }
 
+  async getCurrentUser() {
+    return new Promise((res) => {
+      const unsubscribe = this.auth.onAuthStateChanged((user) => {
+        unsubscribe()
+        res(user)
+      })
+    })
+  }
+
   async setupFirebase() {
     if (process.env.NODE_ENV === 'test') return Promise.resolve()
 
-    await import('/config/firebaseConfig')
-      .then(({ firebaseConfig }) => {
-        this.instance = firebase.initializeApp(firebaseConfig)
-      })
-      .catch((err) => {
-        console.error(err)
-      })
-
     try {
-      this.instance = firebase.auth()
       const handler = async(user) => {
         if (user) {
-          const token = await this.instance.currentUser
+          const token = await this.auth.currentUser
             .getIdToken(/* force refresh */ true)
             .catch((error) => {
               console.error(error)
