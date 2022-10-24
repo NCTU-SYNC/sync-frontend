@@ -1,5 +1,5 @@
 <template>
-  <button :class="[variant, {pill: pill}, size]">
+  <button :class="[variant, {pill: pill}, size]" @click="handleClick">
     <slot />
   </button>
 </template>
@@ -19,6 +19,21 @@ export default {
     size: {
       type: String,
       default: 'default'
+    },
+    to: {
+      type: [String, Object],
+      default: ''
+    }
+  },
+  methods: {
+    routerPush() {
+      if (this.to === '') return
+      this.$router.push(this.to)
+    },
+    handleClick() {
+      // Handle parent 'click' event first, then navigation
+      this.$emit('click')
+      this.routerPush()
     }
   }
 }
