@@ -1,5 +1,5 @@
 <template>
-  <button :class="[variant, {pill: pill}, size]" @click="handleClick">
+  <button :class="[variant, size, {pill: pill}, {block: block}, {squared: squared}]" @click="handleClick">
     <slot />
   </button>
 </template>
@@ -18,11 +18,19 @@ export default {
     },
     size: {
       type: String,
-      default: 'default'
+      default: 'md'
     },
     to: {
       type: [String, Object],
       default: ''
+    },
+    block: {
+      type: Boolean,
+      default: false
+    },
+    squared: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
@@ -55,12 +63,15 @@ button {
   padding: 0.25rem 1rem;
   font-size: 14px;
 }
-.default {
+.md {
   padding: 0.5rem 1rem; // 8px 16px
 }
 .lg {
   padding: 1rem 2rem; // 16px 32px
   font-size: 18px;
+}
+.block {
+  width: 100%;
 }
 
 .primary {
@@ -83,6 +94,10 @@ button {
   &.lg {
     border-radius: 50px;
   }
+}
+
+.squared {
+  border-radius: 0;
 }
 
 </style>
