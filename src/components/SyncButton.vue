@@ -89,6 +89,21 @@ button {
   }
 }
 
+.tertiary {
+  background-color: transparent;
+  color: $text-1;
+
+  &:hover {
+    background-color: $gray-2;
+  }
+  &:disabled {
+    color: $text-4;
+  }
+  &:focus, &:focus-within, &:active {
+    box-shadow: 0px 0px 0px 4px $gray-4 !important;
+  }
+}
+
 .pill {
   border-radius: 1.25rem; // 20px
   &.lg {
