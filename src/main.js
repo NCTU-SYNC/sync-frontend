@@ -9,12 +9,14 @@ import store from './store'
 import FirebaseAuth from '@/utils/firebase.js'
 import router from './router'
 import SvgIcon from '@/components/SvgIcon'
+import SyncButton from '@/components/SyncButton'
 import '@/assets/scss/main.scss'
 
 const requireAll = requireContext => requireContext.keys().map(requireContext)
 const req = require.context('@/assets/icons', true, /\.svg$/)
 requireAll(req)
 Vue.component('icon', SvgIcon)
+Vue.component('SyncButton', SyncButton)
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)
