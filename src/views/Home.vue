@@ -64,6 +64,8 @@
         </b-col>
       </b-row>
     </div>
+    <div class="topic-recommend d-flex justify-content-center align-items-center" />
+
   </b-container>
 </template>
 
@@ -340,4 +342,21 @@ export default {
 .headline-border {
   border-left: 1px solid $gray-light;
 }
+
+.topic-recommend {
+  position: relative;
+  height: 424px;
+  margin: 0 -15px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.4;
+    background-image: url('../../src/assets/images/TopicRecommendBG.svg');
+  }
+}
+
 </style>
