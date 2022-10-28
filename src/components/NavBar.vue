@@ -134,6 +134,7 @@ export default {
 
 .navbar {
   &--container {
+    padding: 8px 64px;
     height: 4rem;
     background-color: $white;
     border-bottom: 1px solid $gray-light;
@@ -155,6 +156,7 @@ export default {
 
   .sync-icon {
     height: 32px;
+    margin-right: 16px;
   }
 
   .login-btn {
@@ -175,6 +177,7 @@ export default {
   }
 }
 
+// dropdown
 .dropdown {
   position: relative;
 }
