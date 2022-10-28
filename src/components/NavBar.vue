@@ -25,7 +25,7 @@
         <icon icon="news-panel-search" class="search-bar--icon" size="md" />
         <input v-model="keyword" type="search" class="search-bar--input" placeholder="搜尋懶人包文章">
       </form>
-      <template v-if="!getLoginStatus">
+      <template v-if="!isLogin">
         <sync-button to="/login" variant="tertiary" class="login-btn">登入</sync-button>
         <sync-button to="/login" variant="primary" pill class="start-edit-btn">開始編輯</sync-button>
       </template>
@@ -48,13 +48,34 @@
         </button>
         <div class="dropdown-user">
           <button class="avatar-user--btn">
-            <img class="avatar-user--img" height="48" width="48" :src="getPhotoURL">
+            <img class="avatar-user--img" height="48" width="48" :src="photoURL">
           </button>
           <div class="dropdown-user--content">
-            <router-link to="/profile" @click.native="handleClickProfile">
-              個人頁面
+            <div class="dropdown-user--profile">
+              <router-link to="/profile" class="d-flex justify-content-between" @click.native="handleClickProfile">
+                <img class="profile-avatar" height="48" width="48" :src="photoURL">
+                <div class="profile-detail">
+                  <div class="display-name">{{ displayName }}</div>
+                  <div class="display-email">{{ email }}</div>
+                </div>
+              </router-link>
+            </div>
+            <router-link to="/post" class="dropdown-user--link border-top-link">
+              編輯新文章
             </router-link>
-            <router-link to="/" @click.native="handleLogout">
+            <router-link to="/profile" class="dropdown-user--link border-top-link">
+              瀏覽紀錄
+            </router-link>
+            <router-link to="/profile" class="dropdown-user--link">
+              編輯過的文章
+            </router-link>
+            <router-link to="/profile" class="dropdown-user--link">
+              收藏的文章
+            </router-link>
+            <router-link to="/profile" class="dropdown-user--link">
+              個人設定
+            </router-link>
+            <router-link to="/" class="dropdown-user--link border-top-link" @click.native="handleLogout">
               登出
             </router-link>
           </div>
@@ -85,6 +106,7 @@
 <script>
 import firebase from '@/utils/firebase'
 import Logo from '@/components/Logo.vue'
+import { mapGetters } from 'vuex'
 import moment from 'moment'
 
 export default {
@@ -104,20 +126,17 @@ export default {
   data() {
     return {
       keyword: '',
-      categoryList: ['政經', '國際', '社會', '科技', '環境', '生活', '運動']
+      categoryList: ['政經', '國際', '社會', '科技', '環境', '生活', '運動'],
+      avatarBlur: true
     }
   },
   computed: {
+    ...mapGetters(['photoURL', 'displayName', 'uid', 'isLogin', 'user']),
+    ...mapGetters({ email: 'user/email' }),
     getRedirectPath() {
       // 設置重新導向，若在首頁、註冊、登入頁面做切換不需設置redirect，其他頁面則需要重新導向，若已經設置重新導向頁面，則註冊、登入切換時，並不會互相把自己的頁面給放進重新導向內
       const disableRedirectPaths = ['/', '/signup', '/login']
       return disableRedirectPaths.some(disableRedirectPath => this.$route.path === disableRedirectPath) ? (this.$route.query.redirect === undefined ? null : { redirect: this.$route.query.redirect }) : { redirect: this.$route.path }
-    },
-    getPhotoURL() {
-      return this.$store.getters.photoURL
-    },
-    getLoginStatus() {
-      return this.$store.getters.isLogin
     },
     notifications() {
       return this.$store.getters.notifications
@@ -160,7 +179,6 @@ export default {
       this.$router.push({ path: '/search', query: { q: this.keyword }})
     },
     handleClickProfile(event) {
-      // fire the blur event to close dropdown after clicked
       event.target.blur()
     }
   }
@@ -259,6 +277,62 @@ export default {
 // user dropdown
 .dropdown-user {
   position: relative;
+  &--profile {
+    height: 80px;
+    margin-top: 4px;
+    padding: 16px 24px;
+    &:hover {
+      background-color: $gray-2;
+    }
+    .profile-avatar {
+      -webkit-background-size: 48px 48px;
+      background-size: 48px 48px;
+      -webkit-border-radius: 50%;
+      border-radius: 50%;
+      display: block;
+      margin: 0;
+      position: relative;
+      height: 48px;
+      width: 48px;
+      z-index: 1;
+    }
+    .profile-detail {
+      width: 190px;
+      .display-name {
+        font-size: 20px;
+        color: $text-1;
+        font-weight: 800;
+      }
+      .display-email {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        color: $text-3;
+        font-weight: 600;
+      }
+    }
+  }
+  &--link {
+    display: block;
+    height: 48px;
+    padding: 12px 24px;
+    color: $text-1;
+    font-weight: bold;
+    position: relative;
+    &:hover {
+      background-color: $gray-2;
+    }
+    &.border-top-link {
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0px;
+        width: 252px;
+        height: 0px;
+        border-top: 1px solid $gray-4;
+      }
+    }
+  }
 }
 
 .dropdown-user--content {
@@ -268,22 +342,11 @@ export default {
   top: 58px;
 
   // style box
-  width: 122px;
+  width: 300px;
   background-color: white;
   z-index: 1;
   box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
   border-radius: 4px;
-
-  a {
-    color: black;
-    padding: 8px 16px;
-    font-weight: bold;
-    text-decoration: none;
-    display: block;
-    &:hover {
-      color: $blue-4;
-    }
-  }
 }
 
 .avatar-user {
