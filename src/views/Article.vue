@@ -1,6 +1,5 @@
 <template>
   <b-container fluid class="article-container">
-    <CategoryBar />
     <div
       v-if="isPageReady"
       :class="{ 'position-relative': windowScrollY > FooterOffsetTop }"
@@ -183,13 +182,11 @@
 import moment from 'moment'
 import articleAPI from '@/api/article'
 import TiptapEditor from '@/components/Editor/TiptapEditor.vue'
-import CategoryBar from '@/components/CategoryBar.vue'
 
 export default {
   name: 'Article',
   components: {
-    TiptapEditor,
-    CategoryBar
+    TiptapEditor
   },
   data() {
     return {

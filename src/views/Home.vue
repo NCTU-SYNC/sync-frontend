@@ -1,6 +1,5 @@
 <template>
   <b-container fluid>
-    <category-bar />
     <div class="d-flex justify-content-center">
       <div
         v-if="headline.length > 0"
@@ -70,15 +69,13 @@
 <script>
 import ArticleCard from '@/components/ArticleCard.vue'
 import HeadlineCard from '@/components/Headline.vue'
-import CategoryBar from '@/components/CategoryBar.vue'
 import articleAPI from '@/api/article'
 
 export default {
   name: 'Home',
   components: {
     ArticleCard,
-    HeadlineCard,
-    CategoryBar
+    HeadlineCard
   },
   data() {
     return {
