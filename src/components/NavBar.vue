@@ -1,100 +1,38 @@
 <template>
   <b-navbar ref="navbar" fixed="top" class="navbar--container" type="light" variant="faded">
-    <b-navbar-nav class="navbar--item item-left">
-      <b-nav-item class="post px-0" to="/post">
-        <icon icon="edit" />
-      </b-nav-item>
-    </b-navbar-nav>
-    <b-navbar-brand id="brand" to="/" class="navbar--item item-center"><Logo /></b-navbar-brand>
+    <div class="navbar--item item-left">
+      <router-link to="/">
+        <Logo />
+      </router-link>
+    </div>
 
-    <!-- Show when screen width is larger than md -->
-    <b-navbar-nav class="navbar--item item-right d-none d-md-flex align-items-center h-100">
+    <div class="navbar--item item-right d-flex align-items-center">
       <form class="search-bar" @submit.prevent="submitSearch">
-        <b-button variant="link" class="search-bar--submit" type="submit"><icon icon="search" /></b-button>
-        <b-form-input
-          id="search-bar--inputid"
-          v-model="keyword"
-          class="search-bar--input"
-          placeholder="搜尋文章"
-          type="search"
-        />
+        <icon icon="news-panel-search" class="search-bar--icon" size="md" />
+        <input v-model="keyword" type="search" class="search-bar--input" placeholder="搜尋懶人包文章">
       </form>
+      <sync-button to="/login" variant="tertiary" class="login-btn">登入</sync-button>
+      <sync-button to="/login" variant="primary" pill class="start-edit-btn">開始編輯</sync-button>
 
-      <b-nav-item-dropdown
-        size="lg"
-        variant="link"
-        toggle-class="text-decoration-none"
-        no-caret
-        no-flip
-        right
-        menu-class="p-0"
+      <b-modal
+        v-model="modalShow"
+        no-close-on-backdrop
+        no-close-on-esc
+        hide-header
+        hide-footer
+        body-class="p-0"
+        dialog-class="h-100 w-100"
+        content-class="login-modal"
       >
-        <template v-slot:button-content>
-          <icon icon="notification" />
-        </template>
-        <div class="notification-container">
-          <h3>通知</h3>
-          <slot v-for="(notification, notificationIndex) in notifications">
-            <b-dropdown-item-button
-              v-if="notification.type = 'update'"
-              button-class="btn-wrap"
-              @click="routeToArticle(notification.articleId)"
-            >{{ notification.title || notification.articleId }} 文章有更新唷！
-              <p class="text-secondary m-0">{{ getDateString(notification.lastUpdatedAt) }}</p></b-dropdown-item-button>
-            <b-dropdown-divider v-if="notificationIndex < notifications.length - 1" />
-          </slot>
-        </div>
-      </b-nav-item-dropdown>
-      <b-nav-item v-show="!getLoginStatus" :to="{ name: 'SignUp', query: getRedirectPath }">註冊</b-nav-item>
-      <b-nav-item v-show="!getLoginStatus" :to="{ name: 'Login', query: getRedirectPath}">登入</b-nav-item>
-      <b-nav-item-dropdown v-show="getLoginStatus" no-caret right>
-        <!-- Using 'button-content' slot -->
-        <template v-slot:button-content>
-          <span>
-            <img class="avatar-user" height="48" width="48" :src="getPhotoURL">
-          </span>
-        </template>
-        <b-dropdown-item to="/profile">個人頁面</b-dropdown-item>
-        <b-dropdown-item href="#" @click="handleLogout">登出</b-dropdown-item>
-      </b-nav-item-dropdown>
-    </b-navbar-nav>
-    <!-- Show when screen width is smaller than md -->
-    <b-navbar-nav class="navbar--item item-right d-flex d-md-none align-items-center">
-      <b-nav-item :to="{ name: 'Search', query: getRedirectPath }"><icon icon="search" /></b-nav-item>
-      <b-button variant="link"><icon icon="notification" /></b-button>
-      <b-nav-item v-if="getLoginStatus" to="/profile">
-        <img class="avatar-user" :src="getPhotoURL">
-      </b-nav-item>
-      <b-nav-item
-        v-else
-        to="login"
-      >
-        <b-iconstack font-scale="2.5">
-          <b-icon stacked icon="person-fill" scale="0.6" variant="secondary" />
-          <b-icon stacked icon="circle" variant="secondary" />
-        </b-iconstack>
-      </b-nav-item>
-    </b-navbar-nav>
-
-    <b-modal
-      v-model="modalShow"
-      no-close-on-backdrop
-      no-close-on-esc
-      hide-header
-      hide-footer
-      body-class="p-0"
-      dialog-class="h-100 w-100"
-      content-class="login-modal"
-    >
-      <transition
-        name="fade"
-        mode="out-in"
-        :duration="200"
-      >
-        <component :is="modalComponent" />
-      </transition>
-    </b-modal>
-  </b-navbar>
+        <transition
+          name="fade"
+          mode="out-in"
+          :duration="200"
+        >
+          <component :is="modalComponent" />
+        </transition>
+      </b-modal>
+    </div></b-navbar>
 </template>
 
 <script>
@@ -184,12 +122,11 @@ export default {
     background-color: $white;
     border-bottom: 1px solid $gray-light;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     width: 100%;
   }
-  &--item {
-    flex: 1;
-  }
+
   .item-left {
     display: flex;
     justify-content: begin;
@@ -198,11 +135,13 @@ export default {
     display: flex;
     justify-content: flex-end;
   }
-  .item-center {
-      margin: 0 !important;
-      // background: lime;
-      display: flex;
-      justify-content: center;
+
+  .login-btn {
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+  .start-edit-btn {
+    margin-left: 4px;
   }
 }
 
@@ -229,6 +168,54 @@ export default {
 }
 
 .search-bar {
+  height: 40px;
+  position: relative;
+  margin-left: 4px;
+  margin-right: 4px;
+
+  // input bar
+  &--input {
+    width: 240px;
+    height: 40px;
+    border-radius: 20px;
+    background-color: $gray-2;
+    padding-left: 42px;
+
+    &::placeholder {
+      color: $text-3;
+      font-size: 14px;
+    }
+    &:focus-within {
+      box-shadow: 0px 0px 0px 4px $gray-4 !important;
+    }
+  }
+
+  &--icon {
+    position: absolute;
+    width: 18px !important;
+    height: 18px !important;
+    left: 13px;
+    top: 11px;
+  }
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  height: 1em;
+  width: 1em;
+  border-radius: 50em;
+  background: url(https://pro.fontawesome.com/releases/v5.10.0/svgs/solid/times-circle.svg) no-repeat 50% 50%;
+  background-size: contain;
+  opacity: 0;
+  pointer-events: none;
+}
+
+input[type="search"]:focus::-webkit-search-cancel-button {
+  opacity: .3;
+  pointer-events: all;
+}
+
+.search-bar-old {
   --size: 40px;
   height: 40px;
   width: var(--size);
@@ -256,7 +243,7 @@ export default {
   }
   &:focus-within {
     width: 400px;
-    .search-bar--input {
+    .search-bar-old--input {
       border: 1px solid $gray-4 !important;
       border-radius: 4px;
       opacity: 1;
