@@ -403,8 +403,8 @@ input[type="search"]:focus::-webkit-search-cancel-button {
 }
 .notification {
   &--btn {
-    margin-right: 12px;
-    margin-left: 20px;
+    margin-right: 7px;
+    margin-left: 15px;
   }
   &--icon {
     height: 36px !important;
