@@ -34,6 +34,11 @@
           <button class="icon-button notification--btn">
             <icon icon="notification" class="notification--icon" />
           </button>
+          <div class="notification-dropdown--content" :class="{'no-notification': notifications.length === 0}">
+            <template v-if="notifications.length === 0">
+              目前沒有通知
+            </template>
+          </div>
         </div>
         <!-- post page -->
         <button class="icon-button post--btn">
@@ -325,16 +330,9 @@ export default {
   }
 }
 
-.dropdown-user:focus-within .dropdown-user--content, .avatar-user--btn:focus + .dropdown-user--content {
+.dropdown-user:focus-within .dropdown-user--content,
+.avatar-user--btn:focus + .dropdown-user--content {
   display: block;
-}
-
-.notification-container {
-  padding: 1rem;
-  width: 20rem;
-  max-height: calc(100vh - 4rem);
-  overflow-x: hidden;
-  overflow-y: scroll;
 }
 
 .search-bar {
@@ -412,6 +410,35 @@ input[type="search"]:focus::-webkit-search-cancel-button {
     height: 36px !important;
     width: 36px !important;
   }
+  &-dropdown {
+    position: relative;
+    &--content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 58px;
+
+      // style box
+      width: 122px;
+      background-color: white;
+      z-index: 1;
+      box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
+      border-radius: 4px;
+      width: 300px;
+      height: 404px;
+    }
+  }
+}
+
+.notification-dropdown:focus-within .notification-dropdown--content,
+.notification-dropdown--content:focus,
+.notification--btn:focus + .notification-dropdown--content {
+  display: block;
+  &.no-notification {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 }
 
 .icon-button {
