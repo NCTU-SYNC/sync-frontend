@@ -31,7 +31,7 @@
             </div>
             <div class="btn-caret">
               <icon
-                :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'"
+                :icon="dropdownOpen ? 'arrow-up' : 'arrow-down-editor'"
                 size="md"
               />
             </div>

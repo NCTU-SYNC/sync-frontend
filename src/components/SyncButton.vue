@@ -104,6 +104,24 @@ button {
   }
 }
 
+.nav {
+  background-color: transparent;
+  color: $text-1;
+  font-weight: bold;
+
+  &:hover {
+    color: $blue-4;
+  }
+  &:disabled {
+    color: $text-4;
+  }
+  &:focus, &:focus-within, &:active {
+    color: $blue-5;
+    box-shadow: none !important;
+    // box-shadow: 0px 0px 0px 4px $blue-2 !important;
+  }
+}
+
 .pill {
   border-radius: 1.25rem; // 20px
   &.lg {

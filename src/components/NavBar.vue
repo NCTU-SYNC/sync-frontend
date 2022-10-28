@@ -2,8 +2,23 @@
   <b-navbar ref="navbar" fixed="top" class="navbar--container" type="light" variant="faded">
     <div class="navbar--item item-left">
       <router-link to="/">
-        <Logo />
+        <Logo class="sync-icon" />
       </router-link>
+      <div class="dropdown">
+        <sync-button variant="nav" class="topic-btn dropdown-btn">探索主題 <icon icon="arrow-down" size="sm" class="arrow-down-icon" /></sync-button>
+        <div class="dropdown-content">
+          <div class="blank-element" />
+          <div class="dropdown-content--list">
+            <router-link v-for="(category, index) in categoryList" :key="index" :to="{path:'/', query: { category: category }}">
+              {{ category }}
+            </router-link>
+          </div>
+
+        </div>
+      </div>
+
+      <sync-button variant="nav">熱門時事</sync-button>
+      <sync-button variant="nav">最新編輯</sync-button>
     </div>
 
     <div class="navbar--item item-right d-flex align-items-center">
@@ -56,7 +71,8 @@ export default {
   },
   data() {
     return {
-      keyword: ''
+      keyword: '',
+      categoryList: ['政經', '國際', '社會', '科技', '環境', '生活', '運動']
     }
   },
   computed: {
@@ -130,10 +146,15 @@ export default {
   .item-left {
     display: flex;
     justify-content: begin;
+    align-items: center;
   }
   .item-right {
     display: flex;
     justify-content: flex-end;
+  }
+
+  .sync-icon {
+    height: 32px;
   }
 
   .login-btn {
@@ -143,6 +164,57 @@ export default {
   .start-edit-btn {
     margin-left: 4px;
   }
+
+  .topic-btn {
+    display: flex;
+    align-items: center;
+  }
+  .arrow-down-icon {
+    padding: 0;
+    margin-left: 4px;
+  }
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-content {
+
+  display: none;
+  position: absolute;
+
+  // style box
+  &--list {
+    width: 122px;
+    background-color: white;
+    z-index: 1;
+    border-top: 1px solid white;
+    border-bottom: 1px solid $gray-2;
+    border-left: 1px solid $gray-2;
+    border-right: 1px solid $gray-2;
+  }
+
+  // hack to retain hover state
+  .blank-element {
+    height: 11px;
+  }
+
+  // list element
+  a {
+    color: black;
+    padding: 8px 16px;
+    font-weight: bold;
+    text-decoration: none;
+    display: block;
+    &:hover {
+      color: $blue-4;
+    }
+  }
+}
+
+.dropdown:hover .dropdown-content, .dropdown:focus-within , .dropdown-btn:focus + .dropdown-content {
+  display: block;
 }
 
 .avatar-user {
@@ -213,45 +285,6 @@ input[type="search"]::-webkit-search-cancel-button {
 input[type="search"]:focus::-webkit-search-cancel-button {
   opacity: .3;
   pointer-events: all;
-}
-
-.search-bar-old {
-  --size: 40px;
-  height: 40px;
-  width: var(--size);
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-  transition: width 300ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
-  &--input {
-    height: 40px;
-    opacity: 0;
-    cursor: pointer;
-    position: absolute;
-    &:active, &:focus {
-      border: 1px solid $blue !important;
-    }
-    &::placeholder{
-      color: $text-4;
-    }
-  }
-  &--submit {
-    padding: 0;
-    margin-right: auto;
-  }
-  &:focus-within {
-    width: 400px;
-    .search-bar-old--input {
-      border: 1px solid $gray-4 !important;
-      border-radius: 4px;
-      opacity: 1;
-      cursor: initial;
-      transition: opacity 150ms ease-in-out;
-      width: calc(100% - var(--size));
-    }
-  }
 }
 
 .header-navbar {
