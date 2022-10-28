@@ -13,7 +13,6 @@
               {{ category }}
             </router-link>
           </div>
-
         </div>
       </div>
 
@@ -26,8 +25,26 @@
         <icon icon="news-panel-search" class="search-bar--icon" size="md" />
         <input v-model="keyword" type="search" class="search-bar--input" placeholder="搜尋懶人包文章">
       </form>
-      <sync-button to="/login" variant="tertiary" class="login-btn">登入</sync-button>
-      <sync-button to="/login" variant="primary" pill class="start-edit-btn">開始編輯</sync-button>
+      <template v-if="!getLoginStatus">
+        <sync-button to="/login" variant="tertiary" class="login-btn">登入</sync-button>
+        <sync-button to="/login" variant="primary" pill class="start-edit-btn">開始編輯</sync-button>
+      </template>
+      <template v-else>
+        <div class="dropdown-user">
+          <button class="avatar-user--btn">
+            <img class="avatar-user--img" height="48" width="48" :src="getPhotoURL">
+          </button>
+          <div class="dropdown-user--content">
+            <router-link to="/profile" @click.native="handleClickProfile">
+              個人頁面
+            </router-link>
+            <router-link to="/" @click.native="handleLogout">
+              登出
+            </router-link>
+          </div>
+        </div>
+
+      </template>
 
       <b-modal
         v-model="modalShow"
@@ -111,7 +128,8 @@ export default {
         this.$router.push(`/article/${articleId}`)
       }
     },
-    handleLogout() {
+    handleLogout(event) {
+      event.target.blur()
       firebase.handleLogout()
       this.$store.commit('article/RESET')
     },
@@ -125,6 +143,10 @@ export default {
       if (!this.keyword) return
       if (this.keyword === this.$route.query.q) return
       this.$router.push({ path: '/search', query: { q: this.keyword }})
+    },
+    handleClickProfile(event) {
+      // fire the blur event to close dropdown after clicked
+      event.target.blur()
     }
   }
 }
@@ -215,23 +237,86 @@ export default {
     }
   }
 }
-
 .dropdown:hover .dropdown-content, .dropdown:focus-within , .dropdown-btn:focus + .dropdown-content {
   display: block;
 }
 
+// user dropdown
+.dropdown-user {
+  position: relative;
+}
+
+.dropdown-user--content {
+
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 58px;
+
+  // style box
+  width: 122px;
+  background-color: white;
+  z-index: 1;
+  box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+
+  a {
+    color: black;
+    padding: 8px 16px;
+    font-weight: bold;
+    text-decoration: none;
+    display: block;
+    &:hover {
+      color: $blue-4;
+    }
+  }
+}
+
 .avatar-user {
+  &--img {
     -webkit-background-size: 32px 32px;
     background-size: 32px 32px;
-    border: 0;
+    border: 2px solid $gray-12;
     -webkit-border-radius: 50%;
     border-radius: 50%;
     display: block;
     margin: 0;
     position: relative;
-    height: 36px;
-    width: 36px;
-    z-index: 0;
+    height: 32px;
+    width: 32px;
+    z-index: 1;
+    &:hover {
+      opacity: 0.9;
+    }
+    &:active {
+      opacity: 0.5;
+    }
+  }
+
+  // for hover effect
+  &--btn {
+    display: flex;
+    align-items: center;
+    position: relative;
+    background-color: none;
+    border: none;
+    border-radius: 50%;
+    padding: 0;
+    &::before {
+      position: absolute;
+      display: block;
+      content: ' ';
+      height: 32px;
+      width: 32px;
+      border-radius: 50%;
+      background-color: $gray-12;
+      z-index: 0;
+    }
+  }
+}
+
+.dropdown-user:focus-within .dropdown-user--content, .avatar-user--btn:focus + .dropdown-user--content {
+  display: block;
 }
 
 .notification-container {
