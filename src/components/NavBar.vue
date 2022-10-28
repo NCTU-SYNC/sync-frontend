@@ -30,6 +30,17 @@
         <sync-button to="/login" variant="primary" pill class="start-edit-btn">開始編輯</sync-button>
       </template>
       <template v-else>
+        <div class="notification-dropdown">
+          <button class="icon-button notification--btn">
+            <icon icon="notification" class="notification--icon" />
+          </button>
+        </div>
+        <!-- post page -->
+        <button class="icon-button post--btn">
+          <router-link to="/post">
+            <icon icon="edit" size="lg" class="post--icon" />
+          </router-link>
+        </button>
         <div class="dropdown-user">
           <button class="avatar-user--btn">
             <img class="avatar-user--img" height="48" width="48" :src="getPhotoURL">
@@ -43,7 +54,6 @@
             </router-link>
           </div>
         </div>
-
       </template>
 
       <b-modal
@@ -247,7 +257,6 @@ export default {
 }
 
 .dropdown-user--content {
-
   display: none;
   position: absolute;
   right: 0;
@@ -302,6 +311,7 @@ export default {
     border: none;
     border-radius: 50%;
     padding: 0;
+    margin-left: 12px;
     &::before {
       position: absolute;
       display: block;
@@ -384,11 +394,34 @@ input[type="search"]:focus::-webkit-search-cancel-button {
   width: 100%;
 }
 
-.centered-block {
-    left: 50%;
-    transform: translate(-50%, 0);
-    -webkit-transform: translate(-50%, 0);
-    position: absolute;
+.post {
+  &--btn {
+    margin: 0px 12px;
+  }
+  &--icon {
+    height: 36px !important;
+    width: 36px !important;
+  }
+}
+.notification {
+  &--btn {
+    margin-right: 12px;
+    margin-left: 20px;
+  }
+  &--icon {
+    height: 36px !important;
+    width: 36px !important;
+  }
+}
+
+.icon-button {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  border-radius: 8px;
+  &:hover {
+    background-color: $gray-2;
+  }
 }
 
 </style>
