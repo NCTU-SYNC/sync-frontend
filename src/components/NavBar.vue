@@ -51,15 +51,13 @@
             <img class="avatar-user--img" height="48" width="48" :src="photoURL">
           </button>
           <div class="dropdown-user--content">
-            <div class="dropdown-user--profile">
-              <router-link to="/profile" class="d-flex justify-content-between" @click.native="handleClickProfile">
-                <img class="profile-avatar" height="48" width="48" :src="photoURL">
-                <div class="profile-detail">
-                  <div class="display-name">{{ displayName }}</div>
-                  <div class="display-email">{{ email }}</div>
-                </div>
-              </router-link>
-            </div>
+            <router-link class="dropdown-user--profile" to="/profile" @click.native="handleClickProfile">
+              <img class="profile-avatar" height="48" width="48" :src="photoURL">
+              <div class="profile-detail">
+                <div class="display-name">{{ displayName }}</div>
+                <div class="display-email">{{ email }}</div>
+              </div>
+            </router-link>
             <router-link to="/post" class="dropdown-user--link border-top-link">
               編輯新文章
             </router-link>
@@ -265,7 +263,7 @@ export default {
     font-weight: bold;
     text-decoration: none;
     display: block;
-    &:hover {
+    &:hover, &:focus, &:active {
       color: $blue-4;
     }
   }
@@ -278,10 +276,13 @@ export default {
 .dropdown-user {
   position: relative;
   &--profile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     height: 80px;
     margin-top: 4px;
     padding: 16px 24px;
-    &:hover {
+    &:hover, &:focus, &:active {
       background-color: $gray-2;
     }
     .profile-avatar {
@@ -319,7 +320,7 @@ export default {
     color: $text-1;
     font-weight: bold;
     position: relative;
-    &:hover {
+    &:hover, &:focus, &:active {
       background-color: $gray-2;
     }
     &.border-top-link {
@@ -430,6 +431,7 @@ export default {
   }
 }
 
+// style cancel button in input
 input[type="search"]::-webkit-search-cancel-button {
   -webkit-appearance: none;
   height: 1em;
@@ -509,7 +511,7 @@ input[type="search"]:focus::-webkit-search-cancel-button {
   border: none;
   padding: 0;
   border-radius: 8px;
-  &:hover {
+  &:hover, &:focus, &:active {
     background-color: $gray-2;
   }
 }
