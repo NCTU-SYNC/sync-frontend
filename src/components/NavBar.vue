@@ -61,16 +61,16 @@
             <router-link to="/post" class="dropdown-user--link border-top-link">
               編輯新文章
             </router-link>
-            <router-link to="/profile" class="dropdown-user--link border-top-link">
+            <router-link to="/profile" class="dropdown-user--link border-top-link" @click.native="handleClickProfile">
               瀏覽紀錄
             </router-link>
-            <router-link to="/profile" class="dropdown-user--link">
+            <router-link to="/profile" class="dropdown-user--link" @click.native="handleClickProfile">
               編輯過的文章
             </router-link>
-            <router-link to="/profile" class="dropdown-user--link">
+            <router-link to="/profile" class="dropdown-user--link" @click.native="handleClickProfile">
               收藏的文章
             </router-link>
-            <router-link to="/profile" class="dropdown-user--link">
+            <router-link to="/profile" class="dropdown-user--link" @click.native="handleClickProfile">
               個人設定
             </router-link>
             <router-link to="/" class="dropdown-user--link border-top-link" @click.native="handleLogout">
@@ -177,7 +177,9 @@ export default {
       this.$router.push({ path: '/search', query: { q: this.keyword }})
     },
     handleClickProfile(event) {
-      event.target.blur()
+      // Close dropdown when dropdown item clicked
+      // This is done by bluring the current target
+      event.currentTarget.blur()
     }
   }
 }
