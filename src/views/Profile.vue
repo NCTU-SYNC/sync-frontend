@@ -164,6 +164,11 @@ export default {
         console.error('Profile Initialization Error:', e)
       }
     }
+    // navigate to tab when page loaded
+    const tab = this.$route.query.tab
+    if (tab && this.tabMap.has(tab)) {
+      this.currentShowingIndex = this.tabMap.get(tab)
+    }
   },
   methods: {
     ...mapActions({ getToken: 'user/getToken' }),

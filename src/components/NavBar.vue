@@ -51,7 +51,7 @@
             <img class="avatar-user--img" height="48" width="48" :src="photoURL">
           </button>
           <div class="dropdown-user--content">
-            <router-link class="dropdown-user--profile" to="/profile" @click.native="handleClickProfile">
+            <router-link class="dropdown-user--profile" :to="{path: '/profile', query: {tab: 'settings'}}" @click.native="handleClickProfile">
               <img class="profile-avatar" height="48" width="48" :src="photoURL">
               <div class="profile-detail">
                 <div class="display-name">{{ displayName }}</div>
@@ -61,16 +61,16 @@
             <router-link to="/post" class="dropdown-user--link border-top-link">
               編輯新文章
             </router-link>
-            <router-link to="/profile" class="dropdown-user--link border-top-link" @click.native="handleClickProfile">
+            <router-link :to="{path: '/profile', query: {tab: 'browsing_history'}}" class="dropdown-user--link border-top-link" @click.native="handleClickProfile">
               瀏覽紀錄
             </router-link>
-            <router-link to="/profile" class="dropdown-user--link" @click.native="handleClickProfile">
+            <router-link :to="{path: '/profile', query: {tab: 'edited_articles'}}" class="dropdown-user--link" @click.native="handleClickProfile">
               編輯過的文章
             </router-link>
-            <router-link to="/profile" class="dropdown-user--link" @click.native="handleClickProfile">
+            <router-link :to="{path: '/profile', query: {tab: 'bookmarks'}}" class="dropdown-user--link" @click.native="handleClickProfile">
               收藏的文章
             </router-link>
-            <router-link to="/profile" class="dropdown-user--link" @click.native="handleClickProfile">
+            <router-link :to="{path: '/profile', query: {tab: 'settings'}}" class="dropdown-user--link" @click.native="handleClickProfile">
               個人設定
             </router-link>
             <router-link to="/" class="dropdown-user--link border-top-link" @click.native="handleLogout">
