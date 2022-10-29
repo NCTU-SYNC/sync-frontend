@@ -64,7 +64,28 @@
         </b-col>
       </b-row>
     </div>
-    <div class="topic-recommend d-flex justify-content-center align-items-center" />
+    <div class="topic-recommend d-flex justify-content-center">
+      <div
+        style="width: 100%; max-width: 1200px; margin: 40px 20px"
+        class="d-flex flex-column justify-content-center align-items-start"
+      >
+        <div class="title"> 為你推薦更多 </div>
+        <div class="content"> 選擇有興趣主題閱讀更多相關內容 </div>
+        <div class="d-flex flex-wrap">
+          <HashtagPill
+            v-for="(tag, tagIndex) in getRecommendHashtags()"
+            :key="tagIndex"
+            style="margin: 8px"
+            :name="tag"
+          />
+        </div>
+        <div v-if="!getLoginStatus()" class="content">
+          已經有一個 SYNC 帳戶？
+          <b-link :to="{ name: 'Login'}"> 登入 </b-link>
+          以查看更多推薦內容？
+        </div>
+      </div>
+    </div>
 
   </b-container>
 </template>
@@ -73,6 +94,7 @@
 import ArticleCard from '@/components/ArticleCard.vue'
 import HeadlineCard from '@/components/Headline.vue'
 import CategoryBar from '@/components/CategoryBar.vue'
+import HashtagPill from '@/components/HashtagPill.vue'
 import articleAPI from '@/api/article'
 
 export default {
@@ -80,7 +102,8 @@ export default {
   components: {
     ArticleCard,
     HeadlineCard,
-    CategoryBar
+    CategoryBar,
+    HashtagPill
   },
   data() {
     return {
@@ -255,6 +278,17 @@ export default {
         this.pickedHeadline %= Math.min(this.headline.length, 5)
       }, this.HEADLINEINTERVAL)
       this.pickedHeadline = 0
+    },
+    getLoginStatus() {
+      return this.$store.getters.isLogin
+    },
+    getRecommendHashtags() {
+      // TODO: get recommend hashtags by api
+      return [
+        '九合一大選', '強尼戴普', '加密貨幣', 'COVID-19', '墮胎自主權',
+        '防疫政策', '烏俄戰爭', '加密貨幣', '普丁', '快篩試劑',
+        '兒童疫苗', '金曲獎33', '猴痘', '確診'
+      ]
     }
   }
 }
@@ -356,6 +390,20 @@ export default {
     z-index: -1;
     opacity: 0.4;
     background-image: url('../../src/assets/images/TopicRecommendBG.svg');
+  }
+
+  .title{
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 40px;
+    letter-spacing: 2px;
+  }
+
+  .content{
+    margin: 32px 0;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 24px;
   }
 }
 
