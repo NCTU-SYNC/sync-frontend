@@ -27,7 +27,7 @@
       </form>
       <template v-if="!isLogin">
         <sync-button to="/login" variant="tertiary" class="login-btn">登入</sync-button>
-        <sync-button to="/login" variant="primary" pill class="start-edit-btn">開始編輯</sync-button>
+        <sync-button :to="{path: '/login', query: { redirect: '/post'}}" variant="primary" pill class="start-edit-btn">開始編輯</sync-button>
       </template>
       <template v-else>
         <div class="notification-dropdown">
