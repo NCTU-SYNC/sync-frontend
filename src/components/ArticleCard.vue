@@ -10,8 +10,8 @@
       footer-class="p-0 article-footer"
     >
       <button v-b-tooltip.hover.bottom.v-secondary="bookmarkTooltip" class="subscribe-btn" @click="handleClickBookmark()">
-        <icon v-if="!isSubscribed" icon="save" />
-        <icon v-else icon="saved" />
+        <SyncIcon v-if="!isSubscribed" icon="save" />
+        <SyncIcon v-else icon="saved" />
       </button>
       <b-card-body class="d-flex flex-column p-0">
         <b-link :to="`/article/${articleId}`">

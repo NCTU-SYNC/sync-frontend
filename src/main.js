@@ -1,20 +1,15 @@
-// Support old IE
-import 'core-js/stable'
-import 'regenerator-runtime/runtime'
-import 'intersection-observer'
 import Vue from 'vue'
 import App from './App.vue'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import store from './store'
 import FirebaseAuth from '@/utils/firebase.js'
 import router from './router'
+// vite-plugin-svg-icons setup
+import 'virtual:svg-icons-register'
 import SvgIcon from '@/components/SvgIcon'
 import '@/assets/scss/main.scss'
 
-const requireAll = requireContext => requireContext.keys().map(requireContext)
-const req = require.context('@/assets/icons', true, /\.svg$/)
-requireAll(req)
-Vue.component('icon', SvgIcon)
+Vue.component('SyncIcon', SvgIcon)
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)

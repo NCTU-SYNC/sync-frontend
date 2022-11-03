@@ -1,10 +1,11 @@
+import { vi, describe, it } from 'vitest'
 import nock from 'nock'
 
 import APIBase from '@/api'
 import { getBaseURL } from '../../../src/utils/api'
 import firebaseAuth from '@/utils/firebase'
 
-jest.mock('@/store')
+vi.mock('@/store')
 
 describe('API basic spec', () => {
   const getTokenMock = jest.spyOn(firebaseAuth, 'token', 'get')

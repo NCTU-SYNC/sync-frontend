@@ -7,7 +7,7 @@
       >
         <div id="search-form">
           <div class="search-row d-flex align-items-center">
-            <icon icon="news-panel-search" class="search-icon" size="md" />
+            <SyncIcon icon="news-panel-search" class="search-icon" size="md" />
             <b-form-input
               id="search-articles"
               :value="keyword"
@@ -78,7 +78,7 @@
       </b-container>
       <div v-else class="loading-animation--container">
         <b-img
-          :src="require('@/assets/images/search-animation.svg')"
+          src="src/assets/images/search-animation.svg"
           class="loading-animation"
         />
       </div>

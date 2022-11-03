@@ -1,5 +1,7 @@
-jest.mock('@/store')
-jest.mock('@/router', () => {
+import { vi, describe, it } from 'vitest'
+
+vi.mock('@/store')
+vi.mock('@/router', () => {
   return {
     currentRoute: {
       params: {
@@ -11,7 +13,8 @@ jest.mock('@/router', () => {
     push: jest.fn()
   }
 })
-jest.mock('@/api/article').resetAllMocks()
+vi.mock('@/api/ariticle')
+// jest.mock('@/api/article').resetAllMocks()
 
 import { getters, mutations, actions } from '@/store/search'
 

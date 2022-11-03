@@ -4,7 +4,18 @@ module.exports = {
   env: {
     browser: true,
     node: true,
-    es6: true
+    es2021: true
+  },
+
+  parser: '@babel/eslint-parser',
+
+  parserOptions: {
+    requireConfigFile: false,
+    babelOptions: {
+      babelrc: false,
+      configFile: false,
+      presets: ['@babel/preset-env']
+    }
   },
 
   extends: [
@@ -17,12 +28,6 @@ module.exports = {
     SharedArrayBuffer: 'readonly'
   },
 
-  parserOptions: {
-    parser: 'babel-eslint',
-    ecmaVersion: 2019,
-    sourceType: 'module'
-  },
-
   plugins: [
     'vue'
   ],
@@ -31,15 +36,16 @@ module.exports = {
   // it is base on https://github.com/vuejs/eslint-config-vue
   rules: {
     'vue/max-attributes-per-line': [2, {
-      'singleline': 10,
+      'singleline': {
+        'max': 10
+      },
       'multiline': {
-        'max': 1,
-        'allowFirstLine': false
+        'max': 1
       }
     }],
     'vue/singleline-html-element-content-newline': 'off',
     'vue/multiline-html-element-content-newline': 'off',
-    'vue/name-property-casing': ['error', 'PascalCase'],
+    'vue/component-definition-name-casing': ['error', 'PascalCase'],
     'vue/no-v-html': 'off',
     'accessor-pairs': 2,
     'arrow-spacing': [2, {

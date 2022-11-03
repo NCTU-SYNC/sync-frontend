@@ -7,7 +7,7 @@
       :editor="editor"
       :should-show="shouldShow"
     >
-      <icon icon="link" size="md" class="link-icon" />
+      <SyncIcon icon="link" size="md" class="link-icon" />
       <div class="url">
         <a :href="editor.getAttributes('link').href" target="_blank">{{ editor.getAttributes('link').href }}</a>
       </div>
