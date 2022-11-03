@@ -168,9 +168,9 @@ class FirebaseAuth {
     } catch (err) {
       console.error(err)
     } finally {
-          removeUserInfo()
-          store.dispatch('user/removeUser')
-        }
+        removeUserInfo()
+        store.dispatch('user/removeUser')
+    }
   }
 
   async loginWithGoogle() {

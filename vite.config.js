@@ -2,7 +2,7 @@ import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import vue from '@vitejs/plugin-vue2'
 import legacy from '@vitejs/plugin-legacy'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
-import path from "node:path"
+import path from 'node:path'
 
 // / <reference types="vitest" />
 // / <reference types="vite/client" />
@@ -74,7 +74,7 @@ export default defineConfig({
 
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': path.resolve(__dirname, './src')
     },
 
     extensions: ['.js', '.mjs', '.json', '.vue']
