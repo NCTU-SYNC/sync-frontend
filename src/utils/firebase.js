@@ -19,6 +19,13 @@ const firebaseConfig = {
 
 class FirebaseAuth {
   constructor() {
+    try {
+      this.app = initializeApp(firebaseConfig)
+    } catch (error) {
+      this.app = null
+      console.error(error)
+    }
+
     this.email = ''
     this.password = ''
     this.displayName = ''
@@ -54,6 +61,15 @@ class FirebaseAuth {
 
   getThirdPartyLoginMethods(id) {
     return this.thirdPartyLoginMethods.get(id)
+  }
+
+  async getCurrentUser() {
+    return new Promise((res) => {
+      const unsubscribe = this.auth.onAuthStateChanged((user) => {
+        unsubscribe()
+        res(user)
+      })
+    })
   }
 
   async setupFirebase() {
