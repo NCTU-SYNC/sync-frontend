@@ -57,9 +57,6 @@ export default {
       return moment(this.lastUpdatedAt).locale('zh-tw').fromNow()
     }
   },
-  mounted() {
-    console.log(this.lg)
-  },
   methods: {
     goToArticle() {
       this.$router.push(`/article/${this.articleId}`)
