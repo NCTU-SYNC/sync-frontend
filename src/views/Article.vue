@@ -215,8 +215,6 @@ export default {
       editedCount: 0,
       citation: {},
       lastUpdatedAt: '',
-      timeId: null,
-      time: moment(),
       isLogin: false,
       isSubscribed: false,
       isPageReady: false,
@@ -230,12 +228,6 @@ export default {
     }
   },
   computed: {
-    getYear() {
-      return this.time.getFullYear()
-    },
-    getMonth() {
-      return this.time.getMonth()
-    },
     articleId() {
       return this.$route.params.ArticleID
     },
@@ -280,10 +272,6 @@ export default {
   },
   created() {
     this.$on('reloadData', this.getArticleData)
-    this.time = moment()
-    this.timeId = setInterval(() => {
-      this.time = moment()
-    }, 1000)
 
     this.getArticleData()
     // check if user logged in
@@ -296,12 +284,6 @@ export default {
     }
   },
   mounted() {
-    window.addEventListener('scroll', this.updateScroll)
-  },
-  beforeDestroy() {
-    clearInterval(this.timeId)
-    this.time = null
-    window.removeEventListener('scroll', this.updateScroll)
   },
   methods: {
     getArticleData() {
@@ -428,9 +410,6 @@ export default {
       const element = this.$refs[refName][0]
       const top = element.offsetTop
       window.scrollTo({ left: 0, top: top - (64 + 10), behavior: 'smooth' })
-    },
-    updateScroll() {
-      this.windowScrollY = window.scrollY
     }
   }
 }
