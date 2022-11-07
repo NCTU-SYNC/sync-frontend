@@ -284,6 +284,10 @@ export default {
     }
   },
   mounted() {
+    window.addEventListener('scroll', this.updateScroll)
+  },
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.updateScroll)
   },
   methods: {
     getArticleData() {
@@ -410,6 +414,9 @@ export default {
       const element = this.$refs[refName][0]
       const top = element.offsetTop
       window.scrollTo({ left: 0, top: top - (64 + 10), behavior: 'smooth' })
+    },
+    updateScroll() {
+      this.windowScrollY = window.scrollY
     }
   }
 }
