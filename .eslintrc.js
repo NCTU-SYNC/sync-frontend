@@ -7,10 +7,10 @@ module.exports = {
     es2021: true
   },
 
-  parser: '@babel/eslint-parser',
-
   parserOptions: {
     requireConfigFile: false,
+    parser: '@babel/eslint-parser',
+    jsx: true,
     babelOptions: {
       babelrc: false,
       configFile: false,
