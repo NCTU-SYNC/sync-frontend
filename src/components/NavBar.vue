@@ -16,17 +16,17 @@
         </div>
       </div>
 
-      <sync-button variant="nav">熱門時事</sync-button>
-      <sync-button variant="nav">最新編輯</sync-button>
+      <sync-button variant="nav" class="topic-btn">熱門時事</sync-button>
+      <sync-button variant="nav" class="topic-btn">最新編輯</sync-button>
     </div>
 
-    <div class="navbar--item item-right d-flex align-items-center">
+    <div class="navbar--item item-right">
       <form class="search-bar" @submit.prevent="submitSearch">
         <icon icon="news-panel-search" class="search-bar--icon" size="md" />
         <input v-model="keyword" type="search" class="search-bar--input" placeholder="搜尋懶人包文章">
       </form>
       <template v-if="!isLogin">
-        <sync-button to="/login" variant="tertiary" class="login-btn">登入</sync-button>
+        <sync-button to="/login" variant="nav" class="login-btn">登入</sync-button>
         <sync-button :to="{path: '/login', query: { redirect: '/post'}}" variant="primary" pill class="start-edit-btn">開始編輯</sync-button>
       </template>
       <template v-else>
@@ -207,11 +207,12 @@ export default {
   .item-right {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
   }
 
   .sync-icon {
     height: 32px;
-    margin-right: 16px;
+    margin-right: 12px;
   }
 
   .login-btn {
@@ -225,6 +226,8 @@ export default {
   .topic-btn {
     display: flex;
     align-items: center;
+    padding-left: 12px;
+    padding-right: 12px;
   }
   .arrow-down-icon {
     padding: 0;
@@ -414,6 +417,8 @@ export default {
     border-radius: 20px;
     background-color: $gray-2;
     padding-left: 42px;
+    caret-color: $blue-4;
+    font-size: 14px;
 
     &::placeholder {
       color: $text-3;
