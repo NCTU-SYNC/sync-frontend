@@ -4,7 +4,10 @@
       {{ title }}
     </div>
     <div class="card-info">
-      <span class="card-info__time">{{ lastUpdatedAt }}</span>
+      <span class="card-info__time">
+        <sync-icon size="md" icon="timer" />
+        {{ lastUpdatedFromNow }}發布
+      </span>
       <span class="card-info__status">{{ status }}</span>
     </div>
     <div class="card-text">
@@ -15,6 +18,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   name: 'AwaitEditCard',
   props: {
@@ -50,6 +54,8 @@ export default {
       while (block.type !== 'text') block = block.content[0]
 
       return block.text
+    lastUpdatedFromNow() {
+      return moment(this.lastUpdatedAt).locale('zh-tw').fromNow()
     }
   },
   mounted() {
@@ -105,6 +111,7 @@ export default {
     font-size: 0.875rem;
 
     &__time {
+      display: flex;
       color: $text-2;
     }
 
