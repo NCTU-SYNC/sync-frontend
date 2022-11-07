@@ -19,6 +19,8 @@
 
 <script>
 import moment from 'moment'
+import { blocksToText } from '@/utils/editorUtil'
+
 export default {
   name: 'AwaitEditCard',
   props: {
@@ -49,11 +51,8 @@ export default {
   },
   computed: {
     body() {
-      let block = this.blocks[0].content
-
-      while (block.type !== 'text') block = block.content[0]
-
-      return block.text
+      return blocksToText(this.blocks)
+    },
     lastUpdatedFromNow() {
       return moment(this.lastUpdatedAt).locale('zh-tw').fromNow()
     }
