@@ -130,9 +130,18 @@
               :class="citations.length === 0 ? 'no-citation' : ''"
             >
               <div class="block-header">
-                <h2>
-                  {{ block.blockTitle }}
-                </h2>
+                <div class="d-flex justify-content-between">
+                  <h2>
+                    {{ block.blockTitle }}
+                  </h2>
+                  <b-button
+                    v-b-tooltip.hover.bottom.v-secondary="'分享段落'"
+                    class="btn-share"
+                  >
+                    <b-icon icon="share-fill"/>
+                  </b-button>
+                </div>
+                
                 <div v-if="block.blockDateTime" class="article-info">
                   事件時間：{{
                     formatBlockDateTime(block.blockDateTime, block.timeEnable)
@@ -464,6 +473,15 @@ p {
   border: 0px;
   background-color: #ffffff;
   padding: 0;
+}
+
+:deep(.btn-share) {
+  border: 0px;
+  background-color: #ffffff;
+  padding: 0;
+  color: black;
+  height: 32px;
+  width: 32px;
 }
 
 .category {
