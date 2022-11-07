@@ -33,8 +33,8 @@ export default {
       default: 'title'
     },
     blocks: {
-      type: Object,
-      default: () => {}
+      type: Array,
+      default: () => []
     },
     lastUpdatedAt: {
       type: String,
