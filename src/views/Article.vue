@@ -265,9 +265,16 @@ export default {
     isPageReady(newValue) {
       this.$store.commit('SET_FOOTER', newValue)
       this.setOffsetTopOfSideElements()
+      // hack to scroll to block after sidebar set
+      this.$nextTick(()=> {
+        this.scrollToBlock()
+      })
     },
-    '$route.params.ArticleID': function() {
+    '$route.params.ArticleID'() {
       this.getArticleData()
+    },
+    '$route.query'() {
+      this.scrollToBlock()
     }
   },
   created() {
@@ -417,6 +424,22 @@ export default {
     },
     updateScroll() {
       this.windowScrollY = window.scrollY
+    },
+    checkBlockExists(blockId) {
+      const refName = `block-${blockId}`
+      return refName in this.$refs
+    },
+    // if query block set, scroll to respective block
+    scrollToBlock() {
+      // check if query exists
+      const query = this.$route.query
+      if ('block' in query && this.checkBlockExists(query['block'])) {
+        // scroll to block if block exists
+        const blockRef = `block-${query['block']}`
+        this.$nextTick(() => {
+          this.scrollTo(blockRef)
+        })
+      }
     }
   }
 }
