@@ -137,11 +137,11 @@
                   <b-button
                     v-b-tooltip.hover.bottom.v-secondary="'分享段落'"
                     class="btn-share"
+                    @click="getBlockLink(block._id)"
                   >
-                    <b-icon icon="share-fill"/>
+                    <b-icon icon="share-fill" />
                   </b-button>
                 </div>
-                
                 <div v-if="block.blockDateTime" class="article-info">
                   事件時間：{{
                     formatBlockDateTime(block.blockDateTime, block.timeEnable)
@@ -181,6 +181,20 @@
               </div>
             </div>
           </div>
+          <b-toast
+            id="share-block-toast"
+            toast-class="share-block-toast--toast"
+            body-class="share-block-toast--toast-body"
+            toaster="share-block-toaster"
+            no-close-button
+            auto-hide-delay="2500"
+          >
+            已將連結複製到剪貼簿
+          </b-toast>
+          <b-toaster
+            class="b-toaster-bottom-center share-block-toast--toaster"
+            name="share-block-toaster"
+          />
         </div>
       </transition>
     </div>
@@ -275,7 +289,7 @@ export default {
       this.$store.commit('SET_FOOTER', newValue)
       this.setOffsetTopOfSideElements()
       // hack to scroll to block after sidebar set
-      this.$nextTick(()=> {
+      this.$nextTick(() => {
         this.scrollToBlock()
       })
     },
@@ -449,6 +463,18 @@ export default {
           this.scrollTo(blockRef)
         })
       }
+    },
+    getBlockLink(blockId) {
+      console.log(blockId)
+      const url = window.location.origin + '/#' + this.$route.path
+      const query = `?block=${blockId}`
+      this.copyToClipBoard(url + query)
+      this.$nextTick(() => {
+        this.$bvToast.show('share-block-toast')
+      })
+    },
+    copyToClipBoard(textToCopy) {
+      navigator.clipboard.writeText(textToCopy)
     }
   }
 }
@@ -724,5 +750,46 @@ p {
 
 html {
   scroll-behavior: smooth;
+}
+</style>
+
+<style lang="scss">
+
+//toast animation
+
+@keyframes toastAnimation {
+  from {
+    transform: translateY(3.5rem);
+  }
+  to {
+    transform: translateY(-3.5rem);
+  }
+}
+.share-block-toast {
+  &--toast {
+    position: relative;
+    background-color: $blue !important;
+    border-radius: 0.5rem;
+    transform: translateY(-3.5rem);
+
+    animation-name: toastAnimation;
+    animation-duration: 0.3s;
+    animation-timing-function: ease;
+  }
+
+  &--toast-body {
+    font-size: 18px;
+    line-height: 30px;
+    color: $white;
+    padding: 0.5rem 1rem;
+  }
+
+  &--toaster {
+    div {
+      display: flex;
+      width: fit-content;
+      margin: 0 auto;
+    }
+  }
 }
 </style>
