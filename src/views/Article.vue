@@ -137,7 +137,7 @@
                   <b-button
                     v-b-tooltip.hover.bottom.v-secondary="'分享段落'"
                     class="btn-share"
-                    @click="getBlockLink(block._id)"
+                    @click="triggerShareModal(block._id, block.blockTitle)"
                   >
                     <b-icon icon="share-fill" />
                   </b-button>
@@ -195,6 +195,24 @@
             class="b-toaster-bottom-center share-block-toast--toaster"
             name="share-block-toaster"
           />
+          <b-modal
+            id="share-link--modal"
+            centered
+            title="分享段落"
+            size="lg"
+            ok-title="新增"
+            cancel-title="取消"
+            content-class="custom-modal"
+            body-class="custom-modal-body"
+            header-class="custom-modal-header"
+            hide-footer
+          >
+            <div class="share-content">
+              <div>分享此段落：<b>「{{ shareTitle }}」</b></div>
+              <b-form-input id="share-link--input" v-model="shareLink" class="input-form my-3" plaintext />
+              <b-button variant="share-link" @click="getBlockLink">複製連結</b-button>
+            </div>
+          </b-modal>
         </div>
       </transition>
     </div>
@@ -247,7 +265,9 @@ export default {
       FooterOffsetTop: 0,
       firstBlockDistToTop: 0,
       isRecommendedReady: false,
-      changePageTransition: false
+      changePageTransition: false,
+      shareLink: '',
+      shareTitle: ''
     }
   },
   computed: {
@@ -464,11 +484,15 @@ export default {
         })
       }
     },
-    getBlockLink(blockId) {
-      console.log(blockId)
+    triggerShareModal(blockId, blockTitle) {
       const url = window.location.origin + '/#' + this.$route.path
       const query = `?block=${blockId}`
-      this.copyToClipBoard(url + query)
+      this.shareLink = `${url}${query}`
+      this.shareTitle = blockTitle
+      this.$bvModal.show('share-link--modal')
+    },
+    getBlockLink() {
+      this.copyToClipBoard(this.shareLink)
       this.$nextTick(() => {
         this.$bvToast.show('share-block-toast')
       })
@@ -791,6 +815,84 @@ html {
         margin: 0 auto;
       }
     }
+  }
+  .custom-modal {
+    border-radius: 4px;
+    border: none;
+    height: 280px;
+    width: 480px;
+    margin: auto;
+    &-tall {
+      height: 448px;
+    }
+  }
+  .custom-modal-body {
+    padding: 24px 20px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+  }
+  .custom-modal-header {
+    border-bottom: 1px solid $gray-4;
+    padding: 20px;
+  }
+  .input-form {
+    margin: 1.5px;
+    margin-bottom: 1.5px;
+    font-size: 16px;
+    height: 40px;
+    border: 1px solid $gray-4 !important;
+    border-radius: 4px;
+    padding-left: 12px;
+    &:active, &:focus {
+      border: 1px solid $blue !important;
+    }
+    &::placeholder{
+      color: $text-4;
+    }
+    &.is-invalid {
+      border: 1px solid $red !important;
+    }
+    &.is-valid {
+      border: 1px solid $green !important;
+    }
+  }
+  %normal-btn {
+    font-size: 16px;
+    line-height: 24px;
+    padding: 7px 15px;
+    border: 1px solid transparent;
+  }
+  %share-link {
+    @extend %normal-btn;
+    background-color: $blue-4;
+    border-color: $blue-4;
+    color: $white;
+    &:hover {
+      background-color: $blue-3;
+      border-color: $blue-3;
+      color: $white;
+    }
+    &:active, &:focus {
+      background-color: $blue-5 !important;
+      border-color: $blue-5 !important;
+      color: $white;
+    }
+    &:disabled {
+      background-color: $blue-2;
+      border-color: $blue-2;
+      color: $white;
+    }
+  }
+  .btn-share-link {
+    @extend %share-link;
+    border-radius: 24px;
+    display: block !important;
+    margin: auto;
+  }
+  .share-content {
+    width: 100%;
+    font-size: 16px;
   }
 }
 
