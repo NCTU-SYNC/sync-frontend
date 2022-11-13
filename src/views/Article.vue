@@ -753,43 +753,45 @@ html {
 }
 </style>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
-//toast animation
-
-@keyframes toastAnimation {
-  from {
-    transform: translateY(3.5rem);
+// share style
+:deep(*) {
+  @keyframes toastAnimation {
+    from {
+      transform: translateY(3.5rem);
+    }
+    to {
+      transform: translateY(-3.5rem);
+    }
   }
-  to {
-    transform: translateY(-3.5rem);
-  }
-}
-.share-block-toast {
-  &--toast {
-    position: relative;
-    background-color: $blue !important;
-    border-radius: 0.5rem;
-    transform: translateY(-3.5rem);
+  .share-block-toast {
+    &--toast {
+      position: relative;
+      background-color: $blue !important;
+      border-radius: 0.5rem;
+      transform: translateY(-3.5rem);
 
-    animation-name: toastAnimation;
-    animation-duration: 0.3s;
-    animation-timing-function: ease;
-  }
+      animation-name: toastAnimation;
+      animation-duration: 0.3s;
+      animation-timing-function: ease;
+    }
 
-  &--toast-body {
-    font-size: 18px;
-    line-height: 30px;
-    color: $white;
-    padding: 0.5rem 1rem;
-  }
+    &--toast-body {
+      font-size: 18px;
+      line-height: 30px;
+      color: $white;
+      padding: 0.5rem 1rem;
+    }
 
-  &--toaster {
-    div {
-      display: flex;
-      width: fit-content;
-      margin: 0 auto;
+    &--toaster {
+      div {
+        display: flex;
+        width: fit-content;
+        margin: 0 auto;
+      }
     }
   }
 }
+
 </style>
