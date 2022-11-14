@@ -523,6 +523,7 @@ p {
   border: 0px;
   background-color: #ffffff;
   padding: 0;
+  color: #52535A;
 }
 
 :deep(.btn-share) {
