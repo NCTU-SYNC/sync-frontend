@@ -8,7 +8,13 @@
         <sync-icon size="md" icon="timer" />
         {{ lastUpdatedFromNow }}發布
       </span>
-      <span class="card-info__status">{{ status }}</span>
+      <span class="card-info__status">
+        <span class="card-info__status_pill">
+          <sync-icon size="sm" icon="pen-red" />
+          <span>{{ editingStatus }}</span>
+        </span>
+        <sync-icon v-if="editingNow > 0" size="md" icon="lifting-red" />
+      </span>
     </div>
     <div class="card-text">
       {{ body }}
@@ -40,9 +46,9 @@ export default {
       type: String,
       default: 'time'
     },
-    status: {
-      type: String,
-      default: 'status'
+    editingNow: {
+      type: Number,
+      default: 0
     },
     lg: {
       type: Boolean,
@@ -55,6 +61,9 @@ export default {
     },
     lastUpdatedFromNow() {
       return moment(this.lastUpdatedAt).locale('zh-tw').fromNow()
+    },
+    editingStatus() {
+      return this.editingNow === 0 ? '等待編輯中' : this.editingNow
     }
   },
   methods: {
@@ -112,7 +121,24 @@ export default {
     }
 
     &__status {
-      color: $text-1;
+      display: flex;
+      gap: 0.5rem;
+
+      &_pill {
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        padding: 0 10px;
+        gap: 0.5rem;
+        color: $text-1;
+        background-color: $red-1;
+        border-radius: 12px;
+
+        & > svg {
+          width: 0.75rem;
+          height: 0.75rem;
+        }
+      }
     }
   }
 
