@@ -1,6 +1,6 @@
-import { defineLocale } from 'moment'
+import moment from 'moment'
 
-defineLocale('zh-tw', {
+moment.defineLocale('zh-tw', {
   months: '一月_二月_三月_四月_五月_六月_七月_八月_九月_十月_十一月_十二月'.split('_'),
   monthsShort: '一月_二月_三月_四月_五月_六月_七月_八月_九月_十月_十一月_十二月'.split('_'),
   monthsParseExact: true,
