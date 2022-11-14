@@ -80,8 +80,8 @@ export default {
 <style lang="scss" scoped>
 .card {
   &-container {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: 8fr 3fr 6fr 6fr;
     width: 304px;
     height: 292px;
     border-radius: 16px;
@@ -100,6 +100,7 @@ export default {
     font-weight: 600;
     line-height: 1.875rem;
     color: $text-1;
+    margin: 0; // override bootstrap margin
 
     display: -webkit-box;
     line-clamp: 2;
