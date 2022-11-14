@@ -98,7 +98,6 @@ export default {
   flex: 1;
   width: 320px;
   max-height: 388px;
-  min-width: 304px;
   border-radius: 16px;
   box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.08);
 
