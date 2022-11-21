@@ -73,7 +73,7 @@
         <div class="content"> 選擇有興趣主題閱讀更多相關內容 </div>
         <div class="d-flex flex-wrap">
           <HashtagPill
-            v-for="(tag, tagIndex) in getRecommendHashtags()"
+            v-for="(tag, tagIndex) in recommendHashtags"
             :key="tagIndex"
             style="margin: 8px"
             :name="tag"
@@ -96,6 +96,7 @@ import HeadlineCard from '@/components/Headline.vue'
 import CategoryBar from '@/components/CategoryBar.vue'
 import HashtagPill from '@/components/HashtagPill.vue'
 import articleAPI from '@/api/article'
+import hashtagAPI from '@/api/hashtag'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -117,7 +118,8 @@ export default {
       iconPaths: ['latest', 'hot', 'explore'],
       pickedHeadline: 0,
       headlineTimer: null,
-      HEADLINEINTERVAL: 5000
+      HEADLINEINTERVAL: 5000,
+      recommendHashtags: []
     }
   },
   computed: {
@@ -205,6 +207,10 @@ export default {
           }
         })
         .catch((err) => console.error(err))
+      await hashtagAPI
+        .getRecommendHashtags()
+        .then((response) => { this.recommendHashtags = response })
+        .catch((err) => console.error(err))
       this.resetTimer()
     },
     getRandomArticles(arr, n) {
@@ -287,14 +293,6 @@ export default {
     },
     getLoginStatus() {
       return this.$store.getters.isLogin
-    },
-    getRecommendHashtags() {
-      // TODO: get recommend hashtags by api
-      return [
-        '九合一大選', '強尼戴普', '加密貨幣', 'COVID-19', '墮胎自主權',
-        '防疫政策', '烏俄戰爭', '加密貨幣', '普丁', '快篩試劑',
-        '兒童疫苗', '金曲獎33', '猴痘', '確診'
-      ]
     }
   }
 }
