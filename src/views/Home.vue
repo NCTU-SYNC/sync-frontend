@@ -79,7 +79,7 @@
             :name="tag"
           />
         </div>
-        <div v-if="!getLoginStatus()" class="content">
+        <div v-if="!isLogin" class="content">
           已經有一個 SYNC 帳戶？
           <b-link :to="{ name: 'Login'}"> 登入 </b-link>
           以查看更多推薦內容？
@@ -96,6 +96,7 @@ import HeadlineCard from '@/components/Headline.vue'
 import CategoryBar from '@/components/CategoryBar.vue'
 import HashtagPill from '@/components/HashtagPill.vue'
 import articleAPI from '@/api/article'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Home',
@@ -118,6 +119,11 @@ export default {
       headlineTimer: null,
       HEADLINEINTERVAL: 5000
     }
+  },
+  computed: {
+    ...mapGetters([
+      'isLogin'
+    ])
   },
   watch: {
     '$route.query.category'() {
