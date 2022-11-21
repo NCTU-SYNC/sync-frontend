@@ -44,7 +44,7 @@ export default {
     },
     lastUpdatedAt: {
       type: String,
-      default: 'time'
+      default: '20200504T074200'
     },
     editingNow: {
       type: Number,
