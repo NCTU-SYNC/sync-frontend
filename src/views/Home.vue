@@ -64,28 +64,7 @@
         </b-col>
       </b-row>
     </div>
-    <div class="topic-recommend d-flex justify-content-center">
-      <div
-        style="width: 100%; max-width: 1200px; margin: 40px 20px"
-        class="d-flex flex-column justify-content-center align-items-start"
-      >
-        <div class="title"> 為你推薦更多 </div>
-        <div class="content"> 選擇有興趣主題閱讀更多相關內容 </div>
-        <div class="d-flex flex-wrap">
-          <HashtagPill
-            v-for="(tag, tagIndex) in recommendHashtags"
-            :key="tagIndex"
-            style="margin: 8px"
-            :name="tag"
-          />
-        </div>
-        <div v-if="!isLogin" class="content">
-          已經有一個 SYNC 帳戶？
-          <b-link :to="{ name: 'Login'}"> 登入 </b-link>
-          以查看更多推薦內容？
-        </div>
-      </div>
-    </div>
+    <RecommendHashtag />
 
   </b-container>
 </template>
@@ -94,9 +73,8 @@
 import ArticleCard from '@/components/ArticleCard.vue'
 import HeadlineCard from '@/components/Headline.vue'
 import CategoryBar from '@/components/CategoryBar.vue'
-import HashtagPill from '@/components/HashtagPill.vue'
+import RecommendHashtag from '@/components/RecommendHashtag.vue'
 import articleAPI from '@/api/article'
-import hashtagAPI from '@/api/hashtag'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -105,7 +83,7 @@ export default {
     ArticleCard,
     HeadlineCard,
     CategoryBar,
-    HashtagPill
+    RecommendHashtag
   },
   data() {
     return {
@@ -118,8 +96,7 @@ export default {
       iconPaths: ['latest', 'hot', 'explore'],
       pickedHeadline: 0,
       headlineTimer: null,
-      HEADLINEINTERVAL: 5000,
-      recommendHashtags: []
+      HEADLINEINTERVAL: 5000
     }
   },
   computed: {
@@ -206,10 +183,6 @@ export default {
             ]
           }
         })
-        .catch((err) => console.error(err))
-      await hashtagAPI
-        .getRecommendHashtags()
-        .then((response) => { this.recommendHashtags = response })
         .catch((err) => console.error(err))
       this.resetTimer()
     },
