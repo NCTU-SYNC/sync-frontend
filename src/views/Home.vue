@@ -290,9 +290,6 @@ export default {
         this.pickedHeadline %= Math.min(this.headline.length, 5)
       }, this.HEADLINEINTERVAL)
       this.pickedHeadline = 0
-    },
-    getLoginStatus() {
-      return this.$store.getters.isLogin
     }
   }
 }
