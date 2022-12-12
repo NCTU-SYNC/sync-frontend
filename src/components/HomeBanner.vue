@@ -89,7 +89,6 @@
 </template>
 <script>
 
-import $ from 'jquery'
 import Swiper, { Navigation, Pagination, Autoplay } from 'swiper'
 import 'swiper/swiper-bundle.css'
 import 'swiper/modules/navigation/navigation.min.css'
@@ -130,25 +129,14 @@ export default {
       return imgLink !== null ? imgLink : this.thumbnailPlaceholder
     }
   },
-  methods: {
-    getArticleContent: Utils.getArticleContent,
-    getArticleFirstImage: Utils.getArticleFirstImage,
-    getCategory(newsCategory) {
-      if (typeof newsCategory === 'string') {
-        if (newsCategory.length === 0) { return '未分類' } else return newsCategory
-      } else return '未分類'
-    },
-    getDateTime(lastUpdatedAt) {
-      const datetime = moment(lastUpdatedAt)
-      if (datetime.isValid()) {
-        return datetime.format('MM/DD HH:mm')
-      }
-      return ''
-    }
-  },
+
   mounted() {
-    const timeline = $('#timeline')
-    const length = $('#timeline .swiper-slide').length
+    const timeline = document.getElementById('timeline')
+    const timelineSwipers = document.querySelectorAll('#timeline .swiper-slide')
+    const length = document.getElementById('swiper-wrapper').childNodes.length
+    console.log(length)
+    const btnNext = document.getElementById('btn-next')
+    const btnPrev = document.getElementById('btn-prev')
     const slidePerPage = 5
     let targetIndex = 0
     let slideIndex = 0
@@ -189,7 +177,7 @@ export default {
       spaceBetween: 0,
       on: {
         init: function() {
-          timeline.find('.swiper-slide').eq(0).addClass('current')
+          timelineSwipers[0].classList.add('current')
         },
         click: function() {
           slideIndex = this.clickedIndex
@@ -203,34 +191,59 @@ export default {
         prevEl: '.swiper-button-prev'
       }
     })
-    timeline.mouseover(function() {
+    timeline.addEventListener('mouseover', function() {
       newsTextSwiper.autoplay.stop()
     })
-    timeline.mouseout(function() {
+    timeline.addEventListener('mouseout', function() {
       newsTextSwiper.autoplay.start()
     })
-    $('.swiper-btn').on('click', function() {
-      navIndex = $('#timeline .swiper-slide-active').index()
+    btnNext.addEventListener('click', pageChange)
+    btnPrev.addEventListener('click', pageChange)
+    function pageChange() {
+      // navIndex = $('#timeline .swiper-slide-active').index()
+      navIndex = indexInParent(document.querySelector('#timeline .swiper-slide-active'))
       targetIndex =
         navIndex > targetIndex
           ? navIndex
           : targetIndex - navIndex >= slidePerPage
             ? navIndex
             : targetIndex
-
       renderCurrent(targetIndex)
       newsTextSwipe(targetIndex)
-    })
+    }
+
+    function indexInParent(child) {
+      var children = child.parentNode.childNodes
+      var num = 0
+      for (var i = 0; i < children.length; i++) {
+        if (children[i] === child) return num
+        if (children[i].nodeType === 1) num++
+      }
+      return -1
+    }
     function renderCurrent(index) {
-      timeline
-        .find('.swiper-slide')
-        .removeClass('current')
-        .eq(index)
-        .addClass('current')
+      timelineSwipers.forEach(swiper => swiper.classList.remove('current'))
+      timelineSwipers[index].classList.add('current')
     }
     function newsTextSwipe(index) {
       newsTextSwiper.slideTo(index, 500, false)
       newsTextSwiper.autoplay.start()
+    }
+  },
+  methods: {
+    getArticleContent: Utils.getArticleContent,
+    getArticleFirstImage: Utils.getArticleFirstImage,
+    getCategory(newsCategory) {
+      if (typeof newsCategory === 'string') {
+        if (newsCategory.length === 0) { return '未分類' } else return newsCategory
+      } else return '未分類'
+    },
+    getDateTime(lastUpdatedAt) {
+      const datetime = moment(lastUpdatedAt)
+      if (datetime.isValid()) {
+        return datetime.format('MM/DD HH:mm')
+      }
+      return ''
     }
   }
 }
