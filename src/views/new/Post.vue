@@ -74,7 +74,7 @@
                   </div>
                   <div class="btn-chevron">
                     <icon
-                      :icon="dropdownOpen ? 'arrow-up' : 'arrow-down-editor'"
+                      :icon="dropdownOpen ? 'arrow-up' : 'arrow-down-gray'"
                       size="md"
                     />
                   </div>
