@@ -92,7 +92,7 @@ export default {
 }
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 .article-card {
   position: relative;
   flex: 1;

@@ -10,7 +10,7 @@
               :disabled="searchKeyword.length === 0 || isLoading"
               @click="getNews"
             >
-              <icon icon="news-panel-search" size="md" />
+              <SyncIcon icon="news-panel-search" size="md" />
             </b-button>
             <b-form-input
               id="search-news"

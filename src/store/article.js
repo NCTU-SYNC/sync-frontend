@@ -1,4 +1,5 @@
 import UserAPI from '@/api/user'
+import FirebaseAuthInstance from '../utils/firebase'
 
 const getDefaultState = () => {
   return {
