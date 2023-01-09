@@ -2,33 +2,13 @@
   <b-container fluid>
     <category-bar />
     <div class="d-flex justify-content-center">
-      <div
-        v-if="headline.length > 0"
-        style="width: 1024px"
-        class="flex-md-nowrap"
-      >
-        <HeadlineCard
-          :category="headline[pickedHeadline].category"
-          :title="headline[pickedHeadline].title"
-          :views-count="headline[pickedHeadline].viewsCount"
-          :tags="headline[pickedHeadline].tags.slice(0, 4)"
-          :last-updated-at="headline[pickedHeadline].lastUpdatedAt"
-          :edited-count="headline[pickedHeadline].editedCount"
-          :blocks="headline[pickedHeadline].blocks"
-          :news-id="headline[pickedHeadline]._id"
-        />
-        <div class="headline-pages">
-          <input
-            v-for="(article, articleIndex) in headline.length"
-            :key="articleIndex"
-            v-model="pickedHeadline"
-            class="headline-page-button"
-            :value="articleIndex"
-            type="radio"
-            @click="resetTimer()"
-          >
-        </div>
-      </div>
+      <HomeBanner
+        :title="focus.title"
+        :tags="focus.tags.slice(0, 4)"
+        :last-updated-at="focus.lastUpdatedAt"
+        :blocks="focus.blocks"
+        :news-id="focus._id"
+      />
     </div>
     <div v-for="(section, sectionIndex) in allArticles" :key="sectionIndex">
       <b-row class="py-5 heading-bar">
@@ -71,11 +51,11 @@
 
 <script>
 import ArticleCard from '@/components/ArticleCard.vue'
-import HeadlineCard from '@/components/Headline.vue'
 import CategoryBar from '@/components/CategoryBar.vue'
 import RecommendHashtag from '@/components/RecommendHashtag.vue'
 import articleAPI from '@/api/article'
 import { mapGetters } from 'vuex'
+import HomeBanner from '@/components/HomeBanner.vue'
 
 export default {
   name: 'Home',
@@ -83,7 +63,8 @@ export default {
     ArticleCard,
     HeadlineCard,
     CategoryBar,
-    RecommendHashtag
+    RecommendHashtag,
+    HomeBanner
   },
   data() {
     return {
@@ -96,7 +77,8 @@ export default {
       iconPaths: ['latest', 'hot', 'explore'],
       pickedHeadline: 0,
       headlineTimer: null,
-      HEADLINEINTERVAL: 5000
+      HEADLINEINTERVAL: 5000,
+      focus: {}
     }
   },
   computed: {
@@ -164,6 +146,7 @@ export default {
               Math.min(6, latestArticles.content.length)
             )
             this.headline = this.exploreList.slice(0, 5)
+            this.focus = this.exploreList[0]
             this.allArticles = [
               {
                 title: '最新同步',
