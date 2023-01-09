@@ -93,6 +93,7 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 import moment from 'moment'
 import { Utils } from '@/utils'
+import thumbnailPlaceholder from '@/assets/images/thumbnail-placeholder.svg'
 
 export default {
   props: {
@@ -124,7 +125,7 @@ export default {
   computed: {
     imgLink() {
       const imgLink = this.getArticleFirstImage(this.blocks)
-      return imgLink !== null ? imgLink : this.thumbnailPlaceholder
+      return imgLink !== null ? imgLink : thumbnailPlaceholder
     }
   },
 
