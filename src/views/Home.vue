@@ -64,6 +64,8 @@
         </b-col>
       </b-row>
     </div>
+    <RecommendHashtag />
+
   </b-container>
 </template>
 
@@ -71,14 +73,17 @@
 import ArticleCard from '@/components/ArticleCard.vue'
 import HeadlineCard from '@/components/Headline.vue'
 import CategoryBar from '@/components/CategoryBar.vue'
+import RecommendHashtag from '@/components/RecommendHashtag.vue'
 import articleAPI from '@/api/article'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Home',
   components: {
     ArticleCard,
     HeadlineCard,
-    CategoryBar
+    CategoryBar,
+    RecommendHashtag
   },
   data() {
     return {
@@ -93,6 +98,11 @@ export default {
       headlineTimer: null,
       HEADLINEINTERVAL: 5000
     }
+  },
+  computed: {
+    ...mapGetters([
+      'isLogin'
+    ])
   },
   watch: {
     '$route.query.category'() {
@@ -340,4 +350,35 @@ export default {
 .headline-border {
   border-left: 1px solid $gray-light;
 }
+
+.topic-recommend {
+  position: relative;
+  height: 424px;
+  margin: 0 -15px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.4;
+    background-image: url('../../src/assets/images/TopicRecommendBG.svg');
+  }
+
+  .title{
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 40px;
+    letter-spacing: 2px;
+  }
+
+  .content{
+    margin: 32px 0;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 24px;
+  }
+}
+
 </style>
