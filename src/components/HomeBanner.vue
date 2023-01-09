@@ -1,13 +1,12 @@
 <template>
   <div>
-    <h1 class="home-focus">焦點內容</h1>
     <div class="home-banner">
       <div class="headline">
         <div class="headline-info d-flex">
           <div class="headline-image">
             <div class="img-container d-flex flex-column">
               <img
-                src="../assets/images/thumbnail-placeholder.svg"
+                :src="imgLink"
                 alt=""
               >
               <div class="paragraph">此篇內容的 {{ blocks.length }} 個段落</div>
@@ -90,9 +89,8 @@
 <script>
 
 import Swiper, { Navigation, Pagination, Autoplay } from 'swiper'
-import 'swiper/swiper-bundle.css'
-import 'swiper/modules/navigation/navigation.min.css'
-import 'swiper/modules/pagination/pagination.min.css'
+import 'swiper/css'
+import 'swiper/css/pagination'
 import moment from 'moment'
 import { Utils } from '@/utils'
 
