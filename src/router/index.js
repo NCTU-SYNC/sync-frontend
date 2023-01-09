@@ -8,8 +8,8 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'Home',
-      component: () => import('@/views/Home')
+      name: 'newHome',
+      component: () => import('@/views/newHome')
     },
     {
       path: '/login',
