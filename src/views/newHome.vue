@@ -1,62 +1,71 @@
 <template>
-  <div class="main-container">
-    <div class="section_title">
-      焦點內容
-    </div>
-    <!-- <HomeBanner
+  <div>
+    <div class="main-container">
+      <div class="container_block">
+        <div class="section_title">
+          焦點內容
+        </div>
+        <!-- <HomeBanner
       :title="articleBanner.title"
       :tags="articleBanner.tags.slice(0, 4)"
       :last-updated-at="articleBanner.lastUpdatedAt"
       :blocks="articleBanner.blocks"
       :news-id="articleBanner._id"
     /> -->
-    <div class="gallery">
-      <ArticleCard
-        v-for="(article, index) in articlesLatest"
-        :key="index"
-        :category="article.category"
-        :title="article.title"
-        :views-count="article.viewsCount"
-        :tags="article.tags.slice(0, 2)"
-        :last-updated-at="article.editedCount"
-        :blocks="article.blocks"
-        :article-id="article._id"
-        :lg="lg"
-      />
+        <div class="gallery">
+          <ArticleCard
+            v-for="(article, index) in articlesLatest"
+            :key="index"
+            :category="article.category"
+            :title="article.title"
+            :views-count="article.viewsCount"
+            :tags="article.tags.slice(0, 2)"
+            :blocks="article.blocks"
+            :article-id="article._id"
+            :lg="lg"
+          />
+        </div>
+      </div>
+
+      <div class="container_block">
+        <div class="section_title">等待編輯</div>
+        <div
+          class="gallery"
+          :class="{ 'gallery__wider': lg }"
+        >
+          <AwaitEditCard
+            v-for="(article, index) in articlesLatest"
+            :key="index"
+            :category="article.category"
+            :title="article.title"
+            :views-count="article.viewsCount"
+            :tags="article.tags.slice(0, 2)"
+            :last-updated-at="article.lastUpdatedAt"
+            :blocks="article.blocks"
+            :article-id="article._id"
+            :lg="lg"
+          />
+        </div>
+      </div>
+
+      <div class="container_block">
+        <div class="section_title">熱門內容</div>
+        <div class="gallery">
+          <ArticleCard
+            v-for="(article, index) in articlesHot"
+            :key="index"
+            :category="article.category"
+            :title="article.title"
+            :views-count="article.viewsCount"
+            :tags="article.tags.slice(0, 2)"
+            :blocks="article.blocks"
+            :article-id="article._id"
+            :lg="lg"
+          />
+        </div>
+      </div>
     </div>
-    <div class="section_title">等待編輯</div>
-    <div
-      class="gallery"
-      :class="{ 'gallery__wider': lg }"
-    >
-      <AwaitEditCard
-        v-for="(article, index) in articlesLatest"
-        :key="index"
-        :category="article.category"
-        :title="article.title"
-        :views-count="article.viewsCount"
-        :tags="article.tags.slice(0, 2)"
-        :last-updated-at="article.editedCount"
-        :blocks="article.blocks"
-        :article-id="article._id"
-        :lg="lg"
-      />
-    </div>
-    <div class="section_title">熱門內容</div>
-    <div class="gallery">
-      <ArticleCard
-        v-for="(article, index) in articlesHot"
-        :key="index"
-        :category="article.category"
-        :title="article.title"
-        :views-count="article.viewsCount"
-        :tags="article.tags.slice(0, 2)"
-        :last-updated-at="article.editedCount"
-        :blocks="article.blocks"
-        :article-id="article._id"
-        :lg="lg"
-      />
-    </div>
+    <RecommendHashtag />
   </div>
 </template>
 
@@ -65,6 +74,7 @@ import articleAPI from '@/api/article'
 import ArticleCard from '@/components/ArticleCard.vue'
 import AwaitEditCard from '@/components/AwaitEditCard.vue'
 import HomeBanner from '@/components/HomeBanner.vue'
+import RecommendHashtag from '@/components/RecommendHashtag.vue'
 
 function makeArticle(article = {}) {
   return {
@@ -79,11 +89,12 @@ function makeArticle(article = {}) {
 }
 
 export default {
-  name: 'newHome',
+  name: 'NewHome',
   components: {
     ArticleCard,
     AwaitEditCard,
-    HomeBanner
+    HomeBanner,
+    RecommendHashtag
   },
   data() {
     return {
@@ -91,6 +102,11 @@ export default {
       articlesLatest: [],
       articlesHot: [],
       windowWidth: window.innerWidth
+    }
+  },
+  computed: {
+    lg() {
+      return this.windowWidth >= 1280
     }
   },
   created() {
@@ -103,11 +119,6 @@ export default {
         console.log('size changed')
       })
     })
-  },
-  computed: {
-    lg() {
-      return this.windowWidth >= 1280
-    }
   },
   methods: {
     async getArticle() {
@@ -133,10 +144,21 @@ export default {
 @import '@/assets/scss/news.scss';
 
 .main-container {
+  display: flex;
+  flex-direction: column;
   max-width: 1240px;
-  margin: 0 auto;
+  margin: 4rem auto;
   padding: 0 1.25rem;
   box-sizing: content-box;
+  gap: 4rem;
+
+  @media screen and (max-width: 679px) {
+    margin-top: 2.5rem;
+  }
+}
+
+.container_block {
+  display: block;
 }
 
 .section {
@@ -145,7 +167,7 @@ export default {
     font-weight: 700;
     line-height: 2.5rem;
     letter-spacing: 2px;
-    margin: 2rem 0;
+    margin-bottom: 2rem;
   }
 }
 
