@@ -5,13 +5,13 @@
         <div class="section_title">
           焦點內容
         </div>
-        <!-- <HomeBanner
-      :title="articleBanner.title"
-      :tags="articleBanner.tags.slice(0, 4)"
-      :last-updated-at="articleBanner.lastUpdatedAt"
-      :blocks="articleBanner.blocks"
-      :news-id="articleBanner._id"
-    /> -->
+        <HomeBanner
+          :title="articleBanner.title"
+          :tags="articleBanner.tags.slice(0, 4)"
+          :last-updated-at="articleBanner.lastUpdatedAt"
+          :blocks="articleBanner.blocks"
+          :news-id="articleBanner._id"
+        />
         <div class="gallery">
           <ArticleCard
             v-for="(article, index) in articlesLatest"
@@ -98,7 +98,7 @@ export default {
   },
   data() {
     return {
-      articleBanner: makeArticle(),
+      articleBanner: {},
       articlesLatest: [],
       articlesHot: [],
       windowWidth: window.innerWidth
@@ -121,8 +121,8 @@ export default {
     })
   },
   methods: {
-    async getArticle() {
-      await articleAPI.get().then((response) => {
+    getArticle() {
+      articleAPI.get().then((response) => {
         const { data } = response
 
         if (data.code !== 200) return

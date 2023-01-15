@@ -46,10 +46,11 @@
                   </p>
                 </div>
               </div>
-              <a
+              <router-link
                 class="readmore"
-                href="#"
-              > 閱讀全文 > </a>
+                :to="`/article/${newsId}`"
+              > 閱讀全文 >
+              </router-link>
             </div>
           </div>
         </div>
@@ -75,10 +76,10 @@
           </div>
           <!-- <div class="swiper-button-next"></div>
                         <div class="swiper-button-prev"></div> -->
-          <div class="swiper-btn-box swiper-box-next">
+          <div id="btn-next" class="swiper-btn-box swiper-box-next">
             <div class="swiper-button-next swiper-btn" />
           </div>
-          <div class="swiper-btn-box swiper-box-prev">
+          <div id="btn-prev" class="swiper-btn-box swiper-box-prev">
             <div class="swiper-button-prev swiper-btn" />
           </div>
         </div>
@@ -131,9 +132,7 @@ export default {
 
   mounted() {
     const timeline = document.getElementById('timeline')
-    const timelineSwipers = document.querySelectorAll('#timeline .swiper-slide')
-    const length = document.getElementById('swiper-wrapper').childNodes.length
-    console.log(length)
+    // const timelineSwipers = document.querySelectorAll('#timeline .swiper-slide')
     const btnNext = document.getElementById('btn-next')
     const btnPrev = document.getElementById('btn-prev')
     const slidePerPage = 5
@@ -176,7 +175,8 @@ export default {
       spaceBetween: 0,
       on: {
         init: function() {
-          timelineSwipers[0].classList.add('current')
+          const swipers = document.getElementById('swiper-wrapper').childNodes
+          swipers[0].classList.add('current')
         },
         click: function() {
           slideIndex = this.clickedIndex
@@ -200,7 +200,7 @@ export default {
     btnPrev.addEventListener('click', pageChange)
     function pageChange() {
       // navIndex = $('#timeline .swiper-slide-active').index()
-      navIndex = indexInParent(document.querySelector('#timeline .swiper-slide-active'))
+      navIndex = indexInParent(document.querySelector('#timeline .current'))
       targetIndex =
         navIndex > targetIndex
           ? navIndex
@@ -221,8 +221,9 @@ export default {
       return -1
     }
     function renderCurrent(index) {
-      timelineSwipers.forEach(swiper => swiper.classList.remove('current'))
-      timelineSwipers[index].classList.add('current')
+      const swipers = document.getElementById('swiper-wrapper').childNodes
+      swipers.forEach(swiper => swiper.classList.remove('current'))
+      swipers[index].classList.add('current')
     }
     function newsTextSwipe(index) {
       newsTextSwiper.slideTo(index, 500, false)
