@@ -3929,7 +3929,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dom7@npm:^4.0.2":
+"dom7@npm:^4.0.4":
   version: 4.0.4
   resolution: "dom7@npm:4.0.4"
   dependencies:
@@ -8191,13 +8191,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swiper@npm:^7.4.1":
-  version: 7.4.1
-  resolution: "swiper@npm:7.4.1"
+"swiper@npm:^8.4.5":
+  version: 8.4.5
+  resolution: "swiper@npm:8.4.5"
   dependencies:
-    dom7: ^4.0.2
+    dom7: ^4.0.4
     ssr-window: ^4.0.2
-  checksum: 996339afa86a0200564d2418b9f5a5f222cb91a5fec7a1ee3123e47a8978b7458fedeb87c7dfeb86ad0559c2bef3e20779a87d71987e9d36b5651fa9dada9a2c
+  checksum: 7b790b897c4aeb616cae02517a1137dc3f8d552bcc3ecb2942ddf8e4ae75f2efeb28816d3d4e648248c3a24eb3611f2700f555372c15f7163cc2434da3ef8317
   languageName: node
   linkType: hard
 
@@ -8261,7 +8261,7 @@ __metadata:
     prosemirror-view: ^1.29.1
     sass: ^1.54.8
     svg-sprite-loader: ^6.0.9
-    swiper: ^7.4.1
+    swiper: ^8.4.5
     terser: ^5.15.0
     vite: ^3.1.0
     vite-plugin-svg-icons: ^2.0.1

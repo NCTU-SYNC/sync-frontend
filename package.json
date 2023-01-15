@@ -41,7 +41,7 @@
     "prosemirror-state": "^1.4.2",
     "prosemirror-transform": "^1.7.0",
     "prosemirror-view": "^1.29.1",
-    "swiper": "^7.4.1",
+    "swiper": "^8.4.5",
     "vue": "^2.7.10",
     "vue-router": "^3.6.4",
     "vuex": "^3.6.2"
