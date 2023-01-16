@@ -29,7 +29,7 @@
 
       <div class="container_block">
         <div class="section_title">等待編輯</div>
-        <div class="scrollable">
+        <div ref="awaitEditScroll" class="scrollable" @mousedown="dragStartHandler" @click.capture="dragStopClick">
           <div
             class="gallery"
             :class="{ 'gallery__wider': lg, 'gallery__md': md }"
@@ -103,6 +103,8 @@ export default {
       articleBanner: {},
       articlesLatest: [],
       articlesHot: [],
+      dragPos: { left: 0, x: 0 },
+      isDragging: false,
       windowWidth: window.innerWidth,
       doneInit: false
     }
@@ -144,6 +146,36 @@ export default {
       } finally {
         this.doneInit = true
       }
+    },
+    horizontalScroll(event) {
+      if (event.deltaY > 0) this.$refs.awaitEditScroll.scrollLeft(15)
+      else this.$refs.awaitEditScroll.scrollLeft(-15)
+    },
+    dragStartHandler(event) {
+      this.dragPos = { left: this.$refs.awaitEditScroll.scrollLeft, x: event.clientX }
+
+      event.target.style.cursor = 'grabbing'
+      event.target.style.userSelect = 'none'
+      document.addEventListener('mousemove', this.dragMoveHandler)
+      document.addEventListener('mouseup', this.dragDoneHandler, true)
+    },
+    dragMoveHandler(event) {
+      this.isDragging = true
+      const dx = event.clientX - this.dragPos.x
+
+      this.$refs.awaitEditScroll.scrollLeft = this.dragPos.left - dx
+    },
+    dragDoneHandler(event) {
+      event.stopPropagation()
+      document.removeEventListener('mousemove', this.dragMoveHandler)
+      document.removeEventListener('mouseup', this.dragDoneHandler)
+
+      event.target.style.cursor = 'grab'
+      event.target.style.removeProperty('user-select')
+      setTimeout(() => { this.isDragging = false }, 0)
+    },
+    dragStopClick(event) {
+      if (this.isDragging) event.stopPropagation()
     }
   }
 }
@@ -200,7 +232,5 @@ export default {
   margin-left: calc(50% - 50vw);
   padding: 0 calc(50vw - 50%);
   overflow-x: auto;
-
-  $prefix_padding: calc(100vw - 100%);
 }
 </style>
