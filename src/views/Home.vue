@@ -233,6 +233,12 @@ export default {
   padding: 0 calc(50vw - 50%);
   overflow-x: auto;
 
+  /* un-cuts shadow */
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-top: -20px;
+  margin-bottom: -20px;
+
   /* Hide ScrollBar */
   &::-webkit-scrollbar {
     width: 0 !important;
