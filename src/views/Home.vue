@@ -29,22 +29,24 @@
 
       <div class="container_block">
         <div class="section_title">等待編輯</div>
-        <div
-          class="gallery"
-          :class="{ 'gallery__wider': lg }"
-        >
-          <AwaitEditCard
-            v-for="(article, index) in articlesLatest"
-            :key="index"
-            :category="article.category"
-            :title="article.title"
-            :views-count="article.viewsCount"
-            :tags="article.tags.slice(0, 2)"
-            :last-updated-at="article.lastUpdatedAt"
-            :blocks="article.blocks"
-            :article-id="article._id"
-            :lg="lg"
-          />
+        <div class="scrollable">
+          <div
+            class="gallery"
+            :class="{ 'gallery__wider': lg, 'gallery__md': md }"
+          >
+            <AwaitEditCard
+              v-for="(article, index) in articlesLatest"
+              :key="index"
+              :category="article.category"
+              :title="article.title"
+              :views-count="article.viewsCount"
+              :tags="article.tags.slice(0, 2)"
+              :last-updated-at="article.lastUpdatedAt"
+              :blocks="article.blocks"
+              :article-id="article._id"
+              :lg="lg"
+            />
+          </div>
         </div>
       </div>
 
@@ -106,6 +108,9 @@ export default {
     }
   },
   computed: {
+    md() {
+      return this.windowWidth < 1280 && this.windowWidth >= 680
+    },
     lg() {
       return this.windowWidth >= 1280
     }
@@ -181,8 +186,21 @@ export default {
   gap: 2rem;
   margin: 0 auto;
 
+  &__md {
+    min-width: 976px;
+  }
+
   &__wider {
     width: 1444px;
   }
+}
+
+.scrollable {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding: 0 calc(50vw - 50%);
+  overflow-x: auto;
+
+  $prefix_padding: calc(100vw - 100%);
 }
 </style>
