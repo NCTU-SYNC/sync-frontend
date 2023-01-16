@@ -232,5 +232,11 @@ export default {
   margin-left: calc(50% - 50vw);
   padding: 0 calc(50vw - 50%);
   overflow-x: auto;
+
+  /* Hide ScrollBar */
+  &::-webkit-scrollbar {
+    width: 0 !important;
+  }
+  scrollbar-width: none;
 }
 </style>
