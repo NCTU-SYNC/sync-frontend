@@ -31,7 +31,7 @@
       </template>
       <template v-else>
         <div class="notification-dropdown">
-          <button class="icon-button notification--btn">
+          <button class="icon-button notification--btn" @click="safariBtnFocusTweak">
             <icon icon="notification" class="notification--icon" />
           </button>
           <div class="notification-dropdown--content" :class="{'no-notification': notifications.length === 0}">
@@ -47,7 +47,7 @@
           </router-link>
         </button>
         <div class="dropdown-user">
-          <button class="avatar-user--btn">
+          <button class="avatar-user--btn" @click="safariBtnFocusTweak">
             <img class="avatar-user--img" height="48" width="48" :src="photoURL">
           </button>
           <div class="dropdown-user--content">
@@ -180,6 +180,10 @@ export default {
       // Close dropdown when dropdown item clicked
       // This is done by bluring the current target
       event.currentTarget.blur()
+    },
+    safariBtnFocusTweak(event) {
+      // This function is used to fixed the Safari focus problem
+      event.target.parentElement.focus()
     }
   }
 }
