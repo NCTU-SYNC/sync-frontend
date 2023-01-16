@@ -9,7 +9,7 @@ const router = new Router({
     {
       path: '/',
       name: 'newHome',
-      component: () => import('@/views/newHome')
+      component: () => import('@/views/Home')
     },
     {
       path: '/login',
