@@ -1,38 +1,18 @@
 <template>
   <b-container fluid>
     <div class="d-flex justify-content-center">
-      <div
-        v-if="headline.length > 0"
-        style="width: 1024px"
-        class="flex-md-nowrap"
-      >
-        <HeadlineCard
-          :category="headline[pickedHeadline].category"
-          :title="headline[pickedHeadline].title"
-          :views-count="headline[pickedHeadline].viewsCount"
-          :tags="headline[pickedHeadline].tags.slice(0, 4)"
-          :last-updated-at="headline[pickedHeadline].lastUpdatedAt"
-          :edited-count="headline[pickedHeadline].editedCount"
-          :blocks="headline[pickedHeadline].blocks"
-          :news-id="headline[pickedHeadline]._id"
-        />
-        <div class="headline-pages">
-          <input
-            v-for="(article, articleIndex) in headline.length"
-            :key="articleIndex"
-            v-model="pickedHeadline"
-            class="headline-page-button"
-            :value="articleIndex"
-            type="radio"
-            @click="resetTimer()"
-          >
-        </div>
-      </div>
+      <HomeBanner
+        :title="focus.title"
+        :tags="focus.tags.slice(0, 4)"
+        :last-updated-at="focus.lastUpdatedAt"
+        :blocks="focus.blocks"
+        :news-id="focus._id"
+      />
     </div>
     <div v-for="(section, sectionIndex) in allArticles" :key="sectionIndex">
       <b-row class="py-5 heading-bar">
         <b-col class="d-flex justify-content-center align-items-center">
-          <icon :icon="section.iconPath" class="mr-3" />
+          <SyncIcon :icon="section.iconPath" class="mr-3" />
           <h1 class="home-heading">{{ section.title }}</h1>
         </b-col>
       </b-row>
@@ -63,19 +43,28 @@
         </b-col>
       </b-row>
     </div>
+    <RecommendHashtag />
+
   </b-container>
 </template>
 
 <script>
 import ArticleCard from '@/components/ArticleCard.vue'
 import HeadlineCard from '@/components/Headline.vue'
+import CategoryBar from '@/components/CategoryBar.vue'
+import RecommendHashtag from '@/components/RecommendHashtag.vue'
 import articleAPI from '@/api/article'
+import { mapGetters } from 'vuex'
+import HomeBanner from '@/components/HomeBanner.vue'
 
 export default {
   name: 'Home',
   components: {
     ArticleCard,
-    HeadlineCard
+    HeadlineCard,
+    CategoryBar,
+    RecommendHashtag,
+    HomeBanner
   },
   data() {
     return {
@@ -88,8 +77,14 @@ export default {
       iconPaths: ['latest', 'hot', 'explore'],
       pickedHeadline: 0,
       headlineTimer: null,
-      HEADLINEINTERVAL: 5000
+      HEADLINEINTERVAL: 5000,
+      focus: {}
     }
+  },
+  computed: {
+    ...mapGetters([
+      'isLogin'
+    ])
   },
   watch: {
     '$route.query.category'() {
@@ -151,6 +146,7 @@ export default {
               Math.min(6, latestArticles.content.length)
             )
             this.headline = this.exploreList.slice(0, 5)
+            this.focus = this.exploreList[0]
             this.allArticles = [
               {
                 title: '最新同步',
@@ -337,4 +333,35 @@ export default {
 .headline-border {
   border-left: 1px solid $gray-light;
 }
+
+.topic-recommend {
+  position: relative;
+  height: 424px;
+  margin: 0 -15px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.4;
+    background-image: url('../../src/assets/images/TopicRecommendBG.svg');
+  }
+
+  .title{
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 40px;
+    letter-spacing: 2px;
+  }
+
+  .content{
+    margin: 32px 0;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 24px;
+  }
+}
+
 </style>

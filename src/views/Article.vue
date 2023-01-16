@@ -97,7 +97,7 @@
                     class="btn-icon mx-3"
                     @click="handleEditPostRoute(`${$route.path}/post`)"
                   >
-                    <icon icon="edit" />
+                    <SyncIcon icon="edit" />
                   </b-button>
 
                   <b-button
@@ -105,7 +105,7 @@
                     class="btn-icon mx-3"
                     @click="handleHistoryRoute"
                   >
-                    <icon icon="history-version" />
+                    <SyncIcon icon="history-version" />
                   </b-button>
 
                   <b-button
@@ -114,8 +114,8 @@
                     :class="isSubscribed ? 'subscribed' : ''"
                     @click="handleClickBookmark"
                   >
-                    <icon v-if="!isSubscribed" icon="save" />
-                    <icon v-else icon="saved" />
+                    <SyncIcon v-if="!isSubscribed" icon="save" />
+                    <SyncIcon v-else icon="saved" />
                   </b-button>
                 </div>
               </div>
@@ -448,12 +448,10 @@ p {
   margin-bottom: 50px;
 }
 
-.btn-icon {
-  &::v-deep {
-    border: 0px;
-    background-color: #ffffff;
-    padding: 0;
-  }
+:deep(.btn-icon) {
+  border: 0px;
+  background-color: #ffffff;
+  padding: 0;
 }
 
 .category {

@@ -6,7 +6,7 @@
     :title="title"
     @click="action"
   >
-    <icon :icon="icon" size="md" />
+    <SyncIcon :icon="icon" size="md" />
   </button>
 </template>
 
@@ -36,11 +36,6 @@ export default {
     tooltip: {
       type: String,
       default: null
-    }
-  },
-  methods: {
-    getIconUrl(icon) {
-      return require(`@/assets/icons/editor/ic-${icon}.svg`)
     }
   }
 }

@@ -1,231 +1,168 @@
 <template>
-  <b-col class="d-flex justify-content-center">
-    <b-card
-      no-body
-      :class="{'card--wide': full}"
-      class="card my-3 justify-content-center"
-      footer-tag="footer"
-      footer-bg-variant="white"
-      footer-border-variant="white"
-      footer-class="p-0 article-footer"
-    >
-      <button v-b-tooltip.hover.bottom.v-secondary="bookmarkTooltip" class="subscribe-btn" @click="handleClickBookmark()">
-        <icon v-if="!isSubscribed" icon="save" />
-        <icon v-else icon="saved" />
-      </button>
-      <b-card-body class="d-flex flex-column p-0">
-        <b-link :to="`/article/${articleId}`">
-          <div class="d-flex justify-content-between">
-            <div class="article-category">
-              {{ getCategory(category) }}
-            </div>
-          </div>
-          <div>
-            <b-card-title class="heading">
-              <h4>
-                {{ getTitle(title) }}
-              </h4>
-            </b-card-title>
-          </div>
-
-          <b-card-text class="article-excerpt" :class="{'article-excerpt--wide': full}">
-            {{ getArticleContent(blocks, excerptCount) }}
-          </b-card-text>
-        </b-link>
-      </b-card-body>
-      <template #footer>
-        <div class="d-flex justify-content-between">
-          <div>
-            {{ getDateTime(lastUpdatedAt) }}
-          </div>
-          <div>觀看數：{{ viewsCount }} | 編輯數：{{ editedCount }}</div>
-        </div>
-      </template>
-    </b-card>
-  </b-col>
+  <div class="article-card" :class="{'article-card__lg':lg}" @click="GotoArticle">
+    <div class="article-card__image">
+      <b-img-lazy :src="imgSrc" fluid-grow />
+    </div>
+    <div class="article-card__body">
+      <div v-show="hasCate" class="article-card__category">{{ category === '' ? '未分類' : category }}</div>
+      <div class="article-card__title">{{ title }}</div>
+      <div v-show="hasTags" class="article-card__hashtag">
+        <hashtag-pill v-for="(tag, tagIndex) in tags" :key="tagIndex" :name="tag" />
+      </div>
+    </div>
+    <div v-show="hasBadge" class="article-card__badge">
+      <b-img-lazy :src="badgeImgSrc" />
+    </div>
+  </div>
 </template>
 
 <script>
-import moment from 'moment'
-import { Utils } from '@/utils'
+import { BImgLazy } from 'bootstrap-vue'
+import HashtagPill from '@/components/HashtagPill.vue'
+import BadgeHot from '@/assets/images/badge-hot.svg'
+import BadgeNew from '@/assets/images/badge-new.svg'
+import thumbnail from '@/assets/images/thumbnail-placeholder.svg'
+
+const badge = new Map([
+  ['badge-hot', BadgeHot],
+  ['badge-new', BadgeNew]
+])
+
 export default {
   name: 'ArticleCard',
+  components: {
+    'b-img-lazy': BImgLazy,
+    'hashtag-pill': HashtagPill
+  },
   props: {
     title: {
       type: String,
-      default: 'title'
-    },
-    viewsCount: {
-      type: Number,
-      default: 0
+      required: true
     },
     category: {
       type: String,
-      default: '未分類'
-    },
-    lastUpdatedAt: {
-      type: String,
-      default: '2021-04-26'
-    },
-    editedCount: {
-      type: Number,
-      default: 0
-    },
-    blocks: {
-      type: Array,
       default: null
     },
-    articleId: {
+    tags: {
+      type: Array,
+      default: () => []
+    },
+    imageURL: {
       type: String,
       default: ''
     },
-    full: {
+    articleId: {
+      type: String,
+      required: true
+    },
+    badge: {
+      type: String,
+      default: '',
+      validator: (value) => {
+        return ['', 'hot', 'new'].includes(value)
+      }
+    },
+    lg: {
       type: Boolean,
       default: false
     }
   },
-  data() {
-    return {
-      isLogin: false,
-      isSubscribed: false
-    }
-  },
   computed: {
-    subscribedList() {
-      return this.$store.getters['article/subscribedList']
+    imgSrc() {
+      return this.imageURL === '' ? thumbnail : this.imageURL
     },
-    bookmarkTooltip() {
-      return this.isSubscribed ? '取消收藏文章' : '收藏文章'
+    hasTags() {
+      return this.tags.length > 0
     },
-    cols() {
-      return this.full ? 12 : 4
+    hasCate() {
+      return this.category !== null
     },
-    excerptCount() {
-      return this.full ? 190 : 140
-    }
-  },
-  watch: {
-    subscribedList(newList) {
-      if (newList) {
-        this.isSubscribed =
-          newList.findIndex(s => s.articleId === this.articleId) >= 0
-        return
-      }
-      this.isSubscribed = false
-    }
-  },
-  created() {
-    // check if user logged in
-    this.isLogin = !!this.$store.getters.isLogin
-    if (this.isLogin) {
-      this.isSubscribed =
-        this.subscribedList.findIndex(s => s.articleId === this.articleId) >= 0
+    hasBadge() {
+      return this.badge !== ''
+    },
+    badgeImgSrc() {
+      return badge.get(`badge-${this.badge}`)
     }
   },
   methods: {
-    getTitle(title) {
-      if (title && title.length > 30) {
-        return title.slice(0, 30) + ' ..'
-      }
-      return title
-    },
-    getCategory(newsCategory) {
-      if (typeof newsCategory === 'string') {
-        if (newsCategory.length === 0) {
-          return '未分類'
-        } else return newsCategory
-      } else { return '未分類' }
-    },
-    getDateTime(lastUpdatedAt) {
-      const datetime = moment(lastUpdatedAt)
-      if (datetime.isValid()) {
-        return datetime.format('YYYY.MM.DD HH:mm')
-      }
-      return ''
-    },
-    async handleClickBookmark() {
-      try {
-        if (!this.isSubscribed) {
-          await this.$store.dispatch('article/SUBSCRIBE', this.articleId)
-        } else {
-          this.$store.dispatch('article/UNSUBSCRIBE', this.articleId)
-        }
-      } catch (error) {
-        if (!this.isLogin) {
-          this.$bvModal.msgBoxOk(`尚未登入！追蹤文章失敗`, {
-            title: '追蹤文章',
-            okVariant: 'danger',
-            okTitle: '確定',
-            footerClass: 'modal-footer-confirm',
-            centered: true
-          })
-        } else {
-          this.$bvModal.msgBoxOk(
-            `${this.isSubscribed ? '取消' : ''}追蹤文章失敗`,
-            {
-              title: '追蹤文章',
-              okVariant: 'danger',
-              okTitle: '確定',
-              footerClass: 'modal-footer-confirm',
-              centered: true
-            }
-          )
-        }
-      }
-    },
-    getArticleContent: Utils.getArticleContent
+    GotoArticle() {
+      this.$router.push(`article/${this.articleId}`)
+    }
   }
 }
 </script>
 
-<style lang="scss" scoped>
-@import '@/assets/scss/news.scss';
+<style lang="scss">
+.article-card {
+  position: relative;
+  flex: 1;
+  width: 320px;
+  max-height: 388px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.08);
 
-.card {
-  padding: 15.2px;
-  max-width: 320px;
-  height: 380px;
-  width: 100%;
-
-  &--wide {
-    max-width: 800px;
-    height: 276px;
+  &:hover {
+    box-shadow: 0 4px 30px 0 rgba(0, 0, 0, 0.16);
+    cursor: pointer;
   }
 
-}
-.heading {
-  // font-size: 22px;
-  line-height: 1.5em;
-  max-height: 3em;
-  overflow: hidden;
-  h4 {
-    margin: 0;
+  &__body {
+    padding: 1.25rem;
+    padding-bottom: 1.5rem;
   }
-  box-sizing: border-box;
-  text-align: justify;
-  margin-top: 26px;
-  margin-bottom: 29px;
-}
 
-.article-excerpt {
-  line-height: 1.5em;
-  overflow: hidden;
-  margin-bottom: 20px;
-  display: -webkit-box;
-  -webkit-line-clamp: 7;
-  -webkit-box-orient: vertical;
-  &--wide {
-    -webkit-line-clamp: 4;
+  &__image {
+    height: 220px;
+    overflow: hidden;
+    border-radius: 16px 16px 0 0;
+    margin: auto;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
-}
 
-.subscribe-btn {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: transparent;
-  border: 0;
-  padding: 0;
-  margin: 0;
+  &__category {
+    font-size: 0.875rem;
+    color: $gray-8;
+    line-height: 1.25rem;
+    -webkit-line-clamp: 2;
+  }
+
+  &__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.875rem;
+    color: $text-1;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  &__hashtag {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  &__badge {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+  }
+
+  &__lg {
+    width: 392px;
+
+    .article-card__title {
+      font-size: 1.5rem;
+      line-height: 2rem;
+    }
+  }
 }
 </style>

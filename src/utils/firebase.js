@@ -1,13 +1,26 @@
-import firebase from 'firebase/app'
-import 'firebase/auth'
+import { initializeApp } from 'firebase/app'
+import {
+  getAuth, signInWithPopup, createUserWithEmailAndPassword,
+  signOut, GoogleAuthProvider, signInWithEmailAndPassword
+} from 'firebase/auth'
 import { removeUserInfo } from '@/utils/auth'
 import store from '../store/index'
-import { firebaseConfig } from '/config/firebaseConfig'
+
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DB_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJ_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MSG_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+}
 
 class FirebaseAuth {
   constructor() {
     try {
-      this.app = firebase.initializeApp(firebaseConfig)
+      this.app = initializeApp(firebaseConfig)
     } catch (error) {
       this.app = null
       console.error(error)
@@ -20,7 +33,7 @@ class FirebaseAuth {
   }
 
   get auth() {
-    return this.app.auth()
+    return getAuth()
   }
 
   get token() {
@@ -63,6 +76,18 @@ class FirebaseAuth {
     if (process.env.NODE_ENV === 'test') return Promise.resolve()
 
     try {
+      this.instance = initializeApp(firebaseConfig)
+    } catch(err) {
+      console.error(err)
+    }
+
+    if (import.meta.env.VITE_FIREBASE_EMULATOR === '1') {
+      const { connectAuthEmulator } = await import('firebase/auth')
+      connectAuthEmulator(this.auth, 'http://localhost:9099')
+    }
+
+    try {
+      // this.instance = getAuth()
       const handler = async(user) => {
         if (user) {
           const token = await this.auth.currentUser
@@ -87,7 +112,7 @@ class FirebaseAuth {
           this.isLogin = false
         }
       }
-      firebase.auth().onAuthStateChanged(handler)
+      getAuth().onAuthStateChanged(handler)
     } catch (error) {
       console.error(error)
     }
@@ -102,10 +127,13 @@ class FirebaseAuth {
   async handleSignup(email, password, displayName) {
     try {
       this.setUserInfo(email, password, displayName)
-      const { user } = await this.auth.createUserWithEmailAndPassword(
+      const { user } = await createUserWithEmailAndPassword(
+        this.auth,
         email,
         password
       )
+      this.isLogin = true
+
       user.updateProfile({
         displayName
       })
@@ -118,39 +146,45 @@ class FirebaseAuth {
 
   async handleLogin(email, password) {
     try {
-      const { user } = await this.auth.signInWithEmailAndPassword(
+      const { user } = await signInWithEmailAndPassword(
+        this.auth,
         email,
         password
       )
+
+      this.isLogin = true
       this.setUserInfo(email, password, user.displayName)
       store.dispatch('user/sendUserInfo', user)
       return Promise.resolve(user)
     } catch (error) {
       return Promise.reject(error)
     }
+
   }
 
-  handleLogout() {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        if (this.isLogin) {
-          removeUserInfo()
-          store.dispatch('user/removeUser')
-        }
-      })
+  async handleLogout() {
+    try {
+      await signOut(this.auth)
+    } catch (err) {
+      console.error(err)
+    } finally {
+        removeUserInfo()
+        store.dispatch('user/removeUser')
+    }
   }
 
   async loginWithGoogle() {
     try {
-      const provider = new firebase.auth.GoogleAuthProvider()
+      const provider = new GoogleAuthProvider()
       provider.addScope('profile')
       provider.addScope('email')
       this.auth.useDeviceLanguage()
-      const result = await this.auth.signInWithPopup(provider)
+      const result = await signInWithPopup(this.auth, provider)
+      this.isLogin = true
+
       const user = result.user
       store.dispatch('user/sendUserInfo', user)
+
       return Promise.resolve(user)
     } catch (error) {
       return Promise.reject(error)

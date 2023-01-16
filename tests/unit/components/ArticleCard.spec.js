@@ -1,10 +1,14 @@
+import { vi, describe, it, expect, beforeEach } from 'vitest'
 import { render, getByText } from '@testing-library/vue'
 import ArticleCard from '@/components/ArticleCard.vue'
 import store from '@/store'
 import router from '@/router'
+// import Vuex from 'vuex'
 
-jest.mock('@/utils/firebase')
-jest.mock('@/router')
+vi.mock('@/utils/firebase')
+vi.mock('@/router', () => ({
+  resolve: vi.fn()
+}))
 
 let props
 
@@ -22,8 +26,13 @@ beforeEach(() => {
   }
 })
 
+/**
+ * @vitest-environment jsdom
+ */
 describe('ArticleCard.vue', () => {
   it('default value', () => {
+    const Vuex = require('vuex')
+    console.log(store instanceof Vuex.Store)
     const { container } = render(ArticleCard, { props, store, router })
 
     const heading = container.querySelector('.heading')

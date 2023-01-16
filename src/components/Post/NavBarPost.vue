@@ -34,8 +34,8 @@
         right
         menu-class="p-0"
       >
-        <template v-slot:button-content>
-          <icon icon="notification" />
+        <template #button-content>
+          <SyncIcon icon="notification" />
         </template>
         <div class="notification-container">
           <h3>通知</h3>
@@ -61,7 +61,7 @@
         toggle-class="p-0"
       >
         <!-- Using 'button-content' slot -->
-        <template v-slot:button-content>
+        <template #button-content>
           <span>
             <img
               class="avatar-user"
@@ -292,7 +292,7 @@ export default {
   margin-right: 32px;
 }
 
-::v-deep .notification-btn.nav-link.dropdown-toggle {
+:deep(.notification-btn.nav-link.dropdown-toggle) {
   padding: 0;
   margin-right: 24px;
 }
@@ -316,18 +316,18 @@ export default {
     height: 16px;
     margin: 0 0.5rem 0.25rem 0;
     vertical-align: middle;
-    background: url('~@/assets/images/ic-checkbox-inactivated.svg') 0 center
+    background: url('@/assets/images/ic-checkbox-inactivated.svg') 0 center
       no-repeat;
     cursor: pointer;
     border-radius: 2px;
   }
 
   input[type='checkbox'] + label span:hover {
-    background: url('~@/assets/images/ic-checkbox-hover.svg') 0 center no-repeat;
+    background: url('@/assets/images/ic-checkbox-hover.svg') 0 center no-repeat;
   }
 
   input[type='checkbox']:checked + label span {
-    background: url('~@/assets/images/ic-checkbox-activated.svg') 0 center
+    background: url('@/assets/images/ic-checkbox-activated.svg') 0 center
       no-repeat;
   }
 
