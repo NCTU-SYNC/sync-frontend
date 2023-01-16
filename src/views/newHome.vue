@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="main-container">
+    <div v-if="doneInit" class="main-container">
       <div class="container_block">
         <div class="section_title">
           焦點內容
@@ -101,7 +101,8 @@ export default {
       articleBanner: {},
       articlesLatest: [],
       articlesHot: [],
-      windowWidth: window.innerWidth
+      windowWidth: window.innerWidth,
+      doneInit: false
     }
   },
   computed: {
@@ -121,10 +122,9 @@ export default {
     })
   },
   methods: {
-    getArticle() {
-      articleAPI.get().then((response) => {
-        const { data } = response
-
+    async getArticle() {
+      try {
+        const { data } = await articleAPI.get()
         if (data.code !== 200) return
 
         const articleSortedLatest = data.data[0].sort((a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt))
@@ -134,7 +134,11 @@ export default {
         this.articlesHot = articleSortedHot.slice(1, 7).map((article) => makeArticle(article))
 
         this.articleBanner = makeArticle(articleSortedHot[0])
-      })
+      } catch (e) {
+        console.error(e)
+      } finally {
+        this.doneInit = true
+      }
     }
   }
 }
