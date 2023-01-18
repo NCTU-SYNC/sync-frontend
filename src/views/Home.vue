@@ -31,8 +31,7 @@
         <div class="section_title">等待編輯</div>
         <div ref="awaitEditScroll" class="scrollable" @mousedown="dragStartHandler" @click.capture="dragStopClick">
           <div
-            class="gallery"
-            :class="{ 'gallery__wider': lg, 'gallery__md': md }"
+            class="gallery gallery__wider"
           >
             <AwaitEditCard
               v-for="(article, index) in articlesLatest"
@@ -213,17 +212,36 @@ export default {
 }
 
 .gallery {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template: repeat(2, 1fr) / repeat(3, 1fr);
   gap: 2rem;
   margin: 0 auto;
+  width: calc(calc(392px * 3) + calc(2rem * 2));
 
-  &__md {
-    min-width: 976px;
+  @media screen and (max-width: 1279px) {
+    grid-template: repeat(3, 1fr) / repeat(2, 1fr);
+    width: calc(304px + 304px + 2rem);
+  }
+
+  @media screen and (max-width: 679px) {
+    grid-template-rows: repeat(6, 1fr);
+    grid-template-columns: 1fr;
+    width: calc(304px);
   }
 
   &__wider {
     width: 1444px;
+
+    @media screen and (max-width: 1279px) {
+      grid-template: 1fr 1fr / 1fr 1fr 1fr;
+      width: calc(calc(304px * 3) + calc(2rem * 2));
+    }
+
+    @media screen and (max-width: 679px) {
+      grid-template-rows: repeat(6, 1fr);
+      grid-template-columns: 1fr;
+      width: calc(304px);
+    }
   }
 }
 

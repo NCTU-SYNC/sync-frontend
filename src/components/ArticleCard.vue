@@ -1,7 +1,17 @@
 <template>
   <div class="article-card" :class="{'article-card__lg':lg}" @click="GotoArticle">
-    <div class="article-card__image">
+    <div v-if="imageURL" class="article-card__image">
       <b-img-lazy :src="imgSrc" fluid-grow />
+    </div>
+    <div v-else-if="!singleBlock" class="article-card__summaryImg">
+      <ul>
+        <li v-for="(blockTitle, index) in blockTitles" :key="index">
+          {{ blockTitle }}
+        </li>
+      </ul>
+    </div>
+    <div v-else class="article-card__contentPreview">
+      <p>{{ content }}</p>
     </div>
     <div class="article-card__body">
       <div v-show="hasCate" class="article-card__category">{{ category === '' ? '未分類' : category }}</div>
@@ -21,7 +31,9 @@ import { BImgLazy } from 'bootstrap-vue'
 import HashtagPill from '@/components/HashtagPill.vue'
 import BadgeHot from '@/assets/images/badge-hot.svg'
 import BadgeNew from '@/assets/images/badge-new.svg'
-import thumbnail from '@/assets/images/thumbnail-placeholder.svg'
+import ArticleAPI from '@/api/article'
+import { Utils } from '@/utils'
+import { blocksToText } from '@/utils/editorUtil'
 
 const badge = new Map([
   ['badge-hot', BadgeHot],
@@ -67,9 +79,17 @@ export default {
       default: false
     }
   },
+  data() {
+    return {
+      hasImg: this.imgLink !== '',
+      blockTitles: [],
+      singleBlock: false,
+      content: ''
+    }
+  },
   computed: {
     imgSrc() {
-      return this.imageURL === '' ? thumbnail : this.imageURL
+      return this.imageURL
     },
     hasTags() {
       return this.tags.length > 0
@@ -84,9 +104,24 @@ export default {
       return badge.get(`badge-${this.badge}`)
     }
   },
+  created() {
+    if (this.imageURL === '') this.getBlockTitles()
+  },
   methods: {
     GotoArticle() {
       this.$router.push(`article/${this.articleId}`)
+    },
+    async getBlockTitles() {
+      const { data: docData } = await ArticleAPI.getById(this.$props.articleId)
+      const { data: article } = docData
+      const ret = Utils.getArticleBlockTitles(article.blocks, 5)
+      this.blockTitles = ret
+
+      if (this.blockTitles.length === 1) {
+        this.singleBlock = true
+        const content = blocksToText(article.blocks)
+        this.content = content
+      }
     }
   }
 }
@@ -121,6 +156,76 @@ export default {
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+  }
+
+  &__summaryImg {
+    padding: 1.5rem;
+    justify-content: center;
+    align-items: center;
+
+    ul {
+      display: grid;
+      gap: 0.625rem;
+      list-style: none;
+    }
+
+    li {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.25rem;
+      color: $text-2;
+
+      // line-clamp: 1;
+      // -webkit-line-clamp: 1;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+
+      /** bullet */
+      position: relative;
+      padding-left: 1.5rem;
+      &::before {
+        display: inline-block;
+        position: absolute;
+        left: 0;
+        content: '\2022';
+        font-size: 1.5rem;
+        line-height: 1.25rem;
+        font-weight: bold;
+        width: 1.5rem;
+      }
+
+      &:nth-child(4n-3)::before {
+        color: $blue;
+      }
+      &:nth-child(4n-2)::before {
+        color: $red;
+      }
+      &:nth-child(4n-1)::before {
+        color: $light-blue;
+      }
+      &:nth-child(4n)::before {
+        color: $yellow;
+      }
+    }
+  }
+
+  &__contentPreview {
+    display: grid;
+    padding: 4rem 3.25rem;
+    p {
+      font-size: 1rem;
+      line-height: 1.5rem;
+
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+      overflow: hidden;
+
+      border-left: solid 2px $yellow;
+      margin-left: -.75rem;
+      padding-left: .75rem;
     }
   }
 
