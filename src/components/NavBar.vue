@@ -38,6 +38,20 @@
             <template v-if="notifications.length === 0">
               目前沒有通知
             </template>
+            <router-link v-for="(notification, index) in notifications" :key="index" class="notification-dropdown--slot" :to="`/article/${notification.articleId}`">
+              <div>
+                <icon icon="avatar" size="md" class-name="avatar-icon" />
+              </div>
+              <div class="notification-dropdown--text">
+                <div>
+                  您發表的 “{{ notification.title }}” 有新的更新
+                </div>
+                <div class="notification-dropdown--date">
+                  {{ parseTime(notification.lastUpdatedAt) }}
+                </div>
+              </div>
+
+            </router-link>
           </div>
         </div>
         <!-- post page -->
@@ -137,6 +151,7 @@ export default {
       return disableRedirectPaths.some(disableRedirectPath => this.$route.path === disableRedirectPath) ? (this.$route.query.redirect === undefined ? null : { redirect: this.$route.query.redirect }) : { redirect: this.$route.path }
     },
     notifications() {
+      console.log(this.$store.getters.notifications)
       return this.$store.getters.notifications
     },
     modalComponent() {
@@ -184,6 +199,15 @@ export default {
     safariBtnFocusTweak(event) {
       // This function is used to fixed the Safari focus problem
       event.target.parentElement.focus()
+    },
+    parseTime(timeObject) {
+      // notification time formats are different
+      if (typeof timeObject === 'string') {
+        return moment(timeObject).fromNow()
+      } else {
+        const time = timeObject['_seconds'] * 1000
+        return moment(time).fromNow()
+      }
     }
   }
 }
@@ -503,6 +527,30 @@ input[type="search"]:focus::-webkit-search-cancel-button {
       width: 300px;
       height: 404px;
     }
+    &--slot {
+      height: 86px;
+      display: flex;
+      padding: 8px 16px;
+      color: $gray-11;
+      font-size: 14px;
+      line-height: 24px;
+
+      &:hover {
+        background-color: $gray-2;
+      }
+      .avatar-icon{
+        width: 20px;
+        margin-right: 8px;
+      }
+    }
+    &--text {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    &--date {
+      color: $blue;
+    }
   }
 }
 
@@ -510,6 +558,7 @@ input[type="search"]:focus::-webkit-search-cancel-button {
 .notification-dropdown--content:focus,
 .notification--btn:focus + .notification-dropdown--content {
   display: block;
+  overflow-y: scroll;
   &.no-notification {
       display: flex;
       align-items: center;
