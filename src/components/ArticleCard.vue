@@ -96,7 +96,7 @@ export default {
 .article-card {
   position: relative;
   flex: 1;
-  width: 320px;
+  min-width: 304px;
   max-height: 388px;
   border-radius: 16px;
   box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.08);
@@ -157,8 +157,6 @@ export default {
   }
 
   &__lg {
-    width: 392px;
-
     .article-card__title {
       font-size: 1.5rem;
       line-height: 2rem;
