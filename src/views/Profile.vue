@@ -29,7 +29,7 @@
           >
             <a @click="setTab('edited_articles')">
               <span aria-hidden focusable="false" class="option-icon">
-                <icon icon="edited" />
+                <SyncIcon icon="edited" />
               </span>
               <span class="option-text">編輯過的文章</span>
             </a>
@@ -41,7 +41,7 @@
           >
             <a @click="setTab('browsing_history')">
               <span aria-hidden focusable="false" class="option-icon">
-                <icon icon="history" />
+                <SyncIcon icon="history" />
               </span>
               <span class="option-text">瀏覽紀錄</span>
             </a>
@@ -53,7 +53,7 @@
           >
             <a @click="setTab('bookmarks')">
               <span aria-hidden focusable="false" class="option-icon">
-                <icon icon="bookmark" />
+                <SyncIcon icon="bookmark" />
               </span>
               <span class="option-text">收藏的文章</span>
             </a>
@@ -65,7 +65,7 @@
           >
             <a @click="setTab('settings')">
               <span aria-hidden focusable="false" class="option-icon">
-                <icon icon="settings" />
+                <SyncIcon icon="settings" />
               </span>
               <span class="option-text">個人設定</span>
             </a>

@@ -30,8 +30,8 @@
               }}
             </div>
             <div class="btn-caret">
-              <icon
-                :icon="dropdownOpen ? 'arrow-up' : 'arrow-down-gray'"
+              <SyncIcon
+                :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'"
                 size="md"
               />
             </div>
@@ -229,7 +229,7 @@ export default {
   }
 }
 
-::v-deep .datetime-dropdown {
+:deep(.datetime-dropdown) {
   padding: 0;
   display: flex;
   align-items: center;
@@ -263,7 +263,7 @@ export default {
   }
 }
 
-::v-deep .b-calendar {
+:deep(.b-calendar) {
   button[title='Previous year'] {
     display: none;
   }
@@ -277,7 +277,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  ::v-deep ul.dropdown-menu {
+  :deep(ul.dropdown-menu) {
     min-height: 450px;
   }
   .b-dropdown-form {

@@ -38,7 +38,7 @@
           class="btn-edit"
           @click="handleShowTimeline(true)"
         >
-          <icon icon="edit-timeline" />
+          <SyncIcon icon="edit-timeline" />
           <span v-if="!showNewsSource">段落標題</span>
         </b-button>
       </div>
@@ -73,8 +73,8 @@
                     }}
                   </div>
                   <div class="btn-chevron">
-                    <icon
-                      :icon="dropdownOpen ? 'arrow-up' : 'arrow-down-gray'"
+                    <SyncIcon
+                      :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'"
                       size="md"
                     />
                   </div>
@@ -213,7 +213,7 @@
       </div>
       <div v-show="!showNewsSource" class="news-area-btn-only">
         <b-button variant="light" @click="handleShowNewsSource(true)">
-          <icon icon="edit-source" />
+          <SyncIcon icon="edit-source" />
           搜尋新聞
         </b-button>
       </div>
@@ -949,7 +949,8 @@ export default {
     background: #c4c4c4;
   }
 }
-::v-deep .category-dropdown {
+
+:deep(.category-dropdown) {
   ul.dropdown-menu {
     min-width: 130px;
     font-size: 14px;
@@ -978,7 +979,7 @@ export default {
     }
   }
 }
-::v-deep .category-dropdown-btn {
+:deep(.category-dropdown-btn) {
   width: 130px;
   height: 40px;
   display: flex;

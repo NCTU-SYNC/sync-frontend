@@ -105,7 +105,7 @@ export default {
 .urlInput {
   width: 100%;
 }
-::v-deep {
+:deep(*) {
   .nav-tabs {
     border-bottom: 1px solid $gray-4;
   }
