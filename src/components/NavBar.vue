@@ -38,7 +38,7 @@
             <template v-if="notifications.length === 0">
               目前沒有通知
             </template>
-            <router-link v-for="(notification, index) in notifications" :key="index" class="notification-dropdown--slot" :to="`/article/${notification.articleId}`">
+            <router-link v-for="(notification, index) in notifications" :key="index" class="notification-dropdown--slot" :to="`/article/${notification.articleId}`" @click.native="handleClickDropdownItem">
               <div>
                 <icon icon="avatar" size="md" class-name="avatar-icon" />
               </div>
@@ -65,7 +65,7 @@
             <img class="avatar-user--img" height="48" width="48" :src="photoURL">
           </button>
           <div class="dropdown-user--content">
-            <router-link class="dropdown-user--profile" :to="{path: '/profile', query: {tab: 'settings'}}" tabindex="0" @click.native="handleClickProfile">
+            <router-link class="dropdown-user--profile" :to="{path: '/profile', query: {tab: 'settings'}}" tabindex="0" @click.native="handleClickDropdownItem">
               <img class="profile-avatar" height="48" width="48" :src="photoURL">
               <div class="profile-detail">
                 <div class="display-name">{{ displayName }}</div>
@@ -75,16 +75,16 @@
             <router-link to="/post" class="dropdown-user--link border-top-link" tabindex="0">
               編輯新文章
             </router-link>
-            <router-link :to="{path: '/profile', query: {tab: 'browsing_history'}}" class="dropdown-user--link border-top-link" tabindex="0" @click.native="handleClickProfile">
+            <router-link :to="{path: '/profile', query: {tab: 'browsing_history'}}" class="dropdown-user--link border-top-link" tabindex="0" @click.native="handleClickDropdownItem">
               瀏覽紀錄
             </router-link>
-            <router-link :to="{path: '/profile', query: {tab: 'edited_articles'}}" class="dropdown-user--link" tabindex="0" @click.native="handleClickProfile">
+            <router-link :to="{path: '/profile', query: {tab: 'edited_articles'}}" class="dropdown-user--link" tabindex="0" @click.native="handleClickDropdownItem">
               編輯過的文章
             </router-link>
-            <router-link :to="{path: '/profile', query: {tab: 'bookmarks'}}" class="dropdown-user--link" tabindex="0" @click.native="handleClickProfile">
+            <router-link :to="{path: '/profile', query: {tab: 'bookmarks'}}" class="dropdown-user--link" tabindex="0" @click.native="handleClickDropdownItem">
               收藏的文章
             </router-link>
-            <router-link :to="{path: '/profile', query: {tab: 'settings'}}" class="dropdown-user--link" tabindex="0" @click.native="handleClickProfile">
+            <router-link :to="{path: '/profile', query: {tab: 'settings'}}" class="dropdown-user--link" tabindex="0" @click.native="handleClickDropdownItem">
               個人設定
             </router-link>
             <router-link to="/" class="dropdown-user--link border-top-link" tabindex="0" @click.native="handleLogout">
@@ -191,7 +191,7 @@ export default {
       if (this.keyword === this.$route.query.q) return
       this.$router.push({ path: '/search', query: { q: this.keyword }})
     },
-    handleClickProfile(event) {
+    handleClickDropdownItem(event) {
       // Close dropdown when dropdown item clicked
       // This is done by bluring the current target
       event.currentTarget.blur()
