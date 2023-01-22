@@ -36,7 +36,7 @@
           </button>
           <div class="notification-dropdown--content" :class="{'no-notification': notifications.length === 0}">
             <template v-if="notifications.length === 0">
-              目前沒有通知
+              目前沒有新的通知
             </template>
             <router-link v-for="(notification, index) in notifications" :key="index" class="notification-dropdown--slot" :to="`/article/${notification.articleId}`" @click.native="handleClickDropdownItem">
               <div>
@@ -549,7 +549,6 @@ input[type="search"]:focus::-webkit-search-cancel-button {
       overflow: overlay !important;
 
       // style box
-      width: 122px;
       background-color: white;
       z-index: 1;
       box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
@@ -602,6 +601,9 @@ input[type="search"]:focus::-webkit-search-cancel-button {
       display: flex;
       align-items: center;
       justify-content: center;
+      height: 82px;
+      font-size: 14px;
+      color: $text-1;
     }
 }
 
