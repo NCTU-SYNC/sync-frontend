@@ -72,10 +72,10 @@
                 <div class="display-email">{{ email }}</div>
               </div>
             </router-link>
-            <router-link to="/post" class="dropdown-user--link border-top-link" tabindex="0">
+            <router-link to="/post" class="dropdown-user--link" tabindex="0">
               編輯新文章
             </router-link>
-            <router-link :to="{path: '/profile', query: {tab: 'browsing_history'}}" class="dropdown-user--link border-top-link" tabindex="0" @click.native="handleClickDropdownItem">
+            <router-link :to="{path: '/profile', query: {tab: 'browsing_history'}}" class="dropdown-user--link" tabindex="0" @click.native="handleClickDropdownItem">
               瀏覽紀錄
             </router-link>
             <router-link :to="{path: '/profile', query: {tab: 'edited_articles'}}" class="dropdown-user--link" tabindex="0" @click.native="handleClickDropdownItem">
@@ -87,7 +87,7 @@
             <router-link :to="{path: '/profile', query: {tab: 'settings'}}" class="dropdown-user--link" tabindex="0" @click.native="handleClickDropdownItem">
               個人設定
             </router-link>
-            <router-link to="/" class="dropdown-user--link border-top-link" tabindex="0" @click.native="handleLogout">
+            <router-link to="/" class="dropdown-user--link" tabindex="0" @click.native="handleLogout">
               登出
             </router-link>
           </div>
@@ -312,9 +312,8 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 80px;
-    margin-top: 4px;
-    padding: 16px 24px;
+    height: 64px;
+    padding: 8px 16px;
     &:hover, &:focus, &:active {
       background-color: $gray-2;
     }
@@ -329,42 +328,35 @@ export default {
       height: 48px;
       width: 48px;
       z-index: 1;
+      margin-right: 16px;
     }
     .profile-detail {
-      width: 190px;
+      flex-grow: 1;
       .display-name {
-        font-size: 20px;
+        font-size: 16px;
         color: $text-1;
-        font-weight: 800;
+        font-weight: 700;
       }
       .display-email {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        font-size: 12px;
         color: $text-3;
-        font-weight: 600;
+        font-weight: 400;
       }
     }
   }
   &--link {
     display: block;
-    height: 48px;
-    padding: 12px 24px;
-    color: $text-1;
-    font-weight: bold;
+    height: 40px;
+    padding: 8px 16px;
+    color: $gray-11;
+    font-size: 14px;
+    font-weight: 400;
     position: relative;
     &:hover, &:focus, &:active {
       background-color: $gray-2;
-    }
-    &.border-top-link {
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0px;
-        width: 252px;
-        height: 0px;
-        border-top: 1px solid $gray-4;
-      }
     }
   }
 }
@@ -373,14 +365,16 @@ export default {
   display: none;
   position: absolute;
   right: 0;
-  top: 58px;
+  top: 40px; // 64 - 12 (avatar height) - 12 offset
 
   // style box
   width: 300px;
+  height: 320px;
   background-color: white;
   z-index: 1;
   box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
+  border-radius: 8px;
+  padding: 8px 0px 8px 0px;
 }
 
 .avatar-user {
@@ -550,7 +544,7 @@ input[type="search"]:focus::-webkit-search-cancel-button {
       display: none;
       position: absolute;
       right: 0;
-      top: 48px; // 56 - 8px
+      top: 42px; // 56 - 8px
       // overlay content under scrollbar
       overflow: overlay !important;
 
