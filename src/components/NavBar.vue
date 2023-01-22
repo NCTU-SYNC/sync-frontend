@@ -7,7 +7,6 @@
       <div class="dropdown">
         <sync-button variant="nav" class="topic-btn dropdown-btn">探索主題 <SyncIcon icon="arrow-down" size="sm" class="arrow-down-icon" /></sync-button>
         <div class="dropdown-content">
-          <div class="blank-element" />
           <div class="dropdown-content--list">
             <router-link v-for="(category, index) in categoryList" :key="index" :to="{path:'/', query: { category: category }}">
               {{ category }}
@@ -272,32 +271,27 @@ export default {
 
   display: none;
   position: absolute;
+  left: -4px; // align list text with topic button
 
   // style box
   &--list {
     width: 122px;
     background-color: white;
     z-index: 1;
-    border-top: 1px solid white;
-    border-bottom: 1px solid $gray-2;
-    border-left: 1px solid $gray-2;
-    border-right: 1px solid $gray-2;
-  }
-
-  // hack to retain hover state
-  .blank-element {
-    height: 11px;
+    box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 8px 0px;
   }
 
   // list element
   a {
+    font-size: 14px;
     color: black;
     padding: 8px 16px;
-    font-weight: bold;
     text-decoration: none;
     display: block;
-    &:hover, &:focus, &:active {
-      color: $blue-4;
+    &:hover {
+      background-color: $gray-2;
     }
   }
 }
