@@ -82,7 +82,8 @@ export default {
   &-container {
     display: grid;
     grid-template-rows: 8fr 3fr 6fr 6fr;
-    width: 304px;
+    flex: 1;
+    min-width: 304px;
     height: 292px;
     border-radius: 16px;
     box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.08);
@@ -170,7 +171,7 @@ export default {
   }
 
   &__lg {
-    width: 460px;
+    min-width: 460px;
     height: 272px;
 
     & .card-title {

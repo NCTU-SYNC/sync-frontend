@@ -1,13 +1,12 @@
 <template>
   <div>
-    <h1 class="home-focus">焦點內容</h1>
     <div class="home-banner">
       <div class="headline">
         <div class="headline-info d-flex">
           <div class="headline-image">
             <div class="img-container d-flex flex-column">
               <img
-                src="../assets/images/thumbnail-placeholder.svg"
+                :src="imgLink"
                 alt=""
               >
               <div class="paragraph">此篇內容的 {{ blocks.length }} 個段落</div>
@@ -47,10 +46,11 @@
                   </p>
                 </div>
               </div>
-              <a
+              <router-link
                 class="readmore"
-                href="#"
-              > 閱讀全文 > </a>
+                :to="`/article/${newsId}`"
+              > 閱讀全文 >
+              </router-link>
             </div>
           </div>
         </div>
@@ -76,10 +76,10 @@
           </div>
           <!-- <div class="swiper-button-next"></div>
                         <div class="swiper-button-prev"></div> -->
-          <div class="swiper-btn-box swiper-box-next">
+          <div id="btn-next" class="swiper-btn-box swiper-box-next">
             <div class="swiper-button-next swiper-btn" />
           </div>
-          <div class="swiper-btn-box swiper-box-prev">
+          <div id="btn-prev" class="swiper-btn-box swiper-box-prev">
             <div class="swiper-button-prev swiper-btn" />
           </div>
         </div>
@@ -90,11 +90,11 @@
 <script>
 
 import Swiper, { Navigation, Pagination, Autoplay } from 'swiper'
-import 'swiper/swiper-bundle.css'
-import 'swiper/modules/navigation/navigation.min.css'
-import 'swiper/modules/pagination/pagination.min.css'
+import 'swiper/css'
+import 'swiper/css/pagination'
 import moment from 'moment'
 import { Utils } from '@/utils'
+import thumbnailPlaceholder from '@/assets/images/thumbnail-placeholder.svg'
 
 export default {
   props: {
@@ -126,15 +126,13 @@ export default {
   computed: {
     imgLink() {
       const imgLink = this.getArticleFirstImage(this.blocks)
-      return imgLink !== null ? imgLink : this.thumbnailPlaceholder
+      return imgLink !== null ? imgLink : thumbnailPlaceholder
     }
   },
 
   mounted() {
     const timeline = document.getElementById('timeline')
-    const timelineSwipers = document.querySelectorAll('#timeline .swiper-slide')
-    const length = document.getElementById('swiper-wrapper').childNodes.length
-    console.log(length)
+    // const timelineSwipers = document.querySelectorAll('#timeline .swiper-slide')
     const btnNext = document.getElementById('btn-next')
     const btnPrev = document.getElementById('btn-prev')
     const slidePerPage = 5
@@ -177,7 +175,8 @@ export default {
       spaceBetween: 0,
       on: {
         init: function() {
-          timelineSwipers[0].classList.add('current')
+          const swipers = document.getElementById('swiper-wrapper').childNodes
+          swipers[0].classList.add('current')
         },
         click: function() {
           slideIndex = this.clickedIndex
@@ -201,7 +200,7 @@ export default {
     btnPrev.addEventListener('click', pageChange)
     function pageChange() {
       // navIndex = $('#timeline .swiper-slide-active').index()
-      navIndex = indexInParent(document.querySelector('#timeline .swiper-slide-active'))
+      navIndex = indexInParent(document.querySelector('#timeline .current'))
       targetIndex =
         navIndex > targetIndex
           ? navIndex
@@ -222,8 +221,9 @@ export default {
       return -1
     }
     function renderCurrent(index) {
-      timelineSwipers.forEach(swiper => swiper.classList.remove('current'))
-      timelineSwipers[index].classList.add('current')
+      const swipers = document.getElementById('swiper-wrapper').childNodes
+      swipers.forEach(swiper => swiper.classList.remove('current'))
+      swipers[index].classList.add('current')
     }
     function newsTextSwipe(index) {
       newsTextSwiper.slideTo(index, 500, false)

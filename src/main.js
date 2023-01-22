@@ -7,9 +7,12 @@ import router from './router'
 // vite-plugin-svg-icons setup
 import 'virtual:svg-icons-register'
 import SvgIcon from '@/components/SvgIcon'
+import SyncButton from '@/components/SyncButton'
 import '@/assets/scss/main.scss'
 
+Vue.component('SyncButton', SyncButton)
 Vue.component('SyncIcon', SvgIcon)
+
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)
