@@ -5,7 +5,7 @@
         <Logo class="sync-icon" />
       </router-link>
       <div class="dropdown">
-        <sync-button variant="nav" class="topic-btn dropdown-btn">探索主題 <icon icon="arrow-down" size="sm" class="arrow-down-icon" /></sync-button>
+        <sync-button variant="nav" class="topic-btn dropdown-btn">探索主題 <SyncIcon icon="arrow-down" size="sm" class="arrow-down-icon" /></sync-button>
         <div class="dropdown-content">
           <div class="blank-element" />
           <div class="dropdown-content--list">
@@ -22,7 +22,7 @@
 
     <div class="navbar--item item-right">
       <form class="search-bar" @submit.prevent="submitSearch">
-        <icon icon="news-panel-search" class="search-bar--icon" size="md" />
+        <SyncIcon icon="news-panel-search" class="search-bar--icon" size="md" />
         <input v-model="keyword" type="search" class="search-bar--input" placeholder="搜尋懶人包文章">
       </form>
       <template v-if="!isLogin">
@@ -32,7 +32,7 @@
       <template v-else>
         <div class="notification-dropdown">
           <button class="icon-button notification--btn" @click="safariBtnFocusTweak">
-            <icon icon="notification" class="notification--icon" />
+            <SyncIcon icon="notification" class="notification--icon" />
           </button>
           <div class="notification-dropdown--content" :class="{'no-notification': notifications.length === 0}">
             <template v-if="notifications.length === 0">
@@ -40,10 +40,10 @@
             </template>
             <router-link v-for="(notification, index) in notifications" :key="index" class="notification-dropdown--slot" :to="`/article/${notification.articleId}`" @click.native="handleClickDropdownItem">
               <div>
-                <icon icon="avatar" size="md" class-name="avatar-icon" />
+                <SyncIcon icon="avatar" size="md" class-name="avatar-icon" />
               </div>
               <div class="notification-dropdown--text">
-                <div>
+                <div class="description">
                   您發表的 “{{ notification.title }}” 有新的更新
                 </div>
                 <div class="notification-dropdown--date">
@@ -57,7 +57,7 @@
         <!-- post page -->
         <button class="icon-button post--btn">
           <router-link to="/post">
-            <icon icon="edit" size="lg" class="post--icon" />
+            <SyncIcon icon="edit" size="lg" class="post--icon" />
           </router-link>
         </button>
         <div class="dropdown-user">
@@ -510,20 +510,56 @@ input[type="search"]:focus::-webkit-search-cancel-button {
     height: 36px !important;
     width: 36px !important;
   }
+
   &-dropdown {
     position: relative;
+    ::-webkit-scrollbar {
+      position: absolute;
+      width: 14px;
+      padding: 4px 8px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: transparent;
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: $gray-4;
+      // hack to add padding at right
+      border: 4px solid transparent;
+      background-clip: padding-box;
+      border-radius: 9999px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+      // hack to add padding at right
+      border: 4px solid transparent;
+      background-clip: padding-box;
+      border-radius: 9999px;
+    }
+
     &--content {
+      padding-top: 8px;
+      padding-bottom: 8px;
       display: none;
       position: absolute;
       right: 0;
-      top: 58px;
+      top: 48px; // 56 - 8px
+      // overlay content under scrollbar
+      overflow: overlay !important;
 
       // style box
       width: 122px;
       background-color: white;
       z-index: 1;
       box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
-      border-radius: 4px;
+      border-radius: 8px;
       width: 300px;
       height: 404px;
     }
@@ -532,8 +568,15 @@ input[type="search"]:focus::-webkit-search-cancel-button {
       display: flex;
       padding: 8px 16px;
       color: $gray-11;
-      font-size: 14px;
-      line-height: 24px;
+
+      .description {
+        font-size: 14px;
+        line-height: 24px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+      }
 
       &:hover {
         background-color: $gray-2;
@@ -547,9 +590,11 @@ input[type="search"]:focus::-webkit-search-cancel-button {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        font-size: 12px;
     }
     &--date {
       color: $blue;
+      font-size: 12px;
     }
   }
 }
