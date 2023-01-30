@@ -160,9 +160,12 @@ export default {
   }
 
   &__summaryImg {
+    display: flex;
     padding: 1.5rem;
     justify-content: center;
     align-items: center;
+    height: 220px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 64%, rgba(0, 0, 0, 0.1) 100%);
 
     ul {
       display: grid;
@@ -214,6 +217,9 @@ export default {
   &__contentPreview {
     display: grid;
     padding: 4rem 3.25rem;
+    height: 220px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 64%, rgba(0, 0, 0, 0.1) 100%);
+
     p {
       font-size: 1rem;
       line-height: 1.5rem;
