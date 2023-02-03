@@ -20,6 +20,7 @@ Vue.use(IconsPlugin)
 Vue.config.productionTip = false
 Vue.prototype.$firebaseAuth = FirebaseAuth
 
+store.commit('WINDOW_WIDTH_UPDATE', window.innerWidth) // first commit
 window.addEventListener('resize', () => {
   store.commit('WINDOW_WIDTH_UPDATE', window.innerWidth)
 })
