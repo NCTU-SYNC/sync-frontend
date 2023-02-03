@@ -323,9 +323,10 @@ export default {
   }
 
   .login-btn {
-    margin-left: 4px;
-    margin-right: 4px;
+    margin: 0;
+    padding: 0;
   }
+
   .start-edit-btn {
     margin-left: 4px;
   }
