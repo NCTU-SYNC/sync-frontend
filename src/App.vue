@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import Navbar from '@/components/NavBar.vue'
+import Navbar from '@/components/NavBar/Navbar.vue'
 import NavbarPost from '@/components/Post/NavBarPost.vue'
 import Footer from '@/components/Footer.vue'
 import { mapGetters } from 'vuex'

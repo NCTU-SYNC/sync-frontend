@@ -1,32 +1,39 @@
 <template>
   <b-navbar ref="navbar" fixed="top" class="navbar--container" type="light" variant="faded">
-    <div class="navbar--item item-left">
-      <router-link to="/">
-        <Logo class="sync-icon" />
-      </router-link>
-      <div class="dropdown">
-        <sync-button variant="nav" class="topic-btn dropdown-btn">探索主題 <SyncIcon icon="arrow-down" size="sm" class="arrow-down-icon" /></sync-button>
-        <div class="dropdown-content">
-          <div class="dropdown-content--list">
+    <sync-icon v-b-toggle.nav-sidebar icon="hamburger" />
+    <b-sidebar id="nav-sidebar">
+      <template #header-close>
+        <b-icon icon="x" font-scale="1.25" />
+      </template>
+      <div class="nav-sidebar">
+        <form class="search-bar" @submit.prevent="submitSearch">
+          <SyncIcon icon="news-panel-search" class="search-bar--icon" size="md" />
+          <input v-model="keyword" type="search" class="search-bar--input" placeholder="搜尋懶人包文章">
+        </form>
+
+        <sync-button v-b-toggle.accordion variant="nav" class="topic-btn dropdown-btn">
+          探索主題 <SyncIcon icon="arrow-down" size="sm" class="arrow-down-icon" />
+        </sync-button>
+        <b-collapse id="accordion">
+          <div class="dropdown-content">
             <router-link v-for="(category, index) in categoryList" :key="index" :to="{path:'/', query: { category: category }}">
               {{ category }}
             </router-link>
           </div>
-        </div>
+        </b-collapse>
+        <sync-button variant="nav" class="topic-btn">熱門時事</sync-button>
+        <sync-button variant="nav" class="topic-btn">最新編輯</sync-button>
       </div>
 
-      <sync-button variant="nav" class="topic-btn">熱門時事</sync-button>
-      <sync-button variant="nav" class="topic-btn">最新編輯</sync-button>
-    </div>
+    </b-sidebar>
+
+    <router-link to="/">
+      <Logo class="sync-icon" />
+    </router-link>
 
     <div class="navbar--item item-right">
-      <form class="search-bar" @submit.prevent="submitSearch">
-        <SyncIcon icon="news-panel-search" class="search-bar--icon" size="md" />
-        <input v-model="keyword" type="search" class="search-bar--input" placeholder="搜尋懶人包文章">
-      </form>
       <template v-if="!isLogin">
         <sync-button to="/login" variant="nav" class="login-btn">登入</sync-button>
-        <sync-button :to="{path: '/login', query: { redirect: '/post'}}" variant="primary" pill class="start-edit-btn">開始編輯</sync-button>
       </template>
       <template v-else>
         <div class="notification-dropdown">
@@ -54,11 +61,6 @@
           </div>
         </div>
         <!-- post page -->
-        <button class="icon-button post--btn">
-          <router-link to="/post">
-            <SyncIcon icon="edit" size="lg" class="post--icon" />
-          </router-link>
-        </button>
         <div class="dropdown-user">
           <button class="avatar-user--btn" @click="safariBtnFocusTweak">
             <img class="avatar-user--img" height="48" width="48" :src="photoURL">
@@ -216,7 +218,6 @@ export default {
 
 .navbar {
   &--container {
-    padding: 8px 64px;
     height: 4rem;
     background-color: $white;
     border-bottom: 1px solid $gray-light;
@@ -228,7 +229,7 @@ export default {
 
   .item-left {
     display: flex;
-    justify-content: begin;
+    justify-content: flex-start;
     align-items: center;
   }
   .item-right {
@@ -253,8 +254,10 @@ export default {
   .topic-btn {
     display: flex;
     align-items: center;
-    padding-left: 12px;
-    padding-right: 12px;
+    padding: 0;
+    font-size: 18px;
+    line-height: 30px;
+    justify-content: space-between;
   }
   .arrow-down-icon {
     padding: 0;
@@ -268,10 +271,8 @@ export default {
 }
 
 .dropdown-content {
-
-  display: none;
-  position: absolute;
-  left: -4px; // align list text with topic button
+  display: flex;
+  flex-direction: column;
 
   // style box
   &--list {
@@ -285,9 +286,8 @@ export default {
 
   // list element
   a {
-    font-size: 14px;
-    color: black;
-    padding: 8px 16px;
+    color: $text-1 !important;
+    padding: 0.5rem;
     text-decoration: none;
     display: block;
     &:hover {
@@ -423,12 +423,11 @@ export default {
 .search-bar {
   height: 40px;
   position: relative;
-  margin-left: 4px;
-  margin-right: 4px;
+  margin-bottom: calc(24px - 10px);
 
   // input bar
   &--input {
-    width: 240px;
+    width: 100%;
     height: 40px;
     border-radius: 20px;
     background-color: $gray-2;
@@ -478,6 +477,14 @@ input[type="search"]:focus::-webkit-search-cancel-button {
   display: flex;
   align-items: center;
   width: 100%;
+}
+
+.nav-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 2rem;
+  font-size: 18px;
 }
 
 .post {
