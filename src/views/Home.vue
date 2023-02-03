@@ -76,6 +76,7 @@ import ArticleCard from '@/components/ArticleCard.vue'
 import AwaitEditCard from '@/components/AwaitEditCard.vue'
 import HomeBanner from '@/components/HomeBanner.vue'
 import RecommendHashtag from '@/components/RecommendHashtag.vue'
+import { mapGetters } from 'vuex'
 
 function makeArticle(article = {}) {
   return {
@@ -104,11 +105,11 @@ export default {
       articlesHot: [],
       dragPos: { left: 0, x: 0 },
       isDragging: false,
-      windowWidth: window.innerWidth,
       doneInit: false
     }
   },
   computed: {
+    ...mapGetters(['windowWidth']),
     md() {
       return this.windowWidth < 1280 && this.windowWidth >= 680
     },
@@ -118,14 +119,6 @@ export default {
   },
   created() {
     this.getArticle()
-  },
-  mounted() {
-    this.$nextTick(() => {
-      window.addEventListener('resize', () => {
-        this.windowWidth = window.innerWidth
-        console.log('size changed')
-      })
-    })
   },
   methods: {
     async getArticle() {
