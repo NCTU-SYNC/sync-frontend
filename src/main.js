@@ -13,13 +13,16 @@ import '@/assets/scss/main.scss'
 Vue.component('SyncButton', SyncButton)
 Vue.component('SyncIcon', SvgIcon)
 
-
 // Install BootstrapVue
 Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
 Vue.config.productionTip = false
 Vue.prototype.$firebaseAuth = FirebaseAuth
+
+window.addEventListener('resize', () => {
+  store.commit('WINDOW_WIDTH_UPDATE', window.innerWidth)
+})
 
 new Vue({
   el: '#app',
