@@ -1,7 +1,10 @@
 <template>
   <b-navbar ref="navbar" fixed="top" class="navbar--container" type="light" variant="faded">
-    <sync-icon v-b-toggle.nav-sidebar icon="hamburger" />
-    <b-sidebar id="nav-sidebar">
+    <div class="item-left">
+      <sync-icon v-b-toggle.nav-sidebar icon="hamburger" />
+      <sync-icon v-if="sm" icon="sync-logo" />
+    </div>
+    <b-sidebar id="nav-sidebar" :width="sm ? '100%' : '360px'" :right="sm" :no-slide="sm">
       <template #header-close>
         <b-icon icon="x" font-scale="1.25" />
       </template>
@@ -14,7 +17,7 @@
         <sync-button v-b-toggle.accordion variant="nav" class="topic-btn dropdown-btn">
           探索主題 <SyncIcon icon="arrow-down" size="sm" class="arrow-down-icon" />
         </sync-button>
-        <b-collapse id="accordion">
+        <b-collapse id="accordion" visible>
           <div class="dropdown-content">
             <router-link v-for="(category, index) in categoryList" :key="index" :to="{path:'/', query: { category: category }}">
               {{ category }}
@@ -24,16 +27,88 @@
         <sync-button variant="nav" class="topic-btn">熱門時事</sync-button>
         <sync-button variant="nav" class="topic-btn">最新編輯</sync-button>
       </div>
-
     </b-sidebar>
 
-    <router-link to="/">
+    <router-link v-if="!sm" to="/">
       <Logo class="sync-icon" />
     </router-link>
 
     <div class="navbar--item item-right">
       <template v-if="!isLogin">
         <sync-button to="/login" variant="nav" class="login-btn">登入</sync-button>
+      </template>
+      <template v-else-if="sm">
+        <button v-b-toggle.nav-user-sidebar class="avatar-user--btn">
+          <img class="avatar-user--img" height="48" width="48" :src="photoURL">
+        </button>
+        <b-sidebar id="nav-user-sidebar" no-slide right width="100%">
+          <template #header-close>
+            <b-icon icon="x" font-scale="1.25" />
+          </template>
+          <div class="nav-sidebar">
+            <router-link class="dropdown-user--profile" :to="{path: '/profile', query: {tab: 'settings'}}" tabindex="0" @click.native="handleClickDropdownItem">
+              <img class="profile-avatar" height="48" width="48" :src="photoURL">
+              <div class="profile-detail">
+                <div class="display-name">{{ displayName }}</div>
+                <div class="display-email">{{ email }}</div>
+              </div>
+            </router-link>
+            <div v-b-toggle.nav-notification-sidebar class="dropdown-user--link" tabindex="0">
+              通知
+            </div>
+            <router-link to="/post" class="dropdown-user--link" tabindex="0">
+              編輯新文章
+            </router-link>
+            <router-link :to="{path: '/profile', query: {tab: 'browsing_history'}}" class="dropdown-user--link" tabindex="0" @click.native="handleClickDropdownItem">
+              瀏覽紀錄
+            </router-link>
+            <router-link :to="{path: '/profile', query: {tab: 'edited_articles'}}" class="dropdown-user--link" tabindex="0" @click.native="handleClickDropdownItem">
+              編輯過的文章
+            </router-link>
+            <router-link :to="{path: '/profile', query: {tab: 'bookmarks'}}" class="dropdown-user--link" tabindex="0" @click.native="handleClickDropdownItem">
+              收藏的文章
+            </router-link>
+            <router-link :to="{path: '/profile', query: {tab: 'settings'}}" class="dropdown-user--link" tabindex="0" @click.native="handleClickDropdownItem">
+              個人設定
+            </router-link>
+            <router-link to="/" class="dropdown-user--link" tabindex="0" @click.native="handleLogout">
+              登出
+            </router-link>
+          </div>
+          <b-sidebar id="nav-notification-sidebar" width="100%" right>
+            <template #header="{ hide }">
+              <div class="nav-sidebar__header">
+                <button class="border-0 bg-transparent" @click="hide">
+                  <b-icon-chevron-left />
+                </button>
+                <span style="color: black">通知</span>
+              </div>
+            </template>
+            <template v-if="notifications.length === 0">
+              <div class="d-flex flex-column">
+                <div class="mx-auto">
+                  目前沒有新的通知
+                </div>
+              </div>
+            </template>
+            <div class="nav-sidebar">
+              <router-link v-for="(notification, index) in notifications" :key="index" class="notification-dropdown--slot" :to="`/article/${notification.articleId}`" @click.native="handleClickDropdownItem">
+                <div>
+                  <SyncIcon icon="avatar" size="md" class-name="avatar-icon" />
+                </div>
+                <div class="notification-dropdown--text">
+                  <div class="description">
+                    您發表的 “{{ notification.title }}” 有新的更新
+                  </div>
+                  <div class="notification-dropdown--date">
+                    {{ parseTime(notification.lastUpdatedAt) }}
+                  </div>
+                </div>
+
+              </router-link>
+            </div>
+          </b-sidebar>
+        </b-sidebar>
       </template>
       <template v-else>
         <div class="notification-dropdown">
@@ -144,7 +219,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['photoURL', 'displayName', 'uid', 'isLogin', 'user']),
+    ...mapGetters(['photoURL', 'displayName', 'uid', 'isLogin', 'user', 'windowWidth']),
     ...mapGetters({ email: 'user/email' }),
     getRedirectPath() {
       // 設置重新導向，若在首頁、註冊、登入頁面做切換不需設置redirect，其他頁面則需要重新導向，若已經設置重新導向頁面，則註冊、登入切換時，並不會互相把自己的頁面給放進重新導向內
@@ -161,6 +236,9 @@ export default {
       } else {
         return () => import('@/components/Account/SignUp.vue')
       }
+    },
+    sm() {
+      return this.windowWidth < 680
     }
   },
   watch: {
@@ -231,6 +309,7 @@ export default {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    gap: 1rem;
   }
   .item-right {
     display: flex;
@@ -311,6 +390,12 @@ export default {
     &:hover, &:focus, &:active {
       background-color: $gray-2;
     }
+
+    @media screen and (max-width: 679px) {
+      margin: 0 -1.25rem;
+      padding: 0 1.25rem;
+    }
+
     .profile-avatar {
       -webkit-background-size: 48px 48px;
       background-size: 48px 48px;
@@ -351,6 +436,15 @@ export default {
     position: relative;
     &:hover, &:focus, &:active {
       background-color: $gray-2;
+    }
+
+    @media screen and (max-width: 679px) {
+      display: flex;
+      align-items: center;
+      height: 48px;
+      padding: 0 1.25rem;
+      margin: 0 -1.25rem;
+      font-size: 16px;
     }
   }
 }
@@ -485,6 +579,21 @@ input[type="search"]:focus::-webkit-search-cancel-button {
   gap: 10px;
   padding: 0 2rem;
   font-size: 18px;
+
+  @media screen and (max-width: 679px) {
+    padding: 0 1.25rem;
+  }
+
+  &__header {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+
+    > span {
+      font-size: 18px;
+      line-height: 30px;
+    }
+  }
 }
 
 .post {
@@ -562,6 +671,10 @@ input[type="search"]:focus::-webkit-search-cancel-button {
       display: flex;
       padding: 8px 16px;
       color: $gray-11;
+
+      @media screen and (max-width: 679px) {
+        margin: 0 -1.25rem;
+      }
 
       .description {
         font-size: 14px;
