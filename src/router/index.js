@@ -14,7 +14,7 @@ const router = new Router({
     {
       path: '/login',
       name: 'Login',
-      component: () => import('@/components/NavBar'),
+      component: () => import('@/components/NavBar/NavBar'),
       props: { modalShow: true, modalType: 'login' }
     },
     {
