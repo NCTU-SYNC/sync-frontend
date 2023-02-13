@@ -26,7 +26,7 @@ const router = new Router({
     {
       path: '/signup',
       name: 'SignUp',
-      component: () => import('@/components/NavBar'),
+      component: () => import('@/components/NavBar/NavBar.vue'),
       props: { modalShow: true, modalType: 'signup' }
     },
     {
