@@ -1,5 +1,6 @@
 <template>
   <div>
+    <MotionBanner v-if="!isLogin" />
     <div v-if="doneInit" class="main-container">
       <div class="container_block">
         <div class="section_title">
@@ -76,6 +77,7 @@ import ArticleCard from '@/components/ArticleCard.vue'
 import AwaitEditCard from '@/components/AwaitEditCard.vue'
 import HomeBanner from '@/components/HomeBanner.vue'
 import RecommendHashtag from '@/components/RecommendHashtag.vue'
+import MotionBanner from '@/components/MotionBanner.vue'
 import { mapGetters } from 'vuex'
 
 function makeArticle(article = {}) {
@@ -96,7 +98,8 @@ export default {
     ArticleCard,
     AwaitEditCard,
     HomeBanner,
-    RecommendHashtag
+    RecommendHashtag,
+    MotionBanner
   },
   data() {
     return {
@@ -109,7 +112,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['windowWidth']),
+    ...mapGetters(['windowWidth', 'isLogin']),
     md() {
       return this.windowWidth < 1280 && this.windowWidth >= 680
     },
