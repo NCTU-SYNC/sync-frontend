@@ -89,6 +89,21 @@ button {
   }
 }
 
+.secondary {
+  background-color: $blue-1;
+  color: $blue-4;
+
+  &:hover, &:focus, &:focus-within, &:active {
+    background-color: $blue-4;
+    color: $white;
+  }
+
+  &:disabled {
+    background-color: $gray-300;
+    color: $white;
+  }
+}
+
 .tertiary {
   background-color: transparent;
   color: $text-1;
