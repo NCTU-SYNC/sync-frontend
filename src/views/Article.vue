@@ -362,7 +362,6 @@ export default {
       }
     },
     handleShareArticle() {
-      // TODO: implement share feature
       navigator.clipboard.writeText(`${location.host}/#${this.$route.path}`).then(() => {
         this.$bvToast.toast('連結已複製', {
           solid: true,
