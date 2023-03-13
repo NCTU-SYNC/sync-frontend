@@ -409,6 +409,10 @@ p {
   letter-spacing: 0.25rem;
 }
 
+svg {
+  color: $gray-8;
+}
+
 .main-content-container {
   display: grid;
   width: 1240px;

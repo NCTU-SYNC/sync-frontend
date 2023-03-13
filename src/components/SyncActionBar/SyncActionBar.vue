@@ -19,6 +19,7 @@
     gap: .25rem;
     padding-right: 1rem;
     border-right: 1px solid rgba(0, 163, 255, 0.3);
+    color: $gray-8;
 
     &:last-of-type {
       border: 0;
@@ -31,6 +32,16 @@
       .action-bar__text {
         display: inline;
         cursor: pointer;
+      }
+    }
+
+    &:active {
+      color: $blue-4;
+
+      .action-bar__text {
+        display: inline;
+        cursor: pointer;
+        color: $blue-4;
       }
     }
   }
