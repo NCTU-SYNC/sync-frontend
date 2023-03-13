@@ -66,7 +66,7 @@
           </div>
         </div>
 
-        <div class="toolbar">
+        <div ref="toolbar" class="toolbar">
           <div class="toolbar__toolset">
             <b-button
               v-b-tooltip.hover.bottom.v-secondary="'編輯內容'"
@@ -112,6 +112,15 @@
         <sync-icon icon="arrow-up" size="lg" />
       </div>
     </div>
+
+    <div ref="actionBar" class="action-bar">
+      <SyncActionBar>
+        <SyncActionBarBtn icon="edit" description="編輯內容" @click="handleEditPostRoute" />
+        <SyncActionBarBtn icon="history-version" description="編輯紀錄" @click="handleHistoryRoute" />
+        <SyncActionBarBtn :icon="isSubscribed ? 'saved' : 'save'" :description="bookmarkTooltip" @click="handleClickBookmark" />
+        <SyncActionBarBtn icon="share" description="分享文章" @click="handleShareArticle" />
+      </SyncActionBar>
+    </div>
     <b-toaster name="read-toaster" class="toaster" />
   </div>
 </template>
@@ -124,6 +133,8 @@ import TiptapEditor from '@/components/Editor/TiptapEditor.vue'
 import HashtagPill from '@/components/HashtagPill.vue'
 import SvgIcon from '@/components/SvgIcon.vue'
 import ArticleTimelineBlock from '@/components/ArticleTimeline/ArticleTimelineBlock.vue'
+import SyncActionBar from '@/components/SyncActionBar/SyncActionBar.vue'
+import SyncActionBarBtn from '@/components/SyncActionBar/SyncActionBarBtn.vue'
 
 export default {
   name: 'Article',
@@ -131,7 +142,9 @@ export default {
     HashtagPill,
     TiptapEditor,
     SvgIcon,
-    ArticleTimelineBlock
+    ArticleTimelineBlock,
+    SyncActionBar,
+    SyncActionBarBtn
   },
   data() {
     return {
@@ -168,7 +181,8 @@ export default {
       FooterOffsetTop: 0,
       firstBlockDistToTop: 0,
       isRecommendedReady: false,
-      changePageTransition: false
+      changePageTransition: false,
+      intersectionObserver: null
     }
   },
   computed: {
@@ -197,7 +211,7 @@ export default {
       return authorsString
     },
     bookmarkTooltip() {
-      return this.isSubscribed ? '取消收藏文章' : '收藏文章'
+      return this.isSubscribed ? '取消收藏' : '收藏文章'
     }
   },
   watch: {
@@ -214,6 +228,11 @@ export default {
     }
   },
   created() {
+    this.intersectionObserver = new IntersectionObserver(this.onElementIntersect, {
+      root: this.$el,
+      threshold: 1.0
+    })
+
     this.$on('reloadData', this.getArticleData)
     this.time = moment()
     this.timeId = setInterval(() => {
@@ -233,6 +252,7 @@ export default {
   beforeDestroy() {
     clearInterval(this.timeId)
     this.time = null
+    this.intersectionObserver.disconnect()
   },
   methods: {
     getArticleData() {
@@ -298,6 +318,10 @@ export default {
           console.error(err)
           this.isRecommendedReady = true
         })
+      setTimeout(() => {
+        console.log(this.$refs)
+        this.intersectionObserver.observe(this.$refs.toolbar)
+      }, 1000)
     },
     handleEditPostRoute(route) {
       if (this.isLogin) {
@@ -356,6 +380,13 @@ export default {
       }).catch((err) => {
         console.error(err)
       })
+    },
+    onElementIntersect(entries) {
+      if (entries[0].isIntersecting) {
+        this.$refs.actionBar.style = 'opacity: 0; pointer-events: none'
+      } else {
+        this.$refs.actionBar.style = 'opacity: 1; pointer-events: all'
+      }
     },
     backToTop() {
       if (this.$route.hash.length > 0) {
@@ -532,6 +563,16 @@ p {
   svg {
     fill: white;
   }
+}
+
+.action-bar {
+  position: fixed;
+  bottom: 2rem;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+
+  transition: ease-out 0.1s;
 }
 
 .toaster {
