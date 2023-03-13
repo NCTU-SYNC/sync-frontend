@@ -227,9 +227,6 @@ export default {
         0
     }
   },
-  updated() {
-    this.$store.commit('SET_FOOTER', false)
-  },
   beforeDestroy() {
     clearInterval(this.timeId)
     this.time = null

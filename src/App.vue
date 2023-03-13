@@ -42,7 +42,7 @@ export default {
   watch: {
     '$route': function(newRoute) {
       const routerName = newRoute.name
-      const pagesHideFooter = ['SignUp', 'Login', 'Post', 'EditComparison']
+      const pagesHideFooter = ['SignUp', 'Login', 'Post', 'EditComparison', 'Article']
       if (newRoute.path.includes('post')) {
         this.$store.commit('SET_FOOTER', false)
         return
