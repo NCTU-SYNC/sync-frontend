@@ -103,7 +103,7 @@
               class="btn-icon"
               @click="handleShareArticle"
             >
-              <SvgIcon icon="chain" />
+              <SvgIcon icon="share" />
             </b-button>
           </div>
         </div>
