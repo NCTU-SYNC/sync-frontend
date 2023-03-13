@@ -256,7 +256,6 @@ export default {
   },
   methods: {
     getArticleData() {
-      console.log('getArticleData')
       if (this.articleId) {
         this.isPageReady = false
         articleAPI
@@ -319,7 +318,6 @@ export default {
           this.isRecommendedReady = true
         })
       setTimeout(() => {
-        console.log(this.$refs)
         this.intersectionObserver.observe(this.$refs.toolbar)
       }, 1000)
     },
