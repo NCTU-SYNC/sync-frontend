@@ -108,6 +108,9 @@
           </div>
         </div>
       </div>
+      <div class="scroll-top-btn" @click="backToTop">
+        <sync-icon icon="arrow-up" size="lg" />
+      </div>
     </div>
     <b-toaster name="read-toaster" class="toaster" />
   </div>
@@ -353,6 +356,16 @@ export default {
       }).catch((err) => {
         console.error(err)
       })
+    },
+    backToTop() {
+      if (this.$route.hash.length > 0) {
+        this.$router.push(this.$route.path)
+      } else {
+        window.scrollTo({
+          top: 0, left: 0,
+          behavior: 'smooth'
+        })
+      }
     }
   }
 }
@@ -500,6 +513,25 @@ p {
   position: fixed;
   top: 4rem;
   padding: 2.25rem 3rem 2.25rem 0;
+}
+
+.scroll-top-btn {
+  position: fixed;
+  bottom: 2.5rem;
+  right: 4rem;
+  z-index: 100;
+  background-color: $gray-5;
+  padding: .25rem;
+  border-radius: 8px;
+  opacity: 50%;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  svg {
+    fill: white;
+  }
 }
 
 .toaster {
