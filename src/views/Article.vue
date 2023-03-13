@@ -1,120 +1,116 @@
 <template>
-  <b-container fluid class="article-container">
-    <div
-      v-if="isPageReady"
-      :class="{ 'position-relative': windowScrollY > FooterOffsetTop }"
-    >
-      <transition name="fade" mode="out-in" :duration="500">
-        <div class="d-flex justify-content-center">
-          <div class="main-content-container">
-            <div class="title-block mt-5">
-              <div class="category">
-                {{ formatCategory(category) }}
-              </div>
-              <div class="title-container">
-                <h1 class="title-text">
-                  {{ title }}
-                </h1>
-              </div>
+  <div v-if="isPageReady">
+    <div class="main-content-container">
+      <ArticleTimelineBlock class="timeline-block" :blocks="blocks" />
+      <div id="article-container" class="article-container">
+        <div class="title-block">
+          <div class="category">
+            {{ formatCategory(category) }}
+          </div>
+          <div class="title-container">
+            <h1 class="title-text">
+              {{ title }}
+            </h1>
+          </div>
 
-              <div class="hashtag-container">
-                <HashtagPill v-for="(tag, index) in tags" :key="index" :name="tag" />
-              </div>
-              <div class="author-info">編輯者： {{ authorsString }}</div>
-            </div>
+          <div class="hashtag-container">
+            <HashtagPill v-for="(tag, index) in tags" :key="index" :name="tag" />
+          </div>
+          <div class="author-info">編輯者： {{ authorsString }}</div>
+        </div>
 
-            <div
-              v-for="(block, index) in blocks"
-              :ref="`block-${block._id}`"
-              :key="index"
-              class="block"
-              :class="citations.length === 0 ? 'no-citation' : ''"
-            >
-              <div class="block-header">
-                <h2>
-                  {{ block.blockTitle }}
-                </h2>
-                <div v-if="block.blockDateTime" class="article-info">
-                  事件時間：{{
-                    formatBlockDateTime(block.blockDateTime, block.timeEnable)
-                  }}
-                </div>
-              </div>
-
-              <TiptapEditor
-                :id="block.id"
-                class="editor__content"
-                :content="block.content"
-                :editable="false"
-              />
-            </div>
-
-            <div v-if="citations.length !== 0" class="citations">
-              <h2>參考資料</h2>
-              <div
-                v-for="(citation, index) in citations"
-                :key="index"
-                class="citation-item"
-              >
-                <div class="citation-title-label" :data-label="index + 1">{{ index + 1 }}.</div>
-
-                <div class="citation-title-text">
-                  {{ citation.title }}
-                </div>
-
-                <a class="citation-link" :href="citation.url" target="_blank">{{
-                  citation.url
-                }}</a>
+        <div>
+          <div
+            v-for="(block, index) in blocks"
+            :id="`block-${index}`"
+            :key="index"
+            class="block"
+            :class="citations.length === 0 ? 'no-citation' : ''"
+          >
+            <div class="block-header">
+              <h2>
+                {{ block.blockTitle }}
+              </h2>
+              <div v-if="block.blockDateTime" class="article-info">
+                事件時間：{{
+                  formatBlockDateTime(block.blockDateTime, block.timeEnable)
+                }}
               </div>
             </div>
 
-            <div class="toolbar">
-              <div class="toolbar__toolset">
-                <b-button
-                  v-b-tooltip.hover.bottom.v-secondary="'編輯內容'"
-                  variant="link"
-                  class="btn-icon"
-                  @click="handleEditPostRoute(`${$route.path}/post`)"
-                >
-                  <SvgIcon icon="edit" />
-                </b-button>
-                <b-button
-                  v-b-tooltip.hover.bottom.v-secondary="'查看編輯歷史'"
-                  variant="link"
-                  class="btn-icon"
-                  @click="handleHistoryRoute"
-                >
-                  <SvgIcon icon="history-version" />
-                </b-button>
-                <b-button
-                  v-b-tooltip.hover.bottom.v-secondary="bookmarkTooltip
-                  "
-                  variant="link"
-                  class="btn-icon"
-                  :class="isSubscribed ? 'subscribed' : ''"
-                  @click="handleClickBookmark"
-                >
-                  <SvgIcon v-if="!isSubscribed" icon="save" />
-                  <SvgIcon v-else icon="saved" />
-                </b-button>
-              </div>
-              <div class="toolbar__toolset">
-                <b-button
-                  v-b-tooltip.hover.bottom.v-secondary="'分享文章'"
-                  variant="link"
-                  class="btn-icon"
-                  @click="handleShareArticle"
-                >
-                  <SvgIcon icon="chain" />
-                </b-button>
-              </div>
-            </div>
+            <TiptapEditor
+              :id="block.id"
+              class="editor__content"
+              :content="block.content"
+              :editable="false"
+            />
           </div>
         </div>
-      </transition>
+
+        <div v-if="citations.length !== 0" class="citations">
+          <h2>參考資料</h2>
+          <div
+            v-for="(citation, index) in citations"
+            :key="index"
+            class="citation-item"
+          >
+            <div class="citation-title-label" :data-label="index + 1">{{ index + 1 }}.</div>
+
+            <div class="citation-title-text">
+              {{ citation.title }}
+            </div>
+
+            <a class="citation-link" :href="citation.url" target="_blank">{{
+              citation.url
+            }}</a>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="toolbar__toolset">
+            <b-button
+              v-b-tooltip.hover.bottom.v-secondary="'編輯內容'"
+              variant="link"
+              class="btn-icon"
+              @click="handleEditPostRoute(`${$route.path}/post`)"
+            >
+              <SvgIcon icon="edit" />
+            </b-button>
+            <b-button
+              v-b-tooltip.hover.bottom.v-secondary="'查看編輯歷史'"
+              variant="link"
+              class="btn-icon"
+              @click="handleHistoryRoute"
+            >
+              <SvgIcon icon="history-version" />
+            </b-button>
+            <b-button
+              v-b-tooltip.hover.bottom.v-secondary="bookmarkTooltip
+              "
+              variant="link"
+              class="btn-icon"
+              :class="isSubscribed ? 'subscribed' : ''"
+              @click="handleClickBookmark"
+            >
+              <SvgIcon v-if="!isSubscribed" icon="save" />
+              <SvgIcon v-else icon="saved" />
+            </b-button>
+          </div>
+          <div class="toolbar__toolset">
+            <b-button
+              v-b-tooltip.hover.bottom.v-secondary="'分享文章'"
+              variant="link"
+              class="btn-icon"
+              @click="handleShareArticle"
+            >
+              <SvgIcon icon="chain" />
+            </b-button>
+          </div>
+        </div>
+      </div>
     </div>
     <b-toaster name="read-toaster" class="toaster" />
-  </b-container>
+  </div>
 </template>
 
 <script>
@@ -124,13 +120,15 @@ import articleAPI from '@/api/article'
 import TiptapEditor from '@/components/Editor/TiptapEditor.vue'
 import HashtagPill from '@/components/HashtagPill.vue'
 import SvgIcon from '@/components/SvgIcon.vue'
+import ArticleTimelineBlock from '@/components/ArticleTimeline/ArticleTimelineBlock.vue'
 
 export default {
   name: 'Article',
   components: {
     HashtagPill,
     TiptapEditor,
-    SvgIcon
+    SvgIcon,
+    ArticleTimelineBlock
   },
   data() {
     return {
@@ -154,7 +152,7 @@ export default {
       authors: [],
       createdAt: '',
       editedCount: 0,
-      citation: {},
+      citations: [],
       lastUpdatedAt: '',
       timeId: null,
       time: moment(),
@@ -208,10 +206,6 @@ export default {
       }
       this.isSubscribed = false
     },
-    isPageReady(newValue) {
-      this.$store.commit('SET_FOOTER', newValue)
-      this.setOffsetTopOfSideElements()
-    },
     '$route.params.ArticleID': function() {
       this.getArticleData()
     }
@@ -233,16 +227,16 @@ export default {
         0
     }
   },
-  mounted() {
-    window.addEventListener('scroll', this.updateScroll)
+  updated() {
+    this.$store.commit('SET_FOOTER', false)
   },
   beforeDestroy() {
     clearInterval(this.timeId)
     this.time = null
-    window.removeEventListener('scroll', this.updateScroll)
   },
   methods: {
     getArticleData() {
+      console.log('getArticleData')
       if (this.articleId) {
         this.isPageReady = false
         articleAPI
@@ -305,17 +299,6 @@ export default {
           this.isRecommendedReady = true
         })
     },
-    setOffsetTopOfSideElements() {
-      if (!this.isPageReady) return
-      this.$nextTick(() => {
-        this.firstBlockDistToTop =
-          this.$refs[`block-${this.blocks[0]._id}`][0].offsetTop
-        setTimeout(() => {
-          const footer = document.querySelector('.footer')
-          this.FooterOffsetTop = footer.offsetTop - footer.offsetHeight - 518 // citation
-        }, 50)
-      })
-    },
     handleEditPostRoute(route) {
       if (this.isLogin) {
         this.$router.push(route)
@@ -373,14 +356,6 @@ export default {
       }).catch((err) => {
         console.error(err)
       })
-    },
-    scrollTo(refName) {
-      const element = this.$refs[refName][0]
-      const top = element.offsetTop
-      window.scrollTo({ left: 0, top: top - (64 + 10), behavior: 'smooth' })
-    },
-    updateScroll() {
-      this.windowScrollY = window.scrollY
     }
   }
 }
@@ -394,7 +369,12 @@ p {
 }
 
 .main-content-container {
-  width: 720px;
+  display: grid;
+  width: 1240px;
+  margin: 0 auto;
+  gap: 2rem;
+  grid-template-columns: repeat(12, 1fr);
+  padding: 2.25rem;
 }
 
 .title-block {
@@ -513,9 +493,16 @@ p {
 }
 
 .article-container {
-  @media only screen and (min-width: map-get($grid-breakpoints, xl)) {
-    min-height: 1080px;
-  }
+  grid-column: 4/10;
+}
+
+.timeline-block {
+  grid-column: 1/4;
+  height: calc(100vh - 4rem);
+  width: 286px;
+  position: fixed;
+  top: 4rem;
+  padding: 2.25rem 3rem 2.25rem 0;
 }
 
 .toaster {
