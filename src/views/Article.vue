@@ -491,7 +491,7 @@ svg {
 }
 
 .block {
-  margin-bottom: 56px;
+  margin-bottom: 4rem;
   .block-header {
     h2 {
       font-weight: 700;
@@ -501,9 +501,6 @@ svg {
       color: #0e0e0e;
     }
     margin-bottom: 18px;
-  }
-  &:last-child.no-citation {
-    margin-bottom: 218px;
   }
 }
 
