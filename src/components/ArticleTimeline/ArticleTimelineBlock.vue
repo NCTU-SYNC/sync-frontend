@@ -1,5 +1,5 @@
 <template>
-  <b-list-group v-b-scrollspy.80 class="timeline-block__container">
+  <b-list-group ref="listGroup" v-b-scrollspy.80 class="timeline-block__container">
     <b-list-group-item v-for="(block, index) in blocks" :key="index" class="timeline-block__card" :to="`#block-${index}`">
       <ArticleTimelineCard
         :datetime="block.blockDateTime"
@@ -23,6 +23,18 @@ export default {
       type: Array,
       default: () => []
     }
+  },
+  created() {
+    this.$root.$on('bv::scrollspy::activate', (target) => {
+      const index = target.split('#block-')[1]
+      const activeNode = this.$refs.listGroup.childNodes[index]
+
+      activeNode.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+        inline: 'nearest'
+      })
+    })
   }
 }
 </script>
