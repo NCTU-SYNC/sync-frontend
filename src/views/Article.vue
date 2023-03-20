@@ -107,7 +107,16 @@
             </b-button>
           </div>
         </div>
+
+        <div>
+          <h2>相關推薦</h2>
+          <div class="card-gallery">
+            <ArticleCard v-for="(article, index) in recommendedNews" :key="index" :article="article" :title="article.title" :article-id="article._id" :tags="article.tags.slice(0, 2)" />
+          </div>
+        </div>
+
       </div>
+
       <div class="scroll-top-btn" @click="backToTop">
         <sync-icon icon="arrow-up" size="lg" />
       </div>
@@ -135,6 +144,7 @@ import SvgIcon from '@/components/SvgIcon.vue'
 import ArticleTimelineBlock from '@/components/ArticleTimeline/ArticleTimelineBlock.vue'
 import SyncActionBar from '@/components/SyncActionBar/SyncActionBar.vue'
 import SyncActionBarBtn from '@/components/SyncActionBar/SyncActionBarBtn.vue'
+import ArticleCard from '@/components/ArticleCard.vue'
 
 export default {
   name: 'Article',
@@ -144,7 +154,8 @@ export default {
     SvgIcon,
     ArticleTimelineBlock,
     SyncActionBar,
-    SyncActionBarBtn
+    SyncActionBarBtn,
+    ArticleCard
   },
   data() {
     return {
@@ -306,10 +317,10 @@ export default {
             const receivedNews = []
             const articles = data.data[0]
             for (const index in articles) {
-              const { title, lastUpdatedAt, _id } = articles[index]
-              receivedNews.push({ title, lastUpdatedAt, _id })
+              const { title, lastUpdatedAt, _id, tags } = articles[index]
+              receivedNews.push({ title, lastUpdatedAt, _id, tags })
             }
-            this.recommendedNews = receivedNews
+            this.recommendedNews = receivedNews.slice(0, 2)
             this.isRecommendedReady = true
           }
         })
@@ -481,6 +492,7 @@ svg {
   justify-content: space-between;
   border-top: solid 1px $gray-300;
   padding: 0.5rem 0;
+  margin-bottom: 3.75rem;
 
   .toolbar__toolset {
     display: flex;
@@ -562,6 +574,13 @@ svg {
   svg {
     fill: white;
   }
+}
+
+.card-gallery {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  margin-top: 1.5rem;
 }
 
 .action-bar {
