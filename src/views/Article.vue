@@ -27,6 +27,10 @@
             class="block"
             :class="citations.length === 0 ? 'no-citation' : ''"
           >
+            <div class="block__share-btn" @click="shareBlock(index)">
+              <SyncIcon icon="chain" size="md" />
+            </div>
+
             <div class="block-header">
               <h2>
                 {{ block.blockTitle }}
@@ -406,6 +410,19 @@ export default {
           behavior: 'smooth'
         })
       }
+    },
+    shareBlock(blockIndex) {
+      navigator.clipboard.writeText(`${location.host}/#${this.$route.path}#block-${blockIndex}`).then(() => {
+        this.$bvToast.toast('連結已複製', {
+          solid: true,
+          noCloseButton: true,
+          toaster: 'read-toaster',
+          bodyClass: 'toast__black rounded',
+          autoHideDelay: 1500
+        })
+      }).catch((err) => {
+        console.error(err)
+      })
     }
   }
 }
@@ -501,6 +518,7 @@ svg {
 }
 
 .block {
+  position: relative;
   margin-bottom: 4rem;
   .block-header {
     h2 {
@@ -511,6 +529,30 @@ svg {
       color: #0e0e0e;
     }
     margin-bottom: 18px;
+  }
+
+  &:hover .block__share-btn {
+    display: block;
+  }
+
+  &__share-btn {
+    display: none;
+    position: absolute;
+    top: 4px;
+    left: calc(-4px - 24px);
+    color: $gray-8;
+    width: calc(24px + 1rem);
+    padding-right: 1rem;
+
+    svg {
+      color: inherit;
+    }
+
+    &:hover {
+      display: block;
+      color: $blue-4;
+      cursor: pointer;
+    }
   }
 }
 
