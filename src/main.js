@@ -7,8 +7,10 @@ import router from './router'
 // vite-plugin-svg-icons setup
 import 'virtual:svg-icons-register'
 import SvgIcon from '@/components/SvgIcon'
+import SyncButton from '@/components/SyncButton'
 import '@/assets/scss/main.scss'
 
+Vue.component('SyncButton', SyncButton)
 Vue.component('SyncIcon', SvgIcon)
 
 // Install BootstrapVue
@@ -17,6 +19,11 @@ Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.config.productionTip = false
 Vue.prototype.$firebaseAuth = FirebaseAuth
+
+store.commit('WINDOW_WIDTH_UPDATE', window.innerWidth) // first commit
+window.addEventListener('resize', () => {
+  store.commit('WINDOW_WIDTH_UPDATE', window.innerWidth)
+})
 
 new Vue({
   el: '#app',

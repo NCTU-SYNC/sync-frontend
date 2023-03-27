@@ -27,7 +27,7 @@
             role="tab"
             class="option-name"
           >
-            <a @click="currentShowingIndex = 0">
+            <a @click="setTab('edited_articles')">
               <span aria-hidden focusable="false" class="option-icon">
                 <SyncIcon icon="edited" />
               </span>
@@ -39,7 +39,7 @@
             role="tab"
             class="option-name"
           >
-            <a @click="currentShowingIndex = 1">
+            <a @click="setTab('browsing_history')">
               <span aria-hidden focusable="false" class="option-icon">
                 <SyncIcon icon="history" />
               </span>
@@ -51,7 +51,7 @@
             role="tab"
             class="option-name"
           >
-            <a @click="currentShowingIndex = 2">
+            <a @click="setTab('bookmarks')">
               <span aria-hidden focusable="false" class="option-icon">
                 <SyncIcon icon="bookmark" />
               </span>
@@ -63,7 +63,7 @@
             role="tab"
             class="option-name"
           >
-            <a @click="currentShowingIndex = 3">
+            <a @click="setTab('settings')">
               <span aria-hidden focusable="false" class="option-icon">
                 <SyncIcon icon="settings" />
               </span>
@@ -120,7 +120,13 @@ export default {
       showingArticles: [],
       currentShowingIndex: 0,
       contentTitle: '',
-      points: 0
+      points: 0,
+      tabMap: new Map([
+        ['edited_articles', 0],
+        ['browsing_history', 1],
+        ['bookmarks', 2],
+        ['settings', 3]
+      ])
     }
   },
   computed: {
@@ -138,6 +144,14 @@ export default {
         this.init()
       }
     },
+    '$route.query.tab'() {
+      const tab = this.$route.query.tab
+      if (!this.tabMap.has(tab)) {
+        this.currentShowingIndex = 0
+      } else {
+        this.currentShowingIndex = this.tabMap.get(tab)
+      }
+    },
     currentShowingIndex() {
       this.updateList()
     }
@@ -149,6 +163,11 @@ export default {
       } catch (e) {
         console.error('Profile Initialization Error:', e)
       }
+    }
+    // navigate to tab when page loaded
+    const tab = this.$route.query.tab
+    if (tab && this.tabMap.has(tab)) {
+      this.currentShowingIndex = this.tabMap.get(tab)
     }
   },
   methods: {
@@ -188,6 +207,14 @@ export default {
           )
           break
       }
+    },
+    setTab(tabName) {
+      const currentTab = this.$route.query.tab
+      if (tabName === currentTab) return
+      const query = {
+        tab: tabName
+      }
+      this.$router.push({ path: 'profile', query })
     }
   }
 }

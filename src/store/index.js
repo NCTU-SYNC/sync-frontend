@@ -10,6 +10,7 @@ Vue.use(Vuex)
 
 const getDefaultState = () => {
   return {
+    windowWidth: 0,
     showFooter: true
   }
 }
@@ -27,6 +28,7 @@ const store = new Vuex.Store({
   getters: {
     isInitialized: (state) => state.user.isInitialized,
     isLogin: (state) => state.user.authenticated,
+    windowWidth: (state) => state.windowWidth,
     displayName: (state) => state.user.displayName,
     photoURL: (state) => state.user.photoURL,
     uid: (state) => state.user.uid,
@@ -36,6 +38,9 @@ const store = new Vuex.Store({
     notifications: (state) => state.user.notifications
   },
   mutations: {
+    WINDOW_WIDTH_UPDATE(state, width) {
+      state.windowWidth = width
+    },
     SET_FOOTER(state, show) {
       state.showFooter = show
     }

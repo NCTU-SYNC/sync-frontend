@@ -8,13 +8,13 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'Home',
+      name: 'newHome',
       component: () => import('@/views/Home')
     },
     {
       path: '/login',
       name: 'Login',
-      component: () => import('@/components/NavBar'),
+      component: () => import('@/components/NavBar/NavBar'),
       props: { modalShow: true, modalType: 'login' }
     },
     {
@@ -26,7 +26,7 @@ const router = new Router({
     {
       path: '/signup',
       name: 'SignUp',
-      component: () => import('@/components/NavBar'),
+      component: () => import('@/components/NavBar/NavBar.vue'),
       props: { modalShow: true, modalType: 'signup' }
     },
     {

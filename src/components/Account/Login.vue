@@ -139,7 +139,8 @@ export default {
 
       try {
         await loginFunc()
-        this.$router.back()
+        const redirect = this.getRedirectPath
+        if (redirect) { this.$router.push({ path: redirect.redirect }) } else { this.$router.back() }
       } catch (error) {
         console.error(error)
         this.$bvModal.msgBoxOk(error.message)

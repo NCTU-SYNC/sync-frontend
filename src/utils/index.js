@@ -59,6 +59,14 @@ function getArticleImages(blocks, result, limit = 10) {
   }
 }
 
+function getArticleBlockTitles(blocks, limits = 0) {
+  const titles = blocks.flatMap((block) => block.blockTitle)
+
+  if (limits !== 0) return titles.slice(0, limits)
+
+  return titles
+}
+
 // url validation
 function isValidUrl(url) {
   try {
@@ -74,6 +82,7 @@ class Utils {
   static getArticleContent = getArticleContent
   static getArticleFirstImage = getArticleFirstImage
   static isValidUrl = isValidUrl
+  static getArticleBlockTitles = getArticleBlockTitles
 }
 
 export { Utils }

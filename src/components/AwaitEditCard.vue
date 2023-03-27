@@ -19,16 +19,20 @@
     <div class="card-text">
       {{ body }}
     </div>
-    <button class="card-btn" @click.stop="goToEdit">加入編輯</button>
+    <SyncButton class="card-btn" variant="secondary" pill :to="`/article/${articleId}/post`">加入編輯</SyncButton>
   </div>
 </template>
 
 <script>
+import SyncButton from './SyncButton.vue'
 import moment from 'moment'
 import { blocksToText } from '@/utils/editorUtil'
 
 export default {
   name: 'AwaitEditCard',
+  components: [
+    SyncButton
+  ],
   props: {
     articleId: {
       type: String,
@@ -82,7 +86,8 @@ export default {
   &-container {
     display: grid;
     grid-template-rows: 8fr 3fr 6fr 6fr;
-    width: 304px;
+    flex: 1;
+    min-width: 304px;
     height: 292px;
     border-radius: 16px;
     box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.08);
@@ -159,18 +164,15 @@ export default {
     width: 100%;
     height: 48px;
     margin-top: auto;
-    background-color: $blue-4;
     border: 0;
-    border-radius: 8px;
+    border-radius: 3rem;
     font-size: 1.125rem;
-    font-weight: 600;
+    font-weight: 500;
     line-height: 1.875rem;
-    color: $white;
-    cursor: pointer;
   }
 
   &__lg {
-    width: 460px;
+    min-width: 460px;
     height: 272px;
 
     & .card-title {
