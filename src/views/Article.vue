@@ -131,13 +131,37 @@
         <SyncActionBarBtn icon="edit" description="編輯內容" @click="handleEditPostRoute" />
         <SyncActionBarBtn icon="history-version" description="編輯紀錄" @click="handleHistoryRoute" />
         <SyncActionBarBtn :icon="isSubscribed ? 'saved' : 'save'" :description="bookmarkTooltip" @click="handleClickBookmark" />
-        <SyncActionBarBtn icon="share" description="分享文章" @click="handleShareArticle" />
+        <SyncActionBarBtn icon="share" description="分享文章" @click="$bvModal.show('article-share-modal')" />
       </SyncActionBar>
     </div>
     <b-toaster name="read-toaster" class="toaster" />
+
+    <b-modal id="article-share-modal" hide-footer hide-header centered content-class="bg-transparent border-0" body-class="p-0">
+      <div class="article-share-modal__content">
+        <div class="article-share-modal__header">
+          <div class="article-share-modal__title">分享文章</div>
+          <button class="article-share-modal__closebtn" @click="$bvModal.hide('article-share-modal')">
+            <SyncIcon icon="x-mark" size="md" />
+          </button>
+        </div>
+        <div class="article-share-modal__body">
+          <b-button variant="light" class="article-share-modal__btn" @click="handleShareArticle">
+            <SvgIcon size="md" icon="chain" />
+            <div>分享連結</div>
+          </b-button>
+          <b-button variant="light" class="article-share-modal__btn" @click="handleShareArticleMessenger">
+            <SvgIcon size="md" icon="messenger" />
+            <div>Messenger</div>
+          </b-button>
+          <b-button variant="light" class="article-share-modal__btn" @click="handleShareArticleLine">
+            <SvgIcon size="md" icon="line" />
+            <div>Line</div>
+          </b-button>
+        </div>
+      </div>
+    </b-modal>
   </div>
 </template>
-
 <script>
 // test id:  5f5113349779a26bd0444b26
 import moment from 'moment'
@@ -394,6 +418,19 @@ export default {
         console.error(err)
       })
     },
+    handleShareArticleMessenger() {
+      console.log(import.meta.env)
+      const url = new URL('https://www.facebook.com/dialog/send')
+      url.searchParams.append('app_id', import.meta.env.VITE_FACEBOOK_APP_ID)
+      url.searchParams.append('link', `${import.meta.env.VITE_BASE_URL}/#${this.$route.path}`)
+      url.searchParams.append('redirect_uri', `${import.meta.env.VITE_BASE_URL}/#${this.$route.path}`)
+      window.open(url.toString())
+    },
+    handleShareArticleLine() {
+      const url = new URL('https://social-plugins.line.me/lineit/share')
+      url.searchParams.append('url', `${import.meta.env.VITE_BASE_URL}/#${this.$route.path}`)
+      window.open(url.toString())
+    },
     onElementIntersect(entries) {
       if (entries[0].isIntersecting) {
         this.$refs.actionBar.style = 'opacity: 0; pointer-events: none'
@@ -633,6 +670,56 @@ svg {
   justify-content: center;
 
   transition: ease-out 0.1s;
+}
+
+.article-share-modal {
+  border: 0;
+  border-radius: 1rem;
+
+  &__content {
+    background-color: white;
+    border-radius: 1rem;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+
+    height: 70px;
+    padding: 1.25rem;
+  }
+
+  &__closebtn {
+    color: $gray-8;
+    background-color: transparent;
+    border: 0;
+  }
+
+  &__body {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 2.5rem;
+    height: 170px;
+  }
+
+  &__btn {
+    width: 80px;
+    height: 80px;
+    padding: 0;
+    background-color: $gray-1;
+
+    font-size: 12px;
+    line-height: 20px;
+    color: $text-1;
+
+    border-radius: .5rem;
+
+    > div {
+      margin-top: .5rem;
+    }
+  }
 }
 
 .toaster {
