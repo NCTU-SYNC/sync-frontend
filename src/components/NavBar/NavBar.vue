@@ -26,7 +26,7 @@ export default {
   computed: {
     ...mapGetters(['windowWidth']),
     lg() {
-      return this.windowWidth > 1023
+      return this.windowWidth > 1279
     }
   },
 
