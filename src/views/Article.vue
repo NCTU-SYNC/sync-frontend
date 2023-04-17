@@ -1,8 +1,14 @@
 <template>
   <div v-if="isPageReady">
-    <div class="main-content-container">
-      <ArticleTimelineBlock class="timeline-block" :blocks="blocks" />
-      <div id="article-container" class="article-container">
+    <div class="main-content-container" :class="{ 'main-content-container__sidebar-visible': sidebarVisible }">
+      <button v-show="md" v-b-toggle.timeline-sidebar class="timeline-block-sidebar__btn">
+        <SyncIcon icon="edit-timeline" size="md" />
+      </button>
+      <b-sidebar v-if="!lg" id="timeline-sidebar" ref="timelineSidebar" v-model="sidebarVisible" sidebar-class="timeline-block-sidebar" :no-slide="sm" @change="sidebarStateChangeHandler">
+        <ArticleTimelineBlock class="timeline-block-sidebar__blocks" :blocks="blocks" />
+      </b-sidebar>
+      <ArticleTimelineBlock v-else class="timeline-block" :blocks="blocks" />
+      <div id="article-container" class="article-container" :class="{ 'article-container__side': semiMd && sidebarVisible }">
         <div class="title-block">
           <div class="category">
             {{ formatCategory(category) }}
@@ -128,7 +134,8 @@
 
     <div ref="actionBar" class="action-bar">
       <SyncActionBar>
-        <SyncActionBarBtn icon="edit" description="編輯內容" @click="handleEditPostRoute" />
+        <SyncActionBarBtn v-if="md || lg" icon="edit" description="編輯內容" @click="handleEditPostRoute" />
+        <SyncActionBarBtn v-else v-b-toggle.timeline-sidebar icon="edit-timeline" description="事件時間軸" />
         <SyncActionBarBtn icon="history-version" description="編輯紀錄" @click="handleHistoryRoute" />
         <SyncActionBarBtn :icon="isSubscribed ? 'saved' : 'save'" :description="bookmarkTooltip" @click="handleClickBookmark" />
         <SyncActionBarBtn icon="share" description="分享文章" @click="$bvModal.show('article-share-modal')" />
@@ -173,6 +180,7 @@ import ArticleTimelineBlock from '@/components/ArticleTimeline/ArticleTimelineBl
 import SyncActionBar from '@/components/SyncActionBar/SyncActionBar.vue'
 import SyncActionBarBtn from '@/components/SyncActionBar/SyncActionBarBtn.vue'
 import ArticleCard from '@/components/ArticleCard.vue'
+import { mapGetters } from 'vuex/dist/vuex.common'
 
 export default {
   name: 'Article',
@@ -221,10 +229,24 @@ export default {
       firstBlockDistToTop: 0,
       isRecommendedReady: false,
       changePageTransition: false,
-      intersectionObserver: null
+      intersectionObserver: null,
+      sidebarVisible: false
     }
   },
   computed: {
+    ...mapGetters(['windowWidth']),
+    sm() {
+      return this.windowWidth < 680
+    },
+    md() {
+      return this.windowWidth < 1280 && this.windowWidth >= 680
+    },
+    semiMd() {
+      return this.windowWidth < 1280 && this.windowWidth >= 1024
+    },
+    lg() {
+      return this.windowWidth >= 1280
+    },
     getYear() {
       return this.time.getFullYear()
     },
@@ -460,6 +482,12 @@ export default {
       }).catch((err) => {
         console.error(err)
       })
+    },
+    sidebarStateChangeHandler(visible) {
+      // execute after bootstrap animation
+      setTimeout(() => {
+        document.getElementById('timeline-sidebar').style.transform = visible ? 'translateY(0)' : ''
+      })
     }
   }
 }
@@ -483,6 +511,26 @@ svg {
   gap: 2rem;
   grid-template-columns: repeat(12, 1fr);
   padding: 2.25rem;
+
+  transition: all 0.3s ease;
+
+  @media screen and (max-width: 1279px) {
+    width: 100%;
+
+    &:has(.article-container__side) {
+      width: calc(100% - 320px);
+      float: right;
+
+      ~ .action-bar {
+        padding-left: 320px;
+      }
+    }
+  }
+
+  @media screen and (max-width: 679px) {
+    min-width: 320px;
+  }
+
 }
 
 .title-block {
@@ -625,15 +673,16 @@ svg {
 
 .article-container {
   grid-column: 4/10;
-}
 
-.timeline-block {
-  grid-column: 1/4;
-  height: calc(100vh - 4rem);
-  width: 286px;
-  position: fixed;
-  top: 4rem;
-  padding: 2.25rem 3rem 2.25rem 0;
+  @media screen and (max-width: 1280px) {
+    grid-column: 1/13;
+    width: 640px;
+    margin: 0 auto;
+  }
+
+  @media screen and (max-width: 679px) {
+    width: 100%;
+  }
 }
 
 .scroll-top-btn {
@@ -738,4 +787,62 @@ svg {
 html {
   scroll-behavior: smooth;
 }
+</style>
+
+<style lang="scss">
+.timeline-block {
+  grid-column: 1/4;
+  height: calc(100vh - 4rem);
+  width: 286px;
+  position: fixed;
+  top: 4rem;
+  padding: 2.25rem 3rem 2.25rem 0;
+
+  &-sidebar {
+    top: 4rem;
+    height: calc(100vh - 4rem);
+
+    &__blocks {
+      padding: 20px;
+    }
+
+    &__btn {
+      position: fixed;
+      top: 6rem;
+      left: 0;
+
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      width: 52px;
+      height: 40px;
+      padding: 8px;
+
+      color: $gray-8;
+      background-color: white;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08) !important; // use !important to override style defined in main.scss
+      border: 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    @media screen and (max-width: 679px) {
+      top: unset;
+      bottom: 0;
+      height: 62.5vh;
+      width: 100%;
+
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+  }
+}
+
+.main-content-container__sidebar-visible {
+  ~ .action-bar {
+    @media screen and (max-width: 1023px) {
+      display: none;
+    }
+  }
+}
+
 </style>
