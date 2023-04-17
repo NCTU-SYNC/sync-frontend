@@ -710,6 +710,10 @@ svg {
   svg {
     fill: white;
   }
+
+  @media screen and (max-width: 1279px) {
+    display: none;
+  }
 }
 
 .card-gallery {
