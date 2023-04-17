@@ -1,192 +1,189 @@
 <template>
-  <b-container fluid class="article-container">
-    <div
-      v-if="isPageReady"
-      :class="{ 'position-relative': windowScrollY > FooterOffsetTop }"
-    >
-      <div
-        class="timeline-container py-4"
-        :class="
-          windowScrollY > FooterOffsetTop
-            ? 'position-absolute'
-            : isTimelineOutOfScreen
-              ? 'position-fixed'
-              : 'position-absolute'
-        "
-        :style="
-          windowScrollY > FooterOffsetTop
-            ? 'bottom: 32px; right: calc(50vw + 360px + 64px - 15px);'
-            : isTimelineOutOfScreen
-              ? 'top: 104px;'
-              : 'top: ' + (barDistToTop - 20) + 'px;'
-        "
-      >
-        <div class="timeline">
-          <ul>
-            <li
-              v-for="(block, blockIndex) in blocks"
-              :key="blockIndex"
-              @click="scrollTo(`block-${block._id}`)"
-            >
-              {{ block.blockTitle }}
-            </li>
-          </ul>
+  <div v-if="isPageReady">
+    <div class="main-content-container">
+      <ArticleTimelineBlock class="timeline-block" :blocks="blocks" />
+      <div id="article-container" class="article-container">
+        <div class="title-block">
+          <div class="category">
+            {{ formatCategory(category) }}
+          </div>
+          <div class="title-container">
+            <h1 class="title-text">
+              {{ title }}
+            </h1>
+          </div>
+
+          <div class="hashtag-container">
+            <HashtagPill v-for="(tag, index) in tags" :key="index" :name="tag" />
+          </div>
+          <div class="author-info">編輯者： {{ authorsString }}</div>
         </div>
-      </div>
-      <div
-        class="recommendedNews-container"
-        :style="`top: ${firstBlockDistToTop}px;`"
-      >
-        <div class="d-flex align-items-center heading">
-          <h2 class="d-inline-block mb-0">推薦新聞</h2>
-          <hr class="d-inline-block line">
-        </div>
-        <ol>
-          <li
-            v-for="(recNews, recNewsIndex) in recommendedNews"
-            :key="recNewsIndex"
+
+        <div>
+          <div
+            v-for="(block, index) in blocks"
+            :id="`block-${index}`"
+            :key="index"
+            class="block"
+            :class="citations.length === 0 ? 'no-citation' : ''"
           >
-            <div class="content">
-              <div class="title">
-                <b-link :to="`/article/${recNews._id}`">{{
-                  recNews.title
-                }}</b-link>
-              </div>
-              <div class="date">{{ formatDate(recNews.lastUpdatedAt) }}</div>
+            <div class="block__share-btn" @click="shareBlock(index)">
+              <SyncIcon icon="chain" size="md" />
             </div>
-          </li>
-        </ol>
-      </div>
-      <transition name="fade" mode="out-in" :duration="500">
-        <div class="d-flex justify-content-center">
-          <div class="main-content-container">
-            <div class="title-block mt-5">
-              <div class="category">
-                {{ formatCategory(category) }}
-              </div>
-              <div class="title-container">
-                <h1 class="title-text">
-                  {{ title }}
-                </h1>
-              </div>
 
-              <div class="hashtag-container">
-                <b-link
-                  v-for="(tag, tagIndex) in tags"
-                  :key="tagIndex"
-                  :to="{path: '../hashtag', query: { q: tag } }"
-                  class="hashtag"
-                >
-                  #{{ tag }}
-                </b-link>
-              </div>
-              <div class="article-info d-flex justify-content-between">
-                <div class="seen-edit-info">
-                  觀看數：{{ viewCount }}｜編輯數：{{ editedCount }}
-                </div>
-                <div class="lastUpdated">
-                  最後更新時間 {{ formatDateTime(lastUpdatedAt) }}
-                </div>
-              </div>
-              <hr ref="title-gray-bar">
-              <div class="d-flex justify-content-between">
-                <div class="author-info">編輯者： {{ authorsString }}</div>
-                <div class="icons">
-                  <b-button
-                    v-b-tooltip.hover.bottom.v-secondary="'編輯內容'"
-                    class="btn-icon mx-3"
-                    @click="handleEditPostRoute(`${$route.path}/post`)"
-                  >
-                    <SyncIcon icon="edit" />
-                  </b-button>
-
-                  <b-button
-                    v-b-tooltip.hover.bottom.v-secondary="'查看編輯歷史'"
-                    class="btn-icon mx-3"
-                    @click="handleHistoryRoute"
-                  >
-                    <SyncIcon icon="history-version" />
-                  </b-button>
-
-                  <b-button
-                    v-b-tooltip.hover.bottom.v-secondary="bookmarkTooltip"
-                    class="btn-icon ml-3"
-                    :class="isSubscribed ? 'subscribed' : ''"
-                    @click="handleClickBookmark"
-                  >
-                    <SyncIcon v-if="!isSubscribed" icon="save" />
-                    <SyncIcon v-else icon="saved" />
-                  </b-button>
-                </div>
+            <div class="block-header">
+              <h2>
+                {{ block.blockTitle }}
+              </h2>
+              <div v-if="block.blockDateTime" class="article-info">
+                事件時間：{{
+                  formatBlockDateTime(block.blockDateTime, block.timeEnable)
+                }}
               </div>
             </div>
 
-            <div
-              v-for="(block, index) in blocks"
-              :ref="`block-${block._id}`"
-              :key="index"
-              class="block"
-              :class="citations.length === 0 ? 'no-citation' : ''"
-            >
-              <div class="block-header">
-                <h2>
-                  {{ block.blockTitle }}
-                </h2>
-                <div v-if="block.blockDateTime" class="article-info">
-                  事件時間：{{
-                    formatBlockDateTime(block.blockDateTime, block.timeEnable)
-                  }}
-                </div>
-              </div>
-
-              <TiptapEditor
-                :id="block.id"
-                class="editor__content"
-                :content="block.content"
-                :editable="false"
-              />
-            </div>
-
-            <div v-if="citations.length !== 0" class="citations">
-              <hr>
-              <h2>新聞來源</h2>
-              <div
-                v-for="(citation, index) in citations"
-                :key="index"
-                class="citation-item"
-              >
-                <div
-                  class="citation-title d-flex justify-content-start align-items-start"
-                >
-                  <div class="citation-title-square">
-                    <div class="citation-title-label" :data-label="index + 1" />
-                  </div>
-                  <div class="citation-title-text">
-                    {{ citation.title }}
-                  </div>
-                </div>
-                <a class="citation-link" :href="citation.url" target="_blank">{{
-                  citation.url
-                }}</a>
-              </div>
-            </div>
+            <TiptapEditor
+              :id="block.id"
+              class="editor__content"
+              :content="block.content"
+              :editable="false"
+            />
           </div>
         </div>
-      </transition>
-    </div>
-  </b-container>
-</template>
 
+        <div v-if="citations.length !== 0" class="citations">
+          <h2>參考資料</h2>
+          <div
+            v-for="(citation, index) in citations"
+            :key="index"
+            class="citation-item"
+          >
+            <div class="citation-title-label" :data-label="index + 1">{{ index + 1 }}.</div>
+
+            <div class="citation-title-text">
+              {{ citation.title }}
+            </div>
+
+            <a class="citation-link" :href="citation.url" target="_blank">{{
+              citation.url
+            }}</a>
+          </div>
+        </div>
+
+        <div ref="toolbar" class="toolbar">
+          <div class="toolbar__toolset">
+            <b-button
+              v-b-tooltip.hover.bottom.v-secondary="'編輯內容'"
+              variant="link"
+              class="btn-icon"
+              @click="handleEditPostRoute(`${$route.path}/post`)"
+            >
+              <SvgIcon icon="edit" />
+            </b-button>
+            <b-button
+              v-b-tooltip.hover.bottom.v-secondary="'查看編輯歷史'"
+              variant="link"
+              class="btn-icon"
+              @click="handleHistoryRoute"
+            >
+              <SvgIcon icon="history-version" />
+            </b-button>
+            <b-button
+              v-b-tooltip.hover.bottom.v-secondary="bookmarkTooltip
+              "
+              variant="link"
+              class="btn-icon"
+              :class="isSubscribed ? 'subscribed' : ''"
+              @click="handleClickBookmark"
+            >
+              <SvgIcon v-if="!isSubscribed" icon="save" />
+              <SvgIcon v-else icon="saved" />
+            </b-button>
+          </div>
+          <div class="toolbar__toolset">
+            <b-button
+              v-b-tooltip.hover.bottom.v-secondary="'分享文章'"
+              variant="link"
+              class="btn-icon"
+              @click="handleShareArticle"
+            >
+              <SvgIcon icon="share" />
+            </b-button>
+          </div>
+        </div>
+
+        <div>
+          <h2>相關推薦</h2>
+          <div class="card-gallery">
+            <ArticleCard v-for="(article, index) in recommendedNews" :key="index" :article="article" :title="article.title" :article-id="article._id" :tags="article.tags.slice(0, 2)" />
+          </div>
+        </div>
+
+      </div>
+
+      <div class="scroll-top-btn" @click="backToTop">
+        <sync-icon icon="arrow-up" size="lg" />
+      </div>
+    </div>
+
+    <div ref="actionBar" class="action-bar">
+      <SyncActionBar>
+        <SyncActionBarBtn icon="edit" description="編輯內容" @click="handleEditPostRoute" />
+        <SyncActionBarBtn icon="history-version" description="編輯紀錄" @click="handleHistoryRoute" />
+        <SyncActionBarBtn :icon="isSubscribed ? 'saved' : 'save'" :description="bookmarkTooltip" @click="handleClickBookmark" />
+        <SyncActionBarBtn icon="share" description="分享文章" @click="$bvModal.show('article-share-modal')" />
+      </SyncActionBar>
+    </div>
+    <b-toaster name="read-toaster" class="toaster" />
+
+    <b-modal id="article-share-modal" hide-footer hide-header centered content-class="bg-transparent border-0" body-class="p-0">
+      <div class="article-share-modal__content">
+        <div class="article-share-modal__header">
+          <div class="article-share-modal__title">分享文章</div>
+          <button class="article-share-modal__closebtn" @click="$bvModal.hide('article-share-modal')">
+            <SyncIcon icon="x-mark" size="md" />
+          </button>
+        </div>
+        <div class="article-share-modal__body">
+          <b-button variant="light" class="article-share-modal__btn" @click="handleShareArticle">
+            <SvgIcon size="md" icon="chain" />
+            <div>分享連結</div>
+          </b-button>
+          <b-button variant="light" class="article-share-modal__btn" @click="handleShareArticleMessenger">
+            <SvgIcon size="md" icon="messenger" />
+            <div>Messenger</div>
+          </b-button>
+          <b-button variant="light" class="article-share-modal__btn" @click="handleShareArticleLine">
+            <SvgIcon size="md" icon="line" />
+            <div>Line</div>
+          </b-button>
+        </div>
+      </div>
+    </b-modal>
+  </div>
+</template>
 <script>
 // test id:  5f5113349779a26bd0444b26
 import moment from 'moment'
 import articleAPI from '@/api/article'
 import TiptapEditor from '@/components/Editor/TiptapEditor.vue'
+import HashtagPill from '@/components/HashtagPill.vue'
+import SvgIcon from '@/components/SvgIcon.vue'
+import ArticleTimelineBlock from '@/components/ArticleTimeline/ArticleTimelineBlock.vue'
+import SyncActionBar from '@/components/SyncActionBar/SyncActionBar.vue'
+import SyncActionBarBtn from '@/components/SyncActionBar/SyncActionBarBtn.vue'
+import ArticleCard from '@/components/ArticleCard.vue'
 
 export default {
   name: 'Article',
   components: {
-    TiptapEditor
+    HashtagPill,
+    TiptapEditor,
+    SvgIcon,
+    ArticleTimelineBlock,
+    SyncActionBar,
+    SyncActionBarBtn,
+    ArticleCard
   },
   data() {
     return {
@@ -210,7 +207,7 @@ export default {
       authors: [],
       createdAt: '',
       editedCount: 0,
-      citation: {},
+      citations: [],
       lastUpdatedAt: '',
       timeId: null,
       time: moment(),
@@ -223,7 +220,8 @@ export default {
       FooterOffsetTop: 0,
       firstBlockDistToTop: 0,
       isRecommendedReady: false,
-      changePageTransition: false
+      changePageTransition: false,
+      intersectionObserver: null
     }
   },
   computed: {
@@ -239,9 +237,6 @@ export default {
     subscribedList() {
       return this.$store.getters['article/subscribedList']
     },
-    isTimelineOutOfScreen() {
-      return this.windowScrollY > this.barDistToTop - 124
-    },
     authorsString() {
       let authorsString = ''
       const authors = this.authors
@@ -255,7 +250,7 @@ export default {
       return authorsString
     },
     bookmarkTooltip() {
-      return this.isSubscribed ? '取消收藏文章' : '收藏文章'
+      return this.isSubscribed ? '取消收藏' : '收藏文章'
     }
   },
   watch: {
@@ -267,15 +262,16 @@ export default {
       }
       this.isSubscribed = false
     },
-    isPageReady(newValue) {
-      this.$store.commit('SET_FOOTER', newValue)
-      this.setOffsetTopOfSideElements()
-    },
     '$route.params.ArticleID': function() {
       this.getArticleData()
     }
   },
   created() {
+    this.intersectionObserver = new IntersectionObserver(this.onElementIntersect, {
+      root: this.$el,
+      threshold: 1.0
+    })
+
     this.$on('reloadData', this.getArticleData)
     this.time = moment()
     this.timeId = setInterval(() => {
@@ -292,13 +288,10 @@ export default {
         0
     }
   },
-  mounted() {
-    window.addEventListener('scroll', this.updateScroll)
-  },
   beforeDestroy() {
     clearInterval(this.timeId)
     this.time = null
-    window.removeEventListener('scroll', this.updateScroll)
+    this.intersectionObserver.disconnect()
   },
   methods: {
     getArticleData() {
@@ -352,10 +345,10 @@ export default {
             const receivedNews = []
             const articles = data.data[0]
             for (const index in articles) {
-              const { title, lastUpdatedAt, _id } = articles[index]
-              receivedNews.push({ title, lastUpdatedAt, _id })
+              const { title, lastUpdatedAt, _id, tags } = articles[index]
+              receivedNews.push({ title, lastUpdatedAt, _id, tags })
             }
-            this.recommendedNews = receivedNews
+            this.recommendedNews = receivedNews.slice(0, 2)
             this.isRecommendedReady = true
           }
         })
@@ -363,18 +356,9 @@ export default {
           console.error(err)
           this.isRecommendedReady = true
         })
-    },
-    setOffsetTopOfSideElements() {
-      if (!this.isPageReady) return
-      this.$nextTick(() => {
-        this.barDistToTop = this.$refs['title-gray-bar'].offsetTop
-        this.firstBlockDistToTop =
-          this.$refs[`block-${this.blocks[0]._id}`][0].offsetTop
-        setTimeout(() => {
-          const footer = document.querySelector('.footer')
-          this.FooterOffsetTop = footer.offsetTop - footer.offsetHeight - 518 // citation
-        }, 50)
-      })
+      setTimeout(() => {
+        this.intersectionObserver.observe(this.$refs.toolbar)
+      }, 1000)
     },
     handleEditPostRoute(route) {
       if (this.isLogin) {
@@ -421,13 +405,61 @@ export default {
         )
       }
     },
-    scrollTo(refName) {
-      const element = this.$refs[refName][0]
-      const top = element.offsetTop
-      window.scrollTo({ left: 0, top: top - (64 + 10), behavior: 'smooth' })
+    handleShareArticle() {
+      navigator.clipboard.writeText(`${location.host}/#${this.$route.path}`).then(() => {
+        this.$bvToast.toast('連結已複製', {
+          solid: true,
+          noCloseButton: true,
+          toaster: 'read-toaster',
+          bodyClass: 'toast__black rounded',
+          autoHideDelay: 1500
+        })
+      }).catch((err) => {
+        console.error(err)
+      })
     },
-    updateScroll() {
-      this.windowScrollY = window.scrollY
+    handleShareArticleMessenger() {
+      console.log(import.meta.env)
+      const url = new URL('https://www.facebook.com/dialog/send')
+      url.searchParams.append('app_id', import.meta.env.VITE_FACEBOOK_APP_ID)
+      url.searchParams.append('link', `${import.meta.env.VITE_BASE_URL}/#${this.$route.path}`)
+      url.searchParams.append('redirect_uri', `${import.meta.env.VITE_BASE_URL}/#${this.$route.path}`)
+      window.open(url.toString())
+    },
+    handleShareArticleLine() {
+      const url = new URL('https://social-plugins.line.me/lineit/share')
+      url.searchParams.append('url', `${import.meta.env.VITE_BASE_URL}/#${this.$route.path}`)
+      window.open(url.toString())
+    },
+    onElementIntersect(entries) {
+      if (entries[0].isIntersecting) {
+        this.$refs.actionBar.style = 'opacity: 0; pointer-events: none'
+      } else {
+        this.$refs.actionBar.style = 'opacity: 1; pointer-events: all'
+      }
+    },
+    backToTop() {
+      if (this.$route.hash.length > 0) {
+        this.$router.push(this.$route.path)
+      } else {
+        window.scrollTo({
+          top: 0, left: 0,
+          behavior: 'smooth'
+        })
+      }
+    },
+    shareBlock(blockIndex) {
+      navigator.clipboard.writeText(`${location.host}/#${this.$route.path}#block-${blockIndex}`).then(() => {
+        this.$bvToast.toast('連結已複製', {
+          solid: true,
+          noCloseButton: true,
+          toaster: 'read-toaster',
+          bodyClass: 'toast__black rounded',
+          autoHideDelay: 1500
+        })
+      }).catch((err) => {
+        console.error(err)
+      })
     }
   }
 }
@@ -440,31 +472,43 @@ p {
   letter-spacing: 0.25rem;
 }
 
+svg {
+  color: $gray-8;
+}
+
 .main-content-container {
-  width: 720px;
+  display: grid;
+  width: 1240px;
+  margin: 0 auto;
+  gap: 2rem;
+  grid-template-columns: repeat(12, 1fr);
+  padding: 2.25rem;
 }
 
 .title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
   margin-bottom: 50px;
+  background-color: white;
+  border-radius: 16px;
 }
 
 :deep(.btn-icon) {
   border: 0px;
-  background-color: #ffffff;
   padding: 0;
 }
 
 .category {
   color: $blue;
   font-size: 18px;
-  margin-bottom: 16px;
 }
 
 .title-text {
-  font-size: 36px;
+  font-size: 2rem;
   font-weight: bold;
-  line-height: 56px;
-  margin-bottom: 10px;
+  line-height: 3rem;
   color: #0e0e0e;
 }
 
@@ -475,21 +519,15 @@ p {
 }
 
 .hashtag-container {
-  margin-bottom: 24px;
-  .hashtag {
-    font-size: 12px;
-    color: $blue !important;
-    margin-right: 12px;
-  }
+  font-size: 12px;
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
 }
 
 .author-info {
   font-size: 12px;
   overflow-wrap: anywhere;
-}
-
-.icons {
-  flex-shrink: 0;
 }
 
 .category-navbar {
@@ -503,8 +541,22 @@ p {
   color: #232323;
 }
 
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  border-top: solid 1px $gray-300;
+  padding: 0.5rem 0;
+  margin-bottom: 3.75rem;
+
+  .toolbar__toolset {
+    display: flex;
+    gap: 1.5rem;
+  }
+}
+
 .block {
-  margin-bottom: 56px;
+  position: relative;
+  margin-bottom: 4rem;
   .block-header {
     h2 {
       font-weight: 700;
@@ -515,181 +567,172 @@ p {
     }
     margin-bottom: 18px;
   }
-  &:last-child.no-citation {
-    margin-bottom: 218px;
+
+  &:hover .block__share-btn {
+    display: block;
+  }
+
+  &__share-btn {
+    display: none;
+    position: absolute;
+    top: 4px;
+    left: calc(-4px - 24px);
+    color: $gray-8;
+    width: calc(24px + 1rem);
+    padding-right: 1rem;
+
+    svg {
+      color: inherit;
+    }
+
+    &:hover {
+      display: block;
+      color: $blue-4;
+      cursor: pointer;
+    }
   }
 }
 
 .citations {
   margin-bottom: 120px;
   .citation-item {
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    grid-template-rows: 1fr 1fr;
+    font-size: 18px;
+    line-height: 30px;
     margin-top: 20px;
-    .citation-title {
-      margin-bottom: 8px;
-      line-height: 24px;
-      .citation-title-square {
-        margin-top: 4px;
-        margin-right: 16px;
-        line-height: 16px;
-        display: flex;
-        justify-content: center;
-        width: 1rem;
-        height: 1rem;
-        background-color: $gray-light;
-      }
-      .citation-title-label {
-        &:before {
-          content: attr(data-label);
-          width: 2rem;
-        }
-        font-size: 11px;
-      }
-    }
+
     .citation-link {
       font-size: 12px;
-      text-decoration: none !important;
-      color: #a8a8a8 !important;
+      color: $blue-4 !important;
+      text-decoration: underline !important;
       font-weight: 400;
       word-break: break-all;
+      grid-row-start: 2;
+      grid-column-start: 2;
     }
   }
-  hr {
-    margin-bottom: 40px;
+
+  .citation-title-label {
+    text-align: center;
   }
+
   h2 {
     margin-bottom: 18px;
   }
 }
 
 .article-container {
-  @media only screen and (min-width: map-get($grid-breakpoints, xl)) {
-    min-height: 1080px;
+  grid-column: 4/10;
+}
+
+.timeline-block {
+  grid-column: 1/4;
+  height: calc(100vh - 4rem);
+  width: 286px;
+  position: fixed;
+  top: 4rem;
+  padding: 2.25rem 3rem 2.25rem 0;
+}
+
+.scroll-top-btn {
+  position: fixed;
+  bottom: 2.5rem;
+  right: 4rem;
+  z-index: 100;
+  background-color: $gray-5;
+  padding: .25rem;
+  border-radius: 8px;
+  opacity: 50%;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  svg {
+    fill: white;
   }
 }
 
-.timeline-container {
-  @include hide-below-desktop;
-  max-height: calc(100vh - 110px);
-  overflow-y: scroll;
-  right: calc(50vw + 360px + 64px);
-  padding-left: 16px;
-  padding-right: 0px;
-  .timeline {
-    position: relative;
+.card-gallery {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.action-bar {
+  position: fixed;
+  bottom: 2rem;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+
+  transition: ease-out 0.1s;
+}
+
+.article-share-modal {
+  border: 0;
+  border-radius: 1rem;
+
+  &__content {
+    background-color: white;
+    border-radius: 1rem;
   }
-  ul {
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+
+    height: 70px;
+    padding: 1.25rem;
+  }
+
+  &__closebtn {
+    color: $gray-8;
+    background-color: transparent;
+    border: 0;
+  }
+
+  &__body {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 2.5rem;
+    height: 170px;
+  }
+
+  &__btn {
+    width: 80px;
+    height: 80px;
     padding: 0;
-    border-left: 1px solid $gray-light;
-    padding-left: 16px;
-    padding-top: 24px;
-    padding-bottom: 24px;
-    margin: 0;
-    li {
-      width: 240px;
-      margin-bottom: 24px;
-      list-style: none;
-      cursor: pointer;
-      line-height: 24px;
-      position: relative;
-      &::before {
-        content: ' ';
-        position: absolute;
-        background: $blue;
-        height: 8px;
-        width: 8px;
-        top: 8px;
-        left: -20.5px;
-        border-radius: 50%;
-      }
-    }
-    &::before {
-      content: ' ';
-      display: block;
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 10px;
-      height: 10px;
-      border: 1px solid $gray-light;
-      background-color: white;
-      transform: translate(-4.5px, -5px);
-    }
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 6px;
-      height: 6px;
-      border-bottom: 1px solid $gray-light;
-      border-right: 1px solid $gray-light;
-      transform-origin: top;
-      -moz-transform: rotate(45deg);
-      -webkit-transform: rotate(45deg);
-      -o-transform: rotate(45deg);
-      -ms-transform: rotate(45deg);
-      transform-origin: center;
-      transform: translate(-2.5px) rotate(45deg);
+    background-color: $gray-1;
+
+    font-size: 12px;
+    line-height: 20px;
+    color: $text-1;
+
+    border-radius: .5rem;
+
+    > div {
+      margin-top: .5rem;
     }
   }
+}
+
+.toaster {
+  position: fixed;
+  top: 5.5rem;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
 }
 
 ::-webkit-scrollbar {
   width: 0; /* Remove scrollbar space */
   background: transparent; /* Optional: just make scrollbar invisible */
-}
-
-.recommendedNews-container {
-  @include hide-below-desktop;
-  position: absolute;
-  width: 264px;
-  left: calc(50vw + 360px + 64px);
-  .heading {
-    margin-bottom: 16px;
-  }
-  hr.line {
-    width: 129px;
-    border-top: 1px solid #232323;
-    margin-right: 0px;
-  }
-
-  ol {
-    list-style: none;
-    counter-reset: rec-count;
-    padding: 0;
-    li {
-      counter-increment: rec-count;
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 16px;
-      .content {
-        width: 225px;
-      }
-      .title {
-        margin-bottom: 8px;
-        letter-spacing: 2px;
-        font-weight: 500;
-        font-size: 16px;
-        line-height: 24px;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-      }
-      .date {
-        font-size: 12px;
-        color: $nature-3;
-        font-weight: 400;
-        line-height: 20px;
-      }
-    }
-    li::before {
-      content: '0' counter(rec-count);
-      color: $nature-3;
-      font-size: 20px;
-      margin-top: -3px;
-    }
-  }
 }
 
 html {

@@ -185,9 +185,10 @@ export default {
       padding-left: 2rem;
     }
     blockquote {
-      margin-left: 1rem;
-      padding-left: 1rem;
-      border-left: 4px solid rgba(35, 35, 35, 1);
+      margin: 0 1.5rem;
+      padding: 0 1.5rem;
+      padding-left: calc(1.5rem - 4px);
+      border-left: 4px solid $blue-4;
       margin-top: 18px;
       margin-bottom: 18px;
     }

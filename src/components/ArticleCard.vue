@@ -131,7 +131,7 @@ export default {
 .article-card {
   position: relative;
   flex: 1;
-  min-width: 304px;
+  // min-width: 304px;
   max-height: 388px;
   border-radius: 16px;
   box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.08);
