@@ -4,7 +4,14 @@
       <button v-show="md" v-b-toggle.timeline-sidebar class="timeline-block-sidebar__btn">
         <SyncIcon icon="edit-timeline" size="md" />
       </button>
-      <b-sidebar v-if="!lg" id="timeline-sidebar" ref="timelineSidebar" v-model="sidebarVisible" sidebar-class="timeline-block-sidebar" :no-slide="sm" @change="sidebarStateChangeHandler">
+      <b-sidebar v-if="!lg" id="timeline-sidebar" ref="timelineSidebar" v-model="sidebarVisible" sidebar-class="timeline-block-sidebar" header-class="timeline-block-sidebar__header" :no-slide="sm" @change="sidebarStateChangeHandler">
+        <template #header>
+          <div class="timeline-block-sidebar__title">
+            <SvgIcon icon="edit-timeline" size="md" />
+            事件時間軸
+          </div>
+          <SvgIcon v-b-toggle.timeline-sidebar icon="x-mark" size="md" />
+        </template>
         <ArticleTimelineBlock class="timeline-block-sidebar__blocks" :blocks="blocks" />
       </b-sidebar>
       <ArticleTimelineBlock v-else class="timeline-block" :blocks="blocks" />
@@ -181,6 +188,7 @@ import SyncActionBar from '@/components/SyncActionBar/SyncActionBar.vue'
 import SyncActionBarBtn from '@/components/SyncActionBar/SyncActionBarBtn.vue'
 import ArticleCard from '@/components/ArticleCard.vue'
 import { mapGetters } from 'vuex/dist/vuex.common'
+import SyncButton from '@/components/SyncButton.vue'
 
 export default {
   name: 'Article',
@@ -802,6 +810,31 @@ html {
     top: 4rem;
     height: calc(100vh - 4rem);
 
+    &__header {
+      padding: 1.25rem !important;
+      justify-content: space-between;
+
+      @media screen and (max-width: 679px) {
+        padding: 1rem 1.25rem !important;
+      }
+    }
+
+    &__title {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      font-size: 18px;
+      line-height: 30px;
+      color: $gray-11;
+
+      @media screen and (max-width: 679px) {
+        font-size: 16px;
+        line-height: 24px;
+      }
+    }
+
     &__blocks {
       padding: 20px;
     }
@@ -830,6 +863,7 @@ html {
       bottom: 0;
       height: 62.5vh;
       width: 100%;
+      border-radius: 1rem 1rem 0 0;
 
       transform: translateY(100%);
       transition: transform 0.3s ease;
