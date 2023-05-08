@@ -89,7 +89,7 @@
               v-b-tooltip.hover.bottom.v-secondary="'編輯內容'"
               variant="link"
               class="btn-icon"
-              @click="handleEditPostRoute(`${$route.path}/post`)"
+              @click="handleEditPostRoute"
             >
               <SvgIcon icon="edit" />
             </b-button>
@@ -390,9 +390,9 @@ export default {
         this.intersectionObserver.observe(this.$refs.toolbar)
       }, 1000)
     },
-    handleEditPostRoute(route) {
+    handleEditPostRoute() {
       if (this.isLogin) {
-        this.$router.push(route)
+        this.$router.push(`${this.$route.path}/post`)
       } else {
         this.$bvModal.msgBoxOk('Please Login First')
       }
