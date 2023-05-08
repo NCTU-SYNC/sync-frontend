@@ -13,6 +13,10 @@
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
 
+  @media screen and (max-width: 679px) {
+    padding: 0.5rem 1rem;
+  }
+
   .action-bar__btn {
     display: flex;
     flex-direction: row;
