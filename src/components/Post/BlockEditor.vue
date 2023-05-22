@@ -11,7 +11,7 @@
         @change="handleChangeTitle"
       />
 
-      <div class="rounded bg-white datetime-container">
+      <div class="rounded datetime-container">
         <b-dropdown
           ref="datetime-dropdown"
           variant="white"
@@ -22,17 +22,17 @@
           @show="dropdownOpen = true"
         >
           <template #button-content>
-            <div class="dropdownbtn-text">
+            <div class="dropdownbtn-text" :class="{'dropdownbtn-text-placeholder': !(tempData.blockDateValue || tempData.blockTimeValue)}">
               {{
                 tempData.blockDateValue || tempData.blockTimeValue
                   ? dropdownBtnDateTime
-                  : '新增段落事件時間'
+                  : '段落事件時間'
               }}
             </div>
             <div class="btn-caret">
               <SyncIcon
                 :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'"
-                size="md"
+                size="sm"
               />
             </div>
           </template>
@@ -202,15 +202,22 @@ export default {
 @import '@/assets/scss/post/main.scss';
 
 .block-title {
-  font-weight: bold;
-  line-height: 1.5rem;
-  padding: 0.5rem 0.625rem;
+  padding: 0.25rem 0.5rem;
   margin-right: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 1.25rem;
+
+  height: unset;
+  font-size: 14px;
+  line-height: 24px;
   color: $text-1;
-  height: 40px;
+  background-color: $gray-1;
+
   &::placeholder {
-    color: $text-4;
+    color: $text-3;
+  }
+
+  &:focus {
+    border: 1px solid $blue-4 !important;
   }
 }
 
@@ -230,36 +237,28 @@ export default {
 }
 
 :deep(.datetime-dropdown) {
-  padding: 0;
+  padding: 4px 8px;
   display: flex;
   align-items: center;
+
   .dropdownbtn-text {
     display: inline-flex;
     color: $text-1;
     font-size: 14px;
     line-height: 24px;
-    width: 140px;
-    justify-content: center;
+    width: 146px;
     align-items: center;
-    height: 100%;
+
+    &-placeholder {
+      color: $text-3;
+    }
   }
   .btn-caret {
     position: relative;
     display: inline-flex;
-    justify-content: center;
     align-items: center;
-    color: $gray-8;
-    width: 40px;
+    color: $nature-8;
     height: 100%;
-    &::before {
-      position: absolute;
-      content: '';
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      height: 24px;
-      border-left: 1px solid $gray-4;
-    }
   }
 }
 
@@ -273,10 +272,12 @@ export default {
 }
 
 .datetime-container {
-  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 1.25rem;
+  background-color: $gray-1;
+
   :deep(ul.dropdown-menu) {
     min-height: 450px;
   }

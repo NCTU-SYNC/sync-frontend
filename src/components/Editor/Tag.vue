@@ -2,7 +2,7 @@
   <div class="input-tag" :class="{ 'input-tag-new': newTag }">
     <template v-if="!newTag">
       <span ref="tag-content" contenteditable @keydown.enter.prevent="handleEnter" @blur="handleBlur">{{ post.postTags[tagIndex] }}</span>
-      <b-button variant="link" class="remove-tag" @click="handleRemoveClk"><b-icon icon="x" font-scale="1.5" /></b-button>
+      <b-button variant="link" class="remove-tag" @click="handleRemoveClk"><b-icon icon="x" /></b-button>
     </template>
     <template v-else>
       <b-form-input v-model="addTagText" placeholder="新增關鍵字" @keyup.enter="submitTag" @blur="submitTag" />
@@ -78,9 +78,26 @@ export default {
 
 <style lang="scss" scoped>
 .input-tag {
+  background-color: $gray-1;
+
   display: flex;
   justify-content: flex-start;
   align-items: center;
+
+  font-size: 14px;
+  line-height: 24px;
+  width: fit-content;
+
+  border-radius: 1rem;
+  padding: 4px 10px 4px 22px;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+
+  input {
+    font-size: inherit;
+    line-height: inherit;
+  }
+
   span {
     margin-left: 4px;
     caret-color: $blue;
@@ -88,35 +105,36 @@ export default {
   }
   &:focus-within {
     border: 1px solid $blue;
+
+    &::before {
+      color: $blue-4;
+    }
   }
   .remove-tag {
     display: none;
   }
+
   &:hover, &:focus-within {
     .remove-tag {
       display: inline-block;
-      padding-left: 0;
-      padding-right: 0;
+      padding: 0;
       color: $nature-8;
+      height: 24px;
       &:hover {
         color: black;
       }
     }
   }
-  margin-right: 0.5rem;
-  padding: 0 1rem 0 1.5rem;
-  height: 36px;
-  background: $white;
-  border-radius: 1.5rem;
-  margin-bottom: 0.5rem;
+
   &::before {
     position: relative;
     content: '#';
-    font-size: 16px;
+    font-size: 14px;
+    line-height: 24px;
     margin-left: -10px;
   }
   &-new {
-    color: $text-4;
+    color: $text-3;
     &:focus-within, &:active {
       color: $text-1;
     }
@@ -124,10 +142,10 @@ export default {
       margin-left: 4px;
       background: transparent;
       padding: 0;
-      max-width: 5.2rem;
-      height: 32px;
+      height: 24px;
+
       &::placeholder {
-        color: $text-4;
+        color: $text-3;
       }
     }
   }

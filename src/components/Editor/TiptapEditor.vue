@@ -205,15 +205,19 @@ export default {
 }
 
 .editor__content__edit {
-  margin-top: 0.5rem;
-  background-color: $white;
+  margin-top: 1.25rem;
+  background-color: $gray-1;
   border-radius: 0.25rem;
-  padding: 1rem;
+  padding: 0.5rem;
 
   color: #000;
-  font-size: 1.125rem;
-  line-height: 1.875rem;
+  font-size: 0.875rem;
+  line-height: 1.5rem;
   min-height: 148px;
+
+  &:focus-within {
+    border: solid 1px $blue-4 !important;
+  }
 }
 
 /* Basic editor styles */
@@ -280,10 +284,10 @@ export default {
   p.is-editor-empty:first-child::before {
     content: attr(data-placeholder);
     float: left;
-    color: rgba(0, 0, 0, 0.2);
+    color: $text-3;
     pointer-events: none;
     height: 0;
-    font-size: 1rem;
+    font-size: 0.875rem;
     line-height: 1.5rem;
   }
 }

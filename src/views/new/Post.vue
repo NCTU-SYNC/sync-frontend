@@ -56,7 +56,7 @@
               />
               <b-dropdown
                 ref="categoryRef"
-                class="bg-white rounded category-dropdown"
+                class="rounded category-dropdown"
                 toggle-class="p-0 text-truncate text-decoration-none category-dropdown-btn"
                 variant="link"
                 no-caret
@@ -75,7 +75,7 @@
                   <div class="btn-chevron">
                     <SyncIcon
                       :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'"
-                      size="md"
+                      size="sm"
                     />
                   </div>
                 </template>
@@ -101,38 +101,13 @@
             </div>
           </b-card-body>
         </b-card>
-        <div class="edit-add-block-row edit-row d-flex align-items-center">
-          <b-button
-            variant="transparent"
-            block
-            class="text-left add-text"
-            @click="handleAddBlock(-1)"
-          >
-            + 新增段落
-          </b-button>
-        </div>
+
         <div v-for="(block, blockIndex) in blocks" :key="block.id">
           <b-card class="edit-block edit-row">
-            <b-button
-              variant="link"
-              class="close-btn"
-              @click="handleDeleteBlock(blockIndex)"
-            >
-              <b-icon icon="x" font-scale="1.5" />
-            </b-button>
             <BlockEditor :ref="`block-${block.id}`" :block="block" />
           </b-card>
-          <div class="edit-add-block-row edit-row d-flex align-items-center">
-            <b-button
-              variant="transparent"
-              block
-              class="text-left add-text"
-              @click="handleAddBlock(blockIndex)"
-            >
-              + 新增段落
-            </b-button>
-          </div>
         </div>
+
         <div v-if="citationList.length > 0">
           <b-row>
             <b-col>
@@ -597,29 +572,21 @@ export default {
 }
 
 .post-title {
-  font-size: 16px;
-  font-weight: bold;
-  line-height: 1.5rem;
-  padding: 8px 10px;
+  font-size: 14px;
+  line-height: 24px;
+  padding: 4px 8px;
+  height: unset;
   margin-right: 16px;
   // used to be calculated by bootstrap, now fixed
-  height: 40px;
-  &::placeholder {
-    color: $text-4;
-    line-height: 1.5rem;
-    font-weight: 700;
-    font-size: 16px;
-  }
-}
+  background-color: $gray-1;
 
-.add-block-btn {
-  border-radius: 3rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-  width: 5rem;
-  height: 2rem;
+  &::placeholder {
+    color: $text-3;
+  }
+
+  &:focus {
+    border: 1px solid $blue-4 !important;
+  }
 }
 
 .main-editor-area {
@@ -913,17 +880,18 @@ export default {
 }
 
 .edit-card {
-  background: $light;
   border: none;
 
   &-body {
-    padding: 24px 32px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.25rem;
   }
 }
 
 .title-card-row {
   display: flex;
-  margin-top: 1.5rem;
   margin-bottom: -0.5rem;
   align-items: center;
   flex-wrap: wrap;
@@ -951,6 +919,9 @@ export default {
 }
 
 :deep(.category-dropdown) {
+  padding: 4px 8px;
+  background-color: $gray-1;
+
   ul.dropdown-menu {
     min-width: 130px;
     font-size: 14px;
@@ -980,17 +951,15 @@ export default {
   }
 }
 :deep(.category-dropdown-btn) {
-  width: 130px;
-  height: 40px;
+  width: 164px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   padding-left: 0;
   padding-right: 0;
   .dropdownbtn-text {
     display: inline-flex;
     margin-right: 16px;
-    justify-content: center;
     align-items: center;
     font-size: 14px;
     width: 90px;
@@ -1002,19 +971,9 @@ export default {
   }
   .btn-chevron {
     display: inline-flex;
-    justify-content: center;
     align-items: center;
-    width: 40px;
     position: relative;
-    &::before {
-      position: absolute;
-      content: '';
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      height: 24px;
-      border-left: 1px solid $gray-4;
-    }
+    color: $nature-8;
   }
 }
 
@@ -1022,27 +981,13 @@ export default {
   color: $nature-8;
 }
 
-.edit-add-block-row {
-  position: relative;
-  margin: 1.5rem 0;
-  width: 100%;
-  height: 40px;
-  background: $light;
-  color: $text-1;
-  border-radius: 0.25rem;
-  border: none;
-  .add-text {
-    font-size: 14px;
-    padding-left: 16px;
-  }
-}
-
 .edit-block {
   position: relative;
-  background: $light;
   border: none;
+  margin-top: 1.25rem;
+
   .card-body {
-    padding: 28px 32px 24px 24px;
+    padding: 1.25rem;
   }
 }
 
@@ -1073,7 +1018,6 @@ export default {
       border-bottom-left-radius: 0.25rem;
       background: $blue;
     }
-    background: $blue-60 !important;
   }
 }
 </style>
