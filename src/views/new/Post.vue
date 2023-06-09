@@ -5,15 +5,16 @@
       :class="{ 'justify-content-center': !showNewsSource }"
     >
       <div v-if="isTimelineShow" align-self="stretch" class="timeline-panel">
-        <div class="bg-light timeline-header">
+        <div class="timeline-header">
+          <span>
+            段落標題
+          </span>
           <b-button
             variant="transparent"
-            block
-            class="btn-edit"
+            class="btn-panel-close"
             @click="handleShowTimeline(false)"
           >
-            <b-icon icon="chevron-left" />
-            段落標題
+            <SyncIcon icon="x-mark" size="md" />
           </b-button>
         </div>
         <div class="timeline-container">
@@ -35,7 +36,7 @@
       >
         <b-button
           variant="light"
-          class="btn-edit"
+          class="btn-panel-open"
           @click="handleShowTimeline(true)"
         >
           <SyncIcon icon="edit-timeline" />
@@ -187,7 +188,7 @@
         <NewsPanel />
       </div>
       <div v-show="!showNewsSource" class="news-area-btn-only">
-        <b-button variant="light" @click="handleShowNewsSource(true)">
+        <b-button variant="light" class="btn-panel-open" @click="handleShowNewsSource(true)">
           <SyncIcon icon="edit-source" />
           搜尋新聞
         </b-button>
@@ -777,34 +778,41 @@ export default {
   align-items: center;
 }
 
+.btn-panel-open {
+  background-color: $white;
+}
+
+.btn-panel-close {
+  // clear bootstrap style
+  padding: 0;
+  border: 0;
+}
+
 .timeline-header {
   display: flex;
   align-items: center;
-  margin-top: 1rem;
-  height: 3.5rem;
+  justify-content: space-between;
+  height: 3rem;
+  padding: 0 1rem 0 2rem;
 
-  button {
-    color: $nature-8 !important;
-    padding-left: 2rem;
-    //styleName: Normal Body / 16px - Medium;
-    font-family: Noto Sans CJK TC;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 24px;
-    letter-spacing: 2px;
-    text-align: left;
-
-    svg {
-      margin-right: 1rem;
-    }
-  }
+  color: $text-1;
+  font-weight: 500;
 }
 
 .timeline-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
   padding: 0;
-  width: 312px;
+  gap: 10px;
+
   border-right: $nature-4 1px solid;
+  background-color: $white;
+
+  > div {
+    width: 312px;
+  }
 
   height: calc(100vh - 64px);
   overflow-x: hidden;
@@ -850,7 +858,6 @@ export default {
 }
 
 .timeline-container {
-  margin: 0.5rem 0;
   display: flex;
   flex-direction: column;
 }
@@ -859,10 +866,10 @@ export default {
   display: flex;
   position: relative;
   width: 100%;
-  padding: 0 2rem 0 2rem;
+  padding: 0 1rem 0 2rem;
   margin: 0.5rem 0;
 
-  color: rgba(0, 0, 0, 0.65);
+  color: $gray-9;
   font-weight: 500;
   letter-spacing: 2px;
   text-decoration: none !important;
@@ -872,11 +879,11 @@ export default {
 
 .rectangle {
   position: absolute;
-  width: 24px;
-  height: 2px;
+  width: 8px;
+  height: 1px;
   top: calc(0.75rem - 1px);
-  left: 0;
-  background: $nature-6;
+  left: 12px;
+  background: $gray-9;
 }
 
 .edit-card {
