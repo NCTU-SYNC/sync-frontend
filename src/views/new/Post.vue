@@ -1000,6 +1000,7 @@ export default {
 
 .edit-row {
   position: relative;
+  box-shadow: 0 2px 16px rgb(0 0 0 / 0.04);
 
   &::before {
     content: '';
