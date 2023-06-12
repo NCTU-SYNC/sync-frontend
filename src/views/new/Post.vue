@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <b-container class="wrapper">
     <b-row
       style="position: relative"
       :class="{ 'justify-content-center': !showNewsSource }"
@@ -210,7 +210,7 @@
       </b-alert>
     </transition>
     <EditToolModal />
-  </div>
+  </b-container>
 </template>
 
 <script>
