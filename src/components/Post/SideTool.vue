@@ -101,6 +101,8 @@ export default {
 
 <style lang="scss" scoped>
 .tools-container {
+  visibility: hidden;
+
   display: flex;
   flex-direction: column;
 

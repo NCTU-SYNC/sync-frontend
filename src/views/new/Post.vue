@@ -1000,6 +1000,10 @@ export default {
       border-bottom-left-radius: 0.25rem;
       background: $blue;
     }
+
+    .tools-container {
+      visibility: visible;
+    }
   }
 }
 </style>
