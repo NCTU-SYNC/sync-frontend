@@ -105,6 +105,7 @@
 
         <div v-for="(block, blockIndex) in blocks" :key="block.id">
           <b-card class="edit-block edit-row">
+            <SideTool class="side-tool" :block-index="blockIndex" />
             <BlockEditor :ref="`block-${block.id}`" :block="block" />
           </b-card>
         </div>
@@ -217,10 +218,10 @@ import { mapGetters } from 'vuex'
 import articleAPI from '@/api/article'
 import BlockEditor from '@/components/Post/BlockEditor'
 import NewsPanel from '@/components/NewsPanel'
-import { Utils } from '@/utils'
 import EditStar from '@/components/Icons/EditStar'
 import Tag from '@/components/Editor/Tag'
 import EditToolModal from '@/components/Post/EditToolModal'
+import SideTool from '@/components/Post/SideTool.vue'
 
 export default {
   name: 'Post',
@@ -229,7 +230,8 @@ export default {
     NewsPanel,
     EditStar,
     Tag,
-    EditToolModal
+    EditToolModal,
+    SideTool
   },
   data() {
     return {
@@ -407,46 +409,7 @@ export default {
       }
       return true
     },
-    handleAddBlock(index) {
-      const currentBlockCount = this.post.blocks.length
-      const blockObj = {
-        id: `${Utils.getRandomString()}-${(currentBlockCount + 1).toString()}`,
-        blockTitle: '',
-        blockDateTime: '',
-        content: null,
-        timeEnable: false
-      }
-      this.$store.commit('post/ADD_BLOCK', {
-        index: index,
-        block: blockObj
-      })
-      this.$nextTick(() => {
-        const editor = this.$store.getters['post/GET_EDITOR_BY_ID'](blockObj.id)
-        this.$store.commit('post/FOCUS_EDITOR', editor)
-      })
-    },
-    handleDeleteBlock(index) {
-      if (this.post.blocks.length === 1) {
-        this.$bvModal.msgBoxOk('文章必須至少含有一個段落，故無法刪除。')
-        return
-      }
-      const title = this.post.blocks[index].blockTitle || '無標題'
-      this.$bvModal
-        .msgBoxConfirm(`是否刪除段落：${title}？`, {
-          title: '刪除段落',
-          okVariant: 'danger',
-          okTitle: '刪除',
-          cancelTitle: '取消',
-          cancelVariant: 'outline-primary',
-          footerClass: 'modal-footer-confirm',
-          centered: true
-        })
-        .then((value) => {
-          if (value) {
-            this.$store.commit('post/DELETE_BLOCK', index)
-          }
-        })
-    },
+
     scrollToCitationNode(index) {
       this.citationList[index].lastNode.node.$el.scrollIntoView({
         behavior: 'smooth',
@@ -597,6 +560,10 @@ export default {
   height: calc(100vh - 64px);
   overflow-x: hidden;
   overflow-y: scroll;
+
+  /** To make side tool visible */
+  padding-right: 64px;
+  margin-right: -64px;
 
   &::-webkit-scrollbar {
     width: 4px;
@@ -996,6 +963,13 @@ export default {
   .card-body {
     padding: 1.25rem;
   }
+}
+
+.side-tool {
+  position: absolute;
+  top: 0;
+  right: -1rem;
+  transform: translateX(100%);
 }
 
 .edit-row {

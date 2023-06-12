@@ -320,11 +320,4 @@ export default {
     height: 100%;
   }
 }
-
-.a {
-  button {
-    padding: 0 !important;
-    border: none !important;
-  }
-}
 </style>
