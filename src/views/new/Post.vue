@@ -1,5 +1,5 @@
 <template>
-  <b-container class="wrapper">
+  <div>
     <b-row
       style="position: relative"
       :class="{ 'justify-content-center': !showNewsSource }"
@@ -210,7 +210,7 @@
       </b-alert>
     </transition>
     <EditToolModal />
-  </b-container>
+  </div>
 </template>
 
 <script>
@@ -222,6 +222,7 @@ import EditStar from '@/components/Icons/EditStar'
 import Tag from '@/components/Editor/Tag'
 import EditToolModal from '@/components/Post/EditToolModal'
 import SideTool from '@/components/Post/SideTool.vue'
+import { Utils } from '@/utils'
 
 export default {
   name: 'Post',
@@ -408,6 +409,25 @@ export default {
         }
       }
       return true
+    },
+
+    handleAddBlock(index) {
+      const currentBlockCount = this.post.blocks.length
+      const blockObj = {
+        id: `${Utils.getRandomString()}-${(currentBlockCount + 1).toString()}`,
+        blockTitle: '',
+        blockDateTime: '',
+        content: null,
+        timeEnable: false
+      }
+      this.$store.commit('post/ADD_BLOCK', {
+        index,
+        block: blockObj
+      })
+      this.$nextTick(() => {
+        const editor = this.$store.getters['post/GET_EDITOR_BY_ID'](blockObj.id)
+        this.$store.commit('post/FOCUS_EDITOR', editor)
+      })
     },
 
     scrollToCitationNode(index) {
