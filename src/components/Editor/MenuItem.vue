@@ -46,6 +46,7 @@ export default {
   width: 28px;
   height: 28px;
   border: none;
+  color: $gray-8;
   background-color: transparent;
   border-radius: 0.25rem;
   padding: 0;
@@ -53,14 +54,18 @@ export default {
   justify-content: center;
   align-items: center;
 
-  &.is-active,
+  &.is-active {
+    color: $white;
+    background-color: $blue-4;
+  }
+
   &:hover {
-    color: #FFF;
-    background-color: $blue;
+    background-color: $gray-2;
   }
 }
 
 .tooltip {
   top: 0;
+  font-size: 0.875rem;
 }
 </style>

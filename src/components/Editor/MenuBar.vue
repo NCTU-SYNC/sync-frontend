@@ -98,7 +98,7 @@ export default {
   align-items: center;
   max-width: 289px;
   height: 36px;
-  background-color: $white;
+  background-color: $gray-1;
   border-radius: 0.25rem;
   .divider::after {
     content: '';

@@ -15,7 +15,7 @@
             <b-form-input
               id="search-news"
               v-model="searchKeyword"
-              class="border-0"
+              class="border-0 p-0 h-auto"
               placeholder="搜尋"
               :readonly="isLoading"
               @keydown.enter="searchOnEnter"
@@ -187,31 +187,41 @@ export default {
 
 <style scoped lang="scss">
 .header {
-  background: $nature-2;
-  padding: 3rem 0.75rem 1rem 1rem;
+  background: $white;
+  padding: 3rem 1.5rem 1rem 1.5rem;
   border-bottom: 1px solid #dbdce1;
 }
 .result-number-container {
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   line-height: 1.25rem;
   color: $text-3;
 }
 .search-bar {
   display: inline-flex;
-  border-radius: 8px;
-  background: #fff;
+  border-radius: 4px;
+  background: $gray-1;
   align-items: center;
 
   button {
     display: inline-flex;
     align-items: center;
   }
+
   .search-btn {
     border: none;
-    border-right: 1px solid #dbdce1;
-    border-radius: 0;
-    padding: 0px 10px 0px 0px;
-    margin: 8px 0px 8px 8px;
+    padding: 8px;
+
+    > svg {
+      color: $gray-8;
+    }
+  }
+
+  > * {
+    background-color: inherit;
+
+    font-size: 14px;
+    line-height: 24px;
+    color: $text-1;
   }
 }
 
@@ -237,6 +247,9 @@ export default {
   padding: 1.5rem;
   padding-top: 0.75rem;
   padding-right: 9px;
+
+  background-color: $gray-1;
+
   /* width */
   &::-webkit-scrollbar {
     width: 15px;
@@ -268,7 +281,7 @@ export default {
 }
 
 .nav-btn {
-  background: $white;
+  background-color: $gray-1;
   color: #212124;
   border: none;
   border-radius: 0.5rem;
@@ -278,6 +291,7 @@ export default {
   margin: 0 4px;
   padding: 10px;
   height: 40px;
+
   &:enabled:hover {
     background: #dbdce1;
     cursor: pointer;

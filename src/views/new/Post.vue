@@ -1,19 +1,18 @@
 <template>
   <b-container class="wrapper">
     <b-row
-      style="position: relative"
+      style="position: relative; width: 100vw"
       :class="{ 'justify-content-center': !showNewsSource }"
     >
       <div v-if="isTimelineShow" align-self="stretch" class="timeline-panel">
-        <div class="bg-light timeline-header">
+        <div class="timeline-header">
+          <span> 段落標題 </span>
           <b-button
             variant="transparent"
-            block
-            class="btn-edit"
+            class="btn-panel-close"
             @click="handleShowTimeline(false)"
           >
-            <b-icon icon="chevron-left" />
-            段落標題
+            <SyncIcon icon="x-mark" size="md" />
           </b-button>
         </div>
         <div class="timeline-container">
@@ -24,18 +23,17 @@
             @click="focusOnTitle(block.id)"
           >
             <div class="rectangle" />
-            {{ block.blockTitle !== '' ? block.blockTitle : '段落尚無標題' }}
+            {{ block.blockTitle !== "" ? block.blockTitle : "段落尚無標題" }}
           </a>
         </div>
       </div>
       <div
-        v-else
         class="timeline-panel-btn-only"
         :class="{ 'timeline-shrink': showNewsSource }"
       >
         <b-button
           variant="light"
-          class="btn-edit"
+          class="btn-panel-open"
           @click="handleShowTimeline(true)"
         >
           <SyncIcon icon="edit-timeline" />
@@ -56,7 +54,7 @@
               />
               <b-dropdown
                 ref="categoryRef"
-                class="bg-white rounded category-dropdown"
+                class="rounded category-dropdown"
                 toggle-class="p-0 text-truncate text-decoration-none category-dropdown-btn"
                 variant="link"
                 no-caret
@@ -69,13 +67,13 @@
                     :class="{ 'btn-text-left': categorySelected !== '' }"
                   >
                     {{
-                      categorySelected === '' ? '文章分類' : categorySelected
+                      categorySelected === "" ? "文章分類" : categorySelected
                     }}
                   </div>
                   <div class="btn-chevron">
                     <SyncIcon
                       :icon="dropdownOpen ? 'arrow-up' : 'arrow-down'"
-                      size="md"
+                      size="sm"
                     />
                   </div>
                 </template>
@@ -101,38 +99,14 @@
             </div>
           </b-card-body>
         </b-card>
-        <div class="edit-add-block-row edit-row d-flex align-items-center">
-          <b-button
-            variant="transparent"
-            block
-            class="text-left add-text"
-            @click="handleAddBlock(-1)"
-          >
-            + 新增段落
-          </b-button>
-        </div>
+
         <div v-for="(block, blockIndex) in blocks" :key="block.id">
           <b-card class="edit-block edit-row">
-            <b-button
-              variant="link"
-              class="close-btn"
-              @click="handleDeleteBlock(blockIndex)"
-            >
-              <b-icon icon="x" font-scale="1.5" />
-            </b-button>
+            <SideTool class="side-tool" :block-index="blockIndex" />
             <BlockEditor :ref="`block-${block.id}`" :block="block" />
           </b-card>
-          <div class="edit-add-block-row edit-row d-flex align-items-center">
-            <b-button
-              variant="transparent"
-              block
-              class="text-left add-text"
-              @click="handleAddBlock(blockIndex)"
-            >
-              + 新增段落
-            </b-button>
-          </div>
         </div>
+
         <div v-if="citationList.length > 0">
           <b-row>
             <b-col>
@@ -166,7 +140,7 @@
                         class="citation-list-link"
                         :href="citation.url"
                         target="_blank"
-                      >{{ citation.info.url }}
+                        >{{ citation.info.url }}
                       </b-link>
                     </div>
                     <div class="citation-list-btn">
@@ -212,7 +186,11 @@
         <NewsPanel />
       </div>
       <div v-show="!showNewsSource" class="news-area-btn-only">
-        <b-button variant="light" @click="handleShowNewsSource(true)">
+        <b-button
+          variant="light"
+          class="btn-panel-open"
+          @click="handleShowNewsSource(true)"
+        >
           <SyncIcon icon="edit-source" />
           搜尋新聞
         </b-button>
@@ -237,23 +215,25 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import articleAPI from '@/api/article'
-import BlockEditor from '@/components/Post/BlockEditor'
-import NewsPanel from '@/components/NewsPanel'
-import { Utils } from '@/utils'
-import EditStar from '@/components/Icons/EditStar'
-import Tag from '@/components/Editor/Tag'
-import EditToolModal from '@/components/Post/EditToolModal'
+import { mapGetters } from "vuex";
+import articleAPI from "@/api/article";
+import BlockEditor from "@/components/Post/BlockEditor";
+import NewsPanel from "@/components/NewsPanel";
+import EditStar from "@/components/Icons/EditStar";
+import Tag from "@/components/Editor/Tag";
+import EditToolModal from "@/components/Post/EditToolModal";
+import SideTool from "@/components/Post/SideTool.vue";
+import { Utils } from "@/utils";
 
 export default {
-  name: 'Post',
+  name: "Post",
   components: {
     BlockEditor,
     NewsPanel,
     EditStar,
     Tag,
-    EditToolModal
+    EditToolModal,
+    SideTool,
   },
   data() {
     return {
@@ -261,134 +241,134 @@ export default {
       currentEditingEditor: null,
       isAddingTag: false,
       categoryList: [
-        '政經',
-        '國際',
-        '社會',
-        '科技',
-        '環境',
-        '生活',
-        '運動',
-        '未分類'
+        "政經",
+        "國際",
+        "社會",
+        "科技",
+        "環境",
+        "生活",
+        "運動",
+        "未分類",
       ],
       items: [
         {
-          text: '首頁',
-          to: '/'
+          text: "首頁",
+          to: "/",
         },
         {
-          text: '編輯新聞',
-          active: true
-        }
+          text: "編輯新聞",
+          active: true,
+        },
       ],
-      addTagText: '',
+      addTagText: "",
       isLoading: false,
       isTimelineShow: false,
       showNewsSource: false,
       dropdownOpen: false,
       sessionTimestamp: new Date(),
-      cacheArticleTimer: null
-    }
+      cacheArticleTimer: null,
+    };
   },
   computed: {
-    ...mapGetters(['isLogin', 'uid']),
-    ...mapGetters({ post: 'post' }),
+    ...mapGetters(["isLogin", "uid"]),
+    ...mapGetters({ post: "post" }),
     editPoint() {
-      return this.post.isNewPost ? 5 : 2
+      return this.post.isNewPost ? 5 : 2;
     },
     blocks() {
-      return this.post.blocks
+      return this.post.blocks;
     },
     postTitle: {
       get() {
-        return this.post.postTitle
+        return this.post.postTitle;
       },
       set(newTitle) {
-        this.$store.commit('post/SET_TITLE', newTitle)
-      }
+        this.$store.commit("post/SET_TITLE", newTitle);
+      },
     },
     categorySelected: {
       get() {
-        return this.post.categorySelected
+        return this.post.categorySelected;
       },
       set(newCategory) {
-        this.$store.commit('post/SET_CATEGORY', newCategory)
-      }
+        this.$store.commit("post/SET_CATEGORY", newCategory);
+      },
     },
     showAddPointsAlert: {
       get() {
-        return this.post.showAddPointsAlert
+        return this.post.showAddPointsAlert;
       },
       set(newValue) {
-        this.$store.commit('post/SHOW_ADDPOINTS_ALERT', newValue)
-      }
+        this.$store.commit("post/SHOW_ADDPOINTS_ALERT", newValue);
+      },
     },
     citationList() {
-      return this.post.citation.getList()
-    }
+      return this.post.citation.getList();
+    },
   },
   watch: {
     categorySelected() {
-      this.$refs.categoryRef.hide(true)
-    }
+      this.$refs.categoryRef.hide(true);
+    },
   },
   beforeDestroy() {
-    clearInterval(this.cacheArticleTimer)
+    clearInterval(this.cacheArticleTimer);
   },
   created() {
     // 從route中獲得此文章的ID
     this.initPostPage().then(() => {
       this.cacheArticleTimer = setInterval(() => {
-        this.setArticleLocalStorage()
-      }, 10000)
-    })
+        this.setArticleLocalStorage();
+      }, 10000);
+    });
   },
   methods: {
     async initPostPage() {
-      this.$store.commit('post/RESET_POST')
-      const articleId = this.$route.params.ArticleID
-      const isNewPost = !(articleId || false)
-      this.$store.commit('post/SET_NEW_POST', isNewPost)
-      this.$store.commit('post/SET_ARTICLEID', articleId)
-      const localStorageData = this.getArticleLocalStorage()
+      this.$store.commit("post/RESET_POST");
+      const articleId = this.$route.params.ArticleID;
+      const isNewPost = !(articleId || false);
+      this.$store.commit("post/SET_NEW_POST", isNewPost);
+      this.$store.commit("post/SET_ARTICLEID", articleId);
+      const localStorageData = this.getArticleLocalStorage();
       // fetch article either from localStorage or remote DB
       if (articleId) {
-        this.isLoading = true
+        this.isLoading = true;
         articleAPI.getById(articleId).then((response) => {
           if (response.data.code === 200) {
-            let data = response.data.data
+            let data = response.data.data;
             // check localStorage, use localStorage article if newer than lastUpdated
             if (localStorageData) {
-              const { timeStamp } = localStorageData
-              const { lastUpdatedAt } = data
+              const { timeStamp } = localStorageData;
+              const { lastUpdatedAt } = data;
               // use date comparison to guarantee correctness
-              const localStorageDate = new Date(timeStamp)
-              const receivedDate = new Date(lastUpdatedAt)
+              const localStorageDate = new Date(timeStamp);
+              const receivedDate = new Date(lastUpdatedAt);
               if (localStorageDate > receivedDate) {
-                data = localStorageData
+                data = localStorageData;
                 this.$bvToast.toast(
                   `已恢復您於 ${localStorageDate.toLocaleString()} 開始的編輯階段`,
                   {
-                    title: '恢復編輯',
-                    autoHideDelay: 20000
+                    title: "恢復編輯",
+                    autoHideDelay: 20000,
                   }
-                )
+                );
               }
             }
-            this.$store.commit('post/INIT_POST', { data })
-            this.isLoading = false
+            this.$store.commit("post/INIT_POST", { data });
+            this.isLoading = false;
             this.$nextTick(() => {
-              this.post.currentEditingEditor = null
-            })
+              this.post.currentEditingEditor = null;
+            });
           } else {
-            this.isLoading = false
-            throw new Error(response.data.message)
+            this.isLoading = false;
+            throw new Error(response.data.message);
           }
-        })
+        });
       } else {
         // if new article
         if (localStorageData) {
-          const { timeStamp } = localStorageData
-          const localStorageDate = new Date(timeStamp)
+          const { timeStamp } = localStorageData;
+          const localStorageDate = new Date(timeStamp);
           this.$bvModal
             .msgBoxConfirm(
               `您於 ${localStorageDate.toLocaleString()} 已有一篇標題為：「${
@@ -396,151 +376,133 @@ export default {
               }」的文章正在編輯，
               請問要繼續編輯嗎？`,
               {
-                title: '繼續編輯',
-                okTitle: '繼續編輯',
-                cancelTitle: '取消',
-                headerClass: 'custom-modal-header',
-                footerClass: 'custom-modal-footer',
-                okVariant: 'ok',
-                cancelVariant: 'cancel',
-                centered: true
+                title: "繼續編輯",
+                okTitle: "繼續編輯",
+                cancelTitle: "取消",
+                headerClass: "custom-modal-header",
+                footerClass: "custom-modal-footer",
+                okVariant: "ok",
+                cancelVariant: "cancel",
+                centered: true,
               }
             )
             .then((value) => {
               if (value) {
-                const data = localStorageData
-                this.$store.commit('post/INIT_POST', { data })
+                const data = localStorageData;
+                this.$store.commit("post/INIT_POST", { data });
                 this.$nextTick(() => {
-                  this.post.currentEditingEditor = null
-                })
+                  this.post.currentEditingEditor = null;
+                });
                 this.$bvToast.toast(
                   `已恢復您於 ${localStorageDate.toLocaleString()} 開始的編輯階段`,
                   {
-                    title: '恢復編輯',
-                    autoHideDelay: 20000
+                    title: "恢復編輯",
+                    autoHideDelay: 20000,
                   }
-                )
+                );
               } else {
-                this.removeArticleLocalStorage()
-                this.handleAddBlock(-1)
+                this.removeArticleLocalStorage();
+                this.handleAddBlock(-1);
               }
-            })
+            });
         } else {
-          this.handleAddBlock(-1)
+          this.handleAddBlock(-1);
         }
       }
-      return true
+      return true;
     },
+
     handleAddBlock(index) {
-      const currentBlockCount = this.post.blocks.length
+      const currentBlockCount = this.post.blocks.length;
       const blockObj = {
         id: `${Utils.getRandomString()}-${(currentBlockCount + 1).toString()}`,
-        blockTitle: '',
-        blockDateTime: '',
+        blockTitle: "",
+        blockDateTime: "",
         content: null,
-        timeEnable: false
-      }
-      this.$store.commit('post/ADD_BLOCK', {
-        index: index,
-        block: blockObj
-      })
+        timeEnable: false,
+      };
+      this.$store.commit("post/ADD_BLOCK", {
+        index,
+        block: blockObj,
+      });
       this.$nextTick(() => {
-        const editor = this.$store.getters['post/GET_EDITOR_BY_ID'](blockObj.id)
-        this.$store.commit('post/FOCUS_EDITOR', editor)
-      })
+        const editor = this.$store.getters["post/GET_EDITOR_BY_ID"](
+          blockObj.id
+        );
+        this.$store.commit("post/FOCUS_EDITOR", editor);
+      });
     },
-    handleDeleteBlock(index) {
-      if (this.post.blocks.length === 1) {
-        this.$bvModal.msgBoxOk('文章必須至少含有一個段落，故無法刪除。')
-        return
-      }
-      const title = this.post.blocks[index].blockTitle || '無標題'
-      this.$bvModal
-        .msgBoxConfirm(`是否刪除段落：${title}？`, {
-          title: '刪除段落',
-          okVariant: 'danger',
-          okTitle: '刪除',
-          cancelTitle: '取消',
-          cancelVariant: 'outline-primary',
-          footerClass: 'modal-footer-confirm',
-          centered: true
-        })
-        .then((value) => {
-          if (value) {
-            this.$store.commit('post/DELETE_BLOCK', index)
-          }
-        })
-    },
+
     scrollToCitationNode(index) {
       this.citationList[index].lastNode.node.$el.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      })
+        behavior: "smooth",
+        block: "center",
+      });
     },
     onCitationEdited(index) {
-      const context = { citation: this.citationList[index] }
-      this.$store.commit('post/SET_MODAL_CONTEXT', { context })
-      this.$store.commit('post/SET_MODAL_COMPONENT', {
-        componentString: 'CITATION'
-      })
+      const context = { citation: this.citationList[index] };
+      this.$store.commit("post/SET_MODAL_CONTEXT", { context });
+      this.$store.commit("post/SET_MODAL_COMPONENT", {
+        componentString: "CITATION",
+      });
     },
     onCitationRemoved(index) {
       if (this.citationList[index]) {
-        const citation = this.citationList[index]
+        const citation = this.citationList[index];
         this.$bvModal
           .msgBoxConfirm(`是否刪除引用：${citation.info.title}？`, {
-            title: '刪除引用',
-            okVariant: 'danger',
-            okTitle: '刪除',
-            cancelTitle: '取消',
-            cancelVariant: 'outline-primary',
-            footerClass: 'modal-footer-confirm',
-            centered: true
+            title: "刪除引用",
+            okVariant: "danger",
+            okTitle: "刪除",
+            cancelTitle: "取消",
+            cancelVariant: "outline-primary",
+            footerClass: "modal-footer-confirm",
+            centered: true,
           })
           .then((value) => {
             if (value) {
-              this.$store.dispatch('post/REMOVE_EDITOR_CITATION', citation)
+              this.$store.dispatch("post/REMOVE_EDITOR_CITATION", citation);
             }
-          })
+          });
       }
     },
     handleShowTimeline(status) {
-      this.isTimelineShow = status
+      this.isTimelineShow = status;
     },
     handleShowNewsSource(status) {
-      this.showNewsSource = status
-      if (status === true) this.handleShowTimeline(false)
+      this.showNewsSource = status;
+      if (status === true) this.handleShowTimeline(false);
     },
     focusOnTitle(blockId) {
-      this.$refs[`block-${blockId}`][0].focusOnTitle()
+      this.$refs[`block-${blockId}`][0].focusOnTitle();
     },
     // Saves article content into localStorage and adds timestamp
     setArticleLocalStorage() {
-      const articleData = this.$store.getters['post/GET_PUBLISH_DATA']
-      articleData['timeStamp'] = this.sessionTimestamp
-      const storeData = JSON.stringify(articleData)
+      const articleData = this.$store.getters["post/GET_PUBLISH_DATA"];
+      articleData["timeStamp"] = this.sessionTimestamp;
+      const storeData = JSON.stringify(articleData);
       localStorage.setItem(
-        this.$store.getters['post/GET_ARTICLEID_STRING'],
+        this.$store.getters["post/GET_ARTICLEID_STRING"],
         storeData
-      )
+      );
     },
     // get from localStorage
     getArticleLocalStorage() {
-      const articleIdStr = this.$store.getters['post/GET_ARTICLEID_STRING']
-      const data = localStorage.getItem(articleIdStr)
-      let ret = null
+      const articleIdStr = this.$store.getters["post/GET_ARTICLEID_STRING"];
+      const data = localStorage.getItem(articleIdStr);
+      let ret = null;
       try {
-        ret = JSON.parse(data)
+        ret = JSON.parse(data);
       } catch (e) {
-        console.error(e)
+        console.error(e);
       }
-      return ret
+      return ret;
     },
     removeArticleLocalStorage() {
-      localStorage.removeItem(this.$store.getters['post/GET_ARTICLEID_STRING'])
-    }
-  }
-}
+      localStorage.removeItem(this.$store.getters["post/GET_ARTICLEID_STRING"]);
+    },
+  },
+};
 </script>
 
 <style lang="scss">
@@ -584,10 +546,11 @@ export default {
 </style>
 
 <style scoped lang="scss">
-@import '@/assets/scss/post/main.scss';
+@import "@/assets/scss/post/main.scss";
 
 .wrapper {
   padding-top: 0;
+  margin: 0; // remove gutter
 }
 
 .block-divider {
@@ -597,29 +560,21 @@ export default {
 }
 
 .post-title {
-  font-size: 16px;
-  font-weight: bold;
-  line-height: 1.5rem;
-  padding: 8px 10px;
+  font-size: 14px;
+  line-height: 24px;
+  padding: 4px 8px;
+  height: unset;
   margin-right: 16px;
   // used to be calculated by bootstrap, now fixed
-  height: 40px;
-  &::placeholder {
-    color: $text-4;
-    line-height: 1.5rem;
-    font-weight: 700;
-    font-size: 16px;
-  }
-}
+  background-color: $gray-1;
 
-.add-block-btn {
-  border-radius: 3rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-  width: 5rem;
-  height: 2rem;
+  &::placeholder {
+    color: $text-3;
+  }
+
+  &:focus {
+    border: 1px solid $blue-4 !important;
+  }
 }
 
 .main-editor-area {
@@ -629,6 +584,10 @@ export default {
   height: calc(100vh - 64px);
   overflow-x: hidden;
   overflow-y: scroll;
+
+  /** To make side tool visible */
+  padding-right: 64px;
+  margin-right: -64px;
 
   &::-webkit-scrollbar {
     width: 4px;
@@ -697,7 +656,7 @@ export default {
 }
 
 /* HIDE RADIO */
-[type='radio'] {
+[type="radio"] {
   position: absolute;
   opacity: 0;
   width: 0;
@@ -705,7 +664,7 @@ export default {
 }
 
 /* IMAGE STYLES */
-[type='radio'] {
+[type="radio"] {
   cursor: pointer;
 }
 
@@ -810,34 +769,43 @@ export default {
   align-items: center;
 }
 
+.btn-panel-open {
+  background-color: $white;
+}
+
+.btn-panel-close {
+  // clear bootstrap style
+  padding: 0;
+  border: 0;
+}
+
 .timeline-header {
   display: flex;
   align-items: center;
-  margin-top: 1rem;
-  height: 3.5rem;
+  justify-content: space-between;
+  height: 3rem;
+  padding: 0 1rem 0 2rem;
 
-  button {
-    color: $nature-8 !important;
-    padding-left: 2rem;
-    //styleName: Normal Body / 16px - Medium;
-    font-family: Noto Sans CJK TC;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 24px;
-    letter-spacing: 2px;
-    text-align: left;
-
-    svg {
-      margin-right: 1rem;
-    }
-  }
+  color: $text-1;
+  font-weight: 500;
 }
 
 .timeline-panel {
+  position: absolute;
+  left: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: end;
   padding: 0;
-  width: 312px;
+  gap: 10px;
+
   border-right: $nature-4 1px solid;
+  background-color: $white;
+
+  > div {
+    width: 312px;
+  }
 
   height: calc(100vh - 64px);
   overflow-x: hidden;
@@ -883,7 +851,6 @@ export default {
 }
 
 .timeline-container {
-  margin: 0.5rem 0;
   display: flex;
   flex-direction: column;
 }
@@ -892,10 +859,10 @@ export default {
   display: flex;
   position: relative;
   width: 100%;
-  padding: 0 2rem 0 2rem;
+  padding: 0 1rem 0 2rem;
   margin: 0.5rem 0;
 
-  color: rgba(0, 0, 0, 0.65);
+  color: $gray-9;
   font-weight: 500;
   letter-spacing: 2px;
   text-decoration: none !important;
@@ -905,25 +872,26 @@ export default {
 
 .rectangle {
   position: absolute;
-  width: 24px;
-  height: 2px;
+  width: 8px;
+  height: 1px;
   top: calc(0.75rem - 1px);
-  left: 0;
-  background: $nature-6;
+  left: 12px;
+  background: $gray-9;
 }
 
 .edit-card {
-  background: $light;
   border: none;
 
   &-body {
-    padding: 24px 32px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.25rem;
   }
 }
 
 .title-card-row {
   display: flex;
-  margin-top: 1.5rem;
   margin-bottom: -0.5rem;
   align-items: center;
   flex-wrap: wrap;
@@ -940,7 +908,7 @@ export default {
   position: relative;
   margin: 0 0.5rem;
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     width: 1px;
     left: 0;
@@ -951,6 +919,9 @@ export default {
 }
 
 :deep(.category-dropdown) {
+  padding: 4px 8px;
+  background-color: $gray-1;
+
   ul.dropdown-menu {
     min-width: 130px;
     font-size: 14px;
@@ -980,17 +951,15 @@ export default {
   }
 }
 :deep(.category-dropdown-btn) {
-  width: 130px;
-  height: 40px;
+  width: 164px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   padding-left: 0;
   padding-right: 0;
   .dropdownbtn-text {
     display: inline-flex;
     margin-right: 16px;
-    justify-content: center;
     align-items: center;
     font-size: 14px;
     width: 90px;
@@ -1002,19 +971,9 @@ export default {
   }
   .btn-chevron {
     display: inline-flex;
-    justify-content: center;
     align-items: center;
-    width: 40px;
     position: relative;
-    &::before {
-      position: absolute;
-      content: '';
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      height: 24px;
-      border-left: 1px solid $gray-4;
-    }
+    color: $nature-8;
   }
 }
 
@@ -1022,35 +981,29 @@ export default {
   color: $nature-8;
 }
 
-.edit-add-block-row {
+.edit-block {
   position: relative;
-  margin: 1.5rem 0;
-  width: 100%;
-  height: 40px;
-  background: $light;
-  color: $text-1;
-  border-radius: 0.25rem;
   border: none;
-  .add-text {
-    font-size: 14px;
-    padding-left: 16px;
+  margin-top: 1.25rem;
+
+  .card-body {
+    padding: 1.25rem;
   }
 }
 
-.edit-block {
-  position: relative;
-  background: $light;
-  border: none;
-  .card-body {
-    padding: 28px 32px 24px 24px;
-  }
+.side-tool {
+  position: absolute;
+  top: 0;
+  right: -1rem;
+  transform: translateX(100%);
 }
 
 .edit-row {
   position: relative;
+  box-shadow: 0 2px 16px rgb(0 0 0 / 0.04);
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     width: 4px;
     left: 0px;
@@ -1063,7 +1016,7 @@ export default {
 
   &:focus-within {
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       width: 4px;
       left: 0px;
@@ -1073,7 +1026,10 @@ export default {
       border-bottom-left-radius: 0.25rem;
       background: $blue;
     }
-    background: $blue-60 !important;
+
+    .tools-container {
+      visibility: visible;
+    }
   }
 }
 </style>
