@@ -140,7 +140,7 @@
                         class="citation-list-link"
                         :href="citation.url"
                         target="_blank"
-                        >{{ citation.info.url }}
+                      >{{ citation.info.url }}
                       </b-link>
                     </div>
                     <div class="citation-list-btn">
@@ -215,25 +215,25 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import articleAPI from "@/api/article";
-import BlockEditor from "@/components/Post/BlockEditor";
-import NewsPanel from "@/components/NewsPanel";
-import EditStar from "@/components/Icons/EditStar";
-import Tag from "@/components/Editor/Tag";
-import EditToolModal from "@/components/Post/EditToolModal";
-import SideTool from "@/components/Post/SideTool.vue";
-import { Utils } from "@/utils";
+import { mapGetters } from 'vuex'
+import articleAPI from '@/api/article'
+import BlockEditor from '@/components/Post/BlockEditor'
+import NewsPanel from '@/components/NewsPanel'
+import EditStar from '@/components/Icons/EditStar'
+import Tag from '@/components/Editor/Tag'
+import EditToolModal from '@/components/Post/EditToolModal'
+import SideTool from '@/components/Post/SideTool.vue'
+import { Utils } from '@/utils'
 
 export default {
-  name: "Post",
+  name: 'Post',
   components: {
     BlockEditor,
     NewsPanel,
     EditStar,
     Tag,
     EditToolModal,
-    SideTool,
+    SideTool
   },
   data() {
     return {
@@ -241,134 +241,134 @@ export default {
       currentEditingEditor: null,
       isAddingTag: false,
       categoryList: [
-        "政經",
-        "國際",
-        "社會",
-        "科技",
-        "環境",
-        "生活",
-        "運動",
-        "未分類",
+        '政經',
+        '國際',
+        '社會',
+        '科技',
+        '環境',
+        '生活',
+        '運動',
+        '未分類'
       ],
       items: [
         {
-          text: "首頁",
-          to: "/",
+          text: '首頁',
+          to: '/'
         },
         {
-          text: "編輯新聞",
-          active: true,
-        },
+          text: '編輯新聞',
+          active: true
+        }
       ],
-      addTagText: "",
+      addTagText: '',
       isLoading: false,
       isTimelineShow: false,
       showNewsSource: false,
       dropdownOpen: false,
       sessionTimestamp: new Date(),
-      cacheArticleTimer: null,
-    };
+      cacheArticleTimer: null
+    }
   },
   computed: {
-    ...mapGetters(["isLogin", "uid"]),
-    ...mapGetters({ post: "post" }),
+    ...mapGetters(['isLogin', 'uid']),
+    ...mapGetters({ post: 'post' }),
     editPoint() {
-      return this.post.isNewPost ? 5 : 2;
+      return this.post.isNewPost ? 5 : 2
     },
     blocks() {
-      return this.post.blocks;
+      return this.post.blocks
     },
     postTitle: {
       get() {
-        return this.post.postTitle;
+        return this.post.postTitle
       },
       set(newTitle) {
-        this.$store.commit("post/SET_TITLE", newTitle);
-      },
+        this.$store.commit('post/SET_TITLE', newTitle)
+      }
     },
     categorySelected: {
       get() {
-        return this.post.categorySelected;
+        return this.post.categorySelected
       },
       set(newCategory) {
-        this.$store.commit("post/SET_CATEGORY", newCategory);
-      },
+        this.$store.commit('post/SET_CATEGORY', newCategory)
+      }
     },
     showAddPointsAlert: {
       get() {
-        return this.post.showAddPointsAlert;
+        return this.post.showAddPointsAlert
       },
       set(newValue) {
-        this.$store.commit("post/SHOW_ADDPOINTS_ALERT", newValue);
-      },
+        this.$store.commit('post/SHOW_ADDPOINTS_ALERT', newValue)
+      }
     },
     citationList() {
-      return this.post.citation.getList();
-    },
+      return this.post.citation.getList()
+    }
   },
   watch: {
     categorySelected() {
-      this.$refs.categoryRef.hide(true);
-    },
+      this.$refs.categoryRef.hide(true)
+    }
   },
   beforeDestroy() {
-    clearInterval(this.cacheArticleTimer);
+    clearInterval(this.cacheArticleTimer)
   },
   created() {
     // 從route中獲得此文章的ID
     this.initPostPage().then(() => {
       this.cacheArticleTimer = setInterval(() => {
-        this.setArticleLocalStorage();
-      }, 10000);
-    });
+        this.setArticleLocalStorage()
+      }, 10000)
+    })
   },
   methods: {
     async initPostPage() {
-      this.$store.commit("post/RESET_POST");
-      const articleId = this.$route.params.ArticleID;
-      const isNewPost = !(articleId || false);
-      this.$store.commit("post/SET_NEW_POST", isNewPost);
-      this.$store.commit("post/SET_ARTICLEID", articleId);
-      const localStorageData = this.getArticleLocalStorage();
+      this.$store.commit('post/RESET_POST')
+      const articleId = this.$route.params.ArticleID
+      const isNewPost = !(articleId || false)
+      this.$store.commit('post/SET_NEW_POST', isNewPost)
+      this.$store.commit('post/SET_ARTICLEID', articleId)
+      const localStorageData = this.getArticleLocalStorage()
       // fetch article either from localStorage or remote DB
       if (articleId) {
-        this.isLoading = true;
+        this.isLoading = true
         articleAPI.getById(articleId).then((response) => {
           if (response.data.code === 200) {
-            let data = response.data.data;
+            let data = response.data.data
             // check localStorage, use localStorage article if newer than lastUpdated
             if (localStorageData) {
-              const { timeStamp } = localStorageData;
-              const { lastUpdatedAt } = data;
+              const { timeStamp } = localStorageData
+              const { lastUpdatedAt } = data
               // use date comparison to guarantee correctness
-              const localStorageDate = new Date(timeStamp);
-              const receivedDate = new Date(lastUpdatedAt);
+              const localStorageDate = new Date(timeStamp)
+              const receivedDate = new Date(lastUpdatedAt)
               if (localStorageDate > receivedDate) {
-                data = localStorageData;
+                data = localStorageData
                 this.$bvToast.toast(
                   `已恢復您於 ${localStorageDate.toLocaleString()} 開始的編輯階段`,
                   {
-                    title: "恢復編輯",
-                    autoHideDelay: 20000,
+                    title: '恢復編輯',
+                    autoHideDelay: 20000
                   }
-                );
+                )
               }
             }
-            this.$store.commit("post/INIT_POST", { data });
-            this.isLoading = false;
+            this.$store.commit('post/INIT_POST', { data })
+            this.isLoading = false
             this.$nextTick(() => {
-              this.post.currentEditingEditor = null;
-            });
+              this.post.currentEditingEditor = null
+            })
           } else {
-            this.isLoading = false;
-            throw new Error(response.data.message);
+            this.isLoading = false
+            throw new Error(response.data.message)
           }
-        });
+        })
       } else {
         // if new article
         if (localStorageData) {
-          const { timeStamp } = localStorageData;
-          const localStorageDate = new Date(timeStamp);
+          const { timeStamp } = localStorageData
+          const localStorageDate = new Date(timeStamp)
           this.$bvModal
             .msgBoxConfirm(
               `您於 ${localStorageDate.toLocaleString()} 已有一篇標題為：「${
@@ -376,133 +376,133 @@ export default {
               }」的文章正在編輯，
               請問要繼續編輯嗎？`,
               {
-                title: "繼續編輯",
-                okTitle: "繼續編輯",
-                cancelTitle: "取消",
-                headerClass: "custom-modal-header",
-                footerClass: "custom-modal-footer",
-                okVariant: "ok",
-                cancelVariant: "cancel",
-                centered: true,
+                title: '繼續編輯',
+                okTitle: '繼續編輯',
+                cancelTitle: '取消',
+                headerClass: 'custom-modal-header',
+                footerClass: 'custom-modal-footer',
+                okVariant: 'ok',
+                cancelVariant: 'cancel',
+                centered: true
               }
             )
             .then((value) => {
               if (value) {
-                const data = localStorageData;
-                this.$store.commit("post/INIT_POST", { data });
+                const data = localStorageData
+                this.$store.commit('post/INIT_POST', { data })
                 this.$nextTick(() => {
-                  this.post.currentEditingEditor = null;
-                });
+                  this.post.currentEditingEditor = null
+                })
                 this.$bvToast.toast(
                   `已恢復您於 ${localStorageDate.toLocaleString()} 開始的編輯階段`,
                   {
-                    title: "恢復編輯",
-                    autoHideDelay: 20000,
+                    title: '恢復編輯',
+                    autoHideDelay: 20000
                   }
-                );
+                )
               } else {
-                this.removeArticleLocalStorage();
-                this.handleAddBlock(-1);
+                this.removeArticleLocalStorage()
+                this.handleAddBlock(-1)
               }
-            });
+            })
         } else {
-          this.handleAddBlock(-1);
+          this.handleAddBlock(-1)
         }
       }
-      return true;
+      return true
     },
 
     handleAddBlock(index) {
-      const currentBlockCount = this.post.blocks.length;
+      const currentBlockCount = this.post.blocks.length
       const blockObj = {
         id: `${Utils.getRandomString()}-${(currentBlockCount + 1).toString()}`,
-        blockTitle: "",
-        blockDateTime: "",
+        blockTitle: '',
+        blockDateTime: '',
         content: null,
-        timeEnable: false,
-      };
-      this.$store.commit("post/ADD_BLOCK", {
+        timeEnable: false
+      }
+      this.$store.commit('post/ADD_BLOCK', {
         index,
-        block: blockObj,
-      });
+        block: blockObj
+      })
       this.$nextTick(() => {
-        const editor = this.$store.getters["post/GET_EDITOR_BY_ID"](
+        const editor = this.$store.getters['post/GET_EDITOR_BY_ID'](
           blockObj.id
-        );
-        this.$store.commit("post/FOCUS_EDITOR", editor);
-      });
+        )
+        this.$store.commit('post/FOCUS_EDITOR', editor)
+      })
     },
 
     scrollToCitationNode(index) {
       this.citationList[index].lastNode.node.$el.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
+        behavior: 'smooth',
+        block: 'center'
+      })
     },
     onCitationEdited(index) {
-      const context = { citation: this.citationList[index] };
-      this.$store.commit("post/SET_MODAL_CONTEXT", { context });
-      this.$store.commit("post/SET_MODAL_COMPONENT", {
-        componentString: "CITATION",
-      });
+      const context = { citation: this.citationList[index] }
+      this.$store.commit('post/SET_MODAL_CONTEXT', { context })
+      this.$store.commit('post/SET_MODAL_COMPONENT', {
+        componentString: 'CITATION'
+      })
     },
     onCitationRemoved(index) {
       if (this.citationList[index]) {
-        const citation = this.citationList[index];
+        const citation = this.citationList[index]
         this.$bvModal
           .msgBoxConfirm(`是否刪除引用：${citation.info.title}？`, {
-            title: "刪除引用",
-            okVariant: "danger",
-            okTitle: "刪除",
-            cancelTitle: "取消",
-            cancelVariant: "outline-primary",
-            footerClass: "modal-footer-confirm",
-            centered: true,
+            title: '刪除引用',
+            okVariant: 'danger',
+            okTitle: '刪除',
+            cancelTitle: '取消',
+            cancelVariant: 'outline-primary',
+            footerClass: 'modal-footer-confirm',
+            centered: true
           })
           .then((value) => {
             if (value) {
-              this.$store.dispatch("post/REMOVE_EDITOR_CITATION", citation);
+              this.$store.dispatch('post/REMOVE_EDITOR_CITATION', citation)
             }
-          });
+          })
       }
     },
     handleShowTimeline(status) {
-      this.isTimelineShow = status;
+      this.isTimelineShow = status
     },
     handleShowNewsSource(status) {
-      this.showNewsSource = status;
-      if (status === true) this.handleShowTimeline(false);
+      this.showNewsSource = status
+      if (status === true) this.handleShowTimeline(false)
     },
     focusOnTitle(blockId) {
-      this.$refs[`block-${blockId}`][0].focusOnTitle();
+      this.$refs[`block-${blockId}`][0].focusOnTitle()
     },
     // Saves article content into localStorage and adds timestamp
     setArticleLocalStorage() {
-      const articleData = this.$store.getters["post/GET_PUBLISH_DATA"];
-      articleData["timeStamp"] = this.sessionTimestamp;
-      const storeData = JSON.stringify(articleData);
+      const articleData = this.$store.getters['post/GET_PUBLISH_DATA']
+      articleData['timeStamp'] = this.sessionTimestamp
+      const storeData = JSON.stringify(articleData)
       localStorage.setItem(
-        this.$store.getters["post/GET_ARTICLEID_STRING"],
+        this.$store.getters['post/GET_ARTICLEID_STRING'],
         storeData
-      );
+      )
     },
     // get from localStorage
     getArticleLocalStorage() {
-      const articleIdStr = this.$store.getters["post/GET_ARTICLEID_STRING"];
-      const data = localStorage.getItem(articleIdStr);
-      let ret = null;
+      const articleIdStr = this.$store.getters['post/GET_ARTICLEID_STRING']
+      const data = localStorage.getItem(articleIdStr)
+      let ret = null
       try {
-        ret = JSON.parse(data);
+        ret = JSON.parse(data)
       } catch (e) {
-        console.error(e);
+        console.error(e)
       }
-      return ret;
+      return ret
     },
     removeArticleLocalStorage() {
-      localStorage.removeItem(this.$store.getters["post/GET_ARTICLEID_STRING"]);
-    },
-  },
-};
+      localStorage.removeItem(this.$store.getters['post/GET_ARTICLEID_STRING'])
+    }
+  }
+}
 </script>
 
 <style lang="scss">
