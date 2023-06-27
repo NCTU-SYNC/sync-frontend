@@ -863,7 +863,9 @@ export default {
   margin: 0.5rem 0;
 
   color: $gray-9;
-  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 400;
   letter-spacing: 2px;
   text-decoration: none !important;
 
