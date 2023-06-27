@@ -248,7 +248,8 @@ export default {
   }
 }
 </script>
-  <style>
+
+<style scoped>
 *,
 p {
   font-family: 'Noto Sans TC', sans-serif;
