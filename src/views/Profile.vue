@@ -76,22 +76,26 @@
         <h2 class="mb-4">
           {{ contentTitle }}
         </h2>
-        <slot v-if="currentShowingIndex === 3">
-          <Setting />
-        </slot>
-        <slot v-for="article in showingArticles" v-else>
-          <ArticleCard
-            :title="article.title"
-            :view-count="article.viewCount"
-            :category="article.category"
-            :last-updated-at="article.lastUpdatedAt"
-            :edited-count="article.editedCount"
-            :blocks="article.blocks"
-            :article-id="article._id"
-            full
-            class="p-0"
-          />
-        </slot>
+        <template v-if="currentShowingIndex === 3">
+          <slot>
+            <Setting />
+          </slot>
+        </template>
+        <template v-else>
+          <slot v-for="article in showingArticles">
+            <ArticleCard
+              :title="article.title"
+              :view-count="article.viewCount"
+              :category="article.category"
+              :last-updated-at="article.lastUpdatedAt"
+              :edited-count="article.editedCount"
+              :blocks="article.blocks"
+              :article-id="article._id"
+              full
+              class="p-0"
+            />
+          </slot>
+        </template>
       </div>
     </div>
   </b-container>
