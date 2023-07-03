@@ -73,28 +73,26 @@
         </ul>
       </div>
       <div class="tab-content">
-        <h2 class="mb-4">
-          {{ contentTitle }}
-        </h2>
         <template v-if="currentShowingIndex === 3">
           <slot>
             <Setting />
           </slot>
         </template>
         <template v-else>
-          <slot v-for="article in showingArticles">
-            <ArticleCard
-              :title="article.title"
-              :view-count="article.viewCount"
-              :category="article.category"
-              :last-updated-at="article.lastUpdatedAt"
-              :edited-count="article.editedCount"
-              :blocks="article.blocks"
-              :article-id="article._id"
-              full
-              class="p-0"
-            />
-          </slot>
+          <div v-for="(article, index) in showingArticles" :key="index" class="title-card">
+            <div class="d-flex justify-content-between">
+              <h1 class="title-text">
+                {{ article.title }}
+              </h1>
+              <SyncIcon icon="bookmark" size="md" />
+            </div>
+            <div v-if="article.tags.length !== 0" class="hashtag-container">
+              <HashtagPill v-for="(tag, idx) in article.tags" :key="idx" :name="tag" />
+            </div>
+            <div class="author-info">
+              編輯者： {{ getAuthorString(article.authors) }}
+            </div>
+          </div>
         </template>
       </div>
     </div>
@@ -102,8 +100,8 @@
 </template>
 
 <script>
-import ArticleCard from '@/components/ArticleCard.vue'
 import Setting from '@/components/Profile/Setting.vue'
+import HashtagPill from '@/components/HashtagPill.vue'
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import UserAPI from '@/api/user'
@@ -111,8 +109,8 @@ import UserAPI from '@/api/user'
 export default {
   name: 'Profile',
   components: {
-    ArticleCard,
-    Setting
+    Setting,
+    HashtagPill
   },
   data() {
     return {
@@ -179,6 +177,7 @@ export default {
     async init() {
       const { data } = await UserAPI.getArticleInfo()
       if (data.code === 200) {
+        console.log('data', data)
         const payload = data.data
         this.articles = payload
         this.points = payload.points
@@ -219,6 +218,17 @@ export default {
         tab: tabName
       }
       this.$router.push({ path: 'profile', query })
+    },
+    getAuthorString(authors) {
+      let authorsString = ''
+      authorsString = authors
+        .slice(0, 3)
+        .map((user) => user.name)
+        .join(', ')
+      if (authors.length > 3) {
+        authorsString += ` + ${authors.length - 3} 人`
+      }
+      return authorsString
     }
   }
 }
@@ -235,7 +245,6 @@ a {
   left: 0;
   width: 300px;
   padding-top: 1.5rem;
-  border-right: 1px solid $gray-400;
   flex-shrink: 0;
 }
 
@@ -333,9 +342,11 @@ a {
   tab content
 */
 .tab-content {
-  padding: 3rem 4rem;
-  box-sizing: content-box;
-  flex-shrink: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 37.75rem;
+  padding: 1.5rem;
 }
 
 /*
@@ -353,6 +364,39 @@ a {
 
   &-blue {
     color: $blue;
+  }
+}
+
+.title-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: 16px;
+
+  .title-text {
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.75rem;
+    color: #0e0e0e;
+    margin: 0;
+  }
+
+  .hashtag-container {
+    font-size: 12px;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .author-info {
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.25rem;
+    overflow-wrap: anywhere;
   }
 }
 </style>
