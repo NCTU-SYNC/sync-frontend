@@ -251,23 +251,14 @@ a {
   options nav
 */
 .options-nav {
-  margin-top: 1.5rem;
+  margin-top: 4rem;
   padding: 0;
   display: flex;
   flex-direction: column;
+  gap: 16px;
   justify-content: space-around;
   position: relative;
   list-style: none;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background-color: $gray-400;
-  }
 
   a {
     cursor: pointer;
@@ -277,12 +268,14 @@ a {
   }
 
   .option-name {
+    background-color: white;
+    border-radius: 16px;
     display: flex;
     height: 4rem;
+    box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.04);
 
     &[aria-selected='true'] {
-      border-left: 3px solid $blue;
-      background-color: #f6f6f8;
+      color: blue;
     }
 
     .option-text {
