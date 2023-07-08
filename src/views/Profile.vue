@@ -84,7 +84,10 @@
               <h1 class="title-text">
                 {{ article.title }}
               </h1>
-              <SyncIcon icon="bookmark" size="md" />
+              <a class="bookmark-icon" @click="toggleSubscription(article)">
+                <SyncIcon v-if="isSubscribed(article)" icon="bookmark-solid" size="md" />
+                <SyncIcon v-else icon="bookmark" size="md" />
+              </a>
             </div>
             <div v-if="article.tags.length !== 0" class="hashtag-container">
               <HashtagPill v-for="(tag, idx) in article.tags" :key="idx" :name="tag" />
@@ -177,7 +180,6 @@ export default {
     async init() {
       const { data } = await UserAPI.getArticleInfo()
       if (data.code === 200) {
-        console.log('data', data)
         const payload = data.data
         this.articles = payload
         this.points = payload.points
@@ -229,6 +231,23 @@ export default {
         authorsString += ` + ${authors.length - 3} 人`
       }
       return authorsString
+    },
+    isSubscribed(article) {
+      return this.articles.subscribed.map((a) => a._id).includes(article._id)
+    },
+    async toggleSubscription(article) {
+      const { _id } = article
+      const isSubscribed = this.isSubscribed(article)
+      const response = await UserAPI.subscribeArticle(_id, !isSubscribed)
+
+      if (response.data.type === 'success') {
+        if (isSubscribed) {
+          const idx = this.articles.subscribed.indexOf(article)
+          this.articles.subscribed.splice(idx, 1)
+        } else {
+          this.articles.subscribed.push(article)
+        }
+      }
     }
   }
 }
@@ -382,6 +401,12 @@ a {
     line-height: 1.75rem;
     color: #0e0e0e;
     margin: 0;
+  }
+
+  .bookmark-icon {
+    :hover {
+      cursor: pointer;
+    }
   }
 
   .hashtag-container {
