@@ -78,7 +78,7 @@
             <Setting />
           </slot>
         </template>
-        <template v-else>
+        <template v-else-if="showingArticles.length > 0">
           <div v-for="(article, index) in showingArticles" :key="index" class="title-card">
             <div class="d-flex justify-content-between">
               <h1 class="title-text">
@@ -97,6 +97,9 @@
             </div>
           </div>
         </template>
+        <template v-else>
+          <Logo class="logo-background" />
+        </template>
       </div>
     </div>
   </b-container>
@@ -105,6 +108,7 @@
 <script>
 import Setting from '@/components/Profile/Setting.vue'
 import HashtagPill from '@/components/HashtagPill.vue'
+import Logo from '@/components/Logo.vue'
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import UserAPI from '@/api/user'
@@ -113,7 +117,8 @@ export default {
   name: 'Profile',
   components: {
     Setting,
-    HashtagPill
+    HashtagPill,
+    Logo
   },
   data() {
     return {
@@ -421,4 +426,13 @@ a {
     overflow-wrap: anywhere;
   }
 }
+
+.logo-background {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: rotate(-30deg) scale(2.5);
+  opacity: 0.3;
+}
+
 </style>
