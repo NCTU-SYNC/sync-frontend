@@ -176,7 +176,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import '@/assets/scss/news.scss';
 
 .main-container {
