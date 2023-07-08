@@ -124,7 +124,6 @@ export default {
       },
       showingArticles: [],
       currentShowingIndex: 0,
-      contentTitle: '',
       points: 0,
       tabMap: new Map([
         ['edited_articles', 0],
@@ -194,19 +193,15 @@ export default {
     updateList() {
       switch (this.currentShowingIndex) {
         case 3:
-          this.contentTitle = '個人設定'
           break
         case 2:
-          this.contentTitle = '收藏的文章'
           this.showingArticles = [...this.articles.subscribed].reverse()
           break
         case 1:
-          this.contentTitle = '瀏覽紀錄'
           this.showingArticles = [...this.articles.viewed].reverse()
           break
         case 0:
         default:
-          this.contentTitle = '編輯過的文章'
           this.showingArticles = [...this.articles.edited].sort(
             (a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt)
           )
@@ -248,6 +243,8 @@ export default {
           this.articles.subscribed.push(article)
         }
       }
+
+      this.updateList()
     }
   }
 }
