@@ -382,8 +382,9 @@ a {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  width: 37.75rem;
+  width: 100%;
   padding: 1.5rem;
+  margin: 0 3rem;
 
   .nav {
     font-size: 1.5rem;
@@ -418,6 +419,7 @@ a {
 .title-card {
   display: flex;
   flex-direction: column;
+  max-width: 37rem;
   gap: 1rem;
   padding: 1.5rem;
   background-color: white;
