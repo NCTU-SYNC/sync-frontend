@@ -81,7 +81,7 @@
         <template v-else-if="showingArticles.length > 0">
           <div v-for="(article, index) in showingArticles" :key="index" class="title-card">
             <div class="d-flex justify-content-between">
-              <h1 class="title-text">
+              <h1 class="title-text" @click="gotoArticle(article._id)">
                 {{ article.title }}
               </h1>
               <a class="bookmark-icon" @click="toggleSubscription(article)">
@@ -220,6 +220,9 @@ export default {
         tab: tabName
       }
       this.$router.push({ path: 'profile', query })
+    },
+    gotoArticle(articleId) {
+      this.$router.push(`article/${articleId}`)
     },
     getAuthorString(authors) {
       let authorsString = ''
@@ -403,6 +406,10 @@ a {
     line-height: 1.75rem;
     color: #0e0e0e;
     margin: 0;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   .bookmark-icon {
