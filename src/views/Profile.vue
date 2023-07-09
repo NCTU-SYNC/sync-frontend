@@ -67,16 +67,28 @@
               <span aria-hidden focusable="false" class="option-icon">
                 <SyncIcon icon="settings" />
               </span>
-              <span class="option-text">個人設定</span>
+              <span class="option-text">個人設定與貢獻值</span>
             </a>
           </li>
         </ul>
       </div>
       <div class="tab-content">
         <template v-if="currentShowingIndex === 3">
-          <slot>
-            <Setting />
-          </slot>
+          <b-nav>
+            <b-nav-item
+              :active="currentSettingIndex === 0"
+              @click="currentSettingIndex = 0"
+            >
+              <h3 class="m-0">個人設定</h3>
+            </b-nav-item>
+            <b-nav-item
+              :active="currentSettingIndex === 1"
+              @click="currentSettingIndex = 1"
+            >
+              <h3 class="m-0">貢獻值</h3>
+            </b-nav-item>
+          </b-nav>
+          <Setting v-if="currentSettingIndex === 0" />
         </template>
         <template v-else-if="showingArticles.length > 0">
           <div v-for="(article, index) in showingArticles" :key="index" class="title-card">
@@ -129,6 +141,7 @@ export default {
       },
       showingArticles: [],
       currentShowingIndex: 0,
+      currentSettingIndex: 0,
       points: 0,
       tabMap: new Map([
         ['edited_articles', 0],
@@ -371,6 +384,17 @@ a {
   gap: 1rem;
   width: 37.75rem;
   padding: 1.5rem;
+
+  .nav {
+    font-size: 1.5rem;
+    font-weight: 700;
+    border-bottom: 1px solid gray;
+
+    .active {
+      color: black;
+      border-bottom: 2px solid #2353FF;
+    }
+  }
 }
 
 /*
