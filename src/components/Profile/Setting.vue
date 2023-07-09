@@ -6,15 +6,13 @@
     </div>
     <div class="section">
       <h4>顯示名稱</h4>
-      <div class="text-box">
-        <span class="m-0 flex-grow-1">{{ displayName }}</span>
-        <span class="text-box-divider" />
+      <div class="d-flex" style="gap: 1rem;">
+        <div class="text-box flex-fill">
+          {{ displayName }}
+        </div>
         <b-button
           id="rename-btn"
           v-b-modal.rename-modal
-          variant="white"
-          size="lg"
-          class="m-0 font-size-1"
         >更改</b-button>
         <b-modal
           id="rename-modal"
@@ -58,7 +56,7 @@
     <div class="section pb-3">
       <h4>註冊信箱</h4>
       <div class="text-box bg-light">
-        <span class="m-0 flex-grow-1">{{ email }}</span>
+        {{ email }}
       </div>
     </div>
     <div class="section pt-5">
@@ -122,11 +120,11 @@ export default {
   padding-top: 1rem;
   padding-bottom: 1rem;
 
-  & * {
+  & > * {
     margin-bottom: 1rem;
   }
 
-  & *:last-child {
+  & > *:last-child {
     margin-bottom: 0;
   }
 }
@@ -135,24 +133,19 @@ export default {
   display: flex;
   border: 1px solid $gray-400;
   border-radius: 5px;
-  width: 100%;
-  height: 3rem;
+  height: 2.5rem;
   align-items: center;
-  justify-content: space-between;
-  padding-left: 1rem;
-
-  &-divider {
-    height: 1.25rem;
-    border-right: 1px solid $gray-400;
-    box-sizing: content-box;
-    padding: 0;
-    margin: 0;
-  }
+  padding: 0 1rem;
 }
 
 #rename-btn {
+  height: 2.5rem;
+  white-space: nowrap;
+  color: $white;
+  background-color: $blue;
+  border: none;
   font-size: 1rem;
-  color: $blue;
+  padding: 0.5rem 1rem;
 }
 
 /*
