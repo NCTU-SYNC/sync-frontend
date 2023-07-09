@@ -89,6 +89,7 @@
             </b-nav-item>
           </b-nav>
           <Setting v-if="currentSettingIndex === 0" />
+          <ContributionPoint v-if="currentSettingIndex === 1" :points="points" />
         </template>
         <template v-else-if="showingArticles.length > 0">
           <div v-for="(article, index) in showingArticles" :key="index" class="title-card">
@@ -119,6 +120,7 @@
 
 <script>
 import Setting from '@/components/Profile/Setting.vue'
+import ContributionPoint from '@/components/Profile/ContributionPoint.vue'
 import HashtagPill from '@/components/HashtagPill.vue'
 import Logo from '@/components/Logo.vue'
 import { mapGetters, mapActions } from 'vuex'
@@ -129,6 +131,7 @@ export default {
   name: 'Profile',
   components: {
     Setting,
+    ContributionPoint,
     HashtagPill,
     Logo
   },
