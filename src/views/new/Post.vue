@@ -100,12 +100,14 @@
           </b-card-body>
         </b-card>
 
-        <div v-for="(block, blockIndex) in blocks" :key="block.id">
-          <b-card class="edit-block edit-row">
-            <SideTool class="side-tool" :block-index="blockIndex" />
-            <BlockEditor :ref="`block-${block.id}`" :block="block" />
-          </b-card>
-        </div>
+        <draggable v-model="blocks">
+          <div v-for="(block, blockIndex) in blocks" :key="block.id">
+            <b-card class="edit-block edit-row">
+              <SideTool class="side-tool" :block-index="blockIndex" />
+              <BlockEditor :ref="`block-${block.id}`" :block="block" />
+            </b-card>
+          </div>
+        </draggable>
 
         <div v-if="citationList.length > 0">
           <b-row>
@@ -216,6 +218,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import draggable from 'vuedraggable'
 import articleAPI from '@/api/article'
 import BlockEditor from '@/components/Post/BlockEditor'
 import NewsPanel from '@/components/NewsPanel'
@@ -233,7 +236,8 @@ export default {
     EditStar,
     Tag,
     EditToolModal,
-    SideTool
+    SideTool,
+    draggable
   },
   data() {
     return {
@@ -275,8 +279,13 @@ export default {
     editPoint() {
       return this.post.isNewPost ? 5 : 2
     },
-    blocks() {
-      return this.post.blocks
+    blocks: {
+      get() {
+        return this.post.blocks
+      },
+      set(newBlocks) {
+        this.$store.commit('post/UPDATE_BLOCKS', newBlocks)
+      }
     },
     postTitle: {
       get() {

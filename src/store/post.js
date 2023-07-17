@@ -41,6 +41,9 @@ const mutations = {
     state.blocks.splice(index, 1)
     state.currentEditingEditor = null
   },
+  UPDATE_BLOCKS(state, newBlocks) {
+    state.blocks = newBlocks
+  },
   UPDATE_BLOCK_CONTENT(state, { id, content }) {
     const block = findBlockById(state, id)
     if (!block) return
