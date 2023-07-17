@@ -3319,7 +3319,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^2.0.0, chalk@npm:^2.3.0":
+"chalk@npm:^2.0.0":
   version: 2.4.2
   resolution: "chalk@npm:2.4.2"
   dependencies:
@@ -3330,6 +3330,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chalk@npm:^2.3.0, chalk@npm:^4.0.0, chalk@npm:^4.1.0":
+  version: 4.1.2
+  resolution: "chalk@npm:4.1.2"
+  dependencies:
+    ansi-styles: ^4.1.0
+    supports-color: ^7.1.0
+  checksum: fe75c9d5c76a7a98d45495b91b2172fa3b7a09e0cc9370e5c8feb1c567b85c4288e2b3fded7cfdd7359ac28d6b3844feb8b82b8686842e93d23c827c417e83fc
+  languageName: node
+  linkType: hard
+
 "chalk@npm:^3.0.0":
   version: 3.0.0
   resolution: "chalk@npm:3.0.0"
@@ -3337,16 +3347,6 @@ __metadata:
     ansi-styles: ^4.1.0
     supports-color: ^7.1.0
   checksum: 8e3ddf3981c4da405ddbd7d9c8d91944ddf6e33d6837756979f7840a29272a69a5189ecae0ff84006750d6d1e92368d413335eab4db5476db6e6703a1d1e0505
-  languageName: node
-  linkType: hard
-
-"chalk@npm:^4.0.0, chalk@npm:^4.1.0":
-  version: 4.1.2
-  resolution: "chalk@npm:4.1.2"
-  dependencies:
-    ansi-styles: ^4.1.0
-    supports-color: ^7.1.0
-  checksum: fe75c9d5c76a7a98d45495b91b2172fa3b7a09e0cc9370e5c8feb1c567b85c4288e2b3fded7cfdd7359ac28d6b3844feb8b82b8686842e93d23c827c417e83fc
   languageName: node
   linkType: hard
 
@@ -3796,13 +3796,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deepmerge@npm:1.3.2":
-  version: 1.3.2
-  resolution: "deepmerge@npm:1.3.2"
-  checksum: cdc9a7ac3ae8383d2974f85587b113cd16bed0b39b88b0bb091dd2ab247bed85288b290dbb9573d1a887819da415b4f7092e9dc2e8af73d743dc8f1a4e90fdd9
-  languageName: node
-  linkType: hard
-
 "define-properties@npm:^1.1.3, define-properties@npm:^1.1.4":
   version: 1.1.4
   resolution: "define-properties@npm:1.1.4"
@@ -3976,13 +3969,6 @@ __metadata:
   dependencies:
     domelementtype: ^2.2.0
   checksum: 4c665ceed016e1911bf7d1dadc09dc888090b64dee7851cccd2fcf5442747ec39c647bb1cb8c8919f8bbdd0f0c625a6bafeeed4b2d656bbecdbae893f43ffaaa
-  languageName: node
-  linkType: hard
-
-"domready@npm:1.0.8":
-  version: 1.0.8
-  resolution: "domready@npm:1.0.8"
-  checksum: 5b0ee86650226e09f65c89b61d15fcfcda5925931dfffab5e9b82bf8ba96637286605fde1ac4addee19717bf7e486d4b49683e6f99038927560412113d96fde0
   languageName: node
   linkType: hard
 
@@ -6560,13 +6546,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mitt@npm:1.1.2":
-  version: 1.1.2
-  resolution: "mitt@npm:1.1.2"
-  checksum: 53cd01c9db1eadb87755df49ed8078103665174299927b139ead3038943b3046494da02938ee5737e768e19a7026b0c19753609c6c7bb5b6ce9d08bb38bd7c31
-  languageName: node
-  linkType: hard
-
 "mixin-deep@npm:^1.2.0":
   version: 1.3.2
   resolution: "mixin-deep@npm:1.3.2"
@@ -8133,18 +8112,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"svg-baker-runtime@npm:^1.4.7":
-  version: 1.4.7
-  resolution: "svg-baker-runtime@npm:1.4.7"
-  dependencies:
-    deepmerge: 1.3.2
-    mitt: 1.1.2
-    svg-baker: ^1.7.0
-  checksum: 32fbb512093b77cc43928bef72054a501e3ad81799d0689571f6caa3b794a0992b051796c5b496f96fec0569b9215f351c6119f9628a5a14d56bed45147b5433
-  languageName: node
-  linkType: hard
-
-"svg-baker@npm:1.7.0, svg-baker@npm:^1.5.0, svg-baker@npm:^1.7.0":
+"svg-baker@npm:1.7.0":
   version: 1.7.0
   resolution: "svg-baker@npm:1.7.0"
   dependencies:
@@ -8162,22 +8130,6 @@ __metadata:
     query-string: ^4.3.2
     traverse: ^0.6.6
   checksum: 06724dd6cd098016a11a778cfa2771defac6bdcdee1e4c61669aa32ebfa52815d66cea989ea1f1d31b440634ceda54637e2d7d57687925b0d256adf9ba176b50
-  languageName: node
-  linkType: hard
-
-"svg-sprite-loader@npm:^6.0.9":
-  version: 6.0.11
-  resolution: "svg-sprite-loader@npm:6.0.11"
-  dependencies:
-    bluebird: ^3.5.0
-    deepmerge: 1.3.2
-    domready: 1.0.8
-    escape-string-regexp: 1.0.5
-    loader-utils: ^1.1.0
-    svg-baker: ^1.5.0
-    svg-baker-runtime: ^1.4.7
-    url-slug: 2.0.0
-  checksum: 8ef822902d62bee35c4aeb9c26f3e31b45a4aee9652f93e750a597518cd43194e4b84ca64c4e45df21d96d6b6832a27fc6b196517e65e8ff82f9afdd8403c5b2
   languageName: node
   linkType: hard
 
@@ -8267,7 +8219,6 @@ __metadata:
     prosemirror-transform: ^1.7.0
     prosemirror-view: ^1.29.1
     sass: ^1.54.8
-    svg-sprite-loader: ^6.0.9
     swiper: ^8.4.5
     terser: ^5.15.0
     vite: ^3.1.0
@@ -8547,13 +8498,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unidecode@npm:0.1.8":
-  version: 0.1.8
-  resolution: "unidecode@npm:0.1.8"
-  checksum: 8d07a15a28e6d2b3fb595aa3439d710c968b98a6d7fa5b2d5fdbd3498042f27e1ba1d5925541912ee14368b8a2d35767d66e3f56199f8cde1feafd62a8acd6a2
-  languageName: node
-  linkType: hard
-
 "union-value@npm:^1.0.0":
   version: 1.0.1
   resolution: "union-value@npm:1.0.1"
@@ -8645,15 +8589,6 @@ __metadata:
     querystringify: ^2.1.1
     requires-port: ^1.0.0
   checksum: fbdba6b1d83336aca2216bbdc38ba658d9cfb8fc7f665eb8b17852de638ff7d1a162c198a8e4ed66001ddbf6c9888d41e4798912c62b4fd777a31657989f7bdf
-  languageName: node
-  linkType: hard
-
-"url-slug@npm:2.0.0":
-  version: 2.0.0
-  resolution: "url-slug@npm:2.0.0"
-  dependencies:
-    unidecode: 0.1.8
-  checksum: f71efd9c6d52429103c2d75898325752c20ebdb795866960e988335667bc3153d46d4a4d7818cc50bffb6a9581b3b0707a38039a20b2e1626a9292212255c849
   languageName: node
   linkType: hard
 

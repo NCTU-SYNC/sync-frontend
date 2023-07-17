@@ -219,7 +219,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
-
 import articleAPI from '@/api/article'
 import BlockEditor from '@/components/Post/BlockEditor'
 import NewsPanel from '@/components/NewsPanel'
