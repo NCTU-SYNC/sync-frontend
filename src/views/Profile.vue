@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="main">
     <PersonalStatus
       v-if="!lg"
-      style="margin-top: 1rem; margin-left: 1rem"
+      :style="{'margin-top': '1rem', 'margin-left': '1rem'}"
       :photo-url="photoURL"
       :display-name="displayName"
       :points="points"
@@ -68,7 +68,7 @@
           </li>
         </ul>
       </div>
-      <div class="tab-content">
+      <div v-if="!sm" class="tab-content">
         <template v-if="currentShowingIndex === 3">
           <b-nav>
             <b-nav-item
@@ -283,13 +283,23 @@ a {
   text-decoration: none !important;
 }
 
+.main {
+  @media screen and (max-width: 680px){
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 .main-container {
-  display: grid;
-  width: 1240px;
   margin: 0 auto;
   gap: 2rem;
-  grid-template-columns: repeat(12, 1fr);
   padding: 2.25rem;
+
+  @media screen and (min-width: 680px){
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+  }
 
   @media screen and (max-width: 1024px){
     padding-top: 1rem;
@@ -298,8 +308,15 @@ a {
 
 .sidebar {
   grid-column: 1 / 4;
-  width: 280px;
   flex-shrink: 0;
+
+  @media screen and (max-width: 1024px) and (min-width: 680px){
+    grid-column: 1 / 2;
+  }
+
+  @media screen and ((min-width: 1024px) or (max-width: 680px)){
+    width: 280px;
+  }
 }
 
 .avatar {
@@ -318,6 +335,10 @@ a {
   justify-content: space-around;
   position: relative;
   list-style: none;
+
+  @media screen and (max-width: 1024px) and (min-width: 680px){
+    width: fit-content;
+  }
 
   @media screen and (min-width: 1024px){
     margin-top: 3rem;
@@ -345,7 +366,6 @@ a {
       font-size: 1.125rem;
       letter-spacing: 0.25rem;
       text-indent: 0.25rem;
-      padding-left: 1rem;
       margin: auto 0;
     }
 
@@ -353,7 +373,7 @@ a {
       display: flex;
       height: 36px;
       width: 36px;
-      margin: auto 0 auto 1rem; /* vertical align icon center */
+      margin: auto 1rem; /* vertical align icon center */
       align-items: center; /* align item in container */
       justify-content: center; /* align item in container */
     }
@@ -373,11 +393,15 @@ a {
   tab content
 */
 .tab-content {
-  grid-column: 4 / 13;
+  grid-column: 4 / -1;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   width: 100%;
+
+  @media screen and (max-width: 1024px) and (min-width: 680px){
+    grid-column-start: 2;
+  }
 
   .nav {
     font-size: 1.5rem;
@@ -412,11 +436,15 @@ a {
 .title-card {
   display: flex;
   flex-direction: column;
-  max-width: 37rem;
+  width: auto;
   gap: 1rem;
   padding: 1.5rem;
   background-color: white;
   border-radius: 16px;
+
+  @media screen and (min-width: 1024px){
+    max-width: 37rem;
+  }
 
   .title-text {
     font-size: 1.25rem;
