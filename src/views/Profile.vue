@@ -1,122 +1,121 @@
 <template>
-  <div class="main-container">
-    <div class="sidebar">
-      <b-container class="personal-status">
-        <b-avatar size="5rem" :src="photoURL" class="float-left" />
-        <b-row align-v="stretch" class="personal-status-name">
-          <b-col class="text-lg font-weight-bold text-truncate">
-            {{ displayName }}
-          </b-col>
-        </b-row>
-        <b-row align-v="stretch" class="personal-status-text">
-          <b-col cols="6" class="text-sm text-gray pr-0">貢獻值</b-col>
-          <b-col class="text-sm text-blue pl-0 pr-0">{{ points }}</b-col>
-        </b-row>
-        <b-row align-v="stretch" class="personal-status-text">
-          <b-col cols="6" class="text-sm text-gray pr-0">加入日期</b-col>
-          <b-col class="text-sm text-gray pl-0 pr-0">{{
-            creationDateTime
-          }}</b-col>
-        </b-row>
-      </b-container>
-
-      <ul role="tablist" class="options-nav">
-        <li
-          :aria-selected="currentShowingIndex === 0"
-          role="tab"
-          class="option-name"
-        >
-          <a @click="setTab('edited_articles')">
-            <span aria-hidden focusable="false" class="option-icon">
-              <SyncIcon icon="edited" />
-            </span>
-            <span class="option-text">編輯過的文章</span>
-          </a>
-        </li>
-        <li
-          :aria-selected="currentShowingIndex === 1"
-          role="tab"
-          class="option-name"
-        >
-          <a @click="setTab('browsing_history')">
-            <span aria-hidden focusable="false" class="option-icon">
-              <SyncIcon icon="history" />
-            </span>
-            <span class="option-text">瀏覽紀錄</span>
-          </a>
-        </li>
-        <li
-          :aria-selected="currentShowingIndex === 2"
-          role="tab"
-          class="option-name"
-        >
-          <a @click="setTab('bookmarks')">
-            <span aria-hidden focusable="false" class="option-icon">
-              <SyncIcon icon="bookmark" />
-            </span>
-            <span class="option-text">收藏的文章</span>
-          </a>
-        </li>
-        <li
-          :aria-selected="currentShowingIndex === 3"
-          role="tab"
-          class="option-name"
-        >
-          <a @click="setTab('settings')">
-            <span aria-hidden focusable="false" class="option-icon">
-              <SyncIcon icon="settings" />
-            </span>
-            <span class="option-text">個人設定與貢獻值</span>
-          </a>
-        </li>
-      </ul>
-    </div>
-    <div class="tab-content">
-      <template v-if="currentShowingIndex === 3">
-        <b-nav>
-          <b-nav-item
-            :active="currentSettingIndex === 0"
-            @click="currentSettingIndex = 0"
+  <div>
+    <PersonalStatus
+      v-if="!lg"
+      style="margin-top: 1rem; margin-left: 1rem"
+      :photo-url="photoURL"
+      :display-name="displayName"
+      :points="points"
+      :creation-date-time="creationDateTime"
+    />
+    <div class="main-container">
+      <div class="sidebar">
+        <PersonalStatus
+          v-if="lg"
+          :photo-url="photoURL"
+          :display-name="displayName"
+          :points="points"
+          :creation-date-time="creationDateTime"
+        />
+        <ul role="tablist" class="options-nav">
+          <li
+            :aria-selected="currentShowingIndex === 0"
+            role="tab"
+            class="option-name"
           >
-            <h3 class="m-0">個人設定</h3>
-          </b-nav-item>
-          <b-nav-item
-            :active="currentSettingIndex === 1"
-            @click="currentSettingIndex = 1"
-          >
-            <h3 class="m-0">貢獻值</h3>
-          </b-nav-item>
-        </b-nav>
-        <Setting v-if="currentSettingIndex === 0" />
-        <ContributionPoint v-if="currentSettingIndex === 1" :points="points" />
-      </template>
-      <template v-else-if="showingArticles.length > 0">
-        <div v-for="(article, index) in showingArticles" :key="index" class="title-card">
-          <div class="d-flex justify-content-between">
-            <h1 class="title-text" @click="gotoArticle(article._id)">
-              {{ article.title }}
-            </h1>
-            <a class="bookmark-icon" @click="toggleSubscription(article)">
-              <SyncIcon v-if="isSubscribed(article)" icon="bookmark-solid" size="md" />
-              <SyncIcon v-else icon="bookmark" size="md" />
+            <a @click="setTab('edited_articles')">
+              <span aria-hidden focusable="false" class="option-icon">
+                <SyncIcon icon="edited" />
+              </span>
+              <span v-if="!md" class="option-text">編輯過的文章</span>
             </a>
+          </li>
+          <li
+            :aria-selected="currentShowingIndex === 1"
+            role="tab"
+            class="option-name"
+          >
+            <a @click="setTab('browsing_history')">
+              <span aria-hidden focusable="false" class="option-icon">
+                <SyncIcon icon="history" />
+              </span>
+              <span v-if="!md" class="option-text">瀏覽紀錄</span>
+            </a>
+          </li>
+          <li
+            :aria-selected="currentShowingIndex === 2"
+            role="tab"
+            class="option-name"
+          >
+            <a @click="setTab('bookmarks')">
+              <span aria-hidden focusable="false" class="option-icon">
+                <SyncIcon icon="bookmark" />
+              </span>
+              <span v-if="!md" class="option-text">收藏的文章</span>
+            </a>
+          </li>
+          <li
+            :aria-selected="currentShowingIndex === 3"
+            role="tab"
+            class="option-name"
+          >
+            <a @click="setTab('settings')">
+              <span aria-hidden focusable="false" class="option-icon">
+                <SyncIcon icon="settings" />
+              </span>
+              <span v-if="!md" class="option-text">個人設定與貢獻值</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="tab-content">
+        <template v-if="currentShowingIndex === 3">
+          <b-nav>
+            <b-nav-item
+              :active="currentSettingIndex === 0"
+              @click="currentSettingIndex = 0"
+            >
+              <h3 class="m-0">個人設定</h3>
+            </b-nav-item>
+            <b-nav-item
+              :active="currentSettingIndex === 1"
+              @click="currentSettingIndex = 1"
+            >
+              <h3 class="m-0">貢獻值</h3>
+            </b-nav-item>
+          </b-nav>
+          <Setting v-if="currentSettingIndex === 0" />
+          <ContributionPoint v-if="currentSettingIndex === 1" :points="points" />
+        </template>
+        <template v-else-if="showingArticles.length > 0">
+          <div v-for="(article, index) in showingArticles" :key="index" class="title-card">
+            <div class="d-flex justify-content-between">
+              <h1 class="title-text" @click="gotoArticle(article._id)">
+                {{ article.title }}
+              </h1>
+              <a class="bookmark-icon" @click="toggleSubscription(article)">
+                <SyncIcon v-if="isSubscribed(article)" icon="bookmark-solid" size="md" />
+                <SyncIcon v-else icon="bookmark" size="md" />
+              </a>
+            </div>
+            <div v-if="article.tags.length !== 0" class="hashtag-container">
+              <HashtagPill v-for="(tag, idx) in article.tags" :key="idx" :name="tag" />
+            </div>
+            <div class="author-info">
+              編輯者： {{ getAuthorString(article.authors) }}
+            </div>
           </div>
-          <div v-if="article.tags.length !== 0" class="hashtag-container">
-            <HashtagPill v-for="(tag, idx) in article.tags" :key="idx" :name="tag" />
-          </div>
-          <div class="author-info">
-            編輯者： {{ getAuthorString(article.authors) }}
-          </div>
-        </div>
-      </template>
-      <template v-else>
-        <Logo class="logo-background" />
-      </template>
+        </template>
+        <template v-else>
+          <Logo class="logo-background" />
+        </template>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import PersonalStatus from '@/components/Profile/PersonalStatus.vue'
 import Setting from '@/components/Profile/Setting.vue'
 import ContributionPoint from '@/components/Profile/ContributionPoint.vue'
 import HashtagPill from '@/components/HashtagPill.vue'
@@ -128,6 +127,7 @@ import UserAPI from '@/api/user'
 export default {
   name: 'Profile',
   components: {
+    PersonalStatus,
     Setting,
     ContributionPoint,
     HashtagPill,
@@ -155,6 +155,16 @@ export default {
   computed: {
     ...mapGetters(['photoURL', 'displayName', 'uid', 'isLogin', 'user']),
     ...mapGetters({ createAt: 'user/createAt', email: 'user/email' }),
+    ...mapGetters(['windowWidth']),
+    sm() {
+      return this.windowWidth < 680
+    },
+    md() {
+      return this.windowWidth < 1024 && this.windowWidth >= 680
+    },
+    lg() {
+      return this.windowWidth >= 1024
+    },
     creationDateTime() {
       return this.createAt
         ? moment(parseInt(this.createAt)).format('YYYY.MM.DD')
@@ -280,12 +290,15 @@ a {
   gap: 2rem;
   grid-template-columns: repeat(12, 1fr);
   padding: 2.25rem;
+
+  @media screen and (max-width: 1024px){
+    padding-top: 1rem;
+  }
 }
 
 .sidebar {
   grid-column: 1 / 4;
   width: 280px;
-  padding-top: 1.5rem;
   flex-shrink: 0;
 }
 
@@ -297,11 +310,7 @@ a {
   max-height: 150px;
 }
 
-/*
-  options nav
-*/
 .options-nav {
-  margin-top: 4rem;
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -309,6 +318,10 @@ a {
   justify-content: space-around;
   position: relative;
   list-style: none;
+
+  @media screen and (min-width: 1024px){
+    margin-top: 3rem;
+  }
 
   a {
     cursor: pointer;
@@ -350,29 +363,6 @@ a {
 .profile-title {
   margin: 1rem 0;
   color: rgb(49, 87, 211);
-}
-
-.personal-status {
-  height: 5rem;
-  padding-left: 1.75rem;
-  padding-right: 1.75rem;
-
-  &-name {
-    height: 2rem;
-  }
-
-  &-text {
-    height: 1.5rem;
-
-    :first-child {
-      width: 8rem;
-    }
-  }
-
-  // align all texts to center
-  & * {
-    margin: auto 0;
-  }
 }
 
 .blank-row {
