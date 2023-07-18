@@ -1,121 +1,119 @@
 <template>
-  <b-container fluid class="no-gutters pl-0 pr-0">
-    <div class="d-flex">
-      <div class="sidebar">
-        <b-container class="personal-status">
-          <b-avatar size="5rem" :src="photoURL" class="float-left" />
-          <b-row align-v="stretch" class="personal-status-name">
-            <b-col class="text-lg font-weight-bold text-truncate">
-              {{ displayName }}
-            </b-col>
-          </b-row>
-          <b-row align-v="stretch" class="personal-status-text">
-            <b-col cols="6" class="text-sm text-gray pr-0">貢獻值</b-col>
-            <b-col class="text-sm text-blue pl-0 pr-0">{{ points }}</b-col>
-          </b-row>
-          <b-row align-v="stretch" class="personal-status-text">
-            <b-col cols="6" class="text-sm text-gray pr-0">加入日期</b-col>
-            <b-col class="text-sm text-gray pl-0 pr-0">{{
-              creationDateTime
-            }}</b-col>
-          </b-row>
-        </b-container>
+  <div class="main-container">
+    <div class="sidebar">
+      <b-container class="personal-status">
+        <b-avatar size="5rem" :src="photoURL" class="float-left" />
+        <b-row align-v="stretch" class="personal-status-name">
+          <b-col class="text-lg font-weight-bold text-truncate">
+            {{ displayName }}
+          </b-col>
+        </b-row>
+        <b-row align-v="stretch" class="personal-status-text">
+          <b-col cols="6" class="text-sm text-gray pr-0">貢獻值</b-col>
+          <b-col class="text-sm text-blue pl-0 pr-0">{{ points }}</b-col>
+        </b-row>
+        <b-row align-v="stretch" class="personal-status-text">
+          <b-col cols="6" class="text-sm text-gray pr-0">加入日期</b-col>
+          <b-col class="text-sm text-gray pl-0 pr-0">{{
+            creationDateTime
+          }}</b-col>
+        </b-row>
+      </b-container>
 
-        <ul role="tablist" class="options-nav">
-          <li
-            :aria-selected="currentShowingIndex === 0"
-            role="tab"
-            class="option-name"
-          >
-            <a @click="setTab('edited_articles')">
-              <span aria-hidden focusable="false" class="option-icon">
-                <SyncIcon icon="edited" />
-              </span>
-              <span class="option-text">編輯過的文章</span>
-            </a>
-          </li>
-          <li
-            :aria-selected="currentShowingIndex === 1"
-            role="tab"
-            class="option-name"
-          >
-            <a @click="setTab('browsing_history')">
-              <span aria-hidden focusable="false" class="option-icon">
-                <SyncIcon icon="history" />
-              </span>
-              <span class="option-text">瀏覽紀錄</span>
-            </a>
-          </li>
-          <li
-            :aria-selected="currentShowingIndex === 2"
-            role="tab"
-            class="option-name"
-          >
-            <a @click="setTab('bookmarks')">
-              <span aria-hidden focusable="false" class="option-icon">
-                <SyncIcon icon="bookmark" />
-              </span>
-              <span class="option-text">收藏的文章</span>
-            </a>
-          </li>
-          <li
-            :aria-selected="currentShowingIndex === 3"
-            role="tab"
-            class="option-name"
-          >
-            <a @click="setTab('settings')">
-              <span aria-hidden focusable="false" class="option-icon">
-                <SyncIcon icon="settings" />
-              </span>
-              <span class="option-text">個人設定與貢獻值</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-      <div class="tab-content">
-        <template v-if="currentShowingIndex === 3">
-          <b-nav>
-            <b-nav-item
-              :active="currentSettingIndex === 0"
-              @click="currentSettingIndex = 0"
-            >
-              <h3 class="m-0">個人設定</h3>
-            </b-nav-item>
-            <b-nav-item
-              :active="currentSettingIndex === 1"
-              @click="currentSettingIndex = 1"
-            >
-              <h3 class="m-0">貢獻值</h3>
-            </b-nav-item>
-          </b-nav>
-          <Setting v-if="currentSettingIndex === 0" />
-          <ContributionPoint v-if="currentSettingIndex === 1" :points="points" />
-        </template>
-        <template v-else-if="showingArticles.length > 0">
-          <div v-for="(article, index) in showingArticles" :key="index" class="title-card">
-            <div class="d-flex justify-content-between">
-              <h1 class="title-text" @click="gotoArticle(article._id)">
-                {{ article.title }}
-              </h1>
-              <a class="bookmark-icon" @click="toggleSubscription(article)">
-                <SyncIcon v-if="isSubscribed(article)" icon="bookmark-solid" size="md" />
-                <SyncIcon v-else icon="bookmark" size="md" />
-              </a>
-            </div>
-            <div v-if="article.tags.length !== 0" class="hashtag-container">
-              <HashtagPill v-for="(tag, idx) in article.tags" :key="idx" :name="tag" />
-            </div>
-            <div class="author-info">
-              編輯者： {{ getAuthorString(article.authors) }}
-            </div>
-          </div>
-        </template>
-        <template v-else>
-          <Logo class="logo-background" />
-        </template>
-      </div>
+      <ul role="tablist" class="options-nav">
+        <li
+          :aria-selected="currentShowingIndex === 0"
+          role="tab"
+          class="option-name"
+        >
+          <a @click="setTab('edited_articles')">
+            <span aria-hidden focusable="false" class="option-icon">
+              <SyncIcon icon="edited" />
+            </span>
+            <span class="option-text">編輯過的文章</span>
+          </a>
+        </li>
+        <li
+          :aria-selected="currentShowingIndex === 1"
+          role="tab"
+          class="option-name"
+        >
+          <a @click="setTab('browsing_history')">
+            <span aria-hidden focusable="false" class="option-icon">
+              <SyncIcon icon="history" />
+            </span>
+            <span class="option-text">瀏覽紀錄</span>
+          </a>
+        </li>
+        <li
+          :aria-selected="currentShowingIndex === 2"
+          role="tab"
+          class="option-name"
+        >
+          <a @click="setTab('bookmarks')">
+            <span aria-hidden focusable="false" class="option-icon">
+              <SyncIcon icon="bookmark" />
+            </span>
+            <span class="option-text">收藏的文章</span>
+          </a>
+        </li>
+        <li
+          :aria-selected="currentShowingIndex === 3"
+          role="tab"
+          class="option-name"
+        >
+          <a @click="setTab('settings')">
+            <span aria-hidden focusable="false" class="option-icon">
+              <SyncIcon icon="settings" />
+            </span>
+            <span class="option-text">個人設定與貢獻值</span>
+          </a>
+        </li>
+      </ul>
     </div>
-  </b-container>
+    <div class="tab-content">
+      <template v-if="currentShowingIndex === 3">
+        <b-nav>
+          <b-nav-item
+            :active="currentSettingIndex === 0"
+            @click="currentSettingIndex = 0"
+          >
+            <h3 class="m-0">個人設定</h3>
+          </b-nav-item>
+          <b-nav-item
+            :active="currentSettingIndex === 1"
+            @click="currentSettingIndex = 1"
+          >
+            <h3 class="m-0">貢獻值</h3>
+          </b-nav-item>
+        </b-nav>
+        <Setting v-if="currentSettingIndex === 0" />
+        <ContributionPoint v-if="currentSettingIndex === 1" :points="points" />
+      </template>
+      <template v-else-if="showingArticles.length > 0">
+        <div v-for="(article, index) in showingArticles" :key="index" class="title-card">
+          <div class="d-flex justify-content-between">
+            <h1 class="title-text" @click="gotoArticle(article._id)">
+              {{ article.title }}
+            </h1>
+            <a class="bookmark-icon" @click="toggleSubscription(article)">
+              <SyncIcon v-if="isSubscribed(article)" icon="bookmark-solid" size="md" />
+              <SyncIcon v-else icon="bookmark" size="md" />
+            </a>
+          </div>
+          <div v-if="article.tags.length !== 0" class="hashtag-container">
+            <HashtagPill v-for="(tag, idx) in article.tags" :key="idx" :name="tag" />
+          </div>
+          <div class="author-info">
+            編輯者： {{ getAuthorString(article.authors) }}
+          </div>
+        </div>
+      </template>
+      <template v-else>
+        <Logo class="logo-background" />
+      </template>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -275,11 +273,18 @@ a {
   text-decoration: none !important;
 }
 
+.main-container {
+  display: grid;
+  width: 1240px;
+  margin: 0 auto;
+  gap: 2rem;
+  grid-template-columns: repeat(12, 1fr);
+  padding: 2.25rem;
+}
+
 .sidebar {
-  position: sticky;
-  top: 0;
-  left: 0;
-  width: 300px;
+  grid-column: 1 / 4;
+  width: 280px;
   padding-top: 1.5rem;
   flex-shrink: 0;
 }
@@ -335,7 +340,7 @@ a {
       display: flex;
       height: 36px;
       width: 36px;
-      margin: auto 0 auto 2rem; /* vertical align icon center */
+      margin: auto 0 auto 1rem; /* vertical align icon center */
       align-items: center; /* align item in container */
       justify-content: center; /* align item in container */
     }
@@ -378,12 +383,11 @@ a {
   tab content
 */
 .tab-content {
+  grid-column: 4 / 13;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   width: 100%;
-  padding: 1.5rem;
-  margin: 0 3rem;
 
   .nav {
     font-size: 1.5rem;
