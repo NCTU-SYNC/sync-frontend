@@ -171,11 +171,7 @@ export default {
     },
     '$route.query.tab'() {
       const tab = this.$route.query.tab
-      if (!this.tabMap.has(tab)) {
-        this.currentShowingIndex = 0
-      } else {
-        this.currentShowingIndex = this.tabMap.get(tab)
-      }
+      this.currentShowingIndex = this.tabMap.get(tab) ?? 0
     },
     currentShowingIndex() {
       this.updateList()
