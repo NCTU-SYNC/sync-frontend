@@ -113,7 +113,7 @@ export default {
   font-weight: 400;
 }
 
-.table-row-border {
-  border-top: 1px solid rgba(0, 0, 0, 0.45);
+:deep .table-row-border {
+  border-top: 1px solid #ccc;
 }
 </style>
