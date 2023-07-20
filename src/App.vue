@@ -5,8 +5,8 @@
       mode="out-in"
       :duration="300"
     >
-      <NavbarPost v-if="isPost" @reloadData="reloadData" />
-      <Navbar v-else @reloadData="reloadData" />
+      <NavBarPost v-if="isPost" @reloadData="reloadData" />
+      <NavBar v-else @reloadData="reloadData" />
     </transition>
 
     <div id="wrapper">
@@ -23,15 +23,15 @@
 </template>
 
 <script>
-import Navbar from '@/components/NavBar/Navbar.vue'
-import NavbarPost from '@/components/Post/NavBarPost.vue'
+import NavBar from '@/components/NavBar/NavBar.vue'
+import NavBarPost from '@/components/Post/NavBarPost.vue'
 import Footer from '@/components/Footer.vue'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'App',
   components: {
-    Navbar, Footer, NavbarPost
+    NavBar, Footer, NavBarPost
   },
   computed: {
     ...mapGetters({ showFooter: 'showFooter' }),
