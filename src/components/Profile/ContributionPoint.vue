@@ -13,10 +13,12 @@
     </div>
     <div class="section">
       <h4>貢獻紀錄</h4>
-      <b-table-lite
+      <b-table
         :items="mockTableData"
         :fields="fields"
+        :stacked="sm"
         borderless
+        tbody-class="table-body"
         tbody-tr-class="table-row-border"
         show-empty
         :empty-text="tableEmptyText"
@@ -24,15 +26,15 @@
         <template #cell(point)="data">
           <span v-html="data.value" />
         </template>
-      </b-table-lite>
+      </b-table>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
-  components: {
-  },
   props: {
     points: {
       type: Number,
@@ -72,9 +74,10 @@ export default {
       ]
     }
   },
-  methods: {
-    rowClass(item, type) {
-      return 'table-row-border'
+  computed: {
+    ...mapGetters(['windowWidth']),
+    sm() {
+      return this.windowWidth < 680
     }
   }
 }
@@ -111,6 +114,16 @@ export default {
   color: blue;
   font-size: 26px;
   font-weight: 400;
+}
+
+:deep .table-body {
+  td::before {
+    width: auto !important;
+  }
+
+  div {
+    width: 85% !important;
+  }
 }
 
 :deep .table-row-border {

@@ -1,6 +1,7 @@
 <template>
   <b-container class="no-gutters pl-0 pr-0 pb-3 mt-2">
     <b-form-checkbox
+      v-if="!sm"
       v-model="preference.status"
       switch
       size="lg"
@@ -9,16 +10,31 @@
     <div>
       <div id="title">{{ preference.title }}</div>
       <div id="description">{{ preference.description }}</div>
+      <b-form-checkbox
+        v-if="sm"
+        v-model="preference.status"
+        switch
+        size="lg"
+        class="switch--color"
+      />
     </div>
   </b-container>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   props: {
     preference: {
       type: Object,
       required: true
+    }
+  },
+  computed: {
+    ...mapGetters(['windowWidth']),
+    sm() {
+      return this.windowWidth < 680
     }
   }
 }

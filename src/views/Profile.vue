@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <PersonalStatus
-      v-if="!lg"
+      v-if="md"
       :style="{'margin-top': '1rem', 'margin-left': '1rem'}"
       :photo-url="photoURL"
       :display-name="displayName"
@@ -9,7 +9,7 @@
       :creation-date-time="creationDateTime"
     />
     <div class="main-container">
-      <div class="sidebar">
+      <div v-if="!sm" class="sidebar">
         <PersonalStatus
           v-if="lg"
           :photo-url="photoURL"
@@ -68,7 +68,7 @@
           </li>
         </ul>
       </div>
-      <div v-if="!sm" class="tab-content">
+      <div class="tab-content">
         <template v-if="currentShowingIndex === 3">
           <b-nav>
             <b-nav-item

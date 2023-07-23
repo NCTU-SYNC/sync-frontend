@@ -116,7 +116,8 @@ export default {
 
 <style scoped lang="scss">
 .section {
-  width: 32.5rem;
+  max-width: 32.5rem;
+  width: auto;
   padding-top: 1rem;
   padding-bottom: 1rem;
 
