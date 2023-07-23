@@ -284,7 +284,7 @@ a {
 }
 
 .main {
-  @media screen and (max-width: 680px){
+  @media screen and (max-width: 679px){
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -301,7 +301,7 @@ a {
     grid-template-columns: repeat(12, 1fr);
   }
 
-  @media screen and (max-width: 1024px){
+  @media screen and (max-width: 1023px){
     padding-top: 1rem;
   }
 }
@@ -310,11 +310,11 @@ a {
   grid-column: 1 / 4;
   flex-shrink: 0;
 
-  @media screen and (max-width: 1024px) and (min-width: 680px){
+  @media screen and (max-width: 1023px) and (min-width: 680px){
     grid-column: 1 / 2;
   }
 
-  @media screen and ((min-width: 1024px) or (max-width: 680px)){
+  @media screen and ((min-width: 1024px) or (max-width: 679px)){
     width: 280px;
   }
 }
@@ -336,7 +336,7 @@ a {
   position: relative;
   list-style: none;
 
-  @media screen and (max-width: 1024px) and (min-width: 680px){
+  @media screen and (max-width: 1023px) and (min-width: 680px){
     width: fit-content;
   }
 
@@ -399,7 +399,7 @@ a {
   gap: 1rem;
   width: 100%;
 
-  @media screen and (max-width: 1024px) and (min-width: 680px){
+  @media screen and (max-width: 1023px) and (min-width: 680px){
     grid-column-start: 2;
   }
 
@@ -442,7 +442,7 @@ a {
   background-color: white;
   border-radius: 16px;
 
-  @media screen and (min-width: 1024px){
+  @media screen and (min-width: 1023px){
     max-width: 37rem;
   }
 

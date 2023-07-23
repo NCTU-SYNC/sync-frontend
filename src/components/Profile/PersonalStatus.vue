@@ -1,5 +1,5 @@
 <template>
-  <b-container v-if="!lg" class="personal-status">
+  <b-container class="personal-status">
     <b-avatar size="5rem" :src="photoUrl" class="float-left" />
     <b-row align-v="stretch">
       <b-col class="personal-status-name">
@@ -31,7 +31,7 @@ export default {
   props: {
     photoUrl: {
       type: String,
-      required: true
+      default: ''
     },
     displayName: {
       type: String,
