@@ -62,10 +62,14 @@
     <div class="section pt-5">
       <h4>偏好設定</h4>
       <PreferenceItem
-        v-for="(preference, preferenceIndex) in mockPreference"
-        :key="preferenceIndex"
+        v-for="(pref, idx) in mockPreference"
+        :key="idx"
         class="setting-pref"
-        :preference="preference"
+        :status="pref.status"
+        :option="pref.option"
+        :title="pref.title"
+        :description="pref.description"
+        @changeStatus="changeStatus"
       />
     </div>
   </b-container>
@@ -73,11 +77,12 @@
 
 <script>
 import PreferenceItem from './PreferenceItem.vue'
+import UserAPI from '@/api/user'
 import { mapGetters } from 'vuex'
 
-/* TODO: replace with API */
-class Preference {
-  constructor(title, description, status) {
+export class Preference {
+  constructor(option, title, description, status) {
+    this.option = option
     this.title = title
     this.description = description
     this.status = status
@@ -88,27 +93,69 @@ export default {
   components: {
     PreferenceItem
   },
+  data() {
+    return {
+      preference: {
+        isAnonymous: false,
+        editedNotification: false,
+        subscribedNotification: false }
+    }
+  },
   computed: {
     ...mapGetters(['displayName', 'photoURL']),
     ...mapGetters({ email: 'user/email' }),
     mockPreference() {
       return [
         new Preference(
+          'isAnonymous',
           '匿名發文',
           '開啟後您的新增段落與文章預設作者都將匿名',
-          false
+          this.preference.isAnonymous
         ),
         new Preference(
+          'editedNotification',
           '編輯文章更新通知',
           '開啟後您曾編輯過的文章有任何更新都將通知您',
-          false
+          this.preference.editedNotification
         ),
         new Preference(
+          'subscribedNotification',
           '收藏文章更新通知',
           '開啟後您的收藏文章有任何更新都將通知您',
-          false
+          this.preference.subscribedNotification
         )
       ]
+    }
+  },
+  async mounted() {
+    try {
+      const { data } = await UserAPI.getPreference()
+      if (data.code === 200) {
+        this.preference = data.data
+      } else {
+        throw new Error(data.message)
+      }
+    } catch (e) {
+      console.error(e)
+      this.preference = {
+        isAnonymous: false,
+        editedNotification: false,
+        subscribedNotification: false }
+    }
+  },
+  methods: {
+    async changeStatus(option, newStatus) {
+      try {
+        const payload = { [option]: newStatus }
+        const { data } = await UserAPI.updatePreference({ payload })
+        if (data.code === 200) {
+          this.preference[option] = newStatus
+        } else {
+          throw new Error(data.message)
+        }
+      } catch (e) {
+        console.error(e)
+      }
     }
   }
 }
