@@ -129,23 +129,26 @@ export default {
     }
   },
   async mounted() {
-    try {
-      const { data } = await UserAPI.getPreference()
-      if (data.code === 200) {
-        this.preference = data.data
-      } else {
-        throw new Error(data.message)
-      }
-    } catch (e) {
-      console.error(e)
-      this.preference = {
-        isAnonymous: false,
-        editedNotification: false,
-        subscribedNotification: false }
-    }
+    await this.fetchStatus()
   },
   methods: {
     ...mapMutations({ updateDisplayName: 'user/UPDATE_DISPLAY_NAME' }),
+    async fetchStatus() {
+      try {
+        const { data } = await UserAPI.getPreference()
+        if (data.code === 200) {
+          this.preference = data.data
+        } else {
+          throw new Error(data.message)
+        }
+      } catch (e) {
+        console.error(e)
+        this.preference = {
+          isAnonymous: false,
+          editedNotification: false,
+          subscribedNotification: false }
+      }
+    },
     async rename(newName) {
       if (newName !== this.displayName) {
         console.log(newName)
