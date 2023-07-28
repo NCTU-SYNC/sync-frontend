@@ -4,7 +4,12 @@
       style="position: relative; width: 100vw"
       :class="{ 'justify-content-center': !showNewsSource }"
     >
-      <div v-if="isTimelineShow" align-self="stretch" class="timeline-panel">
+      <div
+        v-if="isTimelineShow"
+        align-self="stretch"
+        class="timeline-panel"
+        :class="{ 'timeline-panel__join': showNewsSource }"
+      >
         <div class="timeline-header">
           <span> 段落標題 </span>
           <b-button
@@ -28,6 +33,7 @@
         </div>
       </div>
       <div
+        v-if="!(isTimelineShow && showNewsSource)"
         class="timeline-panel-btn-only"
         :class="{ 'timeline-shrink': showNewsSource }"
       >
@@ -802,6 +808,10 @@ export default {
 .timeline-panel {
   position: absolute;
   left: 0;
+
+  &__join {
+    position: static;
+  }
 
   display: flex;
   flex-direction: column;

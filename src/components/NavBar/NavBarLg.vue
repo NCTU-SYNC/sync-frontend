@@ -150,7 +150,6 @@ export default {
       return disableRedirectPaths.some(disableRedirectPath => this.$route.path === disableRedirectPath) ? (this.$route.query.redirect === undefined ? null : { redirect: this.$route.query.redirect }) : { redirect: this.$route.path }
     },
     notifications() {
-      console.log(this.$store.getters.notifications)
       return this.$store.getters.notifications
     },
     modalComponent() {
