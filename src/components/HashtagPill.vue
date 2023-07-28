@@ -26,8 +26,9 @@ button {
   padding: 2px 8px;
 
   cursor: pointer;
-  font: inherit;
-  line-height: inherit;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  color: $text-1;
 
   transition: background-color 0.15s ease-in-out;
   &:hover {

@@ -6,13 +6,14 @@
         <div class="section_title">
           {{ category }}
         </div>
+
         <HomeBanner
+          :article-id="articleBanner._id"
           :title="articleBanner.title"
-          :tags="articleBanner.tags.slice(0, 4)"
-          :last-updated-at="articleBanner.lastUpdatedAt"
+          :tags="articleBanner.tags"
           :blocks="articleBanner.blocks"
-          :news-id="articleBanner._id"
         />
+
         <div class="gallery">
           <ArticleCard
             v-for="(article, index) in articlesLatest"
@@ -36,7 +37,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import ArticleCard from '@/components/ArticleCard.vue'
-import HomeBanner from '@/components/HomeBanner.vue'
+import HomeBanner from '@/components/HomeBanner/HomeBanner.vue'
 import RecommendHashtag from '@/components/RecommendHashtag.vue'
 import MotionBanner from '@/components/MotionBanner.vue'
 import articleAPI from '@/api/article'
