@@ -27,11 +27,11 @@
               <b-form-group>
                 <template #description>
                   <p class="mt-3">
-                    顯示名稱在一個月內僅可以更改兩次。<br>
+                    顯示名稱在30天內僅可以更改兩次。<br>
                     且更改後，將會影響你過去所編輯過文章的名稱。
                   </p>
                 </template>
-                <b-form-input id="input-username" size="lg" required />
+                <b-form-input id="input-username" v-model="newName" size="lg" required />
               </b-form-group>
             </b-form>
           </b-container>
@@ -47,7 +47,7 @@
               class="rename-modal-btn"
               variant="white"
               type="submit"
-              @click="ok()"
+              @click="ok(); rename(newName)"
             >儲存</b-button>
           </template>
         </b-modal>
@@ -78,7 +78,7 @@
 <script>
 import PreferenceItem from './PreferenceItem.vue'
 import UserAPI from '@/api/user'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export class Preference {
   constructor(option, title, description, status) {
@@ -95,6 +95,7 @@ export default {
   },
   data() {
     return {
+      newName: '',
       preference: {
         isAnonymous: false,
         editedNotification: false,
@@ -144,6 +145,29 @@ export default {
     }
   },
   methods: {
+    ...mapMutations({ updateDisplayName: 'user/UPDATE_DISPLAY_NAME' }),
+    async rename(newName) {
+      if (newName !== this.displayName) {
+        console.log(newName)
+        try {
+          const { data } = await UserAPI.updateDisplayName(newName)
+          if (data.code === 200) {
+            this.updateDisplayName(newName)
+          } else {
+            const message = `下次可改名時間: ${new Date(data.data).toLocaleDateString()}`
+            this.$bvToast.toast(message, {
+              title: '改名失敗',
+              toaster: 'b-toaster-top-center',
+              variant: 'danger'
+            })
+            throw new Error(data.data)
+          }
+        } catch (e) {
+          console.error('renamimg failed', e)
+        }
+      }
+      this.newName = ''
+    },
     async changeStatus(option, newStatus) {
       try {
         const payload = { [option]: newStatus }
@@ -229,7 +253,7 @@ export default {
 }
 
 #input-username {
-  border-color: $light !important;
+  border: 1px solid $gray-400 !important;
   font-size: 1rem;
   height: 3rem;
 

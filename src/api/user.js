@@ -19,6 +19,10 @@ class UserAPI extends APIBase {
     return this.action('/profile', {}, 'post')
   }
 
+  updateDisplayName(newName) {
+    return this.action('/profile/displayName', { payload: { newName }}, 'put')
+  }
+
   /**
    * get:
    *  - viewed articles
