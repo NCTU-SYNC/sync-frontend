@@ -4,7 +4,12 @@
       style="position: relative; width: 100vw"
       :class="{ 'justify-content-center': !showNewsSource }"
     >
-      <div v-if="isTimelineShow" align-self="stretch" class="timeline-panel">
+      <div
+        v-if="isTimelineShow"
+        align-self="stretch"
+        class="timeline-panel"
+        :class="{ 'timeline-panel__join': showNewsSource }"
+      >
         <div class="timeline-header">
           <span> 段落標題 </span>
           <b-button
@@ -28,6 +33,7 @@
         </div>
       </div>
       <div
+        v-if="!(isTimelineShow && showNewsSource)"
         class="timeline-panel-btn-only"
         :class="{ 'timeline-shrink': showNewsSource }"
       >
@@ -100,12 +106,14 @@
           </b-card-body>
         </b-card>
 
-        <div v-for="(block, blockIndex) in blocks" :key="block.id">
-          <b-card class="edit-block edit-row">
-            <SideTool class="side-tool" :block-index="blockIndex" />
-            <BlockEditor :ref="`block-${block.id}`" :block="block" />
-          </b-card>
-        </div>
+        <draggable v-model="blocks">
+          <div v-for="(block, blockIndex) in blocks" :key="block.id">
+            <b-card class="edit-block edit-row">
+              <SideTool class="side-tool" :block-index="blockIndex" />
+              <BlockEditor :ref="`block-${block.id}`" :block="block" />
+            </b-card>
+          </div>
+        </draggable>
 
         <div v-if="citationList.length > 0">
           <b-row>
@@ -216,6 +224,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import draggable from 'vuedraggable'
 import articleAPI from '@/api/article'
 import BlockEditor from '@/components/Post/BlockEditor'
 import NewsPanel from '@/components/NewsPanel'
@@ -233,7 +242,8 @@ export default {
     EditStar,
     Tag,
     EditToolModal,
-    SideTool
+    SideTool,
+    draggable
   },
   data() {
     return {
@@ -275,8 +285,13 @@ export default {
     editPoint() {
       return this.post.isNewPost ? 5 : 2
     },
-    blocks() {
-      return this.post.blocks
+    blocks: {
+      get() {
+        return this.post.blocks
+      },
+      set(newBlocks) {
+        this.$store.commit('post/UPDATE_BLOCKS', newBlocks)
+      }
     },
     postTitle: {
       get() {
@@ -794,6 +809,10 @@ export default {
   position: absolute;
   left: 0;
 
+  &__join {
+    position: static;
+  }
+
   display: flex;
   flex-direction: column;
   align-items: end;
@@ -863,7 +882,9 @@ export default {
   margin: 0.5rem 0;
 
   color: $gray-9;
-  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 400;
   letter-spacing: 2px;
   text-decoration: none !important;
 

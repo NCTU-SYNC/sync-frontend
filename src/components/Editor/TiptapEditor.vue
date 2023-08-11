@@ -103,6 +103,7 @@ export default {
         }),
         Typography,
         Link.configure({
+          autolink: false,
           openOnClick: false
         }),
         Image,

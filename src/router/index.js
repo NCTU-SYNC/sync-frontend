@@ -9,7 +9,8 @@ const router = new Router({
     {
       path: '/',
       name: 'newHome',
-      component: () => import('@/views/Home')
+      component: () => import('@/views/Home'),
+      props: (route) => ({ category: route.query.category })
     },
     {
       path: '/login',
