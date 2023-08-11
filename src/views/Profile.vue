@@ -1,26 +1,22 @@
 <template>
-  <b-container fluid class="no-gutters pl-0 pr-0">
-    <div class="d-flex">
-      <div class="sidebar">
-        <b-container class="personal-status">
-          <b-avatar size="5rem" :src="photoURL" class="float-left" />
-          <b-row align-v="stretch" class="personal-status-name">
-            <b-col class="text-lg font-weight-bold text-truncate">
-              {{ displayName }}
-            </b-col>
-          </b-row>
-          <b-row align-v="stretch" class="personal-status-text">
-            <b-col cols="6" class="text-sm text-gray pr-0">貢獻值</b-col>
-            <b-col class="text-sm text-blue pl-0 pr-0">{{ points }}</b-col>
-          </b-row>
-          <b-row align-v="stretch" class="personal-status-text">
-            <b-col cols="6" class="text-sm text-gray pr-0">加入日期</b-col>
-            <b-col class="text-sm text-gray pl-0 pr-0">{{
-              creationDateTime
-            }}</b-col>
-          </b-row>
-        </b-container>
-
+  <div class="main">
+    <PersonalStatus
+      v-if="md"
+      :style="{'margin-top': '1rem', 'margin-left': '1rem'}"
+      :photo-url="photoURL"
+      :display-name="displayName"
+      :points="points"
+      :creation-date-time="creationDateTime"
+    />
+    <div class="main-container">
+      <div v-if="!sm" class="sidebar">
+        <PersonalStatus
+          v-if="lg"
+          :photo-url="photoURL"
+          :display-name="displayName"
+          :points="points"
+          :creation-date-time="creationDateTime"
+        />
         <ul role="tablist" class="options-nav">
           <li
             :aria-selected="currentShowingIndex === 0"
@@ -31,7 +27,7 @@
               <span aria-hidden focusable="false" class="option-icon">
                 <SyncIcon icon="edited" />
               </span>
-              <span class="option-text">編輯過的文章</span>
+              <span v-if="!md" class="option-text">編輯過的文章</span>
             </a>
           </li>
           <li
@@ -43,7 +39,7 @@
               <span aria-hidden focusable="false" class="option-icon">
                 <SyncIcon icon="history" />
               </span>
-              <span class="option-text">瀏覽紀錄</span>
+              <span v-if="!md" class="option-text">瀏覽紀錄</span>
             </a>
           </li>
           <li
@@ -55,7 +51,7 @@
               <span aria-hidden focusable="false" class="option-icon">
                 <SyncIcon icon="bookmark" />
               </span>
-              <span class="option-text">收藏的文章</span>
+              <span v-if="!md" class="option-text">收藏的文章</span>
             </a>
           </li>
           <li
@@ -67,39 +63,63 @@
               <span aria-hidden focusable="false" class="option-icon">
                 <SyncIcon icon="settings" />
               </span>
-              <span class="option-text">個人設定</span>
+              <span v-if="!md" class="option-text">個人設定與貢獻值</span>
             </a>
           </li>
         </ul>
       </div>
       <div class="tab-content">
-        <h2 class="mb-4">
-          {{ contentTitle }}
-        </h2>
-        <slot v-if="currentShowingIndex === 3">
-          <Setting />
-        </slot>
-        <slot v-for="article in showingArticles" v-else>
-          <ArticleCard
-            :title="article.title"
-            :view-count="article.viewCount"
-            :category="article.category"
-            :last-updated-at="article.lastUpdatedAt"
-            :edited-count="article.editedCount"
-            :blocks="article.blocks"
-            :article-id="article._id"
-            full
-            class="p-0"
-          />
-        </slot>
+        <template v-if="currentShowingIndex === 3">
+          <b-nav>
+            <b-nav-item
+              :active="currentSettingIndex === 0"
+              @click="currentSettingIndex = 0"
+            >
+              <h3 class="m-0">個人設定</h3>
+            </b-nav-item>
+            <b-nav-item
+              :active="currentSettingIndex === 1"
+              @click="currentSettingIndex = 1"
+            >
+              <h3 class="m-0">貢獻值</h3>
+            </b-nav-item>
+          </b-nav>
+          <Setting v-if="currentSettingIndex === 0" />
+          <ContributionPoint v-if="currentSettingIndex === 1" :points="points" />
+        </template>
+        <template v-else-if="showingArticles.length > 0">
+          <div v-for="(article, index) in showingArticles" :key="index" class="title-card">
+            <div class="d-flex justify-content-between">
+              <h1 class="title-text" @click="gotoArticle(article._id)">
+                {{ article.title }}
+              </h1>
+              <a class="bookmark-icon" @click="toggleSubscription(article)">
+                <SyncIcon v-if="isSubscribed(article)" icon="bookmark-solid" size="md" />
+                <SyncIcon v-else icon="bookmark" size="md" />
+              </a>
+            </div>
+            <div v-if="article.tags.length !== 0" class="hashtag-container">
+              <HashtagPill v-for="(tag, idx) in article.tags" :key="idx" :name="tag" />
+            </div>
+            <div class="author-info">
+              編輯者： {{ getAuthorString(article.authors) }}
+            </div>
+          </div>
+        </template>
+        <template v-else>
+          <Logo class="logo-background" />
+        </template>
       </div>
     </div>
-  </b-container>
+  </div>
 </template>
 
 <script>
-import ArticleCard from '@/components/ArticleCard.vue'
+import PersonalStatus from '@/components/Profile/PersonalStatus.vue'
 import Setting from '@/components/Profile/Setting.vue'
+import ContributionPoint from '@/components/Profile/ContributionPoint.vue'
+import HashtagPill from '@/components/HashtagPill.vue'
+import Logo from '@/components/Logo.vue'
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import UserAPI from '@/api/user'
@@ -107,8 +127,11 @@ import UserAPI from '@/api/user'
 export default {
   name: 'Profile',
   components: {
-    ArticleCard,
-    Setting
+    PersonalStatus,
+    Setting,
+    ContributionPoint,
+    HashtagPill,
+    Logo
   },
   data() {
     return {
@@ -119,7 +142,7 @@ export default {
       },
       showingArticles: [],
       currentShowingIndex: 0,
-      contentTitle: '',
+      currentSettingIndex: 0,
       points: 0,
       tabMap: new Map([
         ['edited_articles', 0],
@@ -132,6 +155,16 @@ export default {
   computed: {
     ...mapGetters(['photoURL', 'displayName', 'uid', 'isLogin', 'user']),
     ...mapGetters({ createAt: 'user/createAt', email: 'user/email' }),
+    ...mapGetters(['windowWidth']),
+    sm() {
+      return this.windowWidth < 680
+    },
+    md() {
+      return this.windowWidth < 1024 && this.windowWidth >= 680
+    },
+    lg() {
+      return this.windowWidth >= 1024
+    },
     creationDateTime() {
       return this.createAt
         ? moment(parseInt(this.createAt)).format('YYYY.MM.DD')
@@ -146,11 +179,7 @@ export default {
     },
     '$route.query.tab'() {
       const tab = this.$route.query.tab
-      if (!this.tabMap.has(tab)) {
-        this.currentShowingIndex = 0
-      } else {
-        this.currentShowingIndex = this.tabMap.get(tab)
-      }
+      this.currentShowingIndex = this.tabMap.get(tab) ?? 0
     },
     currentShowingIndex() {
       this.updateList()
@@ -189,19 +218,15 @@ export default {
     updateList() {
       switch (this.currentShowingIndex) {
         case 3:
-          this.contentTitle = '個人設定'
           break
         case 2:
-          this.contentTitle = '收藏的文章'
           this.showingArticles = [...this.articles.subscribed].reverse()
           break
         case 1:
-          this.contentTitle = '瀏覽紀錄'
           this.showingArticles = [...this.articles.viewed].reverse()
           break
         case 0:
         default:
-          this.contentTitle = '編輯過的文章'
           this.showingArticles = [...this.articles.edited].sort(
             (a, b) => new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt)
           )
@@ -215,6 +240,39 @@ export default {
         tab: tabName
       }
       this.$router.push({ path: 'profile', query })
+    },
+    gotoArticle(articleId) {
+      this.$router.push(`article/${articleId}`)
+    },
+    getAuthorString(authors) {
+      let authorsString = ''
+      authorsString = authors
+        .slice(0, 3)
+        .map((user) => user.name)
+        .join(', ')
+      if (authors.length > 3) {
+        authorsString += ` + ${authors.length - 3} 人`
+      }
+      return authorsString
+    },
+    isSubscribed(article) {
+      return this.articles.subscribed.map((a) => a._id).includes(article._id)
+    },
+    async toggleSubscription(article) {
+      const { _id } = article
+      const isSubscribed = this.isSubscribed(article)
+      const response = await UserAPI.subscribeArticle(_id, !isSubscribed)
+
+      if (response.data.type === 'success') {
+        if (isSubscribed) {
+          const idx = this.articles.subscribed.indexOf(article)
+          this.articles.subscribed.splice(idx, 1)
+        } else {
+          this.articles.subscribed.push(article)
+        }
+      }
+
+      this.updateList()
     }
   }
 }
@@ -225,14 +283,40 @@ a {
   text-decoration: none !important;
 }
 
+.main {
+  @media screen and (max-width: 679px){
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.main-container {
+  margin: 0 auto;
+  gap: 2rem;
+  padding: 2.25rem;
+
+  @media screen and (min-width: 680px){
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+  }
+
+  @media screen and (max-width: 1023px){
+    padding-top: 1rem;
+  }
+}
+
 .sidebar {
-  position: sticky;
-  top: 0;
-  left: 0;
-  width: 300px;
-  padding-top: 1.5rem;
-  border-right: 1px solid $gray-400;
+  grid-column: 1 / 4;
   flex-shrink: 0;
+
+  @media screen and (max-width: 1023px) and (min-width: 680px){
+    grid-column: 1 / 2;
+  }
+
+  @media screen and ((min-width: 1024px) or (max-width: 679px)){
+    width: 280px;
+  }
 }
 
 .avatar {
@@ -243,26 +327,21 @@ a {
   max-height: 150px;
 }
 
-/*
-  options nav
-*/
 .options-nav {
-  margin-top: 1.5rem;
   padding: 0;
   display: flex;
   flex-direction: column;
+  gap: 16px;
   justify-content: space-around;
   position: relative;
   list-style: none;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background-color: $gray-400;
+  @media screen and (max-width: 1023px) and (min-width: 680px){
+    width: fit-content;
+  }
+
+  @media screen and (min-width: 1024px){
+    margin-top: 3rem;
   }
 
   a {
@@ -273,19 +352,20 @@ a {
   }
 
   .option-name {
+    background-color: white;
+    border-radius: 16px;
     display: flex;
     height: 4rem;
+    box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.04);
 
     &[aria-selected='true'] {
-      border-left: 3px solid $blue;
-      background-color: #f6f6f8;
+      color: blue;
     }
 
     .option-text {
       font-size: 1.125rem;
       letter-spacing: 0.25rem;
       text-indent: 0.25rem;
-      padding-left: 1rem;
       margin: auto 0;
     }
 
@@ -293,7 +373,7 @@ a {
       display: flex;
       height: 36px;
       width: 36px;
-      margin: auto 0 auto 2rem; /* vertical align icon center */
+      margin: auto 1rem; /* vertical align icon center */
       align-items: center; /* align item in container */
       justify-content: center; /* align item in container */
     }
@@ -305,29 +385,6 @@ a {
   color: rgb(49, 87, 211);
 }
 
-.personal-status {
-  height: 5rem;
-  padding-left: 1.75rem;
-  padding-right: 1.75rem;
-
-  &-name {
-    height: 2rem;
-  }
-
-  &-text {
-    height: 1.5rem;
-
-    :first-child {
-      width: 8rem;
-    }
-  }
-
-  // align all texts to center
-  & * {
-    margin: auto 0;
-  }
-}
-
 .blank-row {
   height: 0.875rem !important;
 }
@@ -336,9 +393,26 @@ a {
   tab content
 */
 .tab-content {
-  padding: 3rem 4rem;
-  box-sizing: content-box;
-  flex-shrink: 1;
+  grid-column: 4 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+
+  @media screen and (max-width: 1023px) and (min-width: 680px){
+    grid-column-start: 2;
+  }
+
+  .nav {
+    font-size: 1.5rem;
+    font-weight: 700;
+    border-bottom: 1px solid gray;
+
+    .active {
+      color: black;
+      border-bottom: 2px solid #2353FF;
+    }
+  }
 }
 
 /*
@@ -358,4 +432,61 @@ a {
     color: $blue;
   }
 }
+
+.title-card {
+  display: flex;
+  flex-direction: column;
+  width: auto;
+  gap: 1rem;
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: 16px;
+
+  @media screen and (min-width: 1023px){
+    max-width: 37rem;
+  }
+
+  .title-text {
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.75rem;
+    color: #0e0e0e;
+    margin: 0;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .bookmark-icon {
+    :hover {
+      cursor: pointer;
+    }
+  }
+
+  .hashtag-container {
+    font-size: 12px;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .author-info {
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.25rem;
+    overflow-wrap: anywhere;
+  }
+}
+
+.logo-background {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: rotate(-30deg) scale(2.5);
+  opacity: 0.3;
+}
+
 </style>

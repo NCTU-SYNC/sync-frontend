@@ -6,15 +6,13 @@
     </div>
     <div class="section">
       <h4>顯示名稱</h4>
-      <div class="text-box">
-        <span class="m-0 flex-grow-1">{{ displayName }}</span>
-        <span class="text-box-divider" />
+      <div class="d-flex" style="gap: 1rem;">
+        <div class="text-box flex-fill">
+          {{ displayName }}
+        </div>
         <b-button
           id="rename-btn"
           v-b-modal.rename-modal
-          variant="white"
-          size="lg"
-          class="m-0 font-size-1"
         >更改</b-button>
         <b-modal
           id="rename-modal"
@@ -29,11 +27,11 @@
               <b-form-group>
                 <template #description>
                   <p class="mt-3">
-                    顯示名稱在一個月內僅可以更改兩次。<br>
+                    顯示名稱在30天內僅可以更改兩次。<br>
                     且更改後，將會影響你過去所編輯過文章的名稱。
                   </p>
                 </template>
-                <b-form-input id="input-username" size="lg" required />
+                <b-form-input id="input-username" v-model="newName" size="lg" required />
               </b-form-group>
             </b-form>
           </b-container>
@@ -49,7 +47,7 @@
               class="rename-modal-btn"
               variant="white"
               type="submit"
-              @click="ok()"
+              @click="ok(); rename(newName)"
             >儲存</b-button>
           </template>
         </b-modal>
@@ -58,16 +56,20 @@
     <div class="section pb-3">
       <h4>註冊信箱</h4>
       <div class="text-box bg-light">
-        <span class="m-0 flex-grow-1">{{ email }}</span>
+        {{ email }}
       </div>
     </div>
     <div class="section pt-5">
       <h4>偏好設定</h4>
       <PreferenceItem
-        v-for="(preference, preferenceIndex) in mockPreference"
-        :key="preferenceIndex"
+        v-for="(pref, idx) in mockPreference"
+        :key="idx"
         class="setting-pref"
-        :preference="preference"
+        :status="pref.status"
+        :option="pref.option"
+        :title="pref.title"
+        :description="pref.description"
+        @changeStatus="changeStatus"
       />
     </div>
   </b-container>
@@ -75,11 +77,12 @@
 
 <script>
 import PreferenceItem from './PreferenceItem.vue'
-import { mapGetters } from 'vuex'
+import UserAPI from '@/api/user'
+import { mapGetters, mapMutations } from 'vuex'
 
-/* TODO: replace with API */
-class Preference {
-  constructor(title, description, status) {
+export class Preference {
+  constructor(option, title, description, status) {
+    this.option = option
     this.title = title
     this.description = description
     this.status = status
@@ -90,27 +93,96 @@ export default {
   components: {
     PreferenceItem
   },
+  data() {
+    return {
+      newName: '',
+      preference: {
+        isAnonymous: false,
+        editedNotification: false,
+        subscribedNotification: false }
+    }
+  },
   computed: {
     ...mapGetters(['displayName', 'photoURL']),
     ...mapGetters({ email: 'user/email' }),
     mockPreference() {
       return [
         new Preference(
+          'isAnonymous',
           '匿名發文',
           '開啟後您的新增段落與文章預設作者都將匿名',
-          false
+          this.preference.isAnonymous
         ),
         new Preference(
+          'editedNotification',
           '編輯文章更新通知',
           '開啟後您曾編輯過的文章有任何更新都將通知您',
-          false
+          this.preference.editedNotification
         ),
         new Preference(
+          'subscribedNotification',
           '收藏文章更新通知',
           '開啟後您的收藏文章有任何更新都將通知您',
-          false
+          this.preference.subscribedNotification
         )
       ]
+    }
+  },
+  async mounted() {
+    await this.fetchStatus()
+  },
+  methods: {
+    ...mapMutations({ updateDisplayName: 'user/UPDATE_DISPLAY_NAME' }),
+    async fetchStatus() {
+      try {
+        const { data } = await UserAPI.getPreference()
+        if (data.code === 200) {
+          this.preference = data.data
+        } else {
+          throw new Error(data.message)
+        }
+      } catch (e) {
+        console.error(e)
+        this.preference = {
+          isAnonymous: false,
+          editedNotification: false,
+          subscribedNotification: false }
+      }
+    },
+    async rename(newName) {
+      if (newName !== this.displayName) {
+        console.log(newName)
+        try {
+          const { data } = await UserAPI.updateDisplayName(newName)
+          if (data.code === 200) {
+            this.updateDisplayName(newName)
+          } else {
+            const message = `下次可改名時間: ${new Date(data.data).toLocaleDateString()}`
+            this.$bvToast.toast(message, {
+              title: '改名失敗',
+              toaster: 'b-toaster-top-center',
+              variant: 'danger'
+            })
+            throw new Error(data.data)
+          }
+        } catch (e) {
+          console.error('renamimg failed', e)
+        }
+      }
+      this.newName = ''
+    },
+    async changeStatus(option, newStatus) {
+      try {
+        const payload = { [option]: newStatus }
+        const { data } = await UserAPI.updatePreference({ payload })
+        if (data.code === 200) {
+          this.preference[option] = newStatus
+        } else {
+          throw new Error(data.message)
+        }
+      } catch (e) {
+        console.error(e)
+      }
     }
   }
 }
@@ -118,15 +190,16 @@ export default {
 
 <style scoped lang="scss">
 .section {
-  width: 32.5rem;
+  max-width: 32.5rem;
+  width: auto;
   padding-top: 1rem;
   padding-bottom: 1rem;
 
-  & * {
+  & > * {
     margin-bottom: 1rem;
   }
 
-  & *:last-child {
+  & > *:last-child {
     margin-bottom: 0;
   }
 }
@@ -135,24 +208,19 @@ export default {
   display: flex;
   border: 1px solid $gray-400;
   border-radius: 5px;
-  width: 100%;
-  height: 3rem;
+  height: 2.5rem;
   align-items: center;
-  justify-content: space-between;
-  padding-left: 1rem;
-
-  &-divider {
-    height: 1.25rem;
-    border-right: 1px solid $gray-400;
-    box-sizing: content-box;
-    padding: 0;
-    margin: 0;
-  }
+  padding: 0 1rem;
 }
 
 #rename-btn {
+  height: 2.5rem;
+  white-space: nowrap;
+  color: $white;
+  background-color: $blue;
+  border: none;
   font-size: 1rem;
-  color: $blue;
+  padding: 0.5rem 1rem;
 }
 
 /*
@@ -188,7 +256,7 @@ export default {
 }
 
 #input-username {
-  border-color: $light !important;
+  border: 1px solid $gray-400 !important;
   font-size: 1rem;
   height: 3rem;
 

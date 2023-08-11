@@ -34,6 +34,9 @@ const mutations = {
     state.uid = user ? user.uid : ''
     state.isInitialized = true
   },
+  UPDATE_DISPLAY_NAME(state, displayName) {
+    state.displayName = displayName ?? state.displayName
+  },
   RESET_USER(state) {
     Object.assign(state, getDefaultState())
   },

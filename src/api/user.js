@@ -1,4 +1,5 @@
 import APIBase from '.'
+import FirebaseAuthInstance from '../utils/firebase'
 
 class UserAPI extends APIBase {
   constructor() {
@@ -16,6 +17,10 @@ class UserAPI extends APIBase {
    */
   getProfile() {
     return this.action('/profile', {}, 'post')
+  }
+
+  updateDisplayName(newName) {
+    return this.action('/profile/displayName', { payload: { newName }}, 'put')
   }
 
   /**
@@ -47,6 +52,24 @@ class UserAPI extends APIBase {
    */
   subscribeArticle(articleId, subscribe) {
     return this.action('profile/subscribe', { articleId, subscribe }, 'post')
+  }
+
+  /**
+    * get user's preference
+    * @returns {Promise<Any>}
+    */
+  async getPreference() {
+    const token = await FirebaseAuthInstance.token
+    return this.action('/profile/preference', { token }, 'get')
+  }
+
+  /**
+   * update user's preference
+   * @param {Partial<{editedNotification: Boolean, isAnonymous: Boolean, subscribedNotification: Boolean}>} preference : user's preference
+   * @returns {Promise<Any>}
+   */
+  updatePreference(preferences) {
+    return this.action('/profile/preference', { payload: { preferences }}, 'put')
   }
 }
 

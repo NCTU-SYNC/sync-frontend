@@ -1,24 +1,54 @@
 <template>
   <b-container class="no-gutters pl-0 pr-0 pb-3 mt-2">
     <b-form-checkbox
-      v-model="preference.status"
+      v-if="!sm"
+      :checked="status"
       switch
       size="lg"
       class="switch--color float-right"
+      @change="$emit('changeStatus', option, $event)"
     />
     <div>
-      <div id="title">{{ preference.title }}</div>
-      <div id="description">{{ preference.description }}</div>
+      <div id="title">{{ title }}</div>
+      <div id="description">{{ description }}</div>
+      <b-form-checkbox
+        v-if="sm"
+        :checked="status"
+        switch
+        size="lg"
+        class="switch--color"
+        @change="$emit('changeStatus', title, $event)"
+      />
     </div>
   </b-container>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   props: {
-    preference: {
-      type: Object,
+    option: {
+      type: String,
       required: true
+    },
+    title: {
+      type: String,
+      required: true
+    },
+    description: {
+      type: String,
+      required: true
+    },
+    status: {
+      type: Boolean,
+      required: true
+    }
+  },
+  computed: {
+    ...mapGetters(['windowWidth']),
+    sm() {
+      return this.windowWidth < 680
     }
   }
 }

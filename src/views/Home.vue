@@ -44,7 +44,9 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
+@import '@/assets/scss/news.scss';
+
 #toast-article-not-found {
   width: fit-content;
   margin: 4rem auto 0;
