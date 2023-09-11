@@ -146,7 +146,7 @@
                       </div>
                       <b-link
                         class="citation-list-link"
-                        :href="citation.url"
+                        :href="citation.info.url"
                         target="_blank"
                       >{{ citation.info.url }}
                       </b-link>
