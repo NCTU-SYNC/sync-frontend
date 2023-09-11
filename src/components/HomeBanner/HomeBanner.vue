@@ -137,6 +137,7 @@ export default {
   &-img {
     width: 640px;
     aspect-ratio: 2 / 1;
+    object-fit: cover;
 
     border-radius: 12px;
 
