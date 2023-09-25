@@ -131,7 +131,7 @@
                   body-class="p-3"
                 >
                   <div class="d-flex justify-content-between">
-                    <div class="d-flex flex-column">
+                    <div class="d-flex flex-column" style="min-width: 0">
                       <div class="d-flex mb-2">
                         <div
                           class="citation-list-tag"
