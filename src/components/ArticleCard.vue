@@ -1,7 +1,7 @@
 <template>
   <div class="article-card" :class="{'article-card__lg':lg}" @click="GotoArticle">
-    <div v-if="imageURL" class="article-card__image">
-      <b-img-lazy :src="imgSrc" fluid-grow />
+    <div v-if="imgLink" class="article-card__image">
+      <b-img-lazy :src="imgLink" fluid-grow />
     </div>
     <div v-else-if="!singleBlock" class="article-card__summaryImg">
       <ul>
@@ -11,7 +11,7 @@
       </ul>
     </div>
     <div v-else class="article-card__contentPreview">
-      <p>{{ content }}</p>
+      <p>{{ getContent() }}</p>
     </div>
     <div class="article-card__body">
       <div v-show="hasCate" class="article-card__category">{{ category === '' ? '未分類' : category }}</div>
@@ -31,7 +31,6 @@ import { BImgLazy } from 'bootstrap-vue'
 import HashtagPill from '@/components/HashtagPill.vue'
 import BadgeHot from '@/assets/images/badge-hot.svg'
 import BadgeNew from '@/assets/images/badge-new.svg'
-import ArticleAPI from '@/api/article'
 import { Utils } from '@/utils'
 import { blocksToText } from '@/utils/editorUtil'
 
@@ -59,9 +58,9 @@ export default {
       type: Array,
       default: () => []
     },
-    imageURL: {
-      type: String,
-      default: ''
+    blocks: {
+      type: Object,
+      required: true
     },
     articleId: {
       type: String,
@@ -81,16 +80,14 @@ export default {
   },
   data() {
     return {
-      hasImg: this.imgLink !== '',
-      blockTitles: [],
-      singleBlock: false,
-      content: ''
+      blockTitles: Utils.getArticleBlockTitles(this.$props.blocks, 5)
     }
   },
   computed: {
-    imgSrc() {
-      return this.imageURL
+    imgLink() {
+      return Utils.getArticleFirstImage(this.$props.blocks)
     },
+
     hasTags() {
       return this.tags.length > 0
     },
@@ -102,26 +99,17 @@ export default {
     },
     badgeImgSrc() {
       return badge.get(`badge-${this.badge}`)
+    },
+    singleBlock() {
+      return this.blockTitles.length === 1
     }
-  },
-  created() {
-    if (this.imageURL === '') this.getBlockTitles()
   },
   methods: {
     GotoArticle() {
       this.$router.push(`article/${this.articleId}`)
     },
-    async getBlockTitles() {
-      const { data: docData } = await ArticleAPI.getById(this.$props.articleId)
-      const { data: article } = docData
-      const ret = Utils.getArticleBlockTitles(article.blocks, 5)
-      this.blockTitles = ret
-
-      if (this.blockTitles.length === 1) {
-        this.singleBlock = true
-        const content = blocksToText(article.blocks)
-        this.content = content
-      }
+    getContent() {
+      return blocksToText(this.$props.blocks)
     }
   }
 }
@@ -155,6 +143,7 @@ export default {
     img {
       width: 100%;
       height: 100%;
+      aspect-ratio: 1/1;
       object-fit: cover;
     }
   }
